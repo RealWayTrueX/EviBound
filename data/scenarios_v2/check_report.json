@@ -1,0 +1,51 @@
+{
+  "dev": {
+    "tasks": 16,
+    "rule_coverage": [
+      "R1",
+      "R2",
+      "R3",
+      "R4",
+      "R5",
+      "R6"
+    ],
+    "perturbations": {
+      "tamper": 8,
+      "replay": 8
+    },
+    "errors": []
+  },
+  "pilot": {
+    "tasks": 16,
+    "rule_coverage": [
+      "R1",
+      "R2",
+      "R3",
+      "R4",
+      "R5",
+      "R6"
+    ],
+    "perturbations": {
+      "tamper": 8,
+      "replay": 8
+    },
+    "errors": []
+  },
+  "test": {
+    "tasks": 24,
+    "rule_coverage": [
+      "R1",
+      "R2",
+      "R3",
+      "R4",
+      "R5",
+      "R6"
+    ],
+    "perturbations": {
+      "tamper": 12,
+      "replay": 12
+    },
+    "errors": []
+  },
+  "total_errors": 0
+}

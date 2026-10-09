@@ -1,0 +1,235 @@
+{
+  "schema_version": 2,
+  "status": "DRAFT - not preregistered, not frozen",
+  "generator": {
+    "path": "scripts/generate_scenarios_v2.py",
+    "seed": 20261010
+  },
+  "source": "Locally authored synthetic data, no external benchmark.",
+  "design_doc": "docs/design_v2_dataset.md",
+  "lifecycle": {
+    "dev": "draft",
+    "pilot": "draft",
+    "test": "draft"
+  },
+  "human_review": {
+    "status": "pending",
+    "reviews_dir": "reviews/v2"
+  },
+  "splits": {
+    "dev": {
+      "tasks": 16,
+      "sha256": "34eeab8f00f586a74ae9c1d38c6093452e71d9105df0774e00c72f32689159a0",
+      "task_ids": [
+        "dev_reading_00",
+        "dev_reading_01",
+        "dev_bright_work_00",
+        "dev_bright_work_01",
+        "dev_gentle_comfort_00",
+        "dev_gentle_comfort_01",
+        "dev_strong_ventilation_00",
+        "dev_strong_ventilation_01",
+        "dev_bright_ventilation_00",
+        "dev_bright_ventilation_01",
+        "dev_economy_00",
+        "dev_economy_01",
+        "dev_light_only_00",
+        "dev_light_only_01",
+        "dev_fan_only_00",
+        "dev_fan_only_01"
+      ],
+      "structure_ids": [
+        "dev_reading_c_low_P",
+        "dev_reading_d_off_A",
+        "dev_bright_work_c_low_P",
+        "dev_bright_work_d_off_A",
+        "dev_gentle_comfort_c_off_P",
+        "dev_gentle_comfort_a_low_P",
+        "dev_strong_ventilation_c_low_P",
+        "dev_strong_ventilation_c_off_P",
+        "dev_bright_ventilation_c_off_P",
+        "dev_bright_ventilation_a_low_P",
+        "dev_economy_a_off_A",
+        "dev_economy_d_low_A",
+        "dev_light_only_c_off_P",
+        "dev_light_only_d_off_A",
+        "dev_fan_only_c_off_P",
+        "dev_fan_only_d_off_P"
+      ],
+      "families": {
+        "reading": 2,
+        "bright_work": 2,
+        "gentle_comfort": 2,
+        "strong_ventilation": 2,
+        "bright_ventilation": 2,
+        "economy": 2,
+        "light_only": 2,
+        "fan_only": 2
+      },
+      "perturbations": {
+        "tamper": 8,
+        "replay": 8
+      },
+      "authorization_negative_tasks": [
+        "dev_light_only_00",
+        "dev_light_only_01",
+        "dev_fan_only_00",
+        "dev_fan_only_01"
+      ],
+      "off_branch_noop_tasks": [
+        "dev_gentle_comfort_01",
+        "dev_strong_ventilation_00",
+        "dev_strong_ventilation_01",
+        "dev_bright_ventilation_01",
+        "dev_fan_only_00",
+        "dev_fan_only_01"
+      ]
+    },
+    "pilot": {
+      "tasks": 16,
+      "sha256": "5fd10d4103933321338a65629499454a77ab4966a5a1af5d518f6c384f472d02",
+      "task_ids": [
+        "pilot_reading_00",
+        "pilot_reading_01",
+        "pilot_bright_work_00",
+        "pilot_bright_work_01",
+        "pilot_gentle_comfort_00",
+        "pilot_gentle_comfort_01",
+        "pilot_strong_ventilation_00",
+        "pilot_strong_ventilation_01",
+        "pilot_bright_ventilation_00",
+        "pilot_bright_ventilation_01",
+        "pilot_economy_00",
+        "pilot_economy_01",
+        "pilot_light_only_00",
+        "pilot_light_only_01",
+        "pilot_fan_only_00",
+        "pilot_fan_only_01"
+      ],
+      "structure_ids": [
+        "pilot_reading_b_off_P",
+        "pilot_reading_c_low_A",
+        "pilot_bright_work_b_off_P",
+        "pilot_bright_work_c_low_A",
+        "pilot_gentle_comfort_b_low_P",
+        "pilot_gentle_comfort_c_off_A",
+        "pilot_strong_ventilation_b_off_P",
+        "pilot_strong_ventilation_a_low_P",
+        "pilot_bright_ventilation_b_low_P",
+        "pilot_bright_ventilation_c_off_A",
+        "pilot_economy_c_off_A",
+        "pilot_economy_c_off_P",
+        "pilot_light_only_b_off_P",
+        "pilot_light_only_c_off_A",
+        "pilot_fan_only_d_low_P",
+        "pilot_fan_only_c_low_P"
+      ],
+      "families": {
+        "reading": 2,
+        "bright_work": 2,
+        "gentle_comfort": 2,
+        "strong_ventilation": 2,
+        "bright_ventilation": 2,
+        "economy": 2,
+        "light_only": 2,
+        "fan_only": 2
+      },
+      "perturbations": {
+        "tamper": 8,
+        "replay": 8
+      },
+      "authorization_negative_tasks": [
+        "pilot_light_only_00",
+        "pilot_light_only_01",
+        "pilot_fan_only_00",
+        "pilot_fan_only_01"
+      ],
+      "off_branch_noop_tasks": [
+        "pilot_strong_ventilation_00",
+        "pilot_strong_ventilation_01",
+        "pilot_fan_only_01"
+      ]
+    },
+    "test": {
+      "tasks": 24,
+      "sha256": "563db1fc985b3e7186562fc895f106ced97faf1cf4b7b1fc5a5abceda0fcb4ce",
+      "task_ids": [
+        "test_reading_00",
+        "test_reading_01",
+        "test_reading_02",
+        "test_bright_work_00",
+        "test_bright_work_01",
+        "test_bright_work_02",
+        "test_gentle_comfort_00",
+        "test_gentle_comfort_01",
+        "test_gentle_comfort_02",
+        "test_strong_ventilation_00",
+        "test_strong_ventilation_01",
+        "test_strong_ventilation_02",
+        "test_bright_ventilation_00",
+        "test_bright_ventilation_01",
+        "test_bright_ventilation_02",
+        "test_economy_00",
+        "test_economy_01",
+        "test_economy_02",
+        "test_light_only_00",
+        "test_light_only_01",
+        "test_light_only_02",
+        "test_fan_only_00",
+        "test_fan_only_01",
+        "test_fan_only_02"
+      ],
+      "structure_ids": [
+        "test_reading_a_low_A",
+        "test_reading_a_low_P",
+        "test_reading_b_off_A",
+        "test_bright_work_a_low_A",
+        "test_bright_work_a_low_P",
+        "test_bright_work_b_off_A",
+        "test_gentle_comfort_a_off_A",
+        "test_gentle_comfort_a_off_P",
+        "test_gentle_comfort_b_low_A",
+        "test_strong_ventilation_a_off_A",
+        "test_strong_ventilation_a_off_P",
+        "test_strong_ventilation_b_low_A",
+        "test_bright_ventilation_a_off_A",
+        "test_bright_ventilation_a_off_P",
+        "test_bright_ventilation_b_low_A",
+        "test_economy_a_off_P",
+        "test_economy_d_low_P",
+        "test_economy_a_low_P",
+        "test_light_only_a_low_A",
+        "test_light_only_a_low_P",
+        "test_light_only_b_off_A",
+        "test_fan_only_a_off_A",
+        "test_fan_only_a_off_P",
+        "test_fan_only_d_low_A"
+      ],
+      "families": {
+        "reading": 3,
+        "bright_work": 3,
+        "gentle_comfort": 3,
+        "strong_ventilation": 3,
+        "bright_ventilation": 3,
+        "economy": 3,
+        "light_only": 3,
+        "fan_only": 3
+      },
+      "perturbations": {
+        "tamper": 12,
+        "replay": 12
+      },
+      "authorization_negative_tasks": [
+        "test_light_only_00",
+        "test_light_only_01",
+        "test_light_only_02",
+        "test_fan_only_00",
+        "test_fan_only_01",
+        "test_fan_only_02"
+      ],
+      "off_branch_noop_tasks": [
+        "test_economy_02"
+      ]
+    }
+  }
+}
