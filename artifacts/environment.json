@@ -1,0 +1,17 @@
+{
+  "python": "3.12.7",
+  "packages": {
+    "torch": "2.9.0",
+    "transformers": "4.57.1",
+    "tokenizers": "0.22.2",
+    "huggingface-hub": "0.36.0",
+    "accelerate": "1.11.0",
+    "numpy": "1.26.4",
+    "matplotlib": "3.9.2",
+    "safetensors": "0.5.3",
+    "pandas": "2.2.2"
+  },
+  "base_python": "/home/yanke/anaconda3/bin/python",
+  "runtime_python": "/mnt/HDD-8T-0/evibound_yanke/envs/runtime/bin/python",
+  "environment": "venv --system-site-packages; base environment unchanged"
+}

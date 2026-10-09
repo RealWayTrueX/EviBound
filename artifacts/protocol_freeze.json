@@ -1,0 +1,60 @@
+{
+  "frozen_utc": "20260922T193023Z",
+  "archive": "artifacts/protocol_20260922T193023Z.tar.gz",
+  "files": {
+    "artifacts/model_manifest.json": "e9efdeddd7e382c30a6c3ec6f15c68c3cccaf3de74689bc74091225197bf1ff1",
+    "configs/requirements_observed.txt": "1bfcf64d548b5b46b1a9ce18f8ed8ef50827469226c48a9e3cf249dbc6ce487c",
+    "data/scenarios/dev.jsonl": "5cbdb64200efddc5eefe4547b32acf624336cddf75940add8f9fd0fbb350eb8d",
+    "data/scenarios/manifest.json": "acc4848290ed276b9257bd4e60edc72fad5968c44410956362b9da745c4699ac",
+    "data/scenarios/pilot.jsonl": "1cbd30e1e268cce879e38c44f8849f199a43608110f00ac923ee8b6f8b930a9a",
+    "data/scenarios/test.jsonl": "f5c6b0508d46a893030327dba9b6acbc992721ab0c60fe914f8afd8bef0f5d01",
+    "docs/implementation_contract.md": "6a52195d128808b1e5f06204d08c427401bb81de04aa71bb34dba5ca68830944",
+    "scripts/analyze.py": "39c0517925ca2c0e80ed09d71ab448b74dbd66ec86bb66dd743b35676fdabcbb",
+    "scripts/build_figures.py": "d1b3fbdcbe5d4f2292a9237139f9e85e1db2cb71b95178a3898acfac9523f108",
+    "scripts/confirm_perturbation.py": "38a490c4d6144d8ec7ab6799ee0661f9edd22a7d3f5c7845cb8fa4e76475e2bc",
+    "scripts/env.sh": "59b28c533b4ae99f78dbb8c9790bb93765c1553ca4c2e2ca165edae0ffa61b65",
+    "scripts/freeze_protocol.py": "c1be461dd0de7e221e0676dce2cc90d59be89993d247487402e467f1a0d36728",
+    "scripts/generate_scenarios.py": "09afbdc64e6674754ed26189cfa3da9c30febb3725324af3c40cf20b18306c16",
+    "scripts/hash_weights.py": "4b32a3b24972777389825051f4bcc3a18769ff00241596d1be6b28a858d8e5d0",
+    "scripts/overnight.sh": "c510d8ccb8314b976f4b0d78bc97b2b4874ae45aa4c853b2640494cdced0cfa0",
+    "scripts/prepare_model.py": "9ef1b8649247e3556fb3c54d2522037736cfe4598a5a0a591f2f2e5ca2cd3df3",
+    "scripts/reproduce_subset.sh": "dfec97acb2e693de03a28134613a2927c71743f55a5ddf15723af5bebf029344",
+    "scripts/run_experiment.py": "d1d2d7fd947bdef5567b9f3ff43b2001c60f602dd17e8ae38bb9c921d0a8da46",
+    "scripts/run_stage.sh": "1c4cfe96fd00655573d35fca872d29abc046d1c5c883bc98b9ebef147ff29ffb",
+    "scripts/validate_outputs.py": "2b3292d98ce14e0f782f1dcd311416511060d7a197c0cd1539ae1d03e85f2ac8",
+    "src/evibound/__init__.py": "0e700b4cb4b833480be1b8914c1288e1caec53a9fd7bd3a2d316ad77a0b43c22",
+    "src/evibound/backend.py": "6881b31212cd6e353a5ce2c99ddae2f9d1f8ada1cc32877559d4c8fe7688ece2",
+    "src/evibound/oracle.py": "51968f70c0932c53d2e09335fdcb4a1441f023da4d41ceaf85701445ee928929",
+    "src/evibound/planner.py": "3752c7f67e10e8cba4a4dfe647a504aebbad8f0231877854f274caaa73e2e545",
+    "tests/test_backend.py": "bd565e9a787441e237f4e287415933d114e8bc0c504289b6e47c3f804f078c52",
+    "tests/test_oracle.py": "137f4d5783f03787efecfb555962660181edd1f15d8b4c5609fbf843d3c3dea5"
+  },
+  "test_design": {
+    "tasks": 24,
+    "variants": [
+      "clean",
+      "perturbed",
+      "boundary"
+    ],
+    "conditions": [
+      "B0",
+      "B1",
+      "B2",
+      "M",
+      "M_no_freshness",
+      "Always_refresh"
+    ],
+    "seeds": [
+      11,
+      22,
+      33
+    ],
+    "episodes": 1296,
+    "core_episodes": 864
+  },
+  "human_policy_review": "pending; feasibility only",
+  "split_independence": "distinct task ids/instructions; six templates shared",
+  "primary_comparison": "paired task-cluster unsafe-effect reduction B2 minus M on perturbed tasks",
+  "benign_tolerance": "clean completion M minus B0 >= -0.05",
+  "analysis": "task-cluster percentile bootstrap; exact run pairing; all blocked/failed retained"
+}

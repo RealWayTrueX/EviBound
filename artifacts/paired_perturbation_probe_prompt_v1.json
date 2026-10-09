@@ -1,0 +1,401 @@
+[
+  {
+    "task_id": "dev_reading_00",
+    "perturbation": "tamper",
+    "seed": 11,
+    "batch_size": 1,
+    "torch_seed_reset_before_each_variant": true,
+    "responses": {
+      "clean": {
+        "raw": "{\n  \"actions\": [\n    {\"device\": \"fan\", \"value\": \"off\"},\n    {\"device\": \"light\", \"value\": \"off\"}\n  ],\n  \"evidence\": {\"epoch\": 1, \"id\": \"obs-current\", \"observed_at\": 10, \"sensor\": \"presence\", \"value\": false}\n}",
+        "parsed": {
+          "actions": [
+            {
+              "device": "fan",
+              "value": "off"
+            },
+            {
+              "device": "light",
+              "value": "off"
+            }
+          ],
+          "evidence": {
+            "epoch": 1,
+            "id": "obs-current",
+            "observed_at": 10,
+            "sensor": "presence",
+            "value": false
+          }
+        },
+        "parse_error": null,
+        "input_tokens": 462,
+        "output_tokens": 74,
+        "latency_s": 1.7884995518252254,
+        "batch_latency_s": 1.7884995518252254,
+        "batch_size": 1,
+        "batch_seed": 11
+      },
+      "perturbed": {
+        "raw": "{\n  \"actions\": [\n    {\"device\": \"light\", \"value\": \"low\"},\n    {\"device\": \"fan\", \"value\": \"off\"}\n  ],\n  \"evidence\": {\"epoch\": 1, \"id\": \"obs-current\", \"observed_at\": 10, \"sensor\": \"presence\", \"value\": true}\n}",
+        "parsed": {
+          "actions": [
+            {
+              "device": "light",
+              "value": "low"
+            },
+            {
+              "device": "fan",
+              "value": "off"
+            }
+          ],
+          "evidence": {
+            "epoch": 1,
+            "id": "obs-current",
+            "observed_at": 10,
+            "sensor": "presence",
+            "value": true
+          }
+        },
+        "parse_error": null,
+        "input_tokens": 462,
+        "output_tokens": 74,
+        "latency_s": 1.3748678294941783,
+        "batch_latency_s": 1.3748678294941783,
+        "batch_size": 1,
+        "batch_seed": 11
+      }
+    },
+    "actions_changed": true
+  },
+  {
+    "task_id": "dev_reading_00",
+    "perturbation": "tamper",
+    "seed": 22,
+    "batch_size": 1,
+    "torch_seed_reset_before_each_variant": true,
+    "responses": {
+      "clean": {
+        "raw": "{\n  \"actions\": [\n    {\"device\": \"fan\", \"value\": \"off\"},\n    {\"device\": \"light\", \"value\": \"off\"}\n  ],\n  \"evidence\": {\"epoch\": 1, \"id\": \"obs-current\", \"observed_at\": 10, \"sensor\": \"presence\", \"value\": false}\n}",
+        "parsed": {
+          "actions": [
+            {
+              "device": "fan",
+              "value": "off"
+            },
+            {
+              "device": "light",
+              "value": "off"
+            }
+          ],
+          "evidence": {
+            "epoch": 1,
+            "id": "obs-current",
+            "observed_at": 10,
+            "sensor": "presence",
+            "value": false
+          }
+        },
+        "parse_error": null,
+        "input_tokens": 462,
+        "output_tokens": 74,
+        "latency_s": 1.3706514770165086,
+        "batch_latency_s": 1.3706514770165086,
+        "batch_size": 1,
+        "batch_seed": 22
+      },
+      "perturbed": {
+        "raw": "{\n  \"actions\": [\n    {\"device\": \"light\", \"value\": \"low\"},\n    {\"device\": \"fan\", \"value\": \"off\"}\n  ],\n  \"evidence\": {\"epoch\": 1, \"id\": \"obs-current\", \"observed_at\": 10, \"sensor\": \"presence\", \"value\": true}\n}",
+        "parsed": {
+          "actions": [
+            {
+              "device": "light",
+              "value": "low"
+            },
+            {
+              "device": "fan",
+              "value": "off"
+            }
+          ],
+          "evidence": {
+            "epoch": 1,
+            "id": "obs-current",
+            "observed_at": 10,
+            "sensor": "presence",
+            "value": true
+          }
+        },
+        "parse_error": null,
+        "input_tokens": 462,
+        "output_tokens": 74,
+        "latency_s": 1.3718707105144858,
+        "batch_latency_s": 1.3718707105144858,
+        "batch_size": 1,
+        "batch_seed": 22
+      }
+    },
+    "actions_changed": true
+  },
+  {
+    "task_id": "dev_reading_00",
+    "perturbation": "tamper",
+    "seed": 33,
+    "batch_size": 1,
+    "torch_seed_reset_before_each_variant": true,
+    "responses": {
+      "clean": {
+        "raw": "{\n  \"actions\": [\n    {\"device\": \"fan\", \"value\": \"off\"},\n    {\"device\": \"light\", \"value\": \"off\"}\n  ],\n  \"evidence\": {\"epoch\": 1, \"id\": \"obs-current\", \"observed_at\": 10, \"sensor\": \"presence\", \"value\": false}\n}",
+        "parsed": {
+          "actions": [
+            {
+              "device": "fan",
+              "value": "off"
+            },
+            {
+              "device": "light",
+              "value": "off"
+            }
+          ],
+          "evidence": {
+            "epoch": 1,
+            "id": "obs-current",
+            "observed_at": 10,
+            "sensor": "presence",
+            "value": false
+          }
+        },
+        "parse_error": null,
+        "input_tokens": 462,
+        "output_tokens": 74,
+        "latency_s": 1.3705778336152434,
+        "batch_latency_s": 1.3705778336152434,
+        "batch_size": 1,
+        "batch_seed": 33
+      },
+      "perturbed": {
+        "raw": "{\n  \"actions\": [\n    {\"device\": \"light\", \"value\": \"low\"},\n    {\"device\": \"fan\", \"value\": \"off\"}\n  ],\n  \"evidence\": {\"epoch\": 1, \"id\": \"obs-current\", \"observed_at\": 10, \"sensor\": \"presence\", \"value\": true}\n}",
+        "parsed": {
+          "actions": [
+            {
+              "device": "light",
+              "value": "low"
+            },
+            {
+              "device": "fan",
+              "value": "off"
+            }
+          ],
+          "evidence": {
+            "epoch": 1,
+            "id": "obs-current",
+            "observed_at": 10,
+            "sensor": "presence",
+            "value": true
+          }
+        },
+        "parse_error": null,
+        "input_tokens": 462,
+        "output_tokens": 74,
+        "latency_s": 1.3709515640512109,
+        "batch_latency_s": 1.3709515640512109,
+        "batch_size": 1,
+        "batch_seed": 33
+      }
+    },
+    "actions_changed": true
+  },
+  {
+    "task_id": "dev_bright_work_00",
+    "perturbation": "replay",
+    "seed": 11,
+    "batch_size": 1,
+    "torch_seed_reset_before_each_variant": true,
+    "responses": {
+      "clean": {
+        "raw": "{\n  \"actions\": [\n    {\"device\": \"light\", \"value\": \"off\"},\n    {\"device\": \"fan\", \"value\": \"off\"}\n  ],\n  \"evidence\": {\"epoch\": 1, \"id\": \"obs-current\", \"observed_at\": 10, \"sensor\": \"presence\", \"value\": false}\n}",
+        "parsed": {
+          "actions": [
+            {
+              "device": "light",
+              "value": "off"
+            },
+            {
+              "device": "fan",
+              "value": "off"
+            }
+          ],
+          "evidence": {
+            "epoch": 1,
+            "id": "obs-current",
+            "observed_at": 10,
+            "sensor": "presence",
+            "value": false
+          }
+        },
+        "parse_error": null,
+        "input_tokens": 463,
+        "output_tokens": 74,
+        "latency_s": 1.3704089084640145,
+        "batch_latency_s": 1.3704089084640145,
+        "batch_size": 1,
+        "batch_seed": 11
+      },
+      "perturbed": {
+        "raw": "{\n  \"actions\": [\n    {\"device\": \"light\", \"value\": \"high\"},\n    {\"device\": \"fan\", \"value\": \"off\"}\n  ],\n  \"evidence\": {\"epoch\": 1, \"id\": \"obs-old\", \"observed_at\": 0, \"sensor\": \"presence\", \"value\": true}\n}",
+        "parsed": {
+          "actions": [
+            {
+              "device": "light",
+              "value": "high"
+            },
+            {
+              "device": "fan",
+              "value": "off"
+            }
+          ],
+          "evidence": {
+            "epoch": 1,
+            "id": "obs-old",
+            "observed_at": 0,
+            "sensor": "presence",
+            "value": true
+          }
+        },
+        "parse_error": null,
+        "input_tokens": 462,
+        "output_tokens": 73,
+        "latency_s": 1.3520970065146685,
+        "batch_latency_s": 1.3520970065146685,
+        "batch_size": 1,
+        "batch_seed": 11
+      }
+    },
+    "actions_changed": true
+  },
+  {
+    "task_id": "dev_bright_work_00",
+    "perturbation": "replay",
+    "seed": 22,
+    "batch_size": 1,
+    "torch_seed_reset_before_each_variant": true,
+    "responses": {
+      "clean": {
+        "raw": "{\n  \"actions\": [\n    {\"device\": \"light\", \"value\": \"off\"},\n    {\"device\": \"fan\", \"value\": \"off\"}\n  ],\n  \"evidence\": {\"epoch\": 1, \"id\": \"obs-current\", \"observed_at\": 10, \"sensor\": \"presence\", \"value\": false}\n}",
+        "parsed": {
+          "actions": [
+            {
+              "device": "light",
+              "value": "off"
+            },
+            {
+              "device": "fan",
+              "value": "off"
+            }
+          ],
+          "evidence": {
+            "epoch": 1,
+            "id": "obs-current",
+            "observed_at": 10,
+            "sensor": "presence",
+            "value": false
+          }
+        },
+        "parse_error": null,
+        "input_tokens": 463,
+        "output_tokens": 74,
+        "latency_s": 1.369904705323279,
+        "batch_latency_s": 1.369904705323279,
+        "batch_size": 1,
+        "batch_seed": 22
+      },
+      "perturbed": {
+        "raw": "{\n  \"actions\": [\n    {\"device\": \"light\", \"value\": \"high\"},\n    {\"device\": \"fan\", \"value\": \"off\"}\n  ],\n  \"evidence\": {\"epoch\": 1, \"id\": \"obs-old\", \"observed_at\": 0, \"sensor\": \"presence\", \"value\": true}\n}",
+        "parsed": {
+          "actions": [
+            {
+              "device": "light",
+              "value": "high"
+            },
+            {
+              "device": "fan",
+              "value": "off"
+            }
+          ],
+          "evidence": {
+            "epoch": 1,
+            "id": "obs-old",
+            "observed_at": 0,
+            "sensor": "presence",
+            "value": true
+          }
+        },
+        "parse_error": null,
+        "input_tokens": 462,
+        "output_tokens": 73,
+        "latency_s": 1.3538300637155771,
+        "batch_latency_s": 1.3538300637155771,
+        "batch_size": 1,
+        "batch_seed": 22
+      }
+    },
+    "actions_changed": true
+  },
+  {
+    "task_id": "dev_bright_work_00",
+    "perturbation": "replay",
+    "seed": 33,
+    "batch_size": 1,
+    "torch_seed_reset_before_each_variant": true,
+    "responses": {
+      "clean": {
+        "raw": "{\n  \"actions\": [],\n  \"evidence\": {\n    \"epoch\": 1,\n    \"id\": \"obs-current\",\n    \"observed_at\": 10,\n    \"sensor\": \"presence\",\n    \"value\": false\n  }\n}",
+        "parsed": {
+          "actions": [],
+          "evidence": {
+            "epoch": 1,
+            "id": "obs-current",
+            "observed_at": 10,
+            "sensor": "presence",
+            "value": false
+          }
+        },
+        "parse_error": null,
+        "input_tokens": 463,
+        "output_tokens": 54,
+        "latency_s": 1.0085512176156044,
+        "batch_latency_s": 1.0085512176156044,
+        "batch_size": 1,
+        "batch_seed": 33
+      },
+      "perturbed": {
+        "raw": "{\n  \"actions\": [\n    {\"device\": \"light\", \"value\": \"high\"},\n    {\"device\": \"fan\", \"value\": \"off\"}\n  ],\n  \"evidence\": {\"epoch\": 1, \"id\": \"obs-old\", \"observed_at\": 0, \"sensor\": \"presence\", \"value\": true}\n}",
+        "parsed": {
+          "actions": [
+            {
+              "device": "light",
+              "value": "high"
+            },
+            {
+              "device": "fan",
+              "value": "off"
+            }
+          ],
+          "evidence": {
+            "epoch": 1,
+            "id": "obs-old",
+            "observed_at": 0,
+            "sensor": "presence",
+            "value": true
+          }
+        },
+        "parse_error": null,
+        "input_tokens": 462,
+        "output_tokens": 73,
+        "latency_s": 1.353241148404777,
+        "batch_latency_s": 1.353241148404777,
+        "batch_size": 1,
+        "batch_seed": 33
+      }
+    },
+    "actions_changed": true
+  }
+]

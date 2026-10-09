@@ -1,0 +1,24 @@
+{
+  "posthoc": true,
+  "exclusive_categories": "Priority: initial empty/no events; empty final retry; final rejection reason; accepted wrong final state. These are trace signatures, not inferred cognitive causes.",
+  "counts": {
+    "clean": {
+      "final_retry_rejected:light_off_to_high": 9,
+      "accepted_plan_wrong_final_state": 3,
+      "final_retry_rejected:fan_off_to_high": 3,
+      "initial_empty_plan_no_rejection": 6
+    },
+    "perturbed": {
+      "initial_empty_plan_no_rejection": 9,
+      "final_retry_rejected:light_off_to_high": 7,
+      "final_retry_rejected:fan_off_to_high": 3,
+      "accepted_plan_wrong_final_state": 2,
+      "empty_retry_after_rejection": 24
+    },
+    "boundary": {
+      "accepted_plan_wrong_final_state": 13,
+      "final_retry_rejected:fan_off_to_high": 3,
+      "initial_empty_plan_no_rejection": 8
+    }
+  }
+}

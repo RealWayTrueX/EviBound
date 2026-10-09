@@ -1,0 +1,16 @@
+#!/usr/bin/env bash
+export EVIBOUND_ROOT=/home/yanke/EviBound
+export EVIBOUND_DATA=/mnt/HDD-8T-0/evibound_yanke
+export HF_HOME="$EVIBOUND_DATA/cache/huggingface"
+export HF_HUB_CACHE="$HF_HOME/hub"
+export TORCH_HOME="$EVIBOUND_DATA/cache/torch"
+export XDG_CACHE_HOME="$EVIBOUND_DATA/cache"
+export TMPDIR="$EVIBOUND_DATA/tmp"
+export TOKENIZERS_PARALLELISM=false
+export PYTHONPATH="$EVIBOUND_ROOT/src${PYTHONPATH:+:$PYTHONPATH}"
+export PYTHONUNBUFFERED=1
+export OMP_NUM_THREADS=4
+export MKL_NUM_THREADS=4
+unset TRANSFORMERS_CACHE
+export PATH="$EVIBOUND_DATA/envs/runtime/bin:$PATH"
+cd "$EVIBOUND_ROOT"

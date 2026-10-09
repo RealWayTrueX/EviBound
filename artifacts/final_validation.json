@@ -1,0 +1,35 @@
+{
+  "status": "pass",
+  "episodes": 1296,
+  "expected_episodes": 1296,
+  "task_ids": 24,
+  "paired_initial_proposal_groups": 216,
+  "issues": [],
+  "rejection_reasons": {
+    "record_mismatch": 66,
+    "light_requires_presence": 40,
+    "light_off_to_high": 150,
+    "evidence_not_fresh": 76,
+    "fan_off_to_high": 60
+  },
+  "logical_response_formats": {
+    "responses_total": 1610,
+    "parse_invalid": 0,
+    "max_tokens_reached": 0
+  },
+  "physical_model_calls": 746,
+  "physical_input_tokens": 554744,
+  "physical_output_tokens": 32808,
+  "physical_batches": 114,
+  "summed_gpu_model_batch_seconds": 190.1798819480464,
+  "raw_files": {
+    "/mnt/HDD-8T-0/evibound_yanke/runs/test/worker0.jsonl": {
+      "sha256": "265472bc1d70493da567dec1bbc090660d6314030b4d5e12bb74928a6a4e9a81",
+      "bytes": 2660920
+    },
+    "/mnt/HDD-8T-0/evibound_yanke/runs/test/worker1.jsonl": {
+      "sha256": "977fc82ef29eadffaf90e3226eb7f062f9c84a58db1b50a3338e11e0b1cf6f4e",
+      "bytes": 2778300
+    }
+  }
+}

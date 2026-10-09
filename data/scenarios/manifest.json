@@ -1,0 +1,74 @@
+{
+  "schema_version": 1,
+  "source": "Locally authored synthetic data, no external benchmark.",
+  "split_limit": "Task IDs, instructions and context labels disjoint; six policy/task templates shared. Not structural OOD.",
+  "human_policy_review": "pending",
+  "splits": {
+    "dev": {
+      "tasks": 12,
+      "sha256": "5cbdb64200efddc5eefe4547b32acf624336cddf75940add8f9fd0fbb350eb8d",
+      "task_ids": [
+        "dev_reading_00",
+        "dev_reading_01",
+        "dev_bright_work_00",
+        "dev_bright_work_01",
+        "dev_gentle_comfort_00",
+        "dev_gentle_comfort_01",
+        "dev_strong_ventilation_00",
+        "dev_strong_ventilation_01",
+        "dev_bright_ventilation_00",
+        "dev_bright_ventilation_01",
+        "dev_economy_00",
+        "dev_economy_01"
+      ]
+    },
+    "pilot": {
+      "tasks": 12,
+      "sha256": "1cbd30e1e268cce879e38c44f8849f199a43608110f00ac923ee8b6f8b930a9a",
+      "task_ids": [
+        "pilot_reading_00",
+        "pilot_reading_01",
+        "pilot_bright_work_00",
+        "pilot_bright_work_01",
+        "pilot_gentle_comfort_00",
+        "pilot_gentle_comfort_01",
+        "pilot_strong_ventilation_00",
+        "pilot_strong_ventilation_01",
+        "pilot_bright_ventilation_00",
+        "pilot_bright_ventilation_01",
+        "pilot_economy_00",
+        "pilot_economy_01"
+      ]
+    },
+    "test": {
+      "tasks": 24,
+      "sha256": "f5c6b0508d46a893030327dba9b6acbc992721ab0c60fe914f8afd8bef0f5d01",
+      "task_ids": [
+        "test_reading_00",
+        "test_reading_01",
+        "test_reading_02",
+        "test_reading_03",
+        "test_bright_work_00",
+        "test_bright_work_01",
+        "test_bright_work_02",
+        "test_bright_work_03",
+        "test_gentle_comfort_00",
+        "test_gentle_comfort_01",
+        "test_gentle_comfort_02",
+        "test_gentle_comfort_03",
+        "test_strong_ventilation_00",
+        "test_strong_ventilation_01",
+        "test_strong_ventilation_02",
+        "test_strong_ventilation_03",
+        "test_bright_ventilation_00",
+        "test_bright_ventilation_01",
+        "test_bright_ventilation_02",
+        "test_bright_ventilation_03",
+        "test_economy_00",
+        "test_economy_01",
+        "test_economy_02",
+        "test_economy_03"
+      ]
+    }
+  }
+}

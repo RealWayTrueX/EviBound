@@ -1,0 +1,76 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>EviBound feasibility findings</title><style>body{font:17px/1.8 system-ui,"Noto Sans CJK SC",sans-serif;margin:0;color:#173042;background:#f2f5f7}main{max-width:1120px;margin:40px auto;padding:44px 52px;background:white;border-top:6px solid #087f8c}h1{font-size:32px;line-height:1.35}h2{margin-top:2em;border-bottom:1px solid #d5e0e6;padding-bottom:.35em}a{color:#087487}table{border-collapse:collapse;font-size:14px;width:100%;margin:24px 0;display:block;overflow-x:auto}th,td{padding:9px 12px;border-bottom:1px solid #d5e0e6;text-align:left}th{background:#e9f1f4}img{width:100%;height:auto}pre{overflow-x:auto;padding:18px;background:#f1f5f8}code{font-size:.9em}strong{color:#0b5363}.note{font-size:14px;color:#526674}@media(max-width:700px){main{margin:0;padding:20px}h1{font-size:25px}}@media print{body{background:white}main{padding:0;margin:0;max-width:none}a{color:inherit}h2{break-after:avoid}tr,img{break-inside:avoid}}</style></head><body><main><h1 id="evibound-overnight-feasibility-findings">EviBound: overnight feasibility findings</h1>
+<p>23 September 2026 · <a href="feasibility.zh-CN.md">Chinese report</a> · <a href="../main (14).pdf">Original contract</a></p>
+<p>The engineering prototype is feasible, and evidence validation reduced executed violations in this synthetic experiment. The complete research hypothesis was <strong>not met</strong>: clean task completion fell by 20.83 percentage points relative to the unprotected agent, exceeding the permitted five-point loss. The safety comparison applies specifically to <strong>B2's interface, which trusts agent-submitted presence values</strong>, while M validates immutable collector records. B2 is a controlled baseline, not a reproduction of existing guardrail frameworks.</p>
+<h2 id="completed-experiment">Completed experiment</h2>
+<p>The system uses local Qwen2.5-7B-Instruct, two RTX 4090s, synthetic devices, and no paid inference API. The <a href="https://huggingface.co/Qwen/Qwen2.5-7B-Instruct">official model</a> is Apache-2.0 licensed. Code, reports and small scenarios remain in this workspace; weights, environments, caches and raw traces are under <code>/mnt/HDD-8T-0/evibound_yanke/</code>. Execution ran inside tmux.</p>
+<p>Development and pilot each completed 216 episodes. The frozen test completed <strong>1,296 episodes</strong>: 24 tasks × three observation variants × six conditions × three seeds. This includes 864 core episodes and 432 ablation/refresh diagnostics; every condition–variant cell contains 72 episodes. <a href="../artifacts/final_validation.json">Validation</a> reports complete coverage, no issues, and no malformed or token-truncated responses. All 27 <a href="../artifacts/component_tests.log">component tests</a> passed; independent rescoring found no stored-metric disagreements or inconsistent trajectories. These checks are separate from model performance.</p>
+<p>Development B0 clean completion was <strong>91.67%</strong>, passing the 70% prerequisite. The dedicated repeated perturbation probe changed actions in <strong>6/6 pairs</strong>, passing the observation-sensitivity prerequisite. <a href="../artifacts/feasibility_gates.json">Gate record</a></p>
+<p>The pipeline separates actual state, immutable observations, per-write enforcement and independent trajectory scoring. At most three writes and one rejection-triggered reread/resubmission are allowed. Evidence age must be between zero and two simulated time units, inclusive. Each successful write advances time by 0.25. <a href="../docs/implementation_contract.md">Implementation contract</a></p>
+<h2 id="main-results">Main results</h2>
+<p>Percentages below use 72 episodes per cell. Reads include initial observation, rejection-triggered rereads and automatic refreshes. B1 adds a safety prompt; M_no_freshness retains provenance validation but removes age checks.</p>
+<table>
+<thead>
+<tr>
+<th>Condition</th>
+<th style="text-align: right;">Clean goal completion</th>
+<th style="text-align: right;">Perturbed unsafe effect</th>
+<th style="text-align: right;">Perturbed safe completion</th>
+<th style="text-align: right;">Perturbed mean reads</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>B0: unprotected</td>
+<td style="text-align: right;">91.67%</td>
+<td style="text-align: right;">50.00%</td>
+<td style="text-align: right;">0.00%</td>
+<td style="text-align: right;">1.000</td>
+</tr>
+<tr>
+<td>B1: safety prompt</td>
+<td style="text-align: right;">86.11%</td>
+<td style="text-align: right;">50.00%</td>
+<td style="text-align: right;">0.00%</td>
+<td style="text-align: right;">1.000</td>
+</tr>
+<tr>
+<td>B2: stateful guard</td>
+<td style="text-align: right;">70.83%</td>
+<td style="text-align: right;">37.50%</td>
+<td style="text-align: right;">12.50%</td>
+<td style="text-align: right;">1.208</td>
+</tr>
+<tr>
+<td>M: EviBound</td>
+<td style="text-align: right;">70.83%</td>
+<td style="text-align: right;">0.00%</td>
+<td style="text-align: right;">37.50%</td>
+<td style="text-align: right;">1.875</td>
+</tr>
+<tr>
+<td>M_no_freshness</td>
+<td style="text-align: right;">70.83%</td>
+<td style="text-align: right;">16.67%</td>
+<td style="text-align: right;">37.50%</td>
+<td style="text-align: right;">1.625</td>
+</tr>
+<tr>
+<td>Always_refresh</td>
+<td style="text-align: right;">70.83%</td>
+<td style="text-align: right;">0.00%</td>
+<td style="text-align: right;">50.00%</td>
+<td style="text-align: right;">3.278</td>
+</tr>
+</tbody>
+</table>
+<p>Source: <a href="test/summary.csv">complete summary</a>, <a href="test/paired_effects.json">paired comparisons</a>.</p>
+<p>The primary B2−M perturbed unsafe-effect difference was <strong>+37.50 points</strong>, with a task-clustered 95% bootstrap interval of <strong>[20.83, 58.33]</strong>. M increased perturbed safe completion by <strong>25.00 points [4.17, 50.00]</strong>. This supports the safety-benefit hypothesis within the specified interface and suite.</p>
+<p>The clean M−B0 goal-completion difference was <strong>−20.83 points [−37.50, −4.17]</strong>. Its observed loss exceeds the five-point tolerance by <strong>15.83 points</strong>; the required completion-preservation claim is not established. The interval crosses the −5-point threshold, so it does not establish that the population loss necessarily exceeds five points either.</p>
+<p>B0's 91.67% clean goal completion included unsafe successes: its clean safe completion was only <strong>70.83%</strong>, with <strong>20.83%</strong> experiencing unsafe effects. All 15 matched clean B0 successes lost by M contained unsafe B0 execution. M and B2 both achieved 70.83% clean completion, so evidence validation added no observed clean-completion loss beyond the stateful guard. Nevertheless, the original hypothesis compares M against B0's goal completion and remains unmet.</p>
+<p>Removing freshness produced <strong>12 unsafe episodes</strong>, all in replay cases: 12/36 replay episodes versus M's 0/36. The pooled ablation difference was <strong>16.67 points [4.17, 33.33]</strong>. Always_refresh also recorded zero unsafe effects and achieved higher perturbed safe completion, at <strong>1.403 additional reads per episode [1.097, 1.708]</strong> relative to M. Thus the evidence supports a query-cost trade-off, not universal superiority over refreshing. In boundary cases, M remained safe but completed 48/72 tasks, versus B2's 49/72; evidence accepted for the first write can expire before the next.</p>
+<h2 id="what-the-evidence-does-not-establish">What the evidence does not establish</h2>
+<p>Nine perturbed M episodes began with an empty plan, completed no task and triggered no reread. A wrong absence observation can select an already-satisfied wrong branch; an execution guard cannot repair an omission without an attempted write. Remaining failures include unsuccessful model repairs after rejected transitions. All failed and blocked episodes remain in denominators. <a href="test/retained_failures.jsonl">Retained trajectories</a></p>
+<p>The six provisional rules require presence for lighting and high fan speed, load ≤3, no direct off→high transition for either actuator, and lighting as an indicator for high fan speed. The high-fan presence rule is logically implied by the lighting-presence and indicator rules. All tasks authorize both actuators, so authorization-negative coverage comes from component tests, not model episodes.</p>
+<p>The <a href="../docs/dataset_card.md">dataset audit</a> confirms 1–3-write reachability, but splits share six templates and the 24 test tasks contain only 18 distinct structures. Perturbation type is tied to family. Task bootstrap handles repeated seeds, not shared-template dependence. Initial sampled proposals are reused across B0/B2/M and diagnostics; B1 uses a different prompt, and retries are condition-specific. Sampling uses temperature 0.2, top-p 0.9, top-k 20 and a 224-token generation budget. <a href="../artifacts/protocol_freeze.json">Frozen protocol</a></p>
+<p>Logical call/token accounting includes reused proposals; recorded latency amortizes batch time and is not a production overhead estimate. Fixed corruption/replay, an immutable process-local store and atomic check/commit do not establish real-home, prompt-injection or backdoor robustness. Provenance already appears in <a href="https://arxiv.org/html/2503.18813v2">CaMeL</a>; this experiment does not claim its invention.</p>
+<p>Policies, representative traces and the narrowed project scope still require human review. Proceed with the prototype as feasibility evidence; prioritize omission detection and valid transition repair before claiming acceptable utility preservation. Use the <a href="../scripts/reproduce_subset.sh">30-episode reproduction entry</a> and <a href="../docs/demo_walkthrough.md">bilingual demonstration</a> for review, retaining the frozen results unchanged.</p><p class="note">Offline text and embedded figures. Linked evidence remains in the project directory.</p></main></body></html>

@@ -1,0 +1,24 @@
+# ---- Python ----
+__pycache__/
+*.py[cod]
+
+# ---- Secrets / credentials (never commit) ----
+.env
+.env.*
+*.pem
+*.key
+*.p12
+*.pfx
+id_rsa*
+id_ed25519*
+*secret*
+*credential*
+*token*.txt
+
+# ---- Personal / local-only records ----
+docs/session_memory.md
+
+# ---- Runtime artifacts (large assets live on /mnt/HDD-8T-0) ----
+runs/
+*.log.tmp
+.DS_Store
