@@ -17,6 +17,10 @@ id_ed25519*
 
 # ---- Personal / local-only records ----
 docs/session_memory.md
+docs/research_contract.txt
+reviews/
+reports/
+/*.pdf
 
 # ---- Runtime artifacts (large assets live on /mnt/HDD-8T-0) ----
 runs/

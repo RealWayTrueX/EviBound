@@ -1,36 +1,49 @@
-# EviBound 可行性实验
+# EviBound 证据绑定运行时执行实验
 
-基于工作目录中的 `main (14).pdf`：用纯合成设备、独立状态机和本地
+基于已提交的研究合同：用纯合成设备、独立状态机和本地
 Qwen2.5-7B-Instruct，检验执行时观测来源/时效校验的作用。
 不连接真实家居，不调用付费 API，不训练模型。
 
-已完成1,296回合冻结测试：观测扰动下B2违规37.5%，M为0%；正常任务完成率M比B0下降20.8个百分点，未达到5个百分点容忍目标。工程可行，完整假设尚未满足。
+当前课程工作入口：
+
+- [Agent 工作边界](AGENTS.md)
+- [研究合同](docs/research-contract.md)
+- [Week 7 完成报告](docs/week7_closeout.md)
+- [Week-8 预注册](docs/week8_preregistration.md)
+- [正式实验机器结果](artifacts/week8_main_results.json)
+- [可续跑路线图](docs/roadmap_week6.md)
+
+人机交流用的实验报告、人工审查包和本地交接记录保留在工作目录中，但不纳入
+公开仓库；机器可读结果与冻结协议仍在仓库内。
+
+正式 v2 测试已完成 1,296 个冻结回合：观测扰动下 B2 实际不安全影响为
+41.7%，M 为 0%，聚类效应 +36.4 个百分点且 95% CI 不含 0；但正常完整目标
+完成率 M 比 B0 的聚类效应为 -13.6 个百分点，超过 -5 个百分点容忍目标。
+安全假设得到支持，效用非劣假设未得到支持，联合可行性目标未达到。
 
 ## 入口
 
-- 原始合同：[PDF](<main (14).pdf>)、[提取文本](docs/research_contract.txt)
+- [研究合同](docs/research-contract.md)
 - [运行与规则契约](docs/implementation_contract.md)
 - [数据卡及独立可达性审计](docs/dataset_card.md)
 - [原始文献与设计核查](docs/sources_and_design_review.md)
-- [对话与交接记录](docs/session_memory.md)
-- [中文可行性报告](reports/feasibility.zh-CN.md) · [English report](reports/feasibility.en.md)
-- [离线阅读版（含嵌入图表）](reports/feasibility.zh-CN.html)
-- [五类实测案例](reports/case_studies.md) · [原始统计表](reports/test/summary.csv)
+- [正式实验机器结果](artifacts/week8_main_results.json)
+- [正式实验验证记录](artifacts/week8_main_validation.json)
 
 ## 文件布局
 
-当前工作目录保存代码、配置、48 个小型合成任务、测试、模型/数据哈希、
-冻结协议与报告。权重、Python 运行环境、缓存、完整逐回合轨迹和运行日志
-放在 `/mnt/HDD-8T-0/evibound_yanke/`。权重复用数据盘已有 Hugging Face blob，
+当前工作目录保存代码、配置、48 个小型合成任务、测试、模型/数据哈希与
+冻结协议。权重、Python 运行环境、缓存、完整逐回合轨迹和运行日志
+放在大容量资产目录。权重复用数据盘已有 Hugging Face blob，
 未复制第二份 15.2 GB 权重。
 
 ## 在这台机器复现
 
 ```bash
-cd /home/yanke/EviBound
+cd /path/to/EviBound
 source scripts/env.sh
 python -m unittest discover -s tests -v
-tmux new-session -s evibound_subset 'bash /home/yanke/EviBound/scripts/reproduce_subset.sh'
+tmux new-session -s evibound_subset 'bash scripts/reproduce_subset.sh'
 ```
 
 该子集包含两个需要写入的测试任务、三种观测变体、五个执行条件和一个种子，

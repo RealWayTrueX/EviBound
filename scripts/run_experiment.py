@@ -13,6 +13,40 @@ from evibound.backend import World
 from evibound.oracle import score_episode
 from evibound.planner import LocalPlanner,messages_for,retry_messages,batch_seed
 
+
+def instrument_episode_metrics(episode):
+    proposals = episode.get('proposals', [])
+    parsed = [p.get('parsed') or {} for p in proposals]
+    action_lists = [p.get('actions') or [] for p in parsed]
+    parse_failures = [bool(p.get('parse_error')) for p in proposals]
+    empty_flags = [not actions for actions, failed in zip(action_lists, parse_failures)
+                   if not failed]
+    metrics = episode['metrics']
+    metrics.update({
+        'empty_plan': bool(empty_flags) and all(empty_flags) and not any(parse_failures),
+        'empty_plan_initial': bool(empty_flags) and empty_flags[0] and not parse_failures[0],
+        'empty_plan_final': bool(empty_flags) and empty_flags[-1] and not parse_failures[-1],
+        'parse_failure': any(parse_failures),
+        'parse_failure_initial': bool(parse_failures) and parse_failures[0],
+        'parse_failure_final': bool(parse_failures) and parse_failures[-1],
+        'parse_failures': sum(parse_failures),
+        'resubmissions': max(0, len(proposals) - 1),
+        'rejection_rereads': int(episode.get('rejection_rereads', 0)),
+        'writes_remaining': max(0, 3 - int(episode.get('trace', {}).get(
+            'successful_writes', metrics.get('executed_writes', 0)))),
+    })
+    episode['recovery_budget'] = {
+        'max_successful_writes': 3,
+        'max_rejection_rereads': 1,
+        'max_resubmissions': 1,
+        'resubmissions_used': metrics['resubmissions'],
+        'rejection_rereads_used': metrics['rejection_rereads'],
+        'successful_writes': 3 - metrics['writes_remaining'],
+        'writes_remaining': metrics['writes_remaining'],
+    }
+    return episode
+
+
 def main():
     p=argparse.ArgumentParser()
     p.add_argument('--split',choices=['dev','pilot','test'],required=True)
@@ -26,6 +60,7 @@ def main():
     p.add_argument('--limit',type=int,default=0)
     p.add_argument('--task-ids',nargs='+')
     p.add_argument('--model',default='/mnt/HDD-8T-0/evibound_yanke/models/Qwen2.5-7B-Instruct')
+    p.add_argument('--corpus',choices=['v1','v2'],default='v1')
     args=p.parse_args()
     args.output.parent.mkdir(parents=True,exist_ok=True)
     config=vars(args).copy(); config['output']=str(config['output'])
@@ -34,7 +69,8 @@ def main():
         'proposal_pairing':'Identical first sampled response shared across B0/B2/M/M_no_freshness/Always_refresh; B1 uses extra safety prompt.',
         'temperature':0.2,'top_p':0.9,'top_k':20,'max_new_tokens':224,
         'latency_definition':'Sum of amortized model batch times plus execution time. Logical calls/tokens count reused initial response. See wall_elapsed_s for actual worker time.'})
-    scenario_path=Path(f'data/scenarios/{args.split}.jsonl')
+    scenario_dir='data/scenarios_v2' if args.corpus=='v2' else 'data/scenarios'
+    scenario_path=Path(f'{scenario_dir}/{args.split}.jsonl')
     config['dataset_sha256']=hashlib.sha256(scenario_path.read_bytes()).hexdigest()
     config_path=args.output.with_suffix('.config.json')
     config_path.write_text(json.dumps(config,indent=2)+'\n')
@@ -78,6 +114,7 @@ def main():
                         world=World(s,job['variant']); world.observe()
                         ep={'task_id':s['task_id'],'split':s['split'],'family':s['family'],
                             'perturbation':s['perturbation'],'variant':job['variant'],'condition':condition,
+                            'physical_structure_id':s.get('physical_structure_id',s['task_id']),
                             'seed':seed,'scenario':s,'proposals':[copy.deepcopy(response)],
                             'rejection_rereads':0,'guard_execution_s':0.0,'world':world,'job':job}
                         data=response['parsed'] or {}
@@ -104,6 +141,8 @@ def main():
                         continue
                     world=ep.pop('world'); ep.pop('job'); ep.pop('retry_messages',None)
                     ep['trace']=world.trace(); ep['metrics']=score_episode(ep['scenario'],ep['trace'])
+                    ep['trace']['successful_writes']=ep['metrics']['executed_writes']
+                    instrument_episode_metrics(ep)
                     ep['model_calls']=len(ep['proposals'])
                     ep['model_tokens']=sum(r['input_tokens']+r['output_tokens'] for r in ep['proposals'])
                     ep['output_tokens']=sum(r['output_tokens'] for r in ep['proposals'])

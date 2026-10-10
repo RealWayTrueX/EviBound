@@ -82,6 +82,8 @@ def check_task(t, errors):
         errors.append(f'{tid}: A3 full-goal clean branch needs {n_clean} writes')
     if (n_off == 0) != t['annotations']['off_branch_noop']:
         errors.append(f'{tid}: off_branch_noop annotation mismatch')
+    if not 1 <= n_off <= 3:
+        errors.append(f'{tid}: off branch needs {n_off} writes (must be 1..3)')
     for branch, key in (('goal_present', 'writes_needed_present'),
                         ('goal_absent', 'writes_needed_absent')):
         if len(paths[branch]) != t['annotations'][key]:
@@ -143,6 +145,8 @@ def main():
     all_errors, report = [], {}
     manifest = json.loads((ROOT / 'manifest.json').read_text())
     structure_sets = {}
+    all_family_concrete = set()
+    physical_groups = {}
     for split in ('dev', 'pilot', 'test'):
         rows = [json.loads(l) for l in (ROOT / f'{split}.jsonl').read_text().splitlines()]
         text = (ROOT / f'{split}.jsonl').read_text()
@@ -154,7 +158,6 @@ def main():
         ids = [r['task_id'] for r in rows]
         if len(ids) != len(set(ids)):
             errors.append(f'{split}: duplicate task_ids')
-        seen_struct = set()
         for t in rows:
             if t['split'] != split:
                 errors.append(f'{t["task_id"]}: split field mismatch')
@@ -162,9 +165,17 @@ def main():
                    json.dumps(t['goal_present'], sort_keys=True),
                    json.dumps(t['goal_absent'], sort_keys=True),
                    json.dumps(sorted(t['authorized'])))
-            if key in seen_struct:
-                errors.append(f'{t["task_id"]}: duplicate concrete structure within split')
-            seen_struct.add(key)
+            family_key = (t['family'],) + key
+            if family_key in all_family_concrete:
+                errors.append(f'{t["task_id"]}: family-conditioned concrete structure repeats')
+            all_family_concrete.add(family_key)
+            physical_id = t.get('physical_structure_id')
+            if not isinstance(physical_id, str) or len(physical_id) != 16:
+                errors.append(f'{t["task_id"]}: invalid physical_structure_id')
+            else:
+                physical_groups.setdefault(physical_id, []).append(
+                    {'split': split, 'task_id': t['task_id']}
+                )
             check_task(t, errors)
         # 7. rule-stress coverage per split
         coverage = set()
@@ -195,6 +206,11 @@ def main():
                 all_errors.append(f'structure_id overlap {a}&{b}: '
                                   f'{sorted(structure_sets[a] & structure_sets[b])}')
     report['total_errors'] = len(all_errors)
+    report['shared_physical_structure_groups'] = [
+        {'physical_structure_id': key, 'tasks': members}
+        for key, members in sorted(physical_groups.items())
+        if len({member['split'] for member in members}) > 1
+    ]
     (ROOT / 'check_report.json').write_text(json.dumps(report, indent=2) + '\n')
     if all_errors:
         print(f'FAIL ({len(all_errors)} errors)')

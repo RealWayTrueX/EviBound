@@ -17,14 +17,25 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
 from evibound.oracle import score_episode
 
 
-RATE_METRICS = (
-    "unsafe_effect", "authorization_violation", "goal_completion", "safe_completion"
+ORACLE_RATE_METRICS = (
+    "unsafe_effect", "authorization_violation", "goal_completion", "safe_completion",
+    "authorized_subgoal_completion", "safe_partial_completion",
+    "safe_utility_completion", "safe_abstention",
 )
-COUNT_METRICS = (
+ORACLE_COUNT_METRICS = (
     "executed_writes", "individual_proposals", "rejected_proposals", "false_blocks",
     "legal_proposals", "evidence_sufficient_proposals", "false_block_eligible_proposals",
     "reads", "additional_reads",
 )
+INSTRUMENTED_RATE_METRICS = (
+    "empty_plan", "empty_plan_initial", "empty_plan_final",
+    "parse_failure", "parse_failure_initial", "parse_failure_final",
+)
+INSTRUMENTED_COUNT_METRICS = (
+    "parse_failures", "resubmissions", "rejection_rereads", "writes_remaining",
+)
+RATE_METRICS = ORACLE_RATE_METRICS + INSTRUMENTED_RATE_METRICS
+COUNT_METRICS = ORACLE_COUNT_METRICS + INSTRUMENTED_COUNT_METRICS
 
 
 def numeric(value, *, calls=False):
@@ -44,6 +55,14 @@ def numeric(value, *, calls=False):
     return 0.0
 
 
+def merge_recomputed_metrics(stored, recomputed):
+    merged = dict(recomputed)
+    for key in INSTRUMENTED_RATE_METRICS + INSTRUMENTED_COUNT_METRICS:
+        if key in stored:
+            merged[key] = stored[key]
+    return merged
+
+
 def summarize(rows, dimensions):
     grouped = defaultdict(list)
     for row in rows:
@@ -53,11 +72,11 @@ def summarize(rows, dimensions):
         result = dict(zip(dimensions, key))
         result.update(n=len(group), n_tasks=len({row["task_id"] for row in group}))
         for metric in RATE_METRICS:
-            total = sum(bool(row["metrics"][metric]) for row in group)
+            total = sum(bool(row["metrics"].get(metric, False)) for row in group)
             result[f"{metric}_count"] = total
             result[f"{metric}_rate"] = total / len(group)
         for metric in COUNT_METRICS:
-            total = sum(row["metrics"][metric] for row in group)
+            total = sum(row["metrics"].get(metric, 0) for row in group)
             result[f"{metric}_total"] = total
             result[f"{metric}_mean"] = total / len(group)
         denominator = result["false_block_eligible_proposals_total"]
@@ -105,8 +124,15 @@ def paired_contrast(rows, left, right, metric, *, seed, resamples, group):
         return None
     per_task = defaultdict(list)
     for key in common:
-        per_task[key[0]].append(
-            float(left_rows[key]["metrics"][metric]) - float(right_rows[key]["metrics"][metric])
+        left_row = left_rows[key]
+        right_row = right_rows[key]
+        cluster = (
+            left_row.get("physical_structure_id")
+            or left_row.get("scenario", {}).get("physical_structure_id")
+            or left_row["task_id"]
+        )
+        per_task[cluster].append(
+            float(left_row["metrics"][metric]) - float(right_row["metrics"][metric])
         )
     task_means = [statistics.mean(values) for _, values in sorted(per_task.items())]
     label = json.dumps([group, left, right, metric], sort_keys=True)
@@ -352,13 +378,13 @@ def main():
             if identity in seen:
                 raise ValueError(f"Duplicate episode at {path}:{number}: {identity}")
             seen.add(identity)
-            metrics = score_episode(row["scenario"], row["trace"])
-            for key in RATE_METRICS + COUNT_METRICS:
-                supplied = row.get("metrics", {})
-                if key in supplied and supplied[key] != metrics[key]:
+            supplied = row.get("metrics", {})
+            recomputed = score_episode(row["scenario"], row["trace"])
+            for key in ORACLE_RATE_METRICS + ORACLE_COUNT_METRICS:
+                if key in supplied and supplied[key] != recomputed[key]:
                     metric_disagreements.append({"episode": identity, "metric": key,
-                                                 "stored": supplied[key], "recomputed": metrics[key]})
-            row["metrics"] = metrics
+                                                 "stored": supplied[key], "recomputed": recomputed[key]})
+            row["metrics"] = merge_recomputed_metrics(supplied, recomputed)
             rows.append(row)
     if not rows:
         parser.error("No episode rows found")
@@ -373,7 +399,10 @@ def main():
         "n_tasks": len({(row["split"], row["task_id"]) for row in rows}),
         "bootstrap_seed": args.bootstrap_seed,
         "bootstrap_resamples": args.bootstrap_resamples,
-        "bootstrap_unit": "task; matched run seeds averaged within each task",
+        "bootstrap_unit": (
+            "physical-structure cluster when present, otherwise task; "
+            "matched run seeds averaged within each cluster"
+        ),
         "stored_metric_disagreements": metric_disagreements,
         "limitations": [
             "Synthetic, shared-template tasks; task bootstrap does not remove template dependence.",
@@ -395,8 +424,13 @@ def main():
     write_json(args.output / "action_changes.json", changes)
     write_csv(args.output / "action_changes.csv", changes)
     write_json(args.output / "metadata.json", metadata)
-    failures = [row for row in rows if not row["metrics"]["safe_completion"]
-                or row["metrics"]["rejected_proposals"] or row["metrics"]["trace_inconsistencies"]]
+    failures = [
+        row for row in rows
+        if not row["metrics"]["safe_completion"]
+        or row["metrics"]["rejected_proposals"]
+        or row["metrics"]["trace_inconsistencies"]
+        or row["metrics"].get("parse_failure", False)
+    ]
     with (args.output / "retained_failures.jsonl").open("w", encoding="utf-8") as stream:
         for row in failures:
             stream.write(json.dumps(row, sort_keys=True, allow_nan=False) + "\n")

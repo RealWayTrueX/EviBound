@@ -78,7 +78,7 @@ channel would require a new surface (e.g., free-text fields in device metadata).
 Decision for v2: **not in the main comparison**; candidate stretch item after the
 Week-12 freeze only if the utility question is resolved, because adding a second
 attack family mid-semester would split the evaluation budget. Recorded here so
-the omission is a decision, not an oversight. (! human confirm)
+the omission is a decision, not an oversight.
 
 ## 8. Disclosure and tooling boundary
 

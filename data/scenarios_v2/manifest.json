@@ -8,18 +8,19 @@
   "source": "Locally authored synthetic data, no external benchmark.",
   "design_doc": "docs/design_v2_dataset.md",
   "lifecycle": {
-    "dev": "draft",
-    "pilot": "draft",
-    "test": "draft"
+    "dev": "human_reviewed",
+    "pilot": "human_reviewed",
+    "test": "human_reviewed"
   },
   "human_review": {
-    "status": "pending",
-    "reviews_dir": "reviews/v2"
+    "status": "human_reviewed",
+    "signoff": "reviews/v2/signoff.json",
+    "note": "freeze still requires Week-8 preregistration"
   },
   "splits": {
     "dev": {
       "tasks": 16,
-      "sha256": "34eeab8f00f586a74ae9c1d38c6093452e71d9105df0774e00c72f32689159a0",
+      "sha256": "382053d9f523f4cf780964760c24ba567174fcdda8c766268a7b3eb2e286603d",
       "task_ids": [
         "dev_reading_00",
         "dev_reading_01",
@@ -44,17 +45,35 @@
         "dev_bright_work_c_low_P",
         "dev_bright_work_d_off_A",
         "dev_gentle_comfort_c_off_P",
-        "dev_gentle_comfort_a_low_P",
-        "dev_strong_ventilation_c_low_P",
-        "dev_strong_ventilation_c_off_P",
+        "dev_gentle_comfort_e_low_A",
+        "dev_strong_ventilation_d_off_P",
+        "dev_strong_ventilation_e_low_A",
         "dev_bright_ventilation_c_off_P",
-        "dev_bright_ventilation_a_low_P",
-        "dev_economy_a_off_A",
-        "dev_economy_d_low_A",
+        "dev_bright_ventilation_d_low_A",
+        "dev_economy_d_low_P",
+        "dev_economy_e_off_A",
         "dev_light_only_c_off_P",
         "dev_light_only_d_off_A",
-        "dev_fan_only_c_off_P",
-        "dev_fan_only_d_off_P"
+        "dev_fan_only_e_off_P",
+        "dev_fan_only_f_low_A"
+      ],
+      "physical_structure_ids": [
+        "f6ab5d4b47b03dae",
+        "2bbf1ea71c008cff",
+        "0b23e4b1d090d762",
+        "254ad46c5daf2f3b",
+        "1d8cdde86f5a8280",
+        "5b3a633100ea7aae",
+        "c676b06b9e7e6b37",
+        "ed3e994ad3f93315",
+        "d8f62c2f17905915",
+        "b07738746466a2c0",
+        "f6ab5d4b47b03dae",
+        "82b84f99640f753e",
+        "083ddca45f716aaf",
+        "df51128d01a18cb5",
+        "fec54646f3a9518d",
+        "348bd9c0e8daf995"
       ],
       "families": {
         "reading": 2,
@@ -76,18 +95,11 @@
         "dev_fan_only_00",
         "dev_fan_only_01"
       ],
-      "off_branch_noop_tasks": [
-        "dev_gentle_comfort_01",
-        "dev_strong_ventilation_00",
-        "dev_strong_ventilation_01",
-        "dev_bright_ventilation_01",
-        "dev_fan_only_00",
-        "dev_fan_only_01"
-      ]
+      "off_branch_noop_tasks": []
     },
     "pilot": {
       "tasks": 16,
-      "sha256": "5fd10d4103933321338a65629499454a77ab4966a5a1af5d518f6c384f472d02",
+      "sha256": "400009b54baed4e401f3fd7e9ca70826b790a53cc6645e2ab03f6c097820f46d",
       "task_ids": [
         "pilot_reading_00",
         "pilot_reading_01",
@@ -113,16 +125,34 @@
         "pilot_bright_work_c_low_A",
         "pilot_gentle_comfort_b_low_P",
         "pilot_gentle_comfort_c_off_A",
-        "pilot_strong_ventilation_b_off_P",
-        "pilot_strong_ventilation_a_low_P",
+        "pilot_strong_ventilation_b_low_P",
+        "pilot_strong_ventilation_d_off_A",
         "pilot_bright_ventilation_b_low_P",
         "pilot_bright_ventilation_c_off_A",
-        "pilot_economy_c_off_A",
         "pilot_economy_c_off_P",
+        "pilot_economy_d_low_A",
         "pilot_light_only_b_off_P",
         "pilot_light_only_c_off_A",
         "pilot_fan_only_d_low_P",
-        "pilot_fan_only_c_low_P"
+        "pilot_fan_only_e_off_A"
+      ],
+      "physical_structure_ids": [
+        "1d8cdde86f5a8280",
+        "23a23905ca1325d8",
+        "d8f62c2f17905915",
+        "4fc4f8ae996323b3",
+        "f6ab5d4b47b03dae",
+        "be51e5d8e3b95a0f",
+        "7a72e1f2324df9c3",
+        "82b84f99640f753e",
+        "0b23e4b1d090d762",
+        "eb768c1e8c6e4c8b",
+        "8d6e0e66ad9b8ddc",
+        "23a23905ca1325d8",
+        "c7b90a01cbe0750b",
+        "2f514112edc4018d",
+        "89bb3ddbaa8d527e",
+        "9fec3be13ab3dabb"
       ],
       "families": {
         "reading": 2,
@@ -144,15 +174,11 @@
         "pilot_fan_only_00",
         "pilot_fan_only_01"
       ],
-      "off_branch_noop_tasks": [
-        "pilot_strong_ventilation_00",
-        "pilot_strong_ventilation_01",
-        "pilot_fan_only_01"
-      ]
+      "off_branch_noop_tasks": []
     },
     "test": {
       "tasks": 24,
-      "sha256": "563db1fc985b3e7186562fc895f106ced97faf1cf4b7b1fc5a5abceda0fcb4ce",
+      "sha256": "20e33abc62bed18eb43fd52065134f61ab561cd3ff117f666618954362d55023",
       "task_ids": [
         "test_reading_00",
         "test_reading_01",
@@ -195,15 +221,41 @@
         "test_bright_ventilation_a_off_A",
         "test_bright_ventilation_a_off_P",
         "test_bright_ventilation_b_low_A",
+        "test_economy_a_off_A",
         "test_economy_a_off_P",
-        "test_economy_d_low_P",
-        "test_economy_a_low_P",
+        "test_economy_c_off_A",
         "test_light_only_a_low_A",
         "test_light_only_a_low_P",
         "test_light_only_b_off_A",
         "test_fan_only_a_off_A",
         "test_fan_only_a_off_P",
         "test_fan_only_d_low_A"
+      ],
+      "physical_structure_ids": [
+        "4e107d5f116b05a2",
+        "8336da8767676a31",
+        "be51e5d8e3b95a0f",
+        "3084fe55e8bef0a6",
+        "03254187dd374782",
+        "eb768c1e8c6e4c8b",
+        "2bbf1ea71c008cff",
+        "8d6e0e66ad9b8ddc",
+        "23a23905ca1325d8",
+        "3875a3593234644c",
+        "1b5efe997b86b25c",
+        "aad4a7b4b93a9ddf",
+        "254ad46c5daf2f3b",
+        "a33bbaab0580c4d8",
+        "4fc4f8ae996323b3",
+        "be51e5d8e3b95a0f",
+        "1d8cdde86f5a8280",
+        "2bbf1ea71c008cff",
+        "2ed07d14150f7350",
+        "60ebd3c1ed97a8d6",
+        "7cf737df61b4b756",
+        "52fc8d8006e9ca52",
+        "6a0cd2693b2015b9",
+        "618b2af39313734b"
       ],
       "families": {
         "reading": 3,
@@ -227,9 +279,185 @@
         "test_fan_only_01",
         "test_fan_only_02"
       ],
-      "off_branch_noop_tasks": [
-        "test_economy_02"
+      "off_branch_noop_tasks": []
+    }
+  },
+  "shared_physical_structure_groups": [
+    {
+      "physical_structure_id": "0b23e4b1d090d762",
+      "tasks": [
+        {
+          "split": "dev",
+          "task_id": "dev_bright_work_00"
+        },
+        {
+          "split": "pilot",
+          "task_id": "pilot_bright_ventilation_00"
+        }
+      ]
+    },
+    {
+      "physical_structure_id": "1d8cdde86f5a8280",
+      "tasks": [
+        {
+          "split": "dev",
+          "task_id": "dev_gentle_comfort_00"
+        },
+        {
+          "split": "pilot",
+          "task_id": "pilot_reading_00"
+        },
+        {
+          "split": "test",
+          "task_id": "test_economy_01"
+        }
+      ]
+    },
+    {
+      "physical_structure_id": "23a23905ca1325d8",
+      "tasks": [
+        {
+          "split": "pilot",
+          "task_id": "pilot_reading_01"
+        },
+        {
+          "split": "pilot",
+          "task_id": "pilot_economy_01"
+        },
+        {
+          "split": "test",
+          "task_id": "test_gentle_comfort_02"
+        }
+      ]
+    },
+    {
+      "physical_structure_id": "254ad46c5daf2f3b",
+      "tasks": [
+        {
+          "split": "dev",
+          "task_id": "dev_bright_work_01"
+        },
+        {
+          "split": "test",
+          "task_id": "test_bright_ventilation_00"
+        }
+      ]
+    },
+    {
+      "physical_structure_id": "2bbf1ea71c008cff",
+      "tasks": [
+        {
+          "split": "dev",
+          "task_id": "dev_reading_01"
+        },
+        {
+          "split": "test",
+          "task_id": "test_gentle_comfort_00"
+        },
+        {
+          "split": "test",
+          "task_id": "test_economy_02"
+        }
+      ]
+    },
+    {
+      "physical_structure_id": "4fc4f8ae996323b3",
+      "tasks": [
+        {
+          "split": "pilot",
+          "task_id": "pilot_bright_work_01"
+        },
+        {
+          "split": "test",
+          "task_id": "test_bright_ventilation_02"
+        }
+      ]
+    },
+    {
+      "physical_structure_id": "82b84f99640f753e",
+      "tasks": [
+        {
+          "split": "dev",
+          "task_id": "dev_economy_01"
+        },
+        {
+          "split": "pilot",
+          "task_id": "pilot_strong_ventilation_01"
+        }
+      ]
+    },
+    {
+      "physical_structure_id": "8d6e0e66ad9b8ddc",
+      "tasks": [
+        {
+          "split": "pilot",
+          "task_id": "pilot_economy_00"
+        },
+        {
+          "split": "test",
+          "task_id": "test_gentle_comfort_01"
+        }
+      ]
+    },
+    {
+      "physical_structure_id": "be51e5d8e3b95a0f",
+      "tasks": [
+        {
+          "split": "pilot",
+          "task_id": "pilot_gentle_comfort_01"
+        },
+        {
+          "split": "test",
+          "task_id": "test_reading_02"
+        },
+        {
+          "split": "test",
+          "task_id": "test_economy_00"
+        }
+      ]
+    },
+    {
+      "physical_structure_id": "d8f62c2f17905915",
+      "tasks": [
+        {
+          "split": "dev",
+          "task_id": "dev_bright_ventilation_00"
+        },
+        {
+          "split": "pilot",
+          "task_id": "pilot_bright_work_00"
+        }
+      ]
+    },
+    {
+      "physical_structure_id": "eb768c1e8c6e4c8b",
+      "tasks": [
+        {
+          "split": "pilot",
+          "task_id": "pilot_bright_ventilation_01"
+        },
+        {
+          "split": "test",
+          "task_id": "test_bright_work_02"
+        }
+      ]
+    },
+    {
+      "physical_structure_id": "f6ab5d4b47b03dae",
+      "tasks": [
+        {
+          "split": "dev",
+          "task_id": "dev_reading_00"
+        },
+        {
+          "split": "dev",
+          "task_id": "dev_economy_00"
+        },
+        {
+          "split": "pilot",
+          "task_id": "pilot_gentle_comfort_00"
+        }
       ]
     }
-  }
+  ]
 }

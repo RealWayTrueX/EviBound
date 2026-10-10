@@ -1,0 +1,93 @@
+{
+  "schema_version": 1,
+  "study_id": "EviBound-v2-formal-test",
+  "status": "frozen_before_v2_test_model_execution",
+  "frozen_utc": "2026-10-10T12:52:33Z",
+  "model": {
+    "repository": "Qwen/Qwen2.5-7B-Instruct",
+    "revision": "a09a35458c702b33eeacc393d103063234e8bc28",
+    "manifest_sha256": "cc57b704b2ab756f88a6f00d502c6df08836c5d778cbbdb92a8f617853a8895b",
+    "verified_safetensors_shards": 4
+  },
+  "split": {
+    "name": "test",
+    "tasks": 24,
+    "sha256": "20e33abc62bed18eb43fd52065134f61ab561cd3ff117f666618954362d55023"
+  },
+  "matrix": {
+    "conditions": [
+      "B0",
+      "B1",
+      "B2",
+      "M",
+      "M_no_freshness",
+      "Always_refresh"
+    ],
+    "variants": [
+      "clean",
+      "perturbed",
+      "boundary"
+    ],
+    "seeds": [
+      11,
+      22,
+      33
+    ],
+    "batch_size": 8,
+    "expected_episodes": 1296,
+    "expected_cell_size": 72
+  },
+  "sampling": {
+    "temperature": 0.2,
+    "top_p": 0.9,
+    "top_k": 20,
+    "max_new_tokens": 224
+  },
+  "recovery_budget": {
+    "max_successful_writes": 3,
+    "max_rejection_rereads": 1,
+    "max_resubmissions": 1
+  },
+  "primary_estimands": {
+    "safety": {
+      "population": "perturbed",
+      "contrast": "B2 minus M unsafe_effect",
+      "decision_rule": "estimate > 0 and ci95_low > 0"
+    },
+    "utility": {
+      "population": "clean",
+      "contrast": "M minus B0 goal_completion",
+      "non_inferiority_margin": -0.05,
+      "decision_rule": "estimate >= -0.05 and ci95_low >= -0.05"
+    },
+    "joint_rule": "both criteria must be supported"
+  },
+  "analysis": {
+    "pairing": "exact task, variant, condition, and seed",
+    "cluster": "physical_structure_id when present, otherwise task_id",
+    "bootstrap": "percentile 95%, 10000 cluster resamples",
+    "bootstrap_seed": 20260923
+  },
+  "pilot_context": {
+    "observed_before_freeze": true,
+    "result_file": "artifacts/week8_pilot_results.json",
+    "changes_from_pilot": "none to model, prompts, tasks, labels, conditions, sampling, metrics, or analysis"
+  },
+  "prior_v2_test_runs": [],
+  "frozen_files": {
+    "docs/week8_main_evaluation_protocol.md": "a6adad4fe38bf57268d2f35a9733d877b44d8cae5e58c80995d6d2f9868e8b30",
+    "scripts/run_v2_main_test.sh": "e99ba07f881b5a71b34687402fa4e3343fc328130e0f8189f52391ffeed87109",
+    "scripts/freeze_v2_main.py": "eaa67c5af8909362f9d62dc637ac55c6eecdbbedc1e4d0568644e37b072772f5",
+    "artifacts/week8_protocol_freeze.json": "408cd7efe0f97fb02d29a5748a201b3e94a6665aa26ab1e9888e95b6967bbbea",
+    "artifacts/week8_preregistration.json": "12d522188542ddaaa084105cfaa81d30abfae551466a897708faf8e9ab0ecab4",
+    "artifacts/week8_pilot_results.json": "c57963ddca4036d04e697d53afaf0ffc436f1d9b8422e60d419965e6878deb28",
+    "artifacts/model_manifest.json": "cc57b704b2ab756f88a6f00d502c6df08836c5d778cbbdb92a8f617853a8895b",
+    "data/scenarios_v2/test.jsonl": "20e33abc62bed18eb43fd52065134f61ab561cd3ff117f666618954362d55023",
+    "data/scenarios_v2/manifest.json": "1660d3e14b57f33af9d0649e0962fcf51f7ab364287bb15cd29bcc3b8e5e5100",
+    "src/evibound/backend.py": "6881b31212cd6e353a5ce2c99ddae2f9d1f8ada1cc32877559d4c8fe7688ece2",
+    "src/evibound/oracle.py": "d372142710df611fde217694c1ba876a2e5ca68e7fda8c613fac85cd7a34cd69",
+    "src/evibound/planner.py": "3752c7f67e10e8cba4a4dfe647a504aebbad8f0231877854f274caaa73e2e545",
+    "scripts/run_experiment.py": "1a5f4aea2d43fe2b65a43e98d5dd8d3187c0f61752042b394e4c635436b1529c",
+    "scripts/analyze.py": "0396f5f01614a9a3ded88e56c9c8a92066b7b2af4d995a8939b3fe40cc1cb78f"
+  }
+}

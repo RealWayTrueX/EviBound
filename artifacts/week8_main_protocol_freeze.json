@@ -1,0 +1,27 @@
+{
+  "schema_version": 1,
+  "study_id": "EviBound-v2-formal-test",
+  "status": "frozen_before_v2_test_model_execution",
+  "frozen_utc": "2026-10-10T12:52:33Z",
+  "protocol_sha256": "3481a855c5f0880dfb86fb5c5b25649b87667ae4b4a87615cb20e1faa313203d",
+  "bundle_sha256": "20e4a0710138656ecfb4a0c98e4d1e368413d574e65b6649098818b055dcfbe2",
+  "archive": "artifacts/week8_main_protocol_freeze.tar.gz",
+  "archive_sha256": "3749d9cb0f6ea36ebbf69c2cc646d051924f06ccffc07b7566b14440a958b9de",
+  "files": {
+    "artifacts/model_manifest.json": "cc57b704b2ab756f88a6f00d502c6df08836c5d778cbbdb92a8f617853a8895b",
+    "artifacts/week8_main_evaluation_protocol.json": "3481a855c5f0880dfb86fb5c5b25649b87667ae4b4a87615cb20e1faa313203d",
+    "artifacts/week8_pilot_results.json": "c57963ddca4036d04e697d53afaf0ffc436f1d9b8422e60d419965e6878deb28",
+    "artifacts/week8_preregistration.json": "12d522188542ddaaa084105cfaa81d30abfae551466a897708faf8e9ab0ecab4",
+    "artifacts/week8_protocol_freeze.json": "408cd7efe0f97fb02d29a5748a201b3e94a6665aa26ab1e9888e95b6967bbbea",
+    "data/scenarios_v2/manifest.json": "1660d3e14b57f33af9d0649e0962fcf51f7ab364287bb15cd29bcc3b8e5e5100",
+    "data/scenarios_v2/test.jsonl": "20e33abc62bed18eb43fd52065134f61ab561cd3ff117f666618954362d55023",
+    "docs/week8_main_evaluation_protocol.md": "a6adad4fe38bf57268d2f35a9733d877b44d8cae5e58c80995d6d2f9868e8b30",
+    "scripts/analyze.py": "0396f5f01614a9a3ded88e56c9c8a92066b7b2af4d995a8939b3fe40cc1cb78f",
+    "scripts/freeze_v2_main.py": "eaa67c5af8909362f9d62dc637ac55c6eecdbbedc1e4d0568644e37b072772f5",
+    "scripts/run_experiment.py": "1a5f4aea2d43fe2b65a43e98d5dd8d3187c0f61752042b394e4c635436b1529c",
+    "scripts/run_v2_main_test.sh": "e99ba07f881b5a71b34687402fa4e3343fc328130e0f8189f52391ffeed87109",
+    "src/evibound/backend.py": "6881b31212cd6e353a5ce2c99ddae2f9d1f8ada1cc32877559d4c8fe7688ece2",
+    "src/evibound/oracle.py": "d372142710df611fde217694c1ba876a2e5ca68e7fda8c613fac85cd7a34cd69",
+    "src/evibound/planner.py": "3752c7f67e10e8cba4a4dfe647a504aebbad8f0231877854f274caaa73e2e545"
+  }
+}

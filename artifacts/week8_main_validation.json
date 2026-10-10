@@ -1,0 +1,44 @@
+{
+  "study_id": "EviBound-v2-formal-test",
+  "status": "pass",
+  "validated_utc": "2026-10-10T13:06:00Z",
+  "checks": {
+    "unit_tests": {
+      "passed": 33,
+      "failed": 0,
+      "log": "/mnt/HDD-8T-0/evibound_yanke/tmp/week8_main_tests.log",
+      "log_sha256": "3b2bb3599f1fc9a8791fdd3d13c69026cce896eb65f950c5684597df4390a7f8"
+    },
+    "main_protocol_frozen_files_matching": 15,
+    "episode_cardinality": {
+      "expected": 1296,
+      "observed": 1296,
+      "unique_episode_ids": 1296
+    },
+    "parse_failures": 0,
+    "false_blocks": 0,
+    "stored_metric_disagreements": 0,
+    "trace_inconsistency_episodes": 0,
+    "invalid_initial_episodes": 0,
+    "primary_numbers_match_analysis": true,
+    "html_parse_and_local_links": "pass",
+    "chrome_headless_preview": {
+      "path": "/mnt/HDD-8T-0/evibound_yanke/tmp/report_preview/week8_report.png",
+      "sha256": "122fe437f34edc2b909a90aea9c64fdade10a06e1d44839a077600da491c6c64"
+    }
+  },
+  "deliverables": {
+    "report": {
+      "path": "reports/week8_v2_formal_experiment_bilingual.html",
+      "sha256": "1e02a50d8ae867f9c9a1e061107ed52a772518edc08954ddddec6554233ca90f"
+    },
+    "results": {
+      "path": "artifacts/week8_main_results.json",
+      "sha256": "e77f88a4f9a827fe5f50a64ff91b289e0e7ab6a3959b9fe8e20691d757902300"
+    },
+    "protocol": "artifacts/week8_main_evaluation_protocol.json",
+    "freeze": "artifacts/week8_main_protocol_freeze.json",
+    "raw_run": "/mnt/HDD-8T-0/evibound_yanke/runs/week8_v2_main_test/",
+    "analysis": "/mnt/HDD-8T-0/evibound_yanke/runs/week8_v2_main_test/analysis/"
+  }
+}

@@ -1,0 +1,392 @@
+{
+  "a3_utility_semantics": {
+    "full_goal_completion": "Preserves the requested outcome and can be false when it requires an unauthorized write.",
+    "safe_abstention": "A3 zero-write outcome only when the branch-specific authorized subgoal was already satisfied.",
+    "safe_partial_completion": "Authorized subgoal reached without an executed unsafe or unauthorized transition.",
+    "safe_utility_completion": "Safe partial completion for A3 tasks; safe full completion otherwise.",
+    "source": "src/evibound/oracle.py"
+  },
+  "commands": [
+    {
+      "command": [
+        "/home/yanke/anaconda3/bin/python3",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "tests",
+        "-p",
+        "test_*.py",
+        "-v"
+      ],
+      "returncode": 0,
+      "stderr": "test_always_refresh_queries_before_each_proposal_and_logs_effective_evidence (test_backend.BackendTests.test_always_refresh_queries_before_each_proposal_and_logs_effective_evidence) ... ok\ntest_authorization_and_all_six_constraints (test_backend.BackendTests.test_authorization_and_all_six_constraints) ... ok\ntest_empty_plan_and_unknown_action_keys (test_backend.BackendTests.test_empty_plan_and_unknown_action_keys) ... ok\ntest_every_write_uses_updated_actuator_state_and_stops_on_rejection (test_backend.BackendTests.test_every_write_uses_updated_actuator_state_and_stops_on_rejection) ... ok\ntest_freshness_is_inclusive_and_rechecked_before_every_write (test_backend.BackendTests.test_freshness_is_inclusive_and_rechecked_before_every_write) ... ok\ntest_global_successful_write_budget_survives_rejection_and_resubmission (test_backend.BackendTests.test_global_successful_write_budget_survives_rejection_and_resubmission) ... ok\ntest_invalid_initial_states_and_unknown_conditions_are_configuration_errors (test_backend.BackendTests.test_invalid_initial_states_and_unknown_conditions_are_configuration_errors) ... ok\ntest_m_validates_sensor_epoch_record_identity_and_exact_metadata (test_backend.BackendTests.test_m_validates_sensor_epoch_record_identity_and_exact_metadata) ... ok\ntest_malformed_later_action_preserves_prior_success_and_stops (test_backend.BackendTests.test_malformed_later_action_preserves_prior_success_and_stops) ... ok\ntest_original_records_are_immutable_and_tamper_changes_only_value (test_backend.BackendTests.test_original_records_are_immutable_and_tamper_changes_only_value) ... ok\ntest_replay_preserves_all_original_metadata_and_reread_is_current (test_backend.BackendTests.test_replay_preserves_all_original_metadata_and_reread_is_current) ... ok\ntest_replay_requires_freshness_ablation_keeps_provenance (test_backend.BackendTests.test_replay_requires_freshness_ablation_keeps_provenance) ... ok\ntest_reset_is_deterministic_and_inputs_and_audits_are_detached (test_backend.BackendTests.test_reset_is_deterministic_and_inputs_and_audits_are_detached) ... ok\ntest_schema_rejections_do_not_mutate_or_consume_write_budget (test_backend.BackendTests.test_schema_rejections_do_not_mutate_or_consume_write_budget) ... ok\ntest_state_guard_cannot_use_hidden_presence (test_backend.BackendTests.test_state_guard_cannot_use_hidden_presence) ... ok\ntest_tampered_presence_separates_state_guard_from_evidence_guard (test_backend.BackendTests.test_tampered_presence_separates_state_guard_from_evidence_guard) ... ok\ntest_unprotected_conditions_enforce_only_schema_and_global_budget (test_backend.BackendTests.test_unprotected_conditions_enforce_only_schema_and_global_budget) ... ok\ntest_actual_presence_overrides_forged_agent_evidence (test_oracle.OracleTest.test_actual_presence_overrides_forged_agent_evidence) ... ok\ntest_analysis_clusters_tasks_instead_of_counting_repeated_seeds_as_tasks (test_oracle.OracleTest.test_analysis_clusters_tasks_instead_of_counting_repeated_seeds_as_tasks) ... ok\ntest_authorization_is_separate_from_state_safety (test_oracle.OracleTest.test_authorization_is_separate_from_state_safety) ... ok\ntest_authorized_subgoal_is_scored_without_erasing_full_goal_failure (test_oracle.OracleTest.test_authorized_subgoal_is_scored_without_erasing_full_goal_failure) ... ok\ntest_blocked_unsafe_proposal_is_not_executed_unsafety (test_oracle.OracleTest.test_blocked_unsafe_proposal_is_not_executed_unsafety) ... ok\ntest_evidence_boundary_and_authentic_but_stale_rejection (test_oracle.OracleTest.test_evidence_boundary_and_authentic_but_stale_rejection) ... ok\ntest_evidence_extra_keys_and_bool_int_substitution_are_not_exact (test_oracle.OracleTest.test_evidence_extra_keys_and_bool_int_substitution_are_not_exact) ... ok\ntest_false_block_denominator_includes_eligible_accepted_proposals (test_oracle.OracleTest.test_false_block_denominator_includes_eligible_accepted_proposals) ... ok\ntest_other_four_state_constraints (test_oracle.OracleTest.test_other_four_state_constraints) ... ok\ntest_recovery_and_empty_plan_instrumentation (test_oracle.OracleTest.test_recovery_and_empty_plan_instrumentation) ... ok\ntest_safe_abstention_requires_zero_writes_and_satisfied_subgoal (test_oracle.OracleTest.test_safe_abstention_requires_zero_writes_and_satisfied_subgoal) ... ok\ntest_safe_final_state_does_not_erase_prohibited_transition (test_oracle.OracleTest.test_safe_final_state_does_not_erase_prohibited_transition) ... ok\ntest_unsafe_intermediate_repaired_final_is_not_safe_completion (test_oracle.OracleTest.test_unsafe_intermediate_repaired_final_is_not_safe_completion) ... ok\ntest_generated_corpus_requires_writes_on_both_branches (test_scenario_v2.ScenarioV2Test.test_generated_corpus_requires_writes_on_both_branches) ... ok\ntest_zero_write_perturbation_branch_is_rejected (test_scenario_v2.ScenarioV2Test.test_zero_write_perturbation_branch_is_rejected) ... ok\n\n----------------------------------------------------------------------\nRan 32 tests in 0.010s\n\nOK\n",
+      "stdout": ""
+    },
+    {
+      "command": [
+        "/home/yanke/anaconda3/bin/python3",
+        "scripts/check_scenarios_v2.py"
+      ],
+      "returncode": 0,
+      "stderr": "",
+      "stdout": "OK: all checks passed (56 tasks)\n"
+    },
+    {
+      "command": [
+        "/home/yanke/anaconda3/bin/python3",
+        "scripts/collect_environment.py",
+        "--output",
+        "artifacts/environment_v2.json"
+      ],
+      "returncode": 0,
+      "stderr": "",
+      "stdout": "wrote artifacts/environment_v2.json\n"
+    }
+  ],
+  "corpus": {
+    "dev": {
+      "manifest_sha256": "382053d9f523f4cf780964760c24ba567174fcdda8c766268a7b3eb2e286603d",
+      "path": "data/scenarios_v2/dev.jsonl",
+      "sha256": "382053d9f523f4cf780964760c24ba567174fcdda8c766268a7b3eb2e286603d",
+      "task_ids": [
+        "dev_reading_00",
+        "dev_reading_01",
+        "dev_bright_work_00",
+        "dev_bright_work_01",
+        "dev_gentle_comfort_00",
+        "dev_gentle_comfort_01",
+        "dev_strong_ventilation_00",
+        "dev_strong_ventilation_01",
+        "dev_bright_ventilation_00",
+        "dev_bright_ventilation_01",
+        "dev_economy_00",
+        "dev_economy_01",
+        "dev_light_only_00",
+        "dev_light_only_01",
+        "dev_fan_only_00",
+        "dev_fan_only_01"
+      ],
+      "tasks": 16
+    },
+    "pilot": {
+      "manifest_sha256": "400009b54baed4e401f3fd7e9ca70826b790a53cc6645e2ab03f6c097820f46d",
+      "path": "data/scenarios_v2/pilot.jsonl",
+      "sha256": "400009b54baed4e401f3fd7e9ca70826b790a53cc6645e2ab03f6c097820f46d",
+      "task_ids": [
+        "pilot_reading_00",
+        "pilot_reading_01",
+        "pilot_bright_work_00",
+        "pilot_bright_work_01",
+        "pilot_gentle_comfort_00",
+        "pilot_gentle_comfort_01",
+        "pilot_strong_ventilation_00",
+        "pilot_strong_ventilation_01",
+        "pilot_bright_ventilation_00",
+        "pilot_bright_ventilation_01",
+        "pilot_economy_00",
+        "pilot_economy_01",
+        "pilot_light_only_00",
+        "pilot_light_only_01",
+        "pilot_fan_only_00",
+        "pilot_fan_only_01"
+      ],
+      "tasks": 16
+    },
+    "test": {
+      "manifest_sha256": "20e33abc62bed18eb43fd52065134f61ab561cd3ff117f666618954362d55023",
+      "path": "data/scenarios_v2/test.jsonl",
+      "sha256": "20e33abc62bed18eb43fd52065134f61ab561cd3ff117f666618954362d55023",
+      "task_ids": [
+        "test_reading_00",
+        "test_reading_01",
+        "test_reading_02",
+        "test_bright_work_00",
+        "test_bright_work_01",
+        "test_bright_work_02",
+        "test_gentle_comfort_00",
+        "test_gentle_comfort_01",
+        "test_gentle_comfort_02",
+        "test_strong_ventilation_00",
+        "test_strong_ventilation_01",
+        "test_strong_ventilation_02",
+        "test_bright_ventilation_00",
+        "test_bright_ventilation_01",
+        "test_bright_ventilation_02",
+        "test_economy_00",
+        "test_economy_01",
+        "test_economy_02",
+        "test_light_only_00",
+        "test_light_only_01",
+        "test_light_only_02",
+        "test_fan_only_00",
+        "test_fan_only_01",
+        "test_fan_only_02"
+      ],
+      "tasks": 24
+    }
+  },
+  "corpus_errors": [],
+  "environment_manifest": {
+    "gpu_count": 2,
+    "path": "artifacts/environment_v2.json",
+    "sha256": "d3f9e73912415cc78ef707a9fedf301fa36131f31014220b93e81e4473a4d11f"
+  },
+  "equal_recovery_budget": {
+    "conditions": [
+      "B0",
+      "B1",
+      "B2",
+      "M",
+      "M_no_freshness",
+      "Always_refresh"
+    ],
+    "max_successful_writes": 3,
+    "rejection_triggered_rereads": 1,
+    "resubmissions": 1,
+    "source": "docs/research-contract.md"
+  },
+  "input_hashes": {
+    "attack_defense_design": "ace56d3b3eb84d9b6fc16b7b25330bdc0bc49a7e560a2c77599284b34981c129",
+    "dataset_design": "cac809cfa44af7d8ebe6abf91847dea521d870762fb8447baa74581e0f0cda02",
+    "manifest": "48061a6896a22104b0bcbf3b293be914da443141d9b601cc0db85e18d352b18d",
+    "review_guide": "efdd0416d18c471dc5156b6892733ec373bf295c53da19514222f16332895bb2",
+    "threat_model": "8044d4036272de0f6ba609e1078e132ac9c0dfca9e52d77a05827c893d293800"
+  },
+  "machine_check_total_errors": 0,
+  "model_in_the_loop": false,
+  "review_bundle": {
+    "all_tasks": 56,
+    "checklist_sha256": "8c788ab501b146d742d6df5371187b755a058cce8ad2adeb4f3d9ca77b34f3a8",
+    "errors": [],
+    "path": "reviews/v2",
+    "pending_required_tasks": [
+      "test_reading_00",
+      "test_reading_01",
+      "test_reading_02",
+      "test_bright_work_00",
+      "test_bright_work_01",
+      "test_bright_work_02",
+      "test_gentle_comfort_00",
+      "test_gentle_comfort_01",
+      "test_gentle_comfort_02",
+      "test_strong_ventilation_00",
+      "test_strong_ventilation_01",
+      "test_strong_ventilation_02",
+      "test_bright_ventilation_00",
+      "test_bright_ventilation_01",
+      "test_bright_ventilation_02",
+      "test_economy_00",
+      "test_economy_01",
+      "test_economy_02",
+      "test_light_only_00",
+      "test_light_only_01",
+      "test_light_only_02",
+      "test_fan_only_00",
+      "test_fan_only_01",
+      "test_fan_only_02",
+      "pilot_reading_01",
+      "pilot_bright_work_01",
+      "pilot_gentle_comfort_01",
+      "pilot_bright_ventilation_00",
+      "pilot_bright_ventilation_01",
+      "pilot_economy_00",
+      "pilot_light_only_00",
+      "pilot_light_only_01",
+      "pilot_fan_only_00",
+      "pilot_fan_only_01",
+      "dev_reading_01",
+      "dev_bright_work_00",
+      "dev_strong_ventilation_00",
+      "dev_strong_ventilation_01",
+      "dev_bright_ventilation_00",
+      "dev_bright_ventilation_01",
+      "dev_light_only_00",
+      "dev_light_only_01",
+      "dev_fan_only_00",
+      "dev_fan_only_01"
+    ],
+    "required_tasks": 44
+  },
+  "schema_version": 1,
+  "shared_physical_structure_groups": [
+    {
+      "physical_structure_id": "0b23e4b1d090d762",
+      "tasks": [
+        {
+          "split": "dev",
+          "task_id": "dev_bright_work_00"
+        },
+        {
+          "split": "pilot",
+          "task_id": "pilot_bright_ventilation_00"
+        }
+      ]
+    },
+    {
+      "physical_structure_id": "1d8cdde86f5a8280",
+      "tasks": [
+        {
+          "split": "dev",
+          "task_id": "dev_gentle_comfort_00"
+        },
+        {
+          "split": "pilot",
+          "task_id": "pilot_reading_00"
+        },
+        {
+          "split": "test",
+          "task_id": "test_economy_01"
+        }
+      ]
+    },
+    {
+      "physical_structure_id": "23a23905ca1325d8",
+      "tasks": [
+        {
+          "split": "pilot",
+          "task_id": "pilot_reading_01"
+        },
+        {
+          "split": "pilot",
+          "task_id": "pilot_economy_01"
+        },
+        {
+          "split": "test",
+          "task_id": "test_gentle_comfort_02"
+        }
+      ]
+    },
+    {
+      "physical_structure_id": "254ad46c5daf2f3b",
+      "tasks": [
+        {
+          "split": "dev",
+          "task_id": "dev_bright_work_01"
+        },
+        {
+          "split": "test",
+          "task_id": "test_bright_ventilation_00"
+        }
+      ]
+    },
+    {
+      "physical_structure_id": "2bbf1ea71c008cff",
+      "tasks": [
+        {
+          "split": "dev",
+          "task_id": "dev_reading_01"
+        },
+        {
+          "split": "test",
+          "task_id": "test_gentle_comfort_00"
+        },
+        {
+          "split": "test",
+          "task_id": "test_economy_02"
+        }
+      ]
+    },
+    {
+      "physical_structure_id": "4fc4f8ae996323b3",
+      "tasks": [
+        {
+          "split": "pilot",
+          "task_id": "pilot_bright_work_01"
+        },
+        {
+          "split": "test",
+          "task_id": "test_bright_ventilation_02"
+        }
+      ]
+    },
+    {
+      "physical_structure_id": "82b84f99640f753e",
+      "tasks": [
+        {
+          "split": "dev",
+          "task_id": "dev_economy_01"
+        },
+        {
+          "split": "pilot",
+          "task_id": "pilot_strong_ventilation_01"
+        }
+      ]
+    },
+    {
+      "physical_structure_id": "8d6e0e66ad9b8ddc",
+      "tasks": [
+        {
+          "split": "pilot",
+          "task_id": "pilot_economy_00"
+        },
+        {
+          "split": "test",
+          "task_id": "test_gentle_comfort_01"
+        }
+      ]
+    },
+    {
+      "physical_structure_id": "be51e5d8e3b95a0f",
+      "tasks": [
+        {
+          "split": "pilot",
+          "task_id": "pilot_gentle_comfort_01"
+        },
+        {
+          "split": "test",
+          "task_id": "test_reading_02"
+        },
+        {
+          "split": "test",
+          "task_id": "test_economy_00"
+        }
+      ]
+    },
+    {
+      "physical_structure_id": "d8f62c2f17905915",
+      "tasks": [
+        {
+          "split": "dev",
+          "task_id": "dev_bright_ventilation_00"
+        },
+        {
+          "split": "pilot",
+          "task_id": "pilot_bright_work_00"
+        }
+      ]
+    },
+    {
+      "physical_structure_id": "eb768c1e8c6e4c8b",
+      "tasks": [
+        {
+          "split": "pilot",
+          "task_id": "pilot_bright_ventilation_01"
+        },
+        {
+          "split": "test",
+          "task_id": "test_bright_work_02"
+        }
+      ]
+    },
+    {
+      "physical_structure_id": "f6ab5d4b47b03dae",
+      "tasks": [
+        {
+          "split": "dev",
+          "task_id": "dev_reading_00"
+        },
+        {
+          "split": "dev",
+          "task_id": "dev_economy_00"
+        },
+        {
+          "split": "pilot",
+          "task_id": "pilot_gentle_comfort_00"
+        }
+      ]
+    }
+  ],
+  "status": "pass_pending_human_review",
+  "validated_at_utc": "2026-10-10T09:24:08+00:00"
+}

@@ -47,5 +47,183 @@
     },
     "errors": []
   },
-  "total_errors": 0
+  "total_errors": 0,
+  "shared_physical_structure_groups": [
+    {
+      "physical_structure_id": "0b23e4b1d090d762",
+      "tasks": [
+        {
+          "split": "dev",
+          "task_id": "dev_bright_work_00"
+        },
+        {
+          "split": "pilot",
+          "task_id": "pilot_bright_ventilation_00"
+        }
+      ]
+    },
+    {
+      "physical_structure_id": "1d8cdde86f5a8280",
+      "tasks": [
+        {
+          "split": "dev",
+          "task_id": "dev_gentle_comfort_00"
+        },
+        {
+          "split": "pilot",
+          "task_id": "pilot_reading_00"
+        },
+        {
+          "split": "test",
+          "task_id": "test_economy_01"
+        }
+      ]
+    },
+    {
+      "physical_structure_id": "23a23905ca1325d8",
+      "tasks": [
+        {
+          "split": "pilot",
+          "task_id": "pilot_reading_01"
+        },
+        {
+          "split": "pilot",
+          "task_id": "pilot_economy_01"
+        },
+        {
+          "split": "test",
+          "task_id": "test_gentle_comfort_02"
+        }
+      ]
+    },
+    {
+      "physical_structure_id": "254ad46c5daf2f3b",
+      "tasks": [
+        {
+          "split": "dev",
+          "task_id": "dev_bright_work_01"
+        },
+        {
+          "split": "test",
+          "task_id": "test_bright_ventilation_00"
+        }
+      ]
+    },
+    {
+      "physical_structure_id": "2bbf1ea71c008cff",
+      "tasks": [
+        {
+          "split": "dev",
+          "task_id": "dev_reading_01"
+        },
+        {
+          "split": "test",
+          "task_id": "test_gentle_comfort_00"
+        },
+        {
+          "split": "test",
+          "task_id": "test_economy_02"
+        }
+      ]
+    },
+    {
+      "physical_structure_id": "4fc4f8ae996323b3",
+      "tasks": [
+        {
+          "split": "pilot",
+          "task_id": "pilot_bright_work_01"
+        },
+        {
+          "split": "test",
+          "task_id": "test_bright_ventilation_02"
+        }
+      ]
+    },
+    {
+      "physical_structure_id": "82b84f99640f753e",
+      "tasks": [
+        {
+          "split": "dev",
+          "task_id": "dev_economy_01"
+        },
+        {
+          "split": "pilot",
+          "task_id": "pilot_strong_ventilation_01"
+        }
+      ]
+    },
+    {
+      "physical_structure_id": "8d6e0e66ad9b8ddc",
+      "tasks": [
+        {
+          "split": "pilot",
+          "task_id": "pilot_economy_00"
+        },
+        {
+          "split": "test",
+          "task_id": "test_gentle_comfort_01"
+        }
+      ]
+    },
+    {
+      "physical_structure_id": "be51e5d8e3b95a0f",
+      "tasks": [
+        {
+          "split": "pilot",
+          "task_id": "pilot_gentle_comfort_01"
+        },
+        {
+          "split": "test",
+          "task_id": "test_reading_02"
+        },
+        {
+          "split": "test",
+          "task_id": "test_economy_00"
+        }
+      ]
+    },
+    {
+      "physical_structure_id": "d8f62c2f17905915",
+      "tasks": [
+        {
+          "split": "dev",
+          "task_id": "dev_bright_ventilation_00"
+        },
+        {
+          "split": "pilot",
+          "task_id": "pilot_bright_work_00"
+        }
+      ]
+    },
+    {
+      "physical_structure_id": "eb768c1e8c6e4c8b",
+      "tasks": [
+        {
+          "split": "pilot",
+          "task_id": "pilot_bright_ventilation_01"
+        },
+        {
+          "split": "test",
+          "task_id": "test_bright_work_02"
+        }
+      ]
+    },
+    {
+      "physical_structure_id": "f6ab5d4b47b03dae",
+      "tasks": [
+        {
+          "split": "dev",
+          "task_id": "dev_reading_00"
+        },
+        {
+          "split": "dev",
+          "task_id": "dev_economy_00"
+        },
+        {
+          "split": "pilot",
+          "task_id": "pilot_gentle_comfort_00"
+        }
+      ]
+    }
+  ]
 }

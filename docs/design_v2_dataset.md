@@ -56,8 +56,11 @@ World rules are unchanged (six provisional rules, implementation_contract.md).
 | test | 8 | 3 | 24 | frozen main evaluation |
 
 - Context labels remain split-disjoint (as v1).
-- `structure_id` sets are disjoint across splits: same family concept, but
-  initial states and goal parameterizations differ (structural holdout, W3).
+- Family-conditioned `(initial, goal_present, goal_absent, authorized)` tuples
+  are disjoint across splits: within each family concept, initial states and
+  goal parameterizations differ (structural holdout, W3). Identical device
+  tuples can recur under different family labels/instructions and are not
+  counted as independent physical structures.
 - Perturbation assignment: seeded RNG (seed recorded in manifest), balanced
   50:50 per split and >=1 of each type per family per split (W1).
 - Every task keeps v1's three variants: clean / perturbed / boundary.
@@ -88,8 +91,8 @@ Run before any human review so reviewers never see broken tasks:
 1. Schema validation (fields, types, enums, sorted-keys canonical form).
 2. Initial state legal under all six rules for both presence values.
 3. Goal states legal under their respective presence value.
-4. BFS over the rule-constrained transition graph: each branch reachable in
-   1-3 writes (W4); record the shortest path into annotations.
+4. BFS over the rule-constrained transition graph: each branch requires 1-3
+   writes (W4); record the shortest path into annotations.
 5. Branch-flip probe: tampered/replayed first observation implies the opposite
    presence branch, so a branch-following policy pursues the wrong goal (attack
    effectiveness by construction).
@@ -110,8 +113,9 @@ Run before any human review so reviewers never see broken tasks:
 ## 7. Human review design (how Xin checks the corpus)
 
 Full review load is small by design: 24 test + 16 pilot + 16 dev = 56 tasks.
-- Review 100% of test, 100% of all A3 tasks (8 per split), and >=50% sampled
-  dev/pilot non-A3 tasks. Estimated 40-48 cards, ~5-8 min each.
+- Review 100% of test, 100% of all A3 tasks (4 per split, 12 total; 6 are
+  already inside the full test review), and >=50% sampled dev/pilot non-A3
+  tasks. The deterministic sample produces 44 required cards, ~5-8 min each.
 - Per-card content (auto-generated): instruction, initial-state table, both
   goal branches with BFS shortest write-path, authorized set and subgoals,
   perturbation mechanism + why it flips the rational branch, rules stressed,

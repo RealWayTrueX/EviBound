@@ -139,9 +139,9 @@ def validate_task(task):
     info['writes_clean'] = n_clean
     info['writes_off'] = n_off
     info['off_branch_noop'] = (n_off == 0)
+    if not (1 <= n_off <= MAX_WRITES):
+        errors.append(f'off branch needs {n_off} writes (must be 1..{MAX_WRITES})')
     if not is_a3:
-        if n_clean == 0:
-            errors.append('clean goal branch requires zero writes (v1 W4 regression)')
         if not (1 <= n_clean <= MAX_WRITES):
             errors.append(f'clean branch needs {n_clean} writes (must be 1..{MAX_WRITES})')
     else:
