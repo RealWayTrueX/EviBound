@@ -1,5 +1,13 @@
 # EviBound synthetic feasibility tasks：数据卡
 
+> **适用范围 / Scope:** 本数据卡只描述 v1 语料（`data/scenarios/`，48 个任务，2026-09-23）。
+> v2 语料（56 个任务，含越权任务）见 `docs/design_v2_dataset.md` 和
+> `data/scenarios_v2/manifest.json`；v3 语料（44 个任务）见
+> `docs/week11_v3_preregistration.md`。下文“全部授权两个执行器”“六个共享模板”等限制只针对 v1，
+> 已在 v2 中修正。档位 `low`/`high` 读作 1 档/2 档，场景名（reading、economy 等）只是标签，
+> 见 `docs/reading_guide.md`。
+> This card covers the v1 corpus only; v2 and v3 are described in the documents above.
+
 审计日期：2026-09-23；版本：pilot/test 冻结前修订版。该数据集用于本地灯/风扇/存在传感器模拟中的证据绑定可行性分析。数据由本项目的 `scripts/generate_scenarios.py` 原创合成；没有下载、抽取或改编 SimuHome 或其他外部基准中的任务记录，不含真实住户或家庭资料。人工策略审核仍为 **pending**。本数据卡没有替用户指定项目或数据许可证；若后续需要公开原创数据，可以考虑 CC0，须另行确认。
 
 ## 文件、来源和审计结果

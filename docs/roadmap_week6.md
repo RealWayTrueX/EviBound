@@ -76,6 +76,23 @@ Frozen-boundary rules (non-negotiable):
 - [x] H4. Produce the self-contained bilingual HTML experiment report and
       machine-readable result record
 
+### I. Week 11-12 recovery study (v3)
+- [x] I1. Retrospective failure taxonomy of retained v2 traces
+      (`scripts/week11_failure_taxonomy.py` -> `artifacts/week11_v2_failure_taxonomy.json`)
+- [x] I2. Goal-agnostic recovery interface and eight equal-budget conditions
+      (`src/evibound/recovery.py`, `src/evibound/runner_v3.py`, `tests/test_recovery_v3.py`)
+- [x] I3. Fresh v3 corpus: dev 12 / holdout 32, no v2 physical structure
+      (`scripts/generate_scenarios_v3.py`, `scripts/check_scenarios_v3.py`)
+- [x] I4. Review bundle, DRAFT preregistration, freeze/verify gate
+      (`scripts/build_review_bundle_v3.py`, `docs/week11_v3_preregistration.md`,
+      `scripts/freeze_v3_prereg.py`)
+- [~] I5. Unattended GPU launcher (`scripts/wait_gpu_then_run_v3.sh`, tmux
+      `evibound_v3`): dev is complete; holdout waits for the refreshed I6 freeze
+- [~] I6. Human review is complete for 77 REQUIRED cards; regenerate and verify
+      the preregistration freeze after the later review/corpus changes, using
+      `python3 scripts/freeze_v3_prereg.py --approve "<reviewer-name>"`
+- [ ] I7. Holdout run, independent rescoring, bilingual report, decisions recorded
+
 ## Progress Log
 
 - 2026-10-10: A1-A2 done. v1 confounds reconfirmed from current files: perturbation
@@ -153,3 +170,39 @@ Frozen-boundary rules (non-negotiable):
 - 2026-10-11: the publication commit was created locally and all 33 tests plus
   the v2 corpus checker passed. GitHub push is pending because this execution
   environment has no configured HTTPS token or SSH private key.
+
+- 2026-10-11: Week 11-12 recovery package built. Retained v2 traces show the
+  clean utility gap is planner recovery, not guard error: M clean test misses
+  were 7 empty first plans, 9 failed repairs after correct rejections, 3
+  incomplete recoveries and 9 A3 full-goal misses; 27/72 M perturbed episodes
+  resubmitted an empty plan after a correct evidence rejection. v3 adds rule
+  explanations and empty-plan confirmation under the unchanged budget, on a
+  physically fresh 32-task holdout. 42 tests and both corpus checkers pass. The
+  GPU launcher waits for the StreamVLN G1 runs to release a GPU; holdout stays
+  gated on human review and the preregistration freeze.
+- 2026-10-11: human-facing documentation pass at the corpus owner's request. Added
+  `docs/reading_guide.md` (bilingual glossary: levels off/1/2, rule reasons,
+  condition codes, metrics, statistics terms, document map, confusing spots in
+  frozen docs) and `docs/threat_model_real_world.md` (how tamper/replay/A3 arise
+  in real homes, out-of-scope cases). `threat-model.md` stays byte-identical
+  because it is sealed in the Week-8 freeze; the companion is added to the v3
+  freeze list instead. README rewritten bilingual; v1 dataset card and v1 demo
+  outline carry scope banners; v3 prereg gained a plain-language summary; v3
+  reports gained condition/metric/failure legends; v3 family labels made
+  neutral (A3 families reuse the v2 scene names).
+- 2026-10-11: at the corpus owner's request (before the v3 freeze) the v3 corpus was
+  expanded: holdout 72 tasks on 36 fresh physical structures, dev 12, in a
+  4 x 3 design of observation modality (presence flag, motion timer, camera
+  caption, multi-sensor) x request language (explicit, everyday, named scene),
+  with English/Chinese labels per task. New modules `backend_v3.py`,
+  `oracle_v3.py`, `planner_v3.py` leave frozen v1/v2 code untouched; the
+  presence-flag world is unit-tested against the v2 World. The earlier 37-row
+  sign-off is superseded; the expanded 77-card review is now complete.
+
+- 2026-10-12: v3 dev completed 864/864 exploratory episodes with zero parse
+  failures, trace inconsistencies, invalid initial episodes, false blocks,
+  empty plans, or oracle disagreements. S1 safety is supported, while R1
+  recovery gain and U1 utility non-inferiority are unsupported; joint
+  feasibility is not supported. Holdout has not started. The preserved 37-row
+  freeze is marked superseded because later review/corpus/code changes produce
+  hash mismatches; a fresh preregistration freeze is required before holdout.

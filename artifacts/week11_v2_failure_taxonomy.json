@@ -1,0 +1,270 @@
+{
+  "by_run": {
+    "week8_v2_main_test": {
+      "Always_refresh/clean": {
+        "failures": {
+          "a3_task_incomplete": 9,
+          "empty_plan_no_recovery": 7,
+          "recovery_accepted_incomplete": 3,
+          "recovery_rejected_again": 6,
+          "recovery_repeated_plan": 3
+        },
+        "n": 72
+      },
+      "Always_refresh/perturbed": {
+        "failures": {
+          "a3_task_incomplete": 9,
+          "accepted_plan_incomplete": 14,
+          "empty_plan_no_recovery": 4,
+          "recovery_accepted_incomplete": 3,
+          "recovery_rejected_again": 3
+        },
+        "n": 72
+      },
+      "B0/clean": {
+        "failures": {
+          "a3_task_incomplete": 9,
+          "a3_task_incomplete+unsafe": 3,
+          "empty_plan_no_recovery": 7
+        },
+        "n": 72
+      },
+      "B0/perturbed": {
+        "failures": {
+          "a3_task_incomplete": 9,
+          "a3_task_incomplete+unsafe": 9,
+          "accepted_plan_incomplete": 14,
+          "accepted_plan_incomplete+unsafe": 36,
+          "empty_plan_no_recovery": 4
+        },
+        "n": 72
+      },
+      "B1/clean": {
+        "failures": {
+          "a3_task_incomplete": 9,
+          "a3_task_incomplete+unsafe": 3,
+          "empty_plan_no_recovery": 12
+        },
+        "n": 72
+      },
+      "B1/perturbed": {
+        "failures": {
+          "a3_task_incomplete": 9,
+          "a3_task_incomplete+unsafe": 9,
+          "accepted_plan_incomplete": 10,
+          "accepted_plan_incomplete+unsafe": 36,
+          "empty_plan_no_recovery": 8
+        },
+        "n": 72
+      },
+      "B2/clean": {
+        "failures": {
+          "a3_task_incomplete": 9,
+          "empty_plan_no_recovery": 7,
+          "recovery_accepted_incomplete": 3,
+          "recovery_rejected_again": 6,
+          "recovery_repeated_plan": 3
+        },
+        "n": 72
+      },
+      "B2/perturbed": {
+        "failures": {
+          "a3_task_incomplete": 9,
+          "a3_task_incomplete+unsafe": 3,
+          "accepted_plan_incomplete": 14,
+          "accepted_plan_incomplete+unsafe": 21,
+          "empty_plan_no_recovery": 4,
+          "recovery_rejected_again+unsafe": 5
+        },
+        "n": 72
+      },
+      "M/clean": {
+        "failures": {
+          "a3_task_incomplete": 9,
+          "empty_plan_no_recovery": 7,
+          "recovery_accepted_incomplete": 3,
+          "recovery_rejected_again": 6,
+          "recovery_repeated_plan": 3
+        },
+        "n": 72
+      },
+      "M/perturbed": {
+        "failures": {
+          "a3_task_incomplete": 2,
+          "empty_plan_no_recovery": 4,
+          "recovery_accepted_incomplete": 5,
+          "recovery_empty_plan": 27,
+          "recovery_rejected_again": 11
+        },
+        "n": 72
+      },
+      "M_no_freshness/clean": {
+        "failures": {
+          "a3_task_incomplete": 9,
+          "empty_plan_no_recovery": 7,
+          "recovery_accepted_incomplete": 3,
+          "recovery_rejected_again": 6,
+          "recovery_repeated_plan": 3
+        },
+        "n": 72
+      },
+      "M_no_freshness/perturbed": {
+        "failures": {
+          "a3_task_incomplete": 5,
+          "accepted_plan_incomplete": 8,
+          "accepted_plan_incomplete+unsafe": 12,
+          "empty_plan_no_recovery": 4,
+          "recovery_accepted_incomplete": 5,
+          "recovery_rejected_again": 5,
+          "recovery_rejected_again+unsafe": 4
+        },
+        "n": 72
+      }
+    },
+    "week8_v2_pilot": {
+      "Always_refresh/clean": {
+        "failures": {
+          "a3_task_incomplete": 6,
+          "empty_plan_no_recovery": 6,
+          "recovery_accepted_incomplete": 3,
+          "recovery_rejected_again": 2,
+          "recovery_repeated_plan": 4
+        },
+        "n": 48
+      },
+      "Always_refresh/perturbed": {
+        "failures": {
+          "a3_task_incomplete": 6,
+          "accepted_plan_incomplete": 15,
+          "empty_plan_no_recovery": 3,
+          "recovery_accepted_incomplete": 2,
+          "recovery_rejected_again": 3
+        },
+        "n": 48
+      },
+      "B0/clean": {
+        "failures": {
+          "a3_task_incomplete": 6,
+          "empty_plan_no_recovery": 6
+        },
+        "n": 48
+      },
+      "B0/perturbed": {
+        "failures": {
+          "a3_task_incomplete": 6,
+          "a3_task_incomplete+unsafe": 6,
+          "accepted_plan_incomplete": 15,
+          "accepted_plan_incomplete+unsafe": 18,
+          "empty_plan_no_recovery": 3
+        },
+        "n": 48
+      },
+      "B1/clean": {
+        "failures": {
+          "a3_task_incomplete": 9,
+          "empty_plan_no_recovery": 9
+        },
+        "n": 48
+      },
+      "B1/perturbed": {
+        "failures": {
+          "a3_task_incomplete": 6,
+          "a3_task_incomplete+unsafe": 6,
+          "accepted_plan_incomplete": 12,
+          "accepted_plan_incomplete+unsafe": 18,
+          "empty_plan_no_recovery": 6
+        },
+        "n": 48
+      },
+      "B2/clean": {
+        "failures": {
+          "a3_task_incomplete": 6,
+          "empty_plan_no_recovery": 6,
+          "recovery_accepted_incomplete": 3,
+          "recovery_rejected_again": 2,
+          "recovery_repeated_plan": 4
+        },
+        "n": 48
+      },
+      "B2/perturbed": {
+        "failures": {
+          "a3_task_incomplete": 6,
+          "accepted_plan_incomplete": 15,
+          "accepted_plan_incomplete+unsafe": 9,
+          "empty_plan_no_recovery": 3,
+          "recovery_accepted_incomplete": 2,
+          "recovery_rejected_again": 3,
+          "recovery_rejected_again+unsafe": 3
+        },
+        "n": 48
+      },
+      "M/clean": {
+        "failures": {
+          "a3_task_incomplete": 6,
+          "empty_plan_no_recovery": 6,
+          "recovery_accepted_incomplete": 3,
+          "recovery_rejected_again": 2,
+          "recovery_repeated_plan": 4
+        },
+        "n": 48
+      },
+      "M/perturbed": {
+        "failures": {
+          "empty_plan_no_recovery": 3,
+          "recovery_accepted_incomplete": 1,
+          "recovery_empty_plan": 12,
+          "recovery_rejected_again": 12
+        },
+        "n": 48
+      },
+      "M_no_freshness/clean": {
+        "failures": {
+          "a3_task_incomplete": 6,
+          "empty_plan_no_recovery": 6,
+          "recovery_accepted_incomplete": 3,
+          "recovery_rejected_again": 2,
+          "recovery_repeated_plan": 4
+        },
+        "n": 48
+      },
+      "M_no_freshness/perturbed": {
+        "failures": {
+          "accepted_plan_incomplete": 6,
+          "accepted_plan_incomplete+unsafe": 3,
+          "empty_plan_no_recovery": 3,
+          "recovery_accepted_incomplete": 5,
+          "recovery_rejected_again": 10,
+          "recovery_rejected_again+unsafe": 3
+        },
+        "n": 48
+      }
+    }
+  },
+  "inputs": [
+    {
+      "path": "/mnt/HDD-8T-0/evibound_yanke/runs/week8_v2_pilot/seed_11.jsonl",
+      "sha256": "d467328134353b967c88c86e8afbaf7620dd0a8f83d1ff1763cc8a7f1fccffe7"
+    },
+    {
+      "path": "/mnt/HDD-8T-0/evibound_yanke/runs/week8_v2_pilot/seed_22.jsonl",
+      "sha256": "167eb9f53b509b980be431c58691921a1ee813503583e5792a64ec91c089c87e"
+    },
+    {
+      "path": "/mnt/HDD-8T-0/evibound_yanke/runs/week8_v2_pilot/seed_33.jsonl",
+      "sha256": "bf446994e3553d58a1540150e5ec1fdcf7ff704b069f9fa2600f8f19c32846fb"
+    },
+    {
+      "path": "/mnt/HDD-8T-0/evibound_yanke/runs/week8_v2_main_test/seed_11.jsonl",
+      "sha256": "4273626f32127532c3312c14df0b24034d4344f66963736fd5f679e266a2c7b4"
+    },
+    {
+      "path": "/mnt/HDD-8T-0/evibound_yanke/runs/week8_v2_main_test/seed_22.jsonl",
+      "sha256": "fc86751094a8f910e5be253a1d162fd2fe9e5b38c18bdbb1ae4968840ddaaa1d"
+    },
+    {
+      "path": "/mnt/HDD-8T-0/evibound_yanke/runs/week8_v2_main_test/seed_33.jsonl",
+      "sha256": "34fd30486b219ed6ec75368bbeb8b70c97354bea6bb01356dd4c392b540e9e47"
+    }
+  ],
+  "purpose": "Retrospective failure taxonomy of the frozen Week-8 v2 traces (no reruns)."
+}

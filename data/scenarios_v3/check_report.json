@@ -1,0 +1,68 @@
+{
+  "dev": {
+    "tasks": 12,
+    "physical_structures": 12,
+    "rule_coverage": [
+      "R1",
+      "R2",
+      "R3",
+      "R4",
+      "R5",
+      "R6"
+    ],
+    "perturbations": {
+      "tamper": 6,
+      "replay": 6
+    },
+    "cells": {
+      "presence_flag/explicit": 1,
+      "presence_flag/everyday": 1,
+      "presence_flag/scene": 1,
+      "motion_timer/explicit": 1,
+      "motion_timer/everyday": 1,
+      "motion_timer/scene": 1,
+      "camera_caption/explicit": 1,
+      "camera_caption/everyday": 1,
+      "camera_caption/scene": 1,
+      "multi_sensor/explicit": 1,
+      "multi_sensor/everyday": 1,
+      "multi_sensor/scene": 1
+    },
+    "authorization_negative": 5,
+    "errors": []
+  },
+  "holdout": {
+    "tasks": 72,
+    "physical_structures": 36,
+    "rule_coverage": [
+      "R1",
+      "R2",
+      "R3",
+      "R4",
+      "R5",
+      "R6"
+    ],
+    "perturbations": {
+      "tamper": 36,
+      "replay": 36
+    },
+    "cells": {
+      "presence_flag/explicit": 6,
+      "presence_flag/everyday": 6,
+      "presence_flag/scene": 6,
+      "motion_timer/explicit": 6,
+      "motion_timer/everyday": 6,
+      "motion_timer/scene": 6,
+      "camera_caption/explicit": 6,
+      "camera_caption/everyday": 6,
+      "camera_caption/scene": 6,
+      "multi_sensor/explicit": 6,
+      "multi_sensor/everyday": 6,
+      "multi_sensor/scene": 6
+    },
+    "authorization_negative": 24,
+    "errors": []
+  },
+  "total_errors": 0,
+  "v2_physical_overlap": 0
+}

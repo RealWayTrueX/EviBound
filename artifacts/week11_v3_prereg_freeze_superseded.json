@@ -1,0 +1,35 @@
+{
+  "approved_by": "corpus-owner",
+  "status": "superseded",
+  "superseded_reason": "A later 77-row human review changed the corpus and implementation hashes; regenerate the freeze before holdout.",
+  "frozen_utc": "2026-10-11T07:01:29+00:00",
+  "model_revision": "a09a35458c702b33eeacc393d103063234e8bc28",
+  "review_signoff": {
+    "checklist_sha256": "ebc7bd6fdff5adf6e2c876ffc8065d7c06d0c842ae69e08960047528af04ea39",
+    "corpus_sha256": {
+      "dev": "7d519d1dce210b6704f905d65dc1a2a84dd9f3653747515bb8509a3fe8049b91",
+      "holdout": "434a3dae7056f56cad08d06c2a5bea1e6d72c8d6cd67023133c8b7dd48575edc"
+    },
+    "date": "2026-10-11T06:55:32+00:00",
+    "open_items": [],
+    "required_rows": 37,
+    "reviewer": "corpus-owner"
+  },
+  "sha256": {
+    "data/scenarios_v3/dev.jsonl": "7d519d1dce210b6704f905d65dc1a2a84dd9f3653747515bb8509a3fe8049b91",
+    "data/scenarios_v3/holdout.jsonl": "434a3dae7056f56cad08d06c2a5bea1e6d72c8d6cd67023133c8b7dd48575edc",
+    "data/scenarios_v3/manifest.json": "314aedb42651800b9534fe3a3a6e1463d2d983906b55537bc84bd2f26021ca9b",
+    "docs/threat_model_real_world.md": "55df7de8033d88e0facfaf9fe559ebc22d071ecab06e1f3d7d30cefd2afef073",
+    "docs/week11_v3_preregistration.md": "66e6519c78bc2d028f074f3f85eb2e166b102565db06ecb350c41674755ce9c9",
+    "scripts/analyze.py": "0396f5f01614a9a3ded88e56c9c8a92066b7b2af4d995a8939b3fe40cc1cb78f",
+    "scripts/analyze_v3.py": "3a79c4bdc6d443ecf9edc31214a08461929d86d38412910ef37a5ee19e0c2396",
+    "scripts/run_experiment_v3.py": "99c407d939b612110139676fc489c659b30af5ec82c940e695714807c14771ee",
+    "scripts/run_v3_holdout.sh": "8a3e14c19f9dac9fcfb09656ad697f18e34ed37d7f0c14a8d5fe53acfffd0977",
+    "src/evibound/backend.py": "6881b31212cd6e353a5ce2c99ddae2f9d1f8ada1cc32877559d4c8fe7688ece2",
+    "src/evibound/oracle.py": "d372142710df611fde217694c1ba876a2e5ca68e7fda8c613fac85cd7a34cd69",
+    "src/evibound/planner.py": "3752c7f67e10e8cba4a4dfe647a504aebbad8f0231877854f274caaa73e2e545",
+    "src/evibound/recovery.py": "54893a928eaf7ed0d4350b97b257f38a97d213e32f68d833a8ddaef284e41fc2",
+    "src/evibound/runner_v3.py": "5df1eb5d607bf67e30ec9b6dcc15d4968843be4d8b2f5958e402877ae287bebd"
+  },
+  "study": "EviBound v3 recovery"
+}

@@ -1,5 +1,12 @@
 # EviBound five-minute demonstration / 五分钟演示
 
+> **状态 / Status (2026-10-11):** 这是 9 月 v1 通宵实验时写的演示稿，尚未更新。其中的 PDF 和
+> `research_contract.txt` 链接只在本地存在，`evibound_overnight` 会话、`reports/feasibility.*`
+> 和“六个任务模板”都指 v1。最终演示（Weeks 13–15）应改用 v2 正式结果和 v3 结果重写；
+> 术语解释见 `docs/reading_guide.md`，攻击的现实对应见 `docs/threat_model_real_world.md`。
+> This is the September v1 outline. Links to the PDF and contract text are local-only, and the tmux
+> session and report paths refer to the v1 run. Rewrite it for the final demo once v3 results exist.
+
 演示入口：[原始 PDF](<../main (14).pdf>) · [研究合同文本](research_contract.txt) · [执行与规则契约](implementation_contract.md) · [数据卡](dataset_card.md) · [文献核查](sources_and_design_review.md)。最终汇报入口：[中文报告](../reports/feasibility.zh-CN.md) · [English report](../reports/feasibility.en.md)。报告由完整运行完成后生成；本演示稿不预填结果数字。
 
 ## ZH：五分钟中文提纲

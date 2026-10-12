@@ -1,70 +1,122 @@
-# EviBound 证据绑定运行时执行实验
+# EviBound: Evidence-Bound Runtime Enforcement for Smart-Home Agents
 
-基于已提交的研究合同：用纯合成设备、独立状态机和本地
-Qwen2.5-7B-Instruct，检验执行时观测来源/时效校验的作用。
-不连接真实家居，不调用付费 API，不训练模型。
+COSC 723 course project. An AI agent (local Qwen2.5-7B-Instruct) controls a
+simulated light and fan from a presence-sensor reading. If the reading it sees
+is forged or out of date, a well-formed command can still be unsafe, such as
+turning the light on in an empty room. EviBound sits between the agent and the
+devices and, before every write, checks that the sensor record the agent cited
+is genuine and recent, and that the write obeys the device rules and
+permissions. The experiments measure whether this removes unsafe effects while
+still letting normal tasks finish. Everything is synthetic and offline: no real
+home, device, account or paid API.
 
-当前课程工作入口：
+**New readers: start with the [Reading Guide](docs/reading_guide.md)**, which
+explains the toy world (levels are off / level 1 / level 2), the device rules,
+every condition code (B0, B2, M, ...), the metrics and the statistics terms.
+For how the simulated attacks map to real homes, see
+[Threat Model in the Real World](docs/threat_model_real_world.md).
 
-- [Agent 工作边界](AGENTS.md)
-- [研究合同](docs/research-contract.md)
-- [Week 7 完成报告](docs/week7_closeout.md)
-- [Week-8 预注册](docs/week8_preregistration.md)
-- [正式实验机器结果](artifacts/week8_main_results.json)
-- [可续跑路线图](docs/roadmap_week6.md)
+## Status
 
-人机交流用的实验报告、人工审查包和本地交接记录保留在工作目录中，但不纳入
-公开仓库；机器可读结果与冻结协议仍在仓库内。
+| Study | Unsafe under attack: B2 vs EviBound (M) | Normal-task goal completion: no checker (B0) vs M | Verdict |
+|---|---|---|---|
+| v2 formal test (1,296 episodes) | 30/72 vs 0/72 | 53/72 vs 44/72 | Safety supported; "no worse than 5 points" utility target not met |
 
-正式 v2 测试已完成 1,296 个冻结回合：观测扰动下 B2 实际不安全影响为
-41.7%，M 为 0%，聚类效应 +36.4 个百分点且 95% CI 不含 0；但正常完整目标
-完成率 M 比 B0 的聚类效应为 -13.6 个百分点，超过 -5 个百分点容忍目标。
-安全假设得到支持，效用非劣假设未得到支持，联合可行性目标未达到。
+EviBound never refused a legal write. The utility gap comes from the agent
+failing to repair its plan after a correct refusal, or proposing nothing. The
+Week 11–12 **v3** study tests two recovery aids on 72 new tasks that also vary
+the sensor modality and the phrasing of requests
+([plan](docs/week11_v3_preregistration.md)); it runs once human review and the
+preregistration freeze are complete.
 
-## 入口
+## Where things are
 
-- [研究合同](docs/research-contract.md)
-- [运行与规则契约](docs/implementation_contract.md)
-- [数据卡及独立可达性审计](docs/dataset_card.md)
-- [原始文献与设计核查](docs/sources_and_design_review.md)
-- [正式实验机器结果](artifacts/week8_main_results.json)
-- [正式实验验证记录](artifacts/week8_main_validation.json)
+| Need | Location |
+|---|---|
+| Research question and conditions | [docs/research-contract.md](docs/research-contract.md) |
+| Threat model (frozen) and its real-world companion | [docs/threat-model.md](docs/threat-model.md), [docs/threat_model_real_world.md](docs/threat_model_real_world.md) |
+| Exact rules and runtime contract | [docs/implementation_contract.md](docs/implementation_contract.md) |
+| v2 preregistration and results | [docs/week8_preregistration.md](docs/week8_preregistration.md), [artifacts/week8_main_results.json](artifacts/week8_main_results.json) |
+| v3 recovery study | [docs/week11_v3_preregistration.md](docs/week11_v3_preregistration.md) |
+| Formal test validation record | [artifacts/week8_main_validation.json](artifacts/week8_main_validation.json) |
+| v1 dataset card and literature check | [docs/dataset_card.md](docs/dataset_card.md), [docs/sources_and_design_review.md](docs/sources_and_design_review.md) |
+| Roadmap and decision log | [docs/roadmap_week6.md](docs/roadmap_week6.md) |
+| Agent working rules | [AGENTS.md](AGENTS.md) |
+
+Task corpora: `data/scenarios/` (v1, 48 tasks, frozen), `data/scenarios_v2/`
+(56 tasks, frozen and human-reviewed), `data/scenarios_v3/` (84 tasks across 4
+sensor modalities and 3 language levels, draft pending review). Model weights, raw traces and run logs live on the data disk
+(`/mnt/HDD-8T-0/evibound_yanke/`). Human-facing experiment reports, review
+packs and session notes stay local and are not in the public repository.
+
+## Run the checks
+
+```bash
+PYTHONPATH=src:. python3 -m unittest discover -s tests -p 'test_*.py' -v
+python3 scripts/check_scenarios_v2.py
+python3 scripts/check_scenarios_v3.py
+```
+
+Model runs need one 24 GB GPU and must be launched inside tmux; see
+`scripts/run_v2_main_test.sh` (v2) and `scripts/wait_gpu_then_run_v3.sh` (v3).
+
+## Interpretation limits
+
+The device rules are synthetic policies for the experiment, not real safety
+codes. B2 is a guard built for this project, not a reproduction of a published
+system. Attacks are fixed value tampering and stale-record replay plus
+unauthorized-device requests; prompt injection, trained backdoors and adaptive
+attackers are out of scope. Record matching stands in for cryptographic sensor
+authentication.
+
+---
+
+# 中文说明
+
+COSC 723 课程项目。AI 智能体（本地 Qwen2.5-7B-Instruct）根据人体存在传感器的
+读数控制模拟的灯和风扇。如果它看到的读数是伪造的或过时的，一条格式正确的
+命令也可能不安全，比如在没人的房间开灯。EviBound 放在智能体和设备之间，
+每次写设备前核对智能体引用的传感器记录是否真实、是否足够新，以及这次写入
+是否符合设备规则和权限。实验衡量它能否消除不安全后果，同时不耽误正常任务。
+全部为离线合成实验，不连接真实家居、设备或账号，不调用付费 API，不训练模型。
+
+**第一次读请先看[阅读指南](docs/reading_guide.md)**：解释档位（关 / 1 档 /
+2 档，`low` 不是“调暗”）、设备规则、各条件代号（B0、B2、M……）、指标和统计
+术语。模拟攻击在真实家庭中对应什么，见[威胁模型的现实对应](docs/threat_model_real_world.md)。
+
+## 当前进展
+
+v2 正式测试共 1,296 个回合：受攻击时，B2 有 30/72 次实际不安全，EviBound（M）
+为 0/72，安全假设得到支持；正常任务目标完成 B0 为 53/72，M 为 44/72，差距
+超过预设的 5 个百分点，效用目标未达到。EviBound 从未拒绝过合法写入，差距来自
+智能体被正确拒绝后没能修好计划，或干脆什么都不做。Week 11–12 的 **v3** 实验
+在 72 个新任务上测试两种恢复辅助，同时改变传感器模态和用户说法（[计划](docs/week11_v3_preregistration.md)），
+人工审核和预注册冻结完成后自动运行。
 
 ## 文件布局
 
-当前工作目录保存代码、配置、48 个小型合成任务、测试、模型/数据哈希与
-冻结协议。权重、Python 运行环境、缓存、完整逐回合轨迹和运行日志
-放在大容量资产目录。权重复用数据盘已有 Hugging Face blob，
-未复制第二份 15.2 GB 权重。
+任务语料：`data/scenarios/`（v1，48 个，已冻结）、`data/scenarios_v2/`（56 个，
+已冻结并经人工审核）、`data/scenarios_v3/`（84 个，覆盖 4 种传感器模态和 3 级语言，草稿，待审核）。模型权重、
+完整逐回合轨迹和运行日志在数据盘 `/mnt/HDD-8T-0/evibound_yanke/`。面向人的
+实验报告、审核包和交接记录只保存在本地，不放进公开仓库。
 
-## 在这台机器复现
+## 运行检查
 
 ```bash
-cd /path/to/EviBound
-source scripts/env.sh
-python -m unittest discover -s tests -v
-tmux new-session -s evibound_subset 'bash scripts/reproduce_subset.sh'
+PYTHONPATH=src:. python3 -m unittest discover -s tests -p 'test_*.py' -v
+python3 scripts/check_scenarios_v2.py
+python3 scripts/check_scenarios_v3.py
 ```
 
-该子集包含两个需要写入的测试任务、三种观测变体、五个执行条件和一个种子，
-共 30 回合，输出到数据盘新的时间戳目录。它验证管线，不能替代完整统计结果。
-完整实验入口为 `bash scripts/run_stage.sh dev|pilot|test`，须在 tmux 内启动。
-进程逐回合 flush/fsync，按 task/variant/condition/seed 去重续跑；同一运行需
-保持冻结代码、数据、GPU 分工与批次大小，不能跨协议版本复用输出目录。
-
-`Ctrl-b d` 脱离 tmux；`tmux ls` 查看会话；`tmux attach -t evibound_overnight`
-查看完整测试会话。tmux 能隔离终端断线，机器关机后仍需通过入口续跑。
-
-运行使用数据盘 venv 并复用现有 Python 的包；精确版本见
-`artifacts/environment.json` 和 `configs/requirements_observed.txt`。
-换机器时需安装相容的 PyTorch/CUDA 与这些依赖，并准备 manifest 中固定 revision
-的模型。这里的一键命令是当前机器的复现入口，不是通用系统安装器。
-`model_manifest.json` 保存初始准备时的清单；后续完成的逐字节权重校验以
-`artifacts/weight_integrity.json` 为准。
+模型运行需要一张 24 GB 显卡，并在 tmux 里启动：v2 见
+`scripts/run_v2_main_test.sh`，v3 见 `scripts/wait_gpu_then_run_v3.sh`。
+v1 的 30 回合复现子集仍可用 `bash scripts/reproduce_subset.sh` 运行，它只验证
+管线，不能替代完整统计。精确依赖版本见 `artifacts/environment_v2.json` 和
+`configs/requirements_observed.txt`。
 
 ## 解释边界
 
-策略是课程实验的暂定模拟规则，尚需人类审阅。B2 使用提交的 presence 值，
-M 增加对可信记录的来源和年龄校验；B2 不是已有框架的复现。
-观测扰动仅为固定布尔翻转和旧记录重放，不代表自然语言提示注入或训练后门。
-六类任务模板跨 split 复用，不能把回合数当成独立场景数。
+设备规则是课程实验的合成策略，不是真实安全规范。B2 是本项目自建的守卫，
+不是已发表系统的复现。攻击仅包括固定的读数篡改、旧记录重放和越权设备请求；
+不包括提示注入、训练后门或自适应攻击者。“记录精确匹配”代替的是密码学传感器
+认证。
