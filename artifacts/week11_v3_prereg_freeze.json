@@ -1,0 +1,36 @@
+{
+  "approved_by": "Xin Li",
+  "frozen_utc": "2026-10-12T19:55:49+00:00",
+  "model_revision": "a09a35458c702b33eeacc393d103063234e8bc28",
+  "review_signoff": {
+    "checklist_sha256": "b9c10f3408ad68ce0118aae1a2d05324153251e4d470a8291542ad618877838a",
+    "corpus_sha256": {
+      "dev": "d9efba836624752244a0bdaa3a71a952fecdd8c81bd5247dafc0c5a6844832d0",
+      "holdout": "6bf41a0093f8f8e5b345a6bcb21a2ff7e31d26433452ede38d13f49238c58627"
+    },
+    "date": "2026-10-11T07:52:25+00:00",
+    "open_items": [],
+    "required_rows": 77,
+    "reviewer": "Xin Li"
+  },
+  "sha256": {
+    "data/scenarios_v3/dev.jsonl": "d9efba836624752244a0bdaa3a71a952fecdd8c81bd5247dafc0c5a6844832d0",
+    "data/scenarios_v3/holdout.jsonl": "6bf41a0093f8f8e5b345a6bcb21a2ff7e31d26433452ede38d13f49238c58627",
+    "data/scenarios_v3/manifest.json": "de345a04b70cfdb691d09b74df4f5c63523517d4e5926c149b16bd39248aa9bc",
+    "docs/threat_model_real_world.md": "55df7de8033d88e0facfaf9fe559ebc22d071ecab06e1f3d7d30cefd2afef073",
+    "docs/week11_v3_preregistration.md": "706c488184d1161a959eb9f99f671331151b2579de60aa6c273e7081204d564a",
+    "scripts/analyze.py": "0396f5f01614a9a3ded88e56c9c8a92066b7b2af4d995a8939b3fe40cc1cb78f",
+    "scripts/analyze_v3.py": "16664d8f506a816827497710240c476d0a95665a4d4869253941407e14e8e8a7",
+    "scripts/run_experiment_v3.py": "d32c4035b11451ac1a1a18d8eae83288e118df5e6aa47a33564090540aab2e80",
+    "scripts/run_v3_holdout.sh": "745fc334833947560103bbc24f9c8d98ac6eeaa267ef050138aa539769c78874",
+    "src/evibound/backend.py": "6881b31212cd6e353a5ce2c99ddae2f9d1f8ada1cc32877559d4c8fe7688ece2",
+    "src/evibound/backend_v3.py": "946b9a7b46654cfbacb978a08caeb990e8db69a0e60d2dddccb014d03b025a08",
+    "src/evibound/oracle.py": "d372142710df611fde217694c1ba876a2e5ca68e7fda8c613fac85cd7a34cd69",
+    "src/evibound/oracle_v3.py": "1615d3ef418b8c87ed77708b577a6ad1965de309bc0c3dc6b65f850a09bef814",
+    "src/evibound/planner.py": "3752c7f67e10e8cba4a4dfe647a504aebbad8f0231877854f274caaa73e2e545",
+    "src/evibound/planner_v3.py": "da1e7e7affe87f74e860b565f2a06d33e08d58e7f7a3a1819e38b8fb714e1cdf",
+    "src/evibound/recovery.py": "1570c361ca61099e666239e2574a81cb154fb97c878a9181bf469f1d4f9e50d1",
+    "src/evibound/runner_v3.py": "abd0e6e4c8e31d247c582a5b23410e98e242352f46676bebc5c36bbc31f866c0"
+  },
+  "study": "EviBound v3 recovery"
+}
