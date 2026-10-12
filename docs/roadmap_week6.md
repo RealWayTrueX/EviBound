@@ -97,17 +97,17 @@ Frozen-boundary rules (non-negotiable):
       completion), matrix 7,128. Code+tests+analysis+docs updated; 50 tests and
       both checkers pass. Rationale: `docs/week11_v3_preregistration.md`
       (amendment log) and `docs/week12_direction_review.md`.
-- [ ] I6c. (!) Corpus owner decision on A2 (U2 as the joint-feasibility
+- [x] I6c. (!) Corpus owner decision on A2 (U2 as the joint-feasibility
       utility criterion; U1 still reported). If declined, revert `JOINT_IDS`
       in `scripts/analyze_v3.py` to `('S1','U1')` before freezing.
-- [ ] I6d. On the server: commit the pending `data/scenarios_v3/manifest.json`
+- [x] I6d. On the server: commit the pending `data/scenarios_v3/manifest.json`
       review-status update; rerun dev for the three new conditions only
       (`bash scripts/run_v3_dev.sh <gpu>` resumes by episode identity; expect
       1,188 rows); sanity-check `M_full` on dev (exploratory); then
       `python3 scripts/freeze_v3_prereg.py --approve "<reviewer-name>"`,
       commit `artifacts/week11_v3_prereg_freeze.json`. Holdout must still be
       empty at that moment (the script refuses otherwise).
-- [ ] I7. Holdout run (7,128 episodes), independent rescoring, bilingual
+- [x] I7. Holdout run (7,128 episodes), independent rescoring, bilingual
       report, decisions recorded (U1, U2, S1, R1–R3)
 
 ### J. Post-course direction (v4; nothing here touches v3 after its freeze)
@@ -261,3 +261,10 @@ Frozen-boundary rules (non-negotiable):
   utility criterion U2, and the 7,128-episode matrix; 50 tests and both corpus
   checkers pass. Freeze (I6c/I6d) and holdout (I7) remain pending on the
   server. External-dataset and v4 items recorded under section J.
+
+
+- 2026-10-12: automated v3 closeout completed. The amended preregistration was
+  frozen before holdout, the watcher completed all 7,128 frozen episodes, and
+  machine-readable results plus the episode checksum were recorded. The local
+  `analysis/report.html` remains outside the repository; decisions are recorded
+  in `artifacts/week11_v3_holdout_results.json`.
