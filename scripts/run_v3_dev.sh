@@ -17,7 +17,7 @@ fi
 python scripts/run_experiment_v3.py \
   --split dev --seeds 11 22 33 --batch-size 8 "${device_args[@]}" \
   --output "$run_dir/episodes.jsonl" > "$run_dir/run.log" 2>&1
-test "$(wc -l < "$run_dir/episodes.jsonl")" -eq $((12 * 3 * 8 * 3))
+test "$(wc -l < "$run_dir/episodes.jsonl")" -eq $((12 * 3 * 11 * 3))
 python scripts/analyze_v3.py --stage dev --input "$run_dir/episodes.jsonl" --output "$run_dir/analysis"
 sha256sum "$run_dir/episodes.jsonl" > "$run_dir/episodes.sha256"
 date -u +'%Y-%m-%dT%H:%M:%SZ' > "$run_dir/COMPLETE"

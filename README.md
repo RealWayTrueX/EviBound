@@ -22,12 +22,18 @@ For how the simulated attacks map to real homes, see
 |---|---|---|---|
 | v2 formal test (1,296 episodes) | 30/72 vs 0/72 | 53/72 vs 44/72 | Safety supported; "no worse than 5 points" utility target not met |
 
-EviBound never refused a legal write. The utility gap comes from the agent
-failing to repair its plan after a correct refusal, or proposing nothing. The
-Week 11–12 **v3** study tests two recovery aids on 72 new tasks that also vary
-the sensor modality and the phrasing of requests
-([plan](docs/week11_v3_preregistration.md)); it runs once human review and the
-preregistration freeze are complete.
+EviBound never refused a legal write. On the rule-compliant metric
+(`safe_completion`: goal reached with no unsafe or unauthorized transition) B0
+and M tie at 44/72; the raw gap is B0 completing nine tasks by breaking
+stated sequencing rules, which M blocks and the agent then fails to repair.
+The Week 11–12 **v3** study tests three recovery aids (rule explanation,
+empty-plan check, and a legal-writes menu added before the freeze) on 72 new
+tasks that also vary the sensor modality and the phrasing of requests
+([plan with amendment log](docs/week11_v3_preregistration.md)). Human review
+of the v3 corpus is complete (77/77 cards); the holdout runs once the
+preregistration freeze is regenerated. Why the plan was amended, where the
+work sits in the 2024–2026 literature, and which external datasets come next:
+[Week-12 direction review](docs/week12_direction_review.md).
 
 ## Where things are
 
@@ -38,6 +44,7 @@ preregistration freeze are complete.
 | Exact rules and runtime contract | [docs/implementation_contract.md](docs/implementation_contract.md) |
 | v2 preregistration and results | [docs/week8_preregistration.md](docs/week8_preregistration.md), [artifacts/week8_main_results.json](artifacts/week8_main_results.json) |
 | v3 recovery study | [docs/week11_v3_preregistration.md](docs/week11_v3_preregistration.md) |
+| Direction review, literature positioning, external datasets | [docs/week12_direction_review.md](docs/week12_direction_review.md) |
 | Formal test validation record | [artifacts/week8_main_validation.json](artifacts/week8_main_validation.json) |
 | v1 dataset card and literature check | [docs/dataset_card.md](docs/dataset_card.md), [docs/sources_and_design_review.md](docs/sources_and_design_review.md) |
 | Roadmap and decision log | [docs/roadmap_week6.md](docs/roadmap_week6.md) |
@@ -45,7 +52,7 @@ preregistration freeze are complete.
 
 Task corpora: `data/scenarios/` (v1, 48 tasks, frozen), `data/scenarios_v2/`
 (56 tasks, frozen and human-reviewed), `data/scenarios_v3/` (84 tasks across 4
-sensor modalities and 3 language levels, draft pending review). Model weights, raw traces and run logs live on the data disk
+sensor modalities and 3 language levels, human-reviewed, freeze pending). Model weights, raw traces and run logs live on the data disk
 (`/mnt/HDD-8T-0/evibound_yanke/`). Human-facing experiment reports, review
 packs and session notes stay local and are not in the public repository.
 
@@ -88,15 +95,19 @@ COSC 723 课程项目。AI 智能体（本地 Qwen2.5-7B-Instruct）根据人体
 
 v2 正式测试共 1,296 个回合：受攻击时，B2 有 30/72 次实际不安全，EviBound（M）
 为 0/72，安全假设得到支持；正常任务目标完成 B0 为 53/72，M 为 44/72，差距
-超过预设的 5 个百分点，效用目标未达到。EviBound 从未拒绝过合法写入，差距来自
-智能体被正确拒绝后没能修好计划，或干脆什么都不做。Week 11–12 的 **v3** 实验
-在 72 个新任务上测试两种恢复辅助，同时改变传感器模态和用户说法（[计划](docs/week11_v3_preregistration.md)），
-人工审核和预注册冻结完成后自动运行。
+超过预设的 5 个百分点，效用目标未达到。EviBound 从未拒绝过合法写入；按“合规完成”
+口径（达到目标且全程无不安全/越权写入）B0 与 M 都是 44/72，差距来自 B0 靠违反
+既定顺序规则“完成”的 9 个任务被 M 正确拦下后，智能体没能修好计划。Week 11–12 的
+**v3** 实验在 72 个新任务上测试三种恢复辅助（规则说明、空计划确认、冻结前新增的
+“合法写入清单”），同时改变传感器模态和用户说法（[计划与修订记录](docs/week11_v3_preregistration.md)）。
+v3 语料人工审核已完成（77/77），预注册冻结重新生成后自动运行 holdout。为什么
+修订、工作在 2024–2026 文献中的位置、下一步并入哪些外部数据集：
+[第 12 周方向复审](docs/week12_direction_review.md)。
 
 ## 文件布局
 
 任务语料：`data/scenarios/`（v1，48 个，已冻结）、`data/scenarios_v2/`（56 个，
-已冻结并经人工审核）、`data/scenarios_v3/`（84 个，覆盖 4 种传感器模态和 3 级语言，草稿，待审核）。模型权重、
+已冻结并经人工审核）、`data/scenarios_v3/`（84 个，覆盖 4 种传感器模态和 3 级语言，已人工审核，待冻结）。模型权重、
 完整逐回合轨迹和运行日志在数据盘 `/mnt/HDD-8T-0/evibound_yanke/`。面向人的
 实验报告、审核包和交接记录只保存在本地，不放进公开仓库。
 

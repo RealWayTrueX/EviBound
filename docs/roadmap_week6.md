@@ -87,11 +87,48 @@ Frozen-boundary rules (non-negotiable):
       (`scripts/build_review_bundle_v3.py`, `docs/week11_v3_preregistration.md`,
       `scripts/freeze_v3_prereg.py`)
 - [~] I5. Unattended GPU launcher (`scripts/wait_gpu_then_run_v3.sh`, tmux
-      `evibound_v3`): dev is complete; holdout waits for the refreshed I6 freeze
-- [~] I6. Human review is complete for 77 REQUIRED cards; regenerate and verify
-      the preregistration freeze after the later review/corpus changes, using
-      `python3 scripts/freeze_v3_prereg.py --approve "<reviewer-name>"`
-- [ ] I7. Holdout run, independent rescoring, bilingual report, decisions recorded
+      `evibound_v3`): dev (8 draft conditions) is complete; holdout waits for
+      the I6b freeze. The watcher polls `freeze_v3_prereg.py --verify` every
+      10 min and starts holdout by itself once the freeze verifies.
+- [x] I6a. Human review complete for 77 REQUIRED cards, zero open items
+      (`reviews/v3/signoff.json`, local-only). The 37-row freeze is superseded.
+- [x] I6b-design. Pre-freeze amendment A1–A3 (2026-10-12): `legal_writes` menu
+      aid, conditions `M_mask`/`M_full`/`B2_full`, co-primary U2 (rule-compliant
+      completion), matrix 7,128. Code+tests+analysis+docs updated; 50 tests and
+      both checkers pass. Rationale: `docs/week11_v3_preregistration.md`
+      (amendment log) and `docs/week12_direction_review.md`.
+- [ ] I6c. (!) Corpus owner decision on A2 (U2 as the joint-feasibility
+      utility criterion; U1 still reported). If declined, revert `JOINT_IDS`
+      in `scripts/analyze_v3.py` to `('S1','U1')` before freezing.
+- [ ] I6d. On the server: commit the pending `data/scenarios_v3/manifest.json`
+      review-status update; rerun dev for the three new conditions only
+      (`bash scripts/run_v3_dev.sh <gpu>` resumes by episode identity; expect
+      1,188 rows); sanity-check `M_full` on dev (exploratory); then
+      `python3 scripts/freeze_v3_prereg.py --approve "<reviewer-name>"`,
+      commit `artifacts/week11_v3_prereg_freeze.json`. Holdout must still be
+      empty at that moment (the script refuses otherwise).
+- [ ] I7. Holdout run (7,128 episodes), independent rescoring, bilingual
+      report, decisions recorded (U1, U2, S1, R1–R3)
+
+### J. Post-course direction (v4; nothing here touches v3 after its freeze)
+- [ ] J1. Formal statement of evidence-bound actuation: per-write soundness
+      under the channel-fault model with residual window Δ (the freshness bound);
+      position against CommitGuard (2607.10487), Stale≠Unsafe (2609.29522),
+      Freshness-Bounded Shield (2608.26306) — see `docs/week12_direction_review.md`
+- [ ] J2. Precision ablation `M_scoped`: require fresh evidence only for writes
+      whose rule evaluation reads the observation (R1/R2), answering the
+      "freshness guards over-block benign writes" critique; report benign-block
+      rate head-to-head with the boundary variant
+- [ ] J3. External worlds: HomeBench (ACL 2025) state blocks + invalid
+      instructions as a second world generator; ToolEmu Apache-2.0 smart-home
+      cases (lock guest-access windows) as an authorization-scope family;
+      SimuHome (ICLR 2026, CC BY-NC-ND) as an untouched external environment
+      behind an EviBound proxy
+- [ ] J4. Second planner family (Qwen3-8B or Llama-3.1-8B-Instruct, same
+      revision-pinning discipline) on the frozen v3 holdout; multi-model is a
+      venue requirement, not a course one
+- [ ] J5. Memory-channel replay (stale reading in conversation history, fresh
+      sensor) as the one extra in-scope attack family (gap analysis item 4)
 
 ## Progress Log
 
@@ -211,3 +248,16 @@ Frozen-boundary rules (non-negotiable):
   `claude/project-thread-8evhuz` as `d488161`. Reports, review records,
   background materials, handoff notes, and identity-bearing fields remain
   local-only.
+
+- 2026-10-12 (later): direction review before the v3 freeze. Re-reading the
+  public v2 record showed that the clean utility gap is entirely a metric
+  artefact of crediting rule-violating completions: B0 clean `safe_completion`
+  44/72 equals M's 44/72, and all nine B0-only completions broke R4/R5/R6.
+  Literature check (27 runtime guards / benchmarks, 2024-2026) found no system
+  that binds each physical write to a verbatim-matched, age-bounded sensor
+  record; the closest work (CommitGuard, Stale≠Unsafe, Freshness-Bounded
+  Shield, all mid-2026) is digital-only. Pre-freeze amendments A1-A3 added the
+  `legal_writes` menu aid (`M_mask`, `M_full`, `B2_full`), the rule-compliant
+  utility criterion U2, and the 7,128-episode matrix; 50 tests and both corpus
+  checkers pass. Freeze (I6c/I6d) and holdout (I7) remain pending on the
+  server. External-dataset and v4 items recorded under section J.

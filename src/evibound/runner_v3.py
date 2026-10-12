@@ -103,9 +103,13 @@ def run_seed(generate: Generate, scenarios: Iterable[dict[str, Any]], conditions
                     observation = world.observe()
                     episode["recovery_trigger"] = trigger
                     reason = events[-1]["reason"] if trigger == "rejection" else None
+                    # The reread is the trusted collector's current record; its decoded
+                    # presence feeds only the legal_writes aid (ignored by other conditions).
                     episode["_messages"] = recovery_messages(
                         condition, job["messages"], response["raw"], world.state, observation,
-                        trigger, reason, MAX_WRITES - world.successful_writes)
+                        trigger, reason, MAX_WRITES - world.successful_writes,
+                        presence=world.decode(observation["value"]),
+                        authorized=scenario["authorized"])
                     pending.append(episode)
                 episode["_world"] = world
                 episodes.append(episode)
