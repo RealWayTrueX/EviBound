@@ -167,9 +167,8 @@ Frozen-boundary rules (non-negotiable):
   remain untracked; code, datasets, tests, protocols, and machine-readable
   evidence are prepared for publication.
 
-- 2026-10-11: the publication commit was created locally and all 33 tests plus
-  the v2 corpus checker passed. GitHub push is pending because this execution
-  environment has no configured HTTPS token or SSH private key.
+- 2026-10-11: the v2 publication commit passed all 33 tests and the corpus
+  checker and was pushed to GitHub as `138e628`.
 
 - 2026-10-11: Week 11-12 recovery package built. Retained v2 traces show the
   clean utility gap is planner recovery, not guard error: M clean test misses
@@ -206,3 +205,9 @@ Frozen-boundary rules (non-negotiable):
   feasibility is not supported. Holdout has not started. The preserved 37-row
   freeze is marked superseded because later review/corpus/code changes produce
   hash mismatches; a fresh preregistration freeze is required before holdout.
+
+- 2026-10-12: the sanitized v3 code, corpus, documentation, and dev evidence
+  passed 46 tests plus both corpus checkers and were pushed to `main` and
+  `claude/project-thread-8evhuz` as `d488161`. Reports, review records,
+  background materials, handoff notes, and identity-bearing fields remain
+  local-only.
