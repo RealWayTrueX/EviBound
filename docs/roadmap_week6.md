@@ -129,6 +129,9 @@ Frozen-boundary rules (non-negotiable):
       venue requirement, not a course one
 - [ ] J5. Memory-channel replay (stale reading in conversation history, fresh
       sensor) as the one extra in-scope attack family (gap analysis item 4)
+- [ ] J6. Multi-step legal menu (fix for the boundary penalty of the one-step
+      `legal_writes` aid: M_mask 95/216 vs M 117/216) on a fresh preregistered
+      holdout; drop `confirm_empty` unless empty first plans recur
 
 ## Progress Log
 
@@ -268,3 +271,11 @@ Frozen-boundary rules (non-negotiable):
   machine-readable results plus the episode checksum were recorded. The local
   `analysis/report.html` remains outside the repository; decisions are recorded
   in `artifacts/week11_v3_holdout_results.json`.
+
+- 2026-10-13: holdout closeout written from `artifacts/week11_v3_holdout_results.json`
+  (`docs/week12_v3_holdout_closeout.md`). Joint feasibility supported (S1
+  +14.4 pp, U2 +29.2 pp); U1 −7.4 pp unsupported, entirely from B0 writing
+  forbidden devices on A3 tasks; R1 +19.4 pp; zero false blocks in 7,128
+  episodes. Rule explanation carried the clean gain, the menu helped under
+  attack and hurt on boundary (J6 added), confirm_empty had no effect (no
+  empty first plans). README, direction review and roadmap updated.

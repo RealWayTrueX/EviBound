@@ -58,7 +58,26 @@ supported. A rule *explanation* is not enough for this planner.
 直跳完成的。其次是修复问题：模型被正确拒绝后 0/12 修好计划，受攻击时 27/66 次
 重提交是空计划。v3 开发集显示“只解释规则”不够。
 
-### 1.3 Consequences for the plan / 对计划的影响
+### 1.3 Outcome of the amended holdout (added 2026-10-13) / 修订后 holdout 的结果
+
+The holdout ran the same day under the frozen amended protocol
+(`docs/week12_v3_holdout_closeout.md`): joint feasibility **supported** for
+the first time (S1 +14.4 pp [+4.6, +25.9]; U2 +29.2 pp [+16.7, +43.1]);
+R1 +19.4 pp [+8.3, +31.9]; U1 −7.4 pp [−19.0, +3.2] unsupported, and that
+deficit is entirely the unguarded baseline writing forbidden devices on
+authorization-negative tasks (dual-device tasks: M_full 135/144 vs B0
+126/144). Two findings revise §3 below: the rule explanation, not the menu,
+carried the clean gain (dev was underpowered), and the one-step menu *hurts*
+on the boundary variant (M_mask 95/216 vs M 117/216) by biasing the planner
+toward single-write resubmissions when two writes remain. Zero false blocks
+in 7,128 episodes.
+
+修订后的 holdout 当天跑完：联合可行性首次支持；R1 支持；U1 不支持但差额全部来自
+B0 在越权任务上的越权"完成"。两点修正下文第 3 节的预期：清洁任务上的增益主要来自
+规则说明而非清单（开发集功效不足）；一步清单在 boundary 变体上反而有害（模型倾向
+只重提交一步）。7,128 回合零误拦。
+
+### 1.4 Consequences for the plan / 对计划的影响
 
 - The v3 holdout as drafted would most likely have confirmed a negative
   (text aids do not help), spending the only confirmatory run on it.
@@ -172,10 +191,12 @@ do not claim M dominates refresh.
 5. **Cost is trivial.** 7,128 episodes reuse 648 shared first proposals;
    v2's 1,296-episode matrix ran in three minutes on one GPU.
 
-Risks: the 7B planner may still fail to chain two listed moves (off→low then
-low→high) within one resubmission; if so, R3 will be flat and the honest
-conclusion is "a one-step mask is insufficient; constrained decoding or a
-guard-side intermediate-step insertion is needed" — both are v4 items.
+Risks (written before the run): the 7B planner may still fail to chain two
+listed moves within one resubmission. **What happened:** R3 was flat on
+clean tasks (+2.8 pp, inconclusive) and the menu alone lowered boundary
+completion (95 vs 117), confirming the risk in the multi-step case; under
+attack the combination was still the best condition (123 vs 102). The fix is
+J6 in §5.
 
 ---
 
@@ -234,10 +255,13 @@ modified.
    software context).
 6. **External validation** per §4, starting with HomeBench + ToolEmu, then
    SimuHome behind a proxy.
-7. **Recovery beyond a one-step mask** if R3 is flat: constrained decoding of
-   the action list to the legal set (Agent-C style) or guard-side insertion
-   of the mandatory intermediate step on the same device (a conservative
-   shield-with-correction).
+7. **J6 — recovery beyond a one-step mask** (now required by the holdout):
+   a multi-step legal menu (sequences legal within `writes_remaining`) or the
+   one-step menu with an explicit "submit every remaining write" instruction,
+   then constrained decoding of the action list to the legal set (Agent-C
+   style) or guard-side insertion of the mandatory intermediate step on the
+   same device (a conservative shield-with-correction). Drop `confirm_empty`
+   unless a corpus reintroduces empty first plans.
 
 Target venues, by framing: USENIX Security / NDSS / CCS (enforcement +
 threat model + precision), or ICLR / NeurIPS D&B if the multi-dataset suite
@@ -247,13 +271,14 @@ becomes the main artefact.
 
 ## 6. Decisions for the corpus owner / 需要负责人拍板的事项
 
-1. **A2 (U2 as the joint-feasibility utility criterion).** Recommended;
-   U1 stays reported. If declined, set `JOINT_IDS = ('S1', 'U1')` in
-   `scripts/analyze_v3.py` before the freeze.
-2. **Rerun dev for the three new conditions before freezing** (exploratory,
-   allowed by the DRAFT prereg) so that `M_full` is seen working once on the
-   model, not only on the scripted planner.
-3. **Freeze**, then let the watcher start the holdout.
+All three were taken on 2026-10-12: A2 kept (`JOINT_IDS = ('S1', 'U2')`),
+dev rerun for the new conditions, freeze approved by the corpus owner and
+verified before and after the holdout. Remaining decision: whether the
+course deliverable stops here or includes J6 on a fresh preregistered
+holdout.
+
+三项决定已于 2026-10-12 完成（保留 A2、补跑 dev、负责人批准冻结）。剩下的决定：
+课程交付是否到此为止，还是再做一轮带 J6 的新 holdout。
 
 ---
 

@@ -21,6 +21,7 @@ For how the simulated attacks map to real homes, see
 | Study | Unsafe under attack: B2 vs EviBound (M) | Normal-task goal completion: no checker (B0) vs M | Verdict |
 |---|---|---|---|
 | v2 formal test (1,296 episodes) | 30/72 vs 0/72 | 53/72 vs 44/72 | Safety supported; "no worse than 5 points" utility target not met |
+| v3 holdout (7,128 episodes, frozen amended protocol) | B2_full 31/216 vs M_full 0/216 (+14.4 pp [+4.6, +25.9]) | raw: 172/216 vs 156/216 (−7.4 pp, unsupported); rule-compliant: 93/216 vs 156/216 (+29.2 pp [+16.7, +43.1], supported) | **Joint feasibility supported** (S1 ∧ U2); recovery gain M_full − M +19.4 pp |
 
 EviBound never refused a legal write. On the rule-compliant metric
 (`safe_completion`: goal reached with no unsafe or unauthorized transition) B0
@@ -29,11 +30,15 @@ stated sequencing rules, which M blocks and the agent then fails to repair.
 The Week 11–12 **v3** study tests three recovery aids (rule explanation,
 empty-plan check, and a legal-writes menu added before the freeze) on 72 new
 tasks that also vary the sensor modality and the phrasing of requests
-([plan with amendment log](docs/week11_v3_preregistration.md)). Human review
-of the v3 corpus is complete (77/77 cards); the holdout runs once the
-preregistration freeze is regenerated. Why the plan was amended, where the
-work sits in the 2024–2026 literature, and which external datasets come next:
-[Week-12 direction review](docs/week12_direction_review.md).
+([plan with amendment log](docs/week11_v3_preregistration.md)). The holdout
+ran on 2026-10-12 under the frozen protocol: zero unsafe effects and zero
+false blocks under every M-guard condition, and the rule-compliant utility
+criterion is met; the raw-completion deficit (−7.4 pp) is entirely the
+unguarded baseline "completing" authorization-negative tasks by writing the
+forbidden device ([closeout](docs/week12_v3_holdout_closeout.md),
+[results record](artifacts/week11_v3_holdout_results.json)). Why the plan was
+amended, where the work sits in the 2024–2026 literature, and which external
+datasets come next: [Week-12 direction review](docs/week12_direction_review.md).
 
 ## Where things are
 
@@ -44,6 +49,7 @@ work sits in the 2024–2026 literature, and which external datasets come next:
 | Exact rules and runtime contract | [docs/implementation_contract.md](docs/implementation_contract.md) |
 | v2 preregistration and results | [docs/week8_preregistration.md](docs/week8_preregistration.md), [artifacts/week8_main_results.json](artifacts/week8_main_results.json) |
 | v3 recovery study | [docs/week11_v3_preregistration.md](docs/week11_v3_preregistration.md) |
+| v3 holdout closeout and results | [docs/week12_v3_holdout_closeout.md](docs/week12_v3_holdout_closeout.md), [artifacts/week11_v3_holdout_results.json](artifacts/week11_v3_holdout_results.json) |
 | Direction review, literature positioning, external datasets | [docs/week12_direction_review.md](docs/week12_direction_review.md) |
 | Formal test validation record | [artifacts/week8_main_validation.json](artifacts/week8_main_validation.json) |
 | v1 dataset card and literature check | [docs/dataset_card.md](docs/dataset_card.md), [docs/sources_and_design_review.md](docs/sources_and_design_review.md) |
@@ -52,7 +58,7 @@ work sits in the 2024–2026 literature, and which external datasets come next:
 
 Task corpora: `data/scenarios/` (v1, 48 tasks, frozen), `data/scenarios_v2/`
 (56 tasks, frozen and human-reviewed), `data/scenarios_v3/` (84 tasks across 4
-sensor modalities and 3 language levels, human-reviewed, freeze pending). Model weights, raw traces and run logs live on the data disk
+sensor modalities and 3 language levels, human-reviewed, frozen, holdout complete). Model weights, raw traces and run logs live on the data disk
 (`/mnt/HDD-8T-0/evibound_yanke/`). Human-facing experiment reports, review
 packs and session notes stay local and are not in the public repository.
 
@@ -100,14 +106,17 @@ v2 正式测试共 1,296 个回合：受攻击时，B2 有 30/72 次实际不安
 既定顺序规则“完成”的 9 个任务被 M 正确拦下后，智能体没能修好计划。Week 11–12 的
 **v3** 实验在 72 个新任务上测试三种恢复辅助（规则说明、空计划确认、冻结前新增的
 “合法写入清单”），同时改变传感器模态和用户说法（[计划与修订记录](docs/week11_v3_preregistration.md)）。
-v3 语料人工审核已完成（77/77），预注册冻结重新生成后自动运行 holdout。为什么
-修订、工作在 2024–2026 文献中的位置、下一步并入哪些外部数据集：
+holdout 已于 2026-10-12 按冻结协议跑完 7,128 回合：所有 M 守卫条件零不安全、
+零误拦；合规完成口径达标（+29.2 pp），联合可行性首次支持；raw 口径 −7.4 pp 的差额
+全部来自无守卫基线在越权任务上写了未授权设备（[收尾记录](docs/week12_v3_holdout_closeout.md)、
+[结果文件](artifacts/week11_v3_holdout_results.json)）。为什么修订、工作在
+2024–2026 文献中的位置、下一步并入哪些外部数据集：
 [第 12 周方向复审](docs/week12_direction_review.md)。
 
 ## 文件布局
 
 任务语料：`data/scenarios/`（v1，48 个，已冻结）、`data/scenarios_v2/`（56 个，
-已冻结并经人工审核）、`data/scenarios_v3/`（84 个，覆盖 4 种传感器模态和 3 级语言，已人工审核，待冻结）。模型权重、
+已冻结并经人工审核）、`data/scenarios_v3/`（84 个，覆盖 4 种传感器模态和 3 级语言，已审核并冻结，holdout 已完成）。模型权重、
 完整逐回合轨迹和运行日志在数据盘 `/mnt/HDD-8T-0/evibound_yanke/`。面向人的
 实验报告、审核包和交接记录只保存在本地，不放进公开仓库。
 
