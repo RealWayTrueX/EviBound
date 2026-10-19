@@ -101,7 +101,7 @@
       clockStep: D.constants.write_clock_step, startClock: D.constants.start_clock,
       recordTimes: clone(D.constants.record_times) },
     sampling: Object.assign({ seed: 11 }, clone(D.constants.sampling)),
-    backend: { id: "ollama-qwen7b", custom: { type: "openai", base_url: "http://127.0.0.1:11434/v1", model: "qwen2.5:7b-instruct" } },
+    backend: { id: "linux-planner", custom: { type: "openai", base_url: "http://127.0.0.1:11434/v1", model: "qwen2.5:7b-instruct" } },
     scenarios: {},
   };
   const DRAFT_KEY = "draft-v2";
@@ -158,6 +158,7 @@
   /* ---------------- server / backends ---------------- */
   let server = null;
   const FALLBACK_BACKENDS = [
+    { id: "linux-planner", label: "UQ Linux GPU 机 · 冻结的 Qwen2.5-7B 规划器（Tailscale）", type: "openai", base_url: "http://100.72.39.67:8000/v1", model: "Qwen2.5-7B-Instruct" },
     { id: "ollama-qwen7b", label: "Ollama · qwen2.5:7b-instruct（本机）", type: "openai", base_url: "http://127.0.0.1:11434/v1", model: "qwen2.5:7b-instruct" },
   ];
   const backends = () => {
@@ -171,6 +172,13 @@
       const r = await fetch("api/info", { cache: "no-store" });
       if (r.ok) server = await r.json();
     } catch (e) { server = null; }
+  }
+  /* Query string naming the selected live backend for the server's /api/remote/* proxies. */
+  function remoteQuery() {
+    const id = settings.backend.id;
+    const q = new URLSearchParams({ backend_id: id });
+    if (id === "custom") { q.set("base_url", settings.backend.custom.base_url); q.set("model", settings.backend.custom.model); }
+    return q.toString();
   }
   async function callModel(messages) {
     const b = backends().find((x) => x.id === settings.backend.id) || backends()[0];
@@ -518,9 +526,21 @@
     if ($("plannerSelect").value !== ui.planner) { ui.planner = "scripted:hasty"; $("plannerSelect").value = ui.planner; }
     if (ui.planner.startsWith("live:")) settings.backend.id = ui.planner.slice(5);
     const hint = ui.planner.startsWith("scripted:") ? E.PERSONAS[ui.planner.split(":")[1]] + "。用来稳定复现典型行为，不代表模型的真实比例。"
-      : ui.planner.startsWith("live:") ? (server ? "每次“模型生成”都会真实调用所选模型。" : "直接打开网页时多数模型服务会被浏览器跨域拦截；建议运行 python3 demo/serve.py。")
+      : ui.planner.startsWith("live:") ? (server ? "每次“模型生成”都会真实调用所选模型；计算在模型所在的机器上进行。" : "直接打开网页时多数模型服务会被浏览器跨域拦截；建议运行 python3 demo/serve.py。")
       : ui.planner === "manual" ? "每到模型那一步，由你写出 JSON 计划。" : "使用导入轨迹里的原始模型输出。";
-    $("plannerHint").textContent = hint;
+    $("plannerHint").innerHTML = esc(hint) + (ui.planner.startsWith("live:") && server
+      ? ` <button class="btn small" type="button" id="btnCheckBackend">检查连接</button> <span id="backendStatus"></span>` : "");
+    const check = $("btnCheckBackend");
+    if (check) check.addEventListener("click", async () => {
+      const status = $("backendStatus");
+      status.textContent = "连接中……";
+      try {
+        const r = await fetch("api/remote/health?" + remoteQuery());
+        const d = await r.json();
+        if (!r.ok) throw new Error(d.error || r.status);
+        status.textContent = `已连通：${d.model || "?"} · ${d.device || "?"} · 模型${d.loaded ? "已加载" : "未加载"} · 已调用 ${d.calls || 0} 次${d.auth_required ? " · 需要令牌" : ""}`;
+      } catch (err) { status.textContent = "连不上：" + err.message; }
+    });
   }
   function renderTaskCard() {
     const sc = run.scenario;
@@ -959,12 +979,23 @@
   function renderReplay() {
     const list = replay.episodes;
     const opts = list.slice(0, 2000).map((e, i) => `<option value="${i}">${esc(e.task_id)} · ${esc(e.variant)} · ${esc(e.condition)} · seed ${esc(e.seed)}${e.metrics && e.metrics.unsafe_effect ? " · 不安全" : ""}</option>`).join("");
+    const liveBackends = backends().filter((b) => b.type === "openai");
+    const remoteBlock = server ? `
+      <h3 style="font-size:14px;margin:14px 0 6px">从模型服务直接拉取真实轨迹</h3>
+      <p class="hint">Linux 上的 <code>scripts/serve_planner.py</code> 同时提供数据盘上的运行记录。选服务、列出运行，再按当前任务拉取回合（最多 200 个），不用手动拷文件。</p>
+      <div class="row" style="display:flex;gap:8px;flex-wrap:wrap;align-items:center">
+        <select id="remoteBackend" aria-label="模型服务" style="width:auto">${liveBackends.map((b) => `<option value="${esc(b.id)}" ${b.id === settings.backend.id ? "selected" : ""}>${esc(b.label)}</option>`).join("")}</select>
+        <button class="btn small" type="button" id="btnRemoteRuns">列出运行</button>
+        <span class="hint" id="remoteStatus"></span>
+      </div>
+      <div id="remoteRuns" style="margin-top:8px"></div>` : `<p class="hint">运行 <code>python3 demo/serve.py</code> 后，这里还可以直接从 Linux 上的模型服务拉取真实轨迹。</p>`;
     $("panel-replay").innerHTML = `
-      <p>正式实验的逐回合原始轨迹在 GPU 机的数据盘上（<code>/mnt/HDD-8T-0/evibound_yanke/runs/week11_v3_holdout/</code>，不进仓库）。把其中的 <code>.jsonl</code> 文件拷到 Mac 后在这里导入，就能逐步回放真实模型的输出；演示引擎会重新执行一遍，并核对是否和原始记录一致。</p>
+      <p>正式实验的逐回合原始轨迹在 GPU 机的数据盘上（<code>/mnt/HDD-8T-0/evibound_yanke/runs/week11_v3_holdout/</code>，不进仓库）。导入其中的 <code>.jsonl</code> 文件，或从下面的模型服务直接拉取，就能逐步回放真实模型的输出；演示引擎会按仓库默认参数重新执行一遍，并核对是否和原始记录一致。</p>
       <div class="row" style="display:flex;gap:8px;flex-wrap:wrap;align-items:center">
         <label class="btn" for="replayFile">选择轨迹文件</label><input type="file" id="replayFile" accept=".jsonl,.json" hidden>
         <span class="hint">${replay.fileName ? `${esc(replay.fileName)}：${list.length} 个回合` : "还没有导入"}</span>
       </div>
+      ${remoteBlock}
       ${list.length ? `<div class="edit-box" style="margin-top:10px"><label for="replayPick">选择回合</label><select id="replayPick" size="10">${opts}</select>
         <div class="row" style="display:flex;gap:8px;margin-top:8px"><button class="btn primary" type="button" id="btnReplayLoad">在上方回放</button></div></div>` : ""}`;
     $("replayFile").addEventListener("change", async (e) => {
@@ -980,6 +1011,41 @@
       replay = { episodes: eps, selected: null, fileName: f.name };
       renderReplay();
       toast(eps.length ? `读到 ${eps.length} 个回合` : "文件里没有找到回合记录（需要含 scenario 和 proposals 字段）");
+    });
+    if ($("btnRemoteRuns")) $("btnRemoteRuns").addEventListener("click", async () => {
+      const id = $("remoteBackend").value;
+      settings.backend.id = id;
+      const status = $("remoteStatus");
+      status.textContent = "正在列出……";
+      try {
+        const r = await fetch("api/remote/runs?" + remoteQuery());
+        const d = await r.json();
+        if (!r.ok) throw new Error(d.error || r.status);
+        status.textContent = d.runs.length ? `${d.runs.length} 个运行` : "服务上没有运行记录";
+        $("remoteRuns").innerHTML = `<div class="table-wrap"><table><thead><tr><th>运行</th><th>回合数</th><th>完成</th><th>更新时间</th><th></th></tr></thead><tbody>${d.runs.map((run) =>
+          `<tr><td>${esc(run.name)}</td><td class="num">${esc(run.episodes)}</td><td>${run.complete ? "是" : "否"}</td><td>${esc(run.modified_utc || "")}</td>
+           <td><button class="btn small" type="button" data-run="${esc(run.name)}">拉取 ${esc(ui.taskId)} 的回合</button> <button class="btn small ghost" type="button" data-run="${esc(run.name)}" data-all="1">任意 200 个</button></td></tr>`).join("")}</tbody></table></div>`;
+        $("remoteRuns").querySelectorAll("button[data-run]").forEach((b) => b.addEventListener("click", async () => {
+          status.textContent = "正在拉取……";
+          const q = new URLSearchParams(remoteQuery());
+          q.set("run", b.dataset.run); q.set("limit", "200");
+          if (!b.dataset.all) q.set("task_id", ui.taskId);
+          try {
+            const rr = await fetch("api/remote/episodes?" + q.toString());
+            if (!rr.ok) { const dd = await rr.json(); throw new Error(dd.error || rr.status); }
+            const text = await rr.text();
+            const eps = [];
+            for (const line of text.split(/\n/)) {
+              const t = line.trim();
+              if (!t) continue;
+              try { const o = JSON.parse(t); if (o && o.scenario && o.proposals) eps.push(o); } catch (err) { /* skip */ }
+            }
+            replay = { episodes: eps, selected: null, fileName: `${id}:${b.dataset.run}${b.dataset.all ? "" : " · " + ui.taskId}` };
+            renderReplay();
+            toast(eps.length ? `拉到 ${eps.length} 个回合，在下方选择后回放` : "没有匹配的回合");
+          } catch (err) { status.textContent = "拉取失败：" + err.message; }
+        }));
+      } catch (err) { status.textContent = "连不上：" + err.message; }
     });
     if ($("btnReplayLoad")) $("btnReplayLoad").addEventListener("click", () => {
       const i = +$("replayPick").value;

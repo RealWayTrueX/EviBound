@@ -1,5 +1,15 @@
 [
   {
+    "id": "linux-planner",
+    "label": "UQ Linux GPU 机 · 冻结的 Qwen2.5-7B 规划器（Tailscale 直连，scripts/serve_planner.py）",
+    "type": "openai",
+    "base_url": "http://100.72.39.67:8000/v1",
+    "model": "Qwen2.5-7B-Instruct",
+    "api_key_env": "EVIBOUND_API_TOKEN",
+    "api_key_file": "~/.config/evibound/planner_token",
+    "timeout_s": 600
+  },
+  {
     "id": "ollama-qwen7b",
     "label": "Ollama · qwen2.5:7b-instruct（Mac 本机）",
     "type": "openai",

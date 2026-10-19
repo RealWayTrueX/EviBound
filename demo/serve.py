@@ -29,6 +29,7 @@ import sys
 import threading
 import time
 import urllib.error
+import urllib.parse
 import urllib.request
 from http import HTTPStatus
 from http.server import SimpleHTTPRequestHandler, ThreadingHTTPServer
@@ -87,6 +88,33 @@ def _clean_sampling(sampling) -> dict:
     return out
 
 
+def _bearer(cfg: dict) -> str | None:
+    """Token from the environment variable or file named in backends.json; never from the page."""
+    key_env = cfg.get("api_key_env")
+    if key_env and os.environ.get(key_env):
+        return os.environ[key_env].strip()
+    key_file = cfg.get("api_key_file")
+    if key_file:
+        path = Path(os.path.expanduser(key_file))
+        if path.is_file():
+            return path.read_text().strip() or None
+    return None
+
+
+def _service_root(cfg: dict) -> str:
+    """scripts/serve_planner.py serves /runs next to /v1; strip the OpenAI prefix."""
+    return re.sub(r"/v1/?$", "", cfg["base_url"].rstrip("/"))
+
+
+def _remote_get(cfg: dict, path: str, timeout_s: float = 60):
+    headers = {}
+    token = _bearer(cfg)
+    if token:
+        headers["Authorization"] = "Bearer " + token
+    request = urllib.request.Request(_service_root(cfg) + path, headers=headers)
+    return urllib.request.urlopen(request, timeout=timeout_s)
+
+
 def _call_openai(cfg: dict, messages: list, sampling: dict) -> str:
     url = cfg["base_url"].rstrip("/") + "/chat/completions"
     body = {"model": cfg["model"], "messages": messages,
@@ -97,9 +125,9 @@ def _call_openai(cfg: dict, messages: list, sampling: dict) -> str:
     if sampling.get("seed") is not None:
         body["seed"] = sampling["seed"]
     headers = {"Content-Type": "application/json"}
-    key_env = cfg.get("api_key_env")
-    if key_env and os.environ.get(key_env):
-        headers["Authorization"] = "Bearer " + os.environ[key_env]
+    token = _bearer(cfg)
+    if token:
+        headers["Authorization"] = "Bearer " + token
     request = urllib.request.Request(url, json.dumps(body).encode(), headers)
     with urllib.request.urlopen(request, timeout=cfg.get("timeout_s", 300)) as response:
         data = json.loads(response.read())
@@ -180,12 +208,58 @@ class Handler(SimpleHTTPRequestHandler):
             return self._json(403, {"error": "unexpected Host header"})
         return super().do_HEAD()
 
+    def _public_backends(self) -> list[dict]:
+        """What the page may see: ids, labels, types, urls; never key names, files or paths."""
+        return [{k: v for k, v in cfg.items() if k in ("id", "label", "type", "base_url", "model")}
+                | {"has_token": bool(_bearer(cfg))} for cfg in _backends()]
+
+    def _remote(self, query: dict):
+        """Resolve the backend named in a /api/remote/* query (custom base_url allowed)."""
+        data = {"backend_id": query.get("backend_id", [""])[0]}
+        if data["backend_id"] == "custom":
+            data["custom"] = {"base_url": query.get("base_url", [""])[0], "model": query.get("model", ["x"])[0] or "x"}
+        cfg = _resolve_backend(data)
+        if cfg.get("type") != "openai":
+            raise ValueError("only OpenAI-compatible backends can serve runs")
+        return cfg
+
     def do_GET(self):
         if not self._host_ok():
             return self._json(403, {"error": "unexpected Host header"})
         if self.path == "/api/info":
             presets = sorted(p.stem for p in PRESETS.glob("*.json"))
-            return self._json(200, {"server": True, "backends": _backends(), "presets": presets})
+            return self._json(200, {"server": True, "backends": self._public_backends(), "presets": presets})
+        url = urllib.parse.urlsplit(self.path)
+        if url.path in ("/api/remote/health", "/api/remote/runs", "/api/remote/episodes"):
+            query = urllib.parse.parse_qs(url.query)
+            try:
+                cfg = self._remote(query)
+                if url.path == "/api/remote/health":
+                    with _remote_get(cfg, "/health", 15) as response:
+                        return self._json(200, json.loads(response.read()))
+                if url.path == "/api/remote/runs":
+                    with _remote_get(cfg, "/runs", 60) as response:
+                        return self._json(200, json.loads(response.read()))
+                run = query.get("run", [""])[0]
+                if not re.fullmatch(r"[\w.-]{1,80}", run):
+                    return self._json(400, {"error": "bad run name"})
+                params = {k: query[k][0] for k in ("task_id", "condition", "variant", "seed", "limit") if query.get(k)}
+                with _remote_get(cfg, f"/runs/{run}/episodes?" + urllib.parse.urlencode(params), 600) as response:
+                    body = response.read()
+                self.send_response(200)
+                self.send_header("Content-Type", "application/x-ndjson; charset=utf-8")
+                self.send_header("Content-Length", str(len(body)))
+                self.send_header("Cache-Control", "no-store")
+                self.end_headers()
+                self.wfile.write(body)
+                return None
+            except ValueError as exc:
+                return self._json(400, {"error": str(exc)})
+            except urllib.error.HTTPError as exc:
+                detail = exc.read().decode("utf-8", "replace")[:300]
+                return self._json(502, {"error": f"模型服务返回 {exc.code}：{detail}"})
+            except (urllib.error.URLError, OSError) as exc:
+                return self._json(502, {"error": f"模型服务连不上：{exc}. 检查 Tailscale/网络和服务是否在运行。"})
         match = re.fullmatch(r"/api/presets/([\w.-]+)", self.path)
         if match:
             path = PRESETS / f"{match.group(1)}.json"

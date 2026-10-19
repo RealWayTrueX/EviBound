@@ -38,7 +38,12 @@ planner) load into the replay tab the same way.
 
 ## Models / 模型
 
-Edit `backends.json`. Examples: Ollama on the Mac
+The default live backend is the frozen planner served from the GPU machine by
+`scripts/serve_planner.py` over Tailscale (setup, token and fallbacks without
+SSH: [docs/remote_planner_setup.md](../docs/remote_planner_setup.md)); the
+replay tab can pull real holdout episodes from the same service.
+
+Edit `backends.json` for other endpoints. Examples: Ollama on the Mac
 (`ollama pull qwen2.5:7b-instruct`), vLLM on the GPU machine through
 `ssh -L 8000:127.0.0.1:8000 <gpu-host>`, or a local Hugging Face folder via
 transformers. API keys are read from the environment variable named in

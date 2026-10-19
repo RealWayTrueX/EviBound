@@ -293,3 +293,9 @@ Frozen-boundary rules (non-negotiable):
   oracle disagreements; `scripts/run_v3_local.py` is the no-GPU/local-model
   reproduction path, always labelled exploratory. Frozen files untouched;
   `freeze_v3_prereg.py --verify` still passes.
+  Later the same day, at the corpus owner's request (Mac for demos only, GPU
+  machine for every model call, no SSH available): `scripts/serve_planner.py`
+  serves the frozen planner and the data-disk traces over HTTP on the
+  machines' existing Tailscale network, `scripts/run_planner_server.sh`
+  launches it in tmux with a bearer token, and the demo's live backend and
+  replay tab call it (`docs/remote_planner_setup.md`).
