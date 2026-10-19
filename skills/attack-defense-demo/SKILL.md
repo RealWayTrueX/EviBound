@@ -31,20 +31,29 @@ Worked example: `demo/` in the EviBound repository (`index.html`, `engine.js`,
    write, reread, feedback, re-plan, score). Each step card shows the actor,
    a one-line effect in plain language, the individual checks as pass/fail
    chips, and the raw JSON behind a disclosure.
-5. **Show belief next to truth.** Two small scenes: what the agent believes
+5. **Draw the physical space the dataset implies, and the chain around it.**
+   A floor plan (rooms, fixtures, sensors, people) makes "unsafe" legible: a
+   lamp glowing in an empty room is the finding. Place the data chain
+   (store → integrations → agent → guard → actuators) around the plan and
+   animate every hop as a packet, so the attack is seen travelling. Make
+   consequences physical: a phantom occupant for a forged reading, a
+   shattering stamp for a block, a full-screen flood and shake for an
+   executed unsafe effect. Offer slow / normal / fast / instant speeds and
+   honour reduced-motion.
+6. **Show belief next to truth.** Two small scenes: what the agent believes
    (from the observation it saw) and what is actually true. A violation lights
    up the truth scene, not the belief scene.
-6. **Pending step is editable.** Before a prompt is sent or a model reply is
+7. **Pending step is editable.** Before a prompt is sent or a model reply is
    executed, show it in an editor. One-off edits apply to this run; "make
    default" moves them into settings.
-7. **Edits are drafts until saved.** Keep drafts in browser storage, save
+8. **Edits are drafts until saved.** Keep drafts in browser storage, save
    explicitly to a named preset file through the local server (or download
    JSON when static), store only the diff from repository defaults, and flag
    "deviates from frozen protocol" whenever parameters, prompts or tasks differ.
-8. **Paired comparison table.** Run the same first plan under every condition
+9. **Paired comparison table.** Run the same first plan under every condition
    so the audience sees the guard as the only variable, mirroring the
    experiment's paired design.
-9. **Replay real traces.** Import the experiment's episode JSONL, re-execute
+10. **Replay real traces.** Import the experiment's episode JSONL, re-execute
    with the port and print whether events and metrics match the record.
 
 ## Live models

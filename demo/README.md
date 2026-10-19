@@ -10,6 +10,29 @@ the model are editable; edits can be saved as presets.
 守卫每一项检查（来源、时效、设备规则、授权）的结果、恢复反馈，以及独立判分器的
 结论。提示词、参数、任务和模型都可以改，改动可以保存成预设。
 
+## What you see / 画面
+
+The stage is a blueprint of the simulated home: six rooms (kitchen, hallway,
+bedroom, garage, office, nursery) with their furniture, a ceiling light, a
+fan, the room's sensor (presence, motion, camera or both) and the people in
+it; the active task's room is lit. Around the house sits the data chain:
+hub / record store → cloud & integrations (where the attacker reaches in) →
+LLM agent → EviBound guard (with one LED per check: provenance, freshness,
+authorization, R1–R6) → oracle. Every step animates: packets travel the
+chain, a tampered or replayed reading glitches red and conjures a phantom
+occupant, a blocked write shatters on the guard with a BLOCKED stamp and a
+mint shock-wave, an executed unsafe write floods the room and the screen
+rose with an UNSAFE EFFECT stamp and a shake, and the verdict ends with a
+SAFE sweep or an UNSAFE flash. The 动画 control sets slow / normal / fast /
+instant; "直接跑完" always runs instantly. Reduced-motion settings disable
+the full-screen effects.
+
+舞台是模拟住宅的蓝图：六个房间、家具、顶灯、风扇、该任务的传感器和房间里的人，
+当前任务的房间高亮；房子外面是数据链路：网关记录库 → 云端/集成层（攻击者插手处）
+→ 智能体 → EviBound 守卫（每项检查一个指示灯）→ 判分器。攻击读数会沿链路变红、
+在房间里生成"幻影"；拦截会在守卫处碎裂并盖 BLOCKED 印章；真正执行了不安全写入时
+整屏变红、晃动并盖 UNSAFE EFFECT 印章；判分以绿色扫光或红色闪烁收尾。
+
 ## Run / 运行
 
 ```bash

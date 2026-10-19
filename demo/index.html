@@ -6,81 +6,73 @@
 <title>EviBound 攻防演示台</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,700&family=Instrument+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@500;700;800&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
-<header class="masthead">
-  <div class="wrap masthead-row">
-    <div class="brand">
-      <svg class="brand-mark" viewBox="0 0 32 32" aria-hidden="true"><path d="M16 2 4 7v8c0 7.5 5 12.7 12 15 7-2.3 12-7.5 12-15V7L16 2Z" fill="var(--shield)"/><path d="m10 16 4 4 8-9" fill="none" stroke="var(--panel)" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>
-      <div>
-        <h1>EviBound 攻防演示台</h1>
-        <p class="sub">智能家居智能体的证据约束运行时防护 · 逐步看清攻击者做了什么、EviBound 拦了什么</p>
-      </div>
+<div class="fx-overlay" id="fxOverlay" aria-hidden="true"></div>
+<canvas class="fx-canvas" id="fxCanvas" aria-hidden="true"></canvas>
+
+<header class="top">
+  <div class="brand">
+    <svg class="brand-mark" viewBox="0 0 32 32" aria-hidden="true"><path d="M16 2 4 7v8c0 7.5 5 12.7 12 15 7-2.3 12-7.5 12-15V7L16 2Z" fill="none" stroke="var(--mint)" stroke-width="2"/><path d="m10 16 4 4 8-9" fill="none" stroke="var(--mint)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    <div>
+      <h1>EVIBOUND <span class="h1-zh">攻防演示台</span></h1>
+      <p class="sub">智能家居智能体的证据约束运行时防护 · 看攻击如何沿链路传导、EviBound 在哪一步拦下</p>
     </div>
-    <div class="meta-chips" id="metaChips"></div>
   </div>
+  <div class="meta-chips" id="metaChips"></div>
 </header>
 
-<main class="wrap">
-  <section class="setup" aria-labelledby="setupTitle">
-    <h2 id="setupTitle" class="eyebrow">场景设置</h2>
-    <div class="setup-grid">
-      <div class="field">
-        <label for="taskSelect">任务</label>
-        <select id="taskSelect"></select>
-        <div class="filters" id="filters"></div>
-      </div>
-      <div class="field">
-        <span class="label" id="variantLabel">观测情况</span>
-        <div class="seg" id="variantSeg" role="radiogroup" aria-labelledby="variantLabel"></div>
-        <label for="conditionSelect">防护条件</label>
-        <select id="conditionSelect"></select>
-        <p class="hint" id="conditionHint"></p>
-      </div>
-      <div class="field">
-        <label for="plannerSelect">智能体（谁来出计划）</label>
-        <select id="plannerSelect"></select>
-        <p class="hint" id="plannerHint"></p>
-      </div>
+<main>
+  <section class="mission" aria-label="场景设置">
+    <div class="field wide">
+      <label for="taskSelect">任务</label>
+      <select id="taskSelect"></select>
+      <div class="filters" id="filters"></div>
     </div>
-    <article class="task-card" id="taskCard"></article>
-  </section>
-
-  <section class="stage" aria-labelledby="stageTitle">
-    <div class="stage-head">
-      <h2 id="stageTitle" class="eyebrow">攻防流水线</h2>
-      <div class="controls">
-        <button id="btnReset" class="btn ghost" type="button" title="重置到第 0 步">重置</button>
-        <button id="btnStep" class="btn primary" type="button">下一步</button>
-        <button id="btnPlay" class="btn" type="button">自动播放</button>
-        <button id="btnFinish" class="btn ghost" type="button">直接跑完</button>
-        <label class="speed" for="speedSelect">速度
-          <select id="speedSelect"><option value="1600">慢</option><option value="900" selected>中</option><option value="400">快</option></select>
-        </label>
-      </div>
+    <div class="field">
+      <span class="label" id="variantLabel">观测情况</span>
+      <div class="seg" id="variantSeg" role="radiogroup" aria-labelledby="variantLabel"></div>
     </div>
-    <div class="pipeline" id="pipeline">
-      <div class="packet" id="packet" hidden></div>
+    <div class="field">
+      <label for="conditionSelect">防护条件</label>
+      <select id="conditionSelect"></select>
+      <p class="hint" id="conditionHint"></p>
     </div>
-    <div class="rooms">
-      <figure class="room" id="roomBelief"></figure>
-      <figure class="room" id="roomTruth"></figure>
-      <div class="scoreboard" id="scoreboard"></div>
+    <div class="field">
+      <label for="plannerSelect">智能体</label>
+      <select id="plannerSelect"></select>
+      <p class="hint" id="plannerHint"></p>
     </div>
   </section>
 
-  <section class="run" aria-labelledby="runTitle">
-    <div class="run-cols">
-      <div class="timeline-col">
-        <h2 id="runTitle" class="eyebrow">逐步记录</h2>
-        <ol class="timeline" id="timeline"></ol>
-      </div>
-      <div class="pending-col">
-        <h2 class="eyebrow">下一步</h2>
-        <div class="pending" id="pending"></div>
-      </div>
+  <section class="brief" aria-label="任务与战况">
+    <article class="brief-card" id="taskCard"></article>
+    <aside class="score-card" id="scoreboard"></aside>
+  </section>
+
+  <section class="theatre" aria-label="攻防舞台">
+    <div class="stage"><div class="stage-scroll" id="stage"></div></div>
+    <div class="transport">
+      <button id="btnReset" class="tbtn ghost" type="button" title="重置到第 0 步">重置</button>
+      <button id="btnStep" class="tbtn primary" type="button">下一步 ▸</button>
+      <button id="btnPlay" class="tbtn" type="button">自动播放</button>
+      <button id="btnFinish" class="tbtn ghost" type="button">直接跑完</button>
+      <label class="speed" for="speedSelect">动画
+        <select id="speedSelect"><option value="2">慢</option><option value="1" selected>正常</option><option value="0.5">快</option><option value="0">瞬间</option></select>
+      </label>
+    </div>
+  </section>
+
+  <section class="console" aria-label="逐步记录">
+    <div class="console-log">
+      <h2 class="eyebrow">逐步记录 · STEP LOG</h2>
+      <ol class="timeline" id="timeline"></ol>
+    </div>
+    <div class="console-pending">
+      <h2 class="eyebrow">下一步 · NEXT</h2>
+      <div class="pending" id="pending"></div>
     </div>
   </section>
 
@@ -102,10 +94,11 @@
     <div role="tabpanel" id="panel-about" aria-labelledby="tab-about" class="panel" hidden></div>
   </section>
 </main>
-<footer class="wrap foot" id="foot"></footer>
+<footer class="foot" id="foot"></footer>
 <div class="toast" id="toast" role="status" aria-live="polite" hidden></div>
 <script src="data/bundle.js"></script>
 <script src="engine.js"></script>
+<script src="stage.js"></script>
 <script src="app.js"></script>
 </body>
 </html>

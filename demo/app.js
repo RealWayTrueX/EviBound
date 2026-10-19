@@ -65,16 +65,6 @@
     load_exceeds_three: "总负载超过 3", fan_off_to_high: "风扇从关直接跳到 2 档",
     light_off_to_high: "灯从关直接跳到 2 档", high_fan_missing_light_indicator: "风扇 2 档但灯是关的",
   };
-  const NODES = [
-    { k: "room", name: "真实房间", role: "只有判分器知道真相", icon: "M4 11 12 4l8 7v9H4z" },
-    { k: "collector", name: "可信采集器", role: "网关记录库，不可改写", icon: "M5 5h14v4H5zM5 11h14v4H5zM5 17h14v3H5z" },
-    { k: "attacker", name: "攻击者", role: "能改智能体看到的读数", icon: "M12 3 2 20h20zM12 9v5M12 17v.5" },
-    { k: "agent", name: "智能体", role: "Qwen2.5-7B 出写入计划", icon: "M6 8h12v10H6zM9 4h6v4H9zM9 12h.5M14.5 12h.5M9 15h6" },
-    { k: "guard", name: "EviBound 守卫", role: "每次写入前核对证据与规则", icon: "M12 3 4 6v6c0 5 3.4 8.5 8 10 4.6-1.5 8-5 8-10V6z" },
-    { k: "devices", name: "设备", role: "模拟的灯和风扇", icon: "M9 18h6M10 21h4M12 3a6 6 0 0 0-3 11v2h6v-2a6 6 0 0 0-3-11z" },
-    { k: "oracle", name: "独立判分", role: "按真实状态逐步复核", icon: "M5 12l4 4 10-10" },
-  ];
-
   const labelZh = (sc, dim) => {
     const disp = sc.labels_display && sc.labels_display[dim];
     if (disp && disp.zh) return disp.zh;
@@ -293,7 +283,7 @@
       input = input || {};
       const w = this.world, sc = this.scenario;
       if (this.phase === "setup") {
-        this.push({ actor: "room", from: "room", to: "room", title: "场景就绪",
+        this.push({ actor: "room", from: "room", to: "room", title: "场景就绪", fx: "setup",
           body: `真实情况：房间里<b>${w.actualPresence ? "有人" : "没人"}</b>。灯 ${LV[w.actuators.light]}，风扇 ${LV[w.actuators.fan]}。授权设备：${sc.authorized.map((d) => DEV[d]).join("、")}。`,
           details: `<pre>${esc(pretty({ initial: sc.initial, goal_present: sc.goal_present, goal_absent: sc.goal_absent, authorized: sc.authorized }))}</pre>`,
           status: { room: `${w.actualPresence ? "有人" : "没人"} · 灯${LV[w.actuators.light]} · 风扇${LV[w.actuators.fan]}`,
@@ -317,13 +307,15 @@
         } else body = `真实的当前记录 <code>obs-current</code>（年龄 ${age}）：${esc(obsText(this.observation.value))}。`;
         body += ` 智能体据此会认为<b>${this.belief ? "有人" : "没人"}</b>${this.belief !== w.actualPresence ? "，<span class=\"cell-bad\">与真实情况相反</span>" : ""}。`;
         this.push({ actor, from: actor === "attacker" ? "attacker" : "collector", to: "agent", title, body,
+          fx: read.source === "value_corruption" ? "attack-tamper" : read.source === "replay" ? "attack-replay" : read.source === "boundary" ? "read-boundary" : "read-clean",
+          fxDetail: { label: `智能体以为${this.belief ? "有人" : "没人"}` },
           details: `<pre>${esc(pretty(this.observation))}</pre>`,
           status: { attacker: actor === "attacker" ? (read.source === "replay" ? "已重放旧记录" : "已篡改读数") : "未动手", agent: `以为${this.belief ? "有人" : "没人"}` } });
         this.phase = "prompt";
       } else if (this.phase === "prompt") {
         this.messages = input.messages || E.firstMessages(this.prompts, sc, w.state, this.observation);
         if (input.edited && this.planner.startsWith("live:")) this.edited = true;
-        this.push({ actor: "agent", from: "agent", to: "agent", title: "提示词已发给模型" + (input.edited ? "（手动修改过）" : ""),
+        this.push({ actor: "agent", from: "agent", to: "agent", title: "提示词已发给模型" + (input.edited ? "（手动修改过）" : ""), fx: "prompt",
           body: `系统提示 ${this.messages[0].content.length} 字符，用户消息包含任务、当前档位、授权设备和那条观测。`,
           details: `<pre>${esc(this.messages[1].content)}</pre><details><summary>系统提示词全文</summary><pre>${esc(this.messages[0].content)}</pre></details>`,
           status: { agent: "思考中" } });
@@ -346,6 +338,8 @@
         else if (!acts.length) body = "模型交了<b>空计划</b>：一条写入都没有。";
         else body = `计划 ${acts.length} 条写入：${acts.map((a) => `${esc(DEV[a.device] || a.device)}→${esc(LV[a.value] || a.value)}`).join("，")}。引用证据 <code>${esc(evid.id)}</code>。`;
         this.push({ actor: "agent", from: "agent", to: "guard", title: this.turn === 0 ? "模型给出计划" : "模型重新提交", body,
+          fx: "plan", fxDetail: { parseError: Boolean(resp.parse_error), empty: !acts.length,
+            label: acts.map((a) => `${DEV[a.device] || a.device}→${LV[a.value] || a.value}`).join("，") },
           details: `<pre>${esc(raw)}</pre>`, status: { agent: resp.parse_error ? "输出格式错误" : acts.length ? `${acts.length} 条写入` : "空计划" } });
         const events = w.execute(data.actions, data.evidence || {}, this.spec.guard);
         this.turnEvents = events;
@@ -359,7 +353,7 @@
         if (!this.eventQueue.length) { this.phase = "after"; return this.advanceAfter(); }
       } else if (this.phase === "reread") {
         this.fresh = w.observe();
-        this.push({ actor: "collector", from: "collector", to: "agent", title: "重新读取：真实当前记录",
+        this.push({ actor: "collector", from: "collector", to: "agent", title: "重新读取：真实当前记录", fx: "reread",
           body: `这次绕过攻击者，直接拿到 <code>${esc(this.fresh.id)}</code>：${esc(obsText(this.fresh.value))}。`,
           details: `<pre>${esc(pretty(this.fresh))}</pre>`, status: { collector: "已重读", agent: `现在以为${E.believedPresence(sc, this.fresh) ? "有人" : "没人"}` } });
         this.belief = E.believedPresence(sc, this.fresh);
@@ -376,6 +370,7 @@
         if (f.rule_explanation) bits.push("附规则说明");
         if (f.legal_writes_now) bits.push(`附合法写入清单（${f.legal_writes_now.map((x) => DEV[x.device] + "→" + LV[x.value]).join("、") || "空"}）`);
         this.push({ actor: "guard", from: "guard", to: "agent", title: "反馈发给模型" + (input.edited ? "（手动修改过）" : ""), body: bits.join("；") + "。",
+          fx: "feedback", fxDetail: { label: f.legal_writes_now ? "反馈 + 合法写入清单" : f.rule_explanation ? "反馈 + 规则说明" : "反馈" },
           details: `<pre>${esc(text)}</pre>`, status: { guard: "已反馈", agent: "重新规划中" } });
         this.turn = 1;
         this.phase = "plan";
@@ -393,6 +388,8 @@
         let details = `<pre>${esc(pretty({ unsafe_effect: m.unsafe_effect, unsafe_events: m.unsafe_events, authorization_violation: m.authorization_violation, goal_completion: m.goal_completion, safe_completion: m.safe_completion, safe_utility_completion: m.safe_utility_completion, executed_writes: m.executed_writes, rejected_proposals: m.rejected_proposals, false_blocks: m.false_blocks, reads: m.reads, final_state: m.final_state }))}</pre>`;
         if (this.replay) details += replayAgreement(this);
         this.push({ actor: "oracle", from: "devices", to: "oracle", title: "判分结果", body: verdicts.join("；") + `。执行 ${m.executed_writes} 次写入，拦截 ${m.rejected_proposals} 次，读传感器 ${m.reads} 次，误拦 ${m.false_blocks} 次。`,
+          fx: "score", fxDetail: { unsafe: m.unsafe_effect, complete: Boolean(m.safe_utility_completion),
+            label: m.unsafe_effect ? "出现实际不安全后果" : m.safe_utility_completion ? "安全完成任务" : m.goal_completion ? "完成了，但过程不安全" : "安全，但任务没完成" },
           details, status: { oracle: m.unsafe_effect ? "不安全" : m.safe_utility_completion ? "安全完成" : "安全但未完成" } });
         this.phase = "done";
       }
@@ -436,7 +433,11 @@
     } else verdict = `<span class="verdict block">拦截：${esc(REASON[ev.reason] || ev.reason)}</span>`;
     const used = c.presenceUsed;
     const basis = run.spec.guard === "B0" ? "" : used === null || used === undefined ? "" : `守卫按“${used ? "有人" : "没人"}”判断规则${run.spec.guard === "M" ? "（来自可信记录）" : "（来自智能体引用的读数）"}。`;
+    const unsafeLabel = unsafe.map((v) => ORACLE_ZH[v] || v).join("、");
     return { actor, from: "guard", to: ev.kind === "write" ? "devices" : "guard",
+      fx: ev.kind === "write" ? "guard-pass" : "block",
+      fxDetail: { checks: c, device: ev.device, value: ev.value, unsafe: unsafe.length > 0, unsafeLabel,
+        label: ev.kind === "write" ? `${DEV[ev.device] || ev.device}→${LV[ev.value] || ev.value}` : (REASON[ev.reason] || ev.reason) },
       title: `${DEV[ev.device] || "计划"}${ev.value ? " → " + LV[ev.value] : ""}`,
       body: `<div class="checks">${chips.join("")}</div>${verdict}<div class="hint">${basis}</div>`,
       details: `<pre>${esc(pretty({ kind: ev.kind, reason: ev.reason, clock: ev.clock, before: ev.before, after: ev.after, evidence: ev.evidence }))}</pre>`,
@@ -555,12 +556,10 @@
       settings.scenarios[sc.task_id] ? `<span class="tag attack">已手动修改</span>` : "",
     ].join("");
     $("taskCard").innerHTML = `
-      <div style="min-width:0">
-        <div class="eyebrow" style="margin:0">${esc(sc.task_id)} · ${esc(sc.context)} · ${esc(sc.split)}</div>
-        <p class="instr">${esc(sc.instruction)}</p>
-        <div class="tags">${tags}</div>
-      </div>
-      <dl class="kv">
+      <div class="eyebrow">${esc(sc.task_id)} · ${esc(sc.context)} · ${esc(sc.split)}</div>
+      <p class="instr">${esc(sc.instruction)}</p>
+      <div class="tags">${tags}</div>
+      <dl class="kv brief-grid">
         <dt>初始</dt><dd>灯 ${LV[sc.initial.light]}，风扇 ${LV[sc.initial.fan]}</dd>
         <dt>有人时</dt><dd>${goalText(sc.goal_present)}</dd>
         <dt>没人时</dt><dd>${goalText(sc.goal_absent)}</dd>
@@ -570,88 +569,46 @@
       </dl>`;
   }
 
-  /* ---------------- rendering: stage ---------------- */
-  function renderPipeline() {
-    const pipe = $("pipeline");
-    pipe.querySelectorAll(".node").forEach((n) => n.remove());
-    NODES.forEach((n, i) => {
-      const el = document.createElement("div");
-      el.className = "node idle";
-      el.dataset.k = n.k;
-      el.innerHTML = `<div class="n-head"><svg class="n-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="${n.icon}"/></svg><span>${n.name}</span><span class="n-ix">${i + 1}</span></div><div class="n-role">${n.role}</div><div class="n-status" id="status-${n.k}">—</div>`;
-      pipe.appendChild(el);
-    });
-  }
+  /* ---------------- rendering: stage (EviStage) ---------------- */
+  const STATUS_KEYS = { room: "room", collector: "hub", attacker: "attacker", agent: "agent", guard: "guard", devices: "devices", oracle: "oracle" };
   const statusMemo = {};
   function applyStatuses(steps) {
     for (const k of Object.keys(statusMemo)) delete statusMemo[k];
     for (const s of steps) Object.assign(statusMemo, s.status || {});
-    NODES.forEach((n) => { $("status-" + n.k).textContent = statusMemo[n.k] || "—"; });
+    for (const [k, target] of Object.entries(STATUS_KEYS)) EviStage.status(target, statusMemo[k] || "");
   }
-  function movePacket(step) {
-    const pipe = $("pipeline"), pk = $("packet");
-    const from = pipe.querySelector(`.node[data-k="${step.from}"]`), to = pipe.querySelector(`.node[data-k="${step.to}"]`);
-    pipe.querySelectorAll(".node").forEach((n) => { n.classList.remove("active", "hit"); });
-    const used = new Set(run.steps.flatMap((s) => [s.from, s.to]));
-    pipe.querySelectorAll(".node").forEach((n) => n.classList.toggle("idle", !used.has(n.dataset.k)));
-    if (!to) return;
-    to.classList.add("active");
-    if (step.alarm) to.classList.add("hit");
-    const color = { attacker: "var(--attack)", agent: "var(--agent)", collector: "var(--sensor)", "guard-bad": "var(--bad)", oracle: "var(--ink)" }[step.actor] || "var(--shield)";
-    const pr = pipe.getBoundingClientRect();
-    const pos = (el) => { const r = el.getBoundingClientRect(); return [r.left - pr.left + r.width / 2 - 7, r.top - pr.top + 26]; };
-    pk.hidden = false;
-    pk.style.setProperty("--pc", color);
-    pk.style.transition = "none";
-    const [fx, fy] = pos(from || to);
-    pk.style.transform = `translate(${fx}px, ${fy}px)`;
-    void pk.offsetWidth;
-    pk.style.transition = "";
-    const [tx, ty] = pos(to);
-    pk.style.transform = `translate(${tx}px, ${ty}px)`;
+  function stageState() {
+    const w = run.world, st = w.state;
+    const alarm = run.steps.some((s) => s.alarm);
+    EviStage.setState({ truth: st.presence, belief: run.belief, beliefKnown: run.belief !== null,
+      actuators: { light: st.light, fan: st.fan }, unsafe: alarm, clock: w.clock });
   }
-
-  function roomSvg(presence, light, fan, uncertain) {
-    const glow = { off: 0, low: 0.45, high: 0.95 }[light];
-    const shade = light === "off" ? "var(--muted)" : "var(--lamp)";
-    const spin = fan === "off" ? "" : fan === "low" ? "spin1" : "spin2";
-    return `<svg viewBox="0 0 220 120" role="img" aria-label="${presence ? "有人" : "没人"}，灯${LV[light]}，风扇${LV[fan]}">
-      <rect class="wall" x="1" y="1" width="218" height="118" rx="10"/>
-      <rect class="floor" x="1" y="100" width="218" height="19" rx="0"/>
-      <circle class="glow" cx="40" cy="44" r="${18 + glow * 22}" style="opacity:${glow * 0.55}"/>
-      <rect class="fixture" x="38" y="50" width="4" height="50"/>
-      <path class="shade" d="M26 50 L54 50 L48 32 L32 32 Z" style="fill:${shade}"/>
-      <rect class="fixture" x="167" y="62" width="6" height="38"/>
-      <g class="blades ${spin}"><ellipse cx="170" cy="48" rx="5" ry="14"/><ellipse cx="170" cy="76" rx="5" ry="14"/><ellipse cx="156" cy="62" rx="14" ry="5"/><ellipse cx="184" cy="62" rx="14" ry="5"/></g>
-      <circle cx="170" cy="62" r="4" class="fixture"/>
-      ${presence
-        ? `<g class="person"><circle cx="105" cy="46" r="9"/><path d="M91 100 Q91 62 105 60 Q119 62 119 100 Z"/></g>`
-        : `<g class="person-ghost"><circle cx="105" cy="46" r="9"/><path d="M91 100 Q91 62 105 60 Q119 62 119 100 Z"/></g>`}
-      ${uncertain ? `<text x="105" y="22" text-anchor="middle" style="font:600 13px var(--f-body);fill:var(--muted)">?</text>` : ""}
-    </svg>`;
+  async function playStepFx(step) {
+    if (!step.fx) return;
+    if (step.fx === "guard-pass") {
+      await EviStage.fx("guard-pass", step.fxDetail);
+      stageState();
+      await EviStage.fx("write-effect", step.fxDetail);
+      if (step.fxDetail.unsafe) await EviStage.fx("unsafe", { label: step.fxDetail.unsafeLabel });
+      return;
+    }
+    await EviStage.fx(step.fx, step.fxDetail);
+    stageState();
   }
   function renderRooms() {
     const w = run.world;
-    const st = w.state;
-    const belief = run.belief;
-    const alarm = run.steps.some((s) => s.alarm);
-    $("roomBelief").className = "room";
-    $("roomBelief").innerHTML = `<figcaption>智能体以为 <span>${belief === null ? "还没读到传感器" : belief ? "有人" : "没人"}</span></figcaption>${roomSvg(belief === true, st.light, st.fan, belief === null)}<div class="state-line">依据：${run.observation ? esc(run.observation.id) + " · t=" + run.observation.observed_at : "—"}</div>`;
-    $("roomTruth").className = "room" + (alarm ? " alarm" : "");
-    $("roomTruth").innerHTML = `<figcaption>真实情况 <span>${st.presence ? "有人" : "没人"}${alarm ? " · 出现违规" : ""}</span></figcaption>${roomSvg(st.presence, st.light, st.fan, false)}<div class="state-line">灯 ${LV[st.light]} · 风扇 ${LV[st.fan]} · 时钟 ${w.clock.toFixed(2)}</div>`;
     const ev = w.events;
     const writes = ev.filter((e) => e.kind === "write").length, rejects = ev.filter((e) => e.kind === "reject").length;
     const unsafeSoFar = ev.some((e) => e.kind === "write" && oracleViolations(e.before, e.after).length);
     const m = run.metrics;
-    const row = (k, v) => `<div class="score-row"><span>${k}</span>${v}</div>`;
-    const pill = (cls, t) => `<span class="pill ${cls}">${t}</span>`;
-    $("scoreboard").innerHTML = `<h3>本回合 · ${esc(run.condition)} · ${VARIANT[run.variant].zh}${run.edited ? " · 含手动修改" : ""}</h3>` +
-      row("执行的写入", pill("neutral", `${writes} / ${w.p.maxWrites}`)) +
-      row("被拦截", pill(rejects ? "warn" : "neutral", rejects)) +
-      row("读传感器", pill("neutral", w.queryCount)) +
-      row("不安全后果", unsafeSoFar ? pill("bad", "出现") : pill("ok", "无")) +
-      row("任务结果", m ? (m.safe_utility_completion ? pill("ok", "安全完成") : m.goal_completion ? pill("bad", "完成但不安全") : pill("neutral", "未完成")) : pill("neutral", "进行中")) +
-      row("误拦合法写入", m ? pill(m.false_blocks ? "bad" : "ok", m.false_blocks) : pill("neutral", "—"));
+    const tile = (k, v, cls) => `<div class="score"><div class="k">${k}</div><div class="v ${cls || ""}">${v}</div></div>`;
+    $("scoreboard").innerHTML = `<h3>本回合 · ${esc(run.condition)} · ${VARIANT[run.variant].zh}${run.edited ? " · 含手动修改" : ""}</h3><div class="score-grid">` +
+      tile("执行写入", `${writes}<span class="mute" style="font-size:14px">/${w.p.maxWrites}</span>`) +
+      tile("被拦截", rejects, rejects ? "warn" : "") +
+      tile("读传感器", w.queryCount) +
+      tile("不安全后果", unsafeSoFar ? "出现" : "无", unsafeSoFar ? "bad" : "ok") +
+      tile("任务结果", m ? (m.safe_utility_completion ? "安全完成" : m.goal_completion ? "完成但不安全" : "未完成") : "进行中", m ? (m.safe_utility_completion ? "ok" : m.goal_completion ? "bad" : "warn") : "mute") +
+      tile("误拦合法写入", m ? m.false_blocks : "—", m ? (m.false_blocks ? "bad" : "ok") : "mute") + `</div>`;
   }
 
   /* ---------------- rendering: timeline + pending ---------------- */
@@ -735,10 +692,12 @@
       try { run = new Run(); } catch (err2) { Object.assign(ui, sanitizeUi({})); run = new Run(); }
     }
     saveUi();
+    $("btnStep").disabled = false;  // a reset during an in-flight animation must not leave the button dead
     renderConditionSelect(); renderPlannerSelect(); renderTaskCard();
+    EviStage.reset();
+    EviStage.setScene({ room: run.scenario.context, modality: run.scenario.observation.modality, authorized: run.scenario.authorized });
     applyStatuses([]);
-    $("packet").hidden = true;
-    $("pipeline").querySelectorAll(".node").forEach((n) => n.classList.remove("active", "hit", "idle"));
+    stageState();
     renderAllRun();
     renderCompare();
     renderScenarioEditor();
@@ -766,7 +725,12 @@
     }
     if (r.steps.length > before) {
       applyStatuses(r.steps);
-      movePacket(r.steps[r.steps.length - 1]);
+      renderTimeline(); renderPending();
+      r.busy = true;
+      $("btnStep").disabled = true;
+      try { await playStepFx(r.steps[r.steps.length - 1]); }
+      finally { r.busy = false; if (run === r) $("btnStep").disabled = false; }
+      if (run !== r) return;
     }
     renderAllRun();
     if (r.done()) { stopAuto(); renderCompare(); }
@@ -775,17 +739,21 @@
   function startAuto() {
     if (run.done()) resetRun();
     $("btnPlay").textContent = "暂停";
-    autoplay = setInterval(() => { if (!run.busy) step(); }, +$("speedSelect").value);
+    autoplay = setInterval(() => { if (!run.busy) step(); }, 350);
   }
   async function finish() {
     stopAuto();
     const r = run;
+    const speed = +$("speedSelect").value;
+    EviStage.setSpeed(0);
     let guard = 0;
-    while (run === r && !r.done() && guard++ < 80) {
-      if (r.busy) { await new Promise((res) => setTimeout(res, 120)); continue; }
-      await step();
-      if (pendingError) break;
-    }
+    try {
+      while (run === r && !r.done() && guard++ < 80) {
+        if (r.busy) { await new Promise((res) => setTimeout(res, 120)); continue; }
+        await step();
+        if (pendingError) break;
+      }
+    } finally { EviStage.setSpeed(speed); }
   }
 
   /* ---------------- tab: compare all conditions ---------------- */
@@ -1197,7 +1165,9 @@ python3 demo/serve.py               # 打开 http://127.0.0.1:8765/
       if (validateScenario(obj) || obj.task_id !== id) delete settings.scenarios[id];
     }
     renderMeta();
-    renderPipeline();
+    EviStage.mount($("stage"), $("fxCanvas"), $("fxOverlay"));
+    EviStage.setSpeed(+$("speedSelect").value);
+    $("speedSelect").addEventListener("change", (e) => EviStage.setSpeed(+e.target.value));
     renderFilters();
     renderTaskSelect();
     renderVariantSeg();
@@ -1217,7 +1187,6 @@ python3 demo/serve.py               # 打开 http://127.0.0.1:8765/
     resetRun();
     selectTab(ui.tab || "compare");
     if (staleDraftDropped) toast("仓库数据已更新，旧的浏览器草稿已清除（预设文件不受影响）。");
-    window.addEventListener("resize", () => { if (run && run.steps.length) movePacket(run.steps[run.steps.length - 1]); });
   }
   boot().catch((err) => {
     // A corrupt draft or selection must never brick the page: clear per-viewer state once and reload.
