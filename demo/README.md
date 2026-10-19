@@ -32,7 +32,9 @@ models and saving presets to files (it downloads the preset JSON instead).
 | "回放真实轨迹" | episode JSONL from `/mnt/HDD-8T-0/evibound_yanke/runs/...`, re-executed and checked against the record |
 
 `tests/sample_episodes.jsonl` is a small scripted sample in the runner's
-episode format, only for testing the replay tab.
+episode format, only for testing the replay tab. Episode files written by
+`scripts/run_v3_local.py` (the real runner with a scripted or local-model
+planner) load into the replay tab the same way.
 
 ## Models / 模型
 
@@ -40,7 +42,9 @@ Edit `backends.json`. Examples: Ollama on the Mac
 (`ollama pull qwen2.5:7b-instruct`), vLLM on the GPU machine through
 `ssh -L 8000:127.0.0.1:8000 <gpu-host>`, or a local Hugging Face folder via
 transformers. API keys are read from the environment variable named in
-`api_key_env`; the page never asks for them.
+`api_key_env`; the page never asks for them. On a Mac whose conda `torch`
+aborts with a duplicate-OpenMP error, the local-weights path sets
+`KMP_DUPLICATE_LIB_OK=TRUE` before importing torch (Ollama avoids the issue).
 
 ## Test / 测试
 
