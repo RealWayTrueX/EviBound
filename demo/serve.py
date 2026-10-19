@@ -169,12 +169,16 @@ class Handler(SimpleHTTPRequestHandler):
     def log_message(self, fmt, *args):
         sys.stderr.write("[demo] " + fmt % args + "\n")
 
+    def end_headers(self):
+        # Static files change between demos; never let the browser keep a stale app.js.
+        self.send_header("Cache-Control", "no-store")
+        super().end_headers()
+
     def _json(self, status: int, payload) -> None:
         body = json.dumps(payload, ensure_ascii=False).encode()
         self.send_response(status)
         self.send_header("Content-Type", "application/json; charset=utf-8")
         self.send_header("Content-Length", str(len(body)))
-        self.send_header("Cache-Control", "no-store")
         self.end_headers()
         self.wfile.write(body)
 
@@ -249,7 +253,6 @@ class Handler(SimpleHTTPRequestHandler):
                 self.send_response(200)
                 self.send_header("Content-Type", "application/x-ndjson; charset=utf-8")
                 self.send_header("Content-Length", str(len(body)))
-                self.send_header("Cache-Control", "no-store")
                 self.end_headers()
                 self.wfile.write(body)
                 return None
