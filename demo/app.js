@@ -538,7 +538,10 @@
         const r = await fetch("api/remote/health?" + remoteQuery());
         const d = await r.json();
         if (!r.ok) throw new Error(d.error || r.status);
-        status.textContent = `已连通：${d.model || "?"} · ${d.device || "?"} · 模型${d.loaded ? "已加载" : "未加载"} · 已调用 ${d.calls || 0} 次${d.auth_required ? " · 需要令牌" : ""}`;
+        // serve_planner.py answers {model, device, loaded:bool, calls}; model_server.py answers {models:[], loaded:[]}.
+        const model = d.model || (Array.isArray(d.models) ? d.models.join(", ") : "?");
+        const loaded = d.loaded === true || (Array.isArray(d.loaded) && d.loaded.length > 0);
+        status.textContent = `已连通：${model}${d.device ? " · " + d.device : ""} · 模型${loaded ? "已加载" : "未加载"}${d.calls != null ? ` · 已调用 ${d.calls} 次` : ""}${d.auth_required ? " · 需要令牌" : ""}`;
       } catch (err) { status.textContent = "连不上：" + err.message; }
     });
   }
