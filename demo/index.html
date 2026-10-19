@@ -1,0 +1,111 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>EviBound 攻防演示台</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,700&family=Instrument+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header class="masthead">
+  <div class="wrap masthead-row">
+    <div class="brand">
+      <svg class="brand-mark" viewBox="0 0 32 32" aria-hidden="true"><path d="M16 2 4 7v8c0 7.5 5 12.7 12 15 7-2.3 12-7.5 12-15V7L16 2Z" fill="var(--shield)"/><path d="m10 16 4 4 8-9" fill="none" stroke="var(--panel)" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      <div>
+        <h1>EviBound 攻防演示台</h1>
+        <p class="sub">智能家居智能体的证据约束运行时防护 · 逐步看清攻击者做了什么、EviBound 拦了什么</p>
+      </div>
+    </div>
+    <div class="meta-chips" id="metaChips"></div>
+  </div>
+</header>
+
+<main class="wrap">
+  <section class="setup" aria-labelledby="setupTitle">
+    <h2 id="setupTitle" class="eyebrow">场景设置</h2>
+    <div class="setup-grid">
+      <div class="field">
+        <label for="taskSelect">任务</label>
+        <select id="taskSelect"></select>
+        <div class="filters" id="filters"></div>
+      </div>
+      <div class="field">
+        <span class="label" id="variantLabel">观测情况</span>
+        <div class="seg" id="variantSeg" role="radiogroup" aria-labelledby="variantLabel"></div>
+        <label for="conditionSelect">防护条件</label>
+        <select id="conditionSelect"></select>
+        <p class="hint" id="conditionHint"></p>
+      </div>
+      <div class="field">
+        <label for="plannerSelect">智能体（谁来出计划）</label>
+        <select id="plannerSelect"></select>
+        <p class="hint" id="plannerHint"></p>
+      </div>
+    </div>
+    <article class="task-card" id="taskCard"></article>
+  </section>
+
+  <section class="stage" aria-labelledby="stageTitle">
+    <div class="stage-head">
+      <h2 id="stageTitle" class="eyebrow">攻防流水线</h2>
+      <div class="controls">
+        <button id="btnReset" class="btn ghost" type="button" title="重置到第 0 步">重置</button>
+        <button id="btnStep" class="btn primary" type="button">下一步</button>
+        <button id="btnPlay" class="btn" type="button">自动播放</button>
+        <button id="btnFinish" class="btn ghost" type="button">直接跑完</button>
+        <label class="speed" for="speedSelect">速度
+          <select id="speedSelect"><option value="1600">慢</option><option value="900" selected>中</option><option value="400">快</option></select>
+        </label>
+      </div>
+    </div>
+    <div class="pipeline" id="pipeline">
+      <div class="packet" id="packet" hidden></div>
+    </div>
+    <div class="rooms">
+      <figure class="room" id="roomBelief"></figure>
+      <figure class="room" id="roomTruth"></figure>
+      <div class="scoreboard" id="scoreboard"></div>
+    </div>
+  </section>
+
+  <section class="run" aria-labelledby="runTitle">
+    <div class="run-cols">
+      <div class="timeline-col">
+        <h2 id="runTitle" class="eyebrow">逐步记录</h2>
+        <ol class="timeline" id="timeline"></ol>
+      </div>
+      <div class="pending-col">
+        <h2 class="eyebrow">下一步</h2>
+        <div class="pending" id="pending"></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="tabs-section">
+    <div class="tabbar" role="tablist" id="tabbar">
+      <button role="tab" id="tab-compare" aria-controls="panel-compare" aria-selected="true" type="button">全条件对比</button>
+      <button role="tab" id="tab-edit" aria-controls="panel-edit" aria-selected="false" type="button">Prompt 与参数</button>
+      <button role="tab" id="tab-scenario" aria-controls="panel-scenario" aria-selected="false" type="button">任务 JSON</button>
+      <button role="tab" id="tab-results" aria-controls="panel-results" aria-selected="false" type="button">正式实验结果</button>
+      <button role="tab" id="tab-replay" aria-controls="panel-replay" aria-selected="false" type="button">回放真实轨迹</button>
+      <button role="tab" id="tab-about" aria-controls="panel-about" aria-selected="false" type="button">说明</button>
+    </div>
+    <div class="savebar" id="savebar"></div>
+    <div role="tabpanel" id="panel-compare" aria-labelledby="tab-compare" class="panel"></div>
+    <div role="tabpanel" id="panel-edit" aria-labelledby="tab-edit" class="panel" hidden></div>
+    <div role="tabpanel" id="panel-scenario" aria-labelledby="tab-scenario" class="panel" hidden></div>
+    <div role="tabpanel" id="panel-results" aria-labelledby="tab-results" class="panel" hidden></div>
+    <div role="tabpanel" id="panel-replay" aria-labelledby="tab-replay" class="panel" hidden></div>
+    <div role="tabpanel" id="panel-about" aria-labelledby="tab-about" class="panel" hidden></div>
+  </section>
+</main>
+<footer class="wrap foot" id="foot"></footer>
+<div class="toast" id="toast" role="status" aria-live="polite" hidden></div>
+<script src="data/bundle.js"></script>
+<script src="engine.js"></script>
+<script src="app.js"></script>
+</body>
+</html>

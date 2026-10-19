@@ -55,6 +55,8 @@ datasets come next: [Week-12 direction review](docs/week12_direction_review.md).
 | v1 dataset card and literature check | [docs/dataset_card.md](docs/dataset_card.md), [docs/sources_and_design_review.md](docs/sources_and_design_review.md) |
 | Roadmap and decision log | [docs/roadmap_week6.md](docs/roadmap_week6.md) |
 | Agent working rules | [AGENTS.md](AGENTS.md) |
+| Step-by-step attack/defense demo (editable prompts, parameters, models) | [demo/](demo/README.md) — `python3 demo/serve.py` |
+| Reusable project skills (experiment design, demo, literature review) | [skills/](skills/README.md) |
 
 Task corpora: `data/scenarios/` (v1, 48 tasks, frozen), `data/scenarios_v2/`
 (56 tasks, frozen and human-reviewed), `data/scenarios_v3/` (84 tasks across 4

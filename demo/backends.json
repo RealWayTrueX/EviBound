@@ -1,0 +1,29 @@
+[
+  {
+    "id": "ollama-qwen7b",
+    "label": "Ollama · qwen2.5:7b-instruct（Mac 本机）",
+    "type": "openai",
+    "base_url": "http://127.0.0.1:11434/v1",
+    "model": "qwen2.5:7b-instruct"
+  },
+  {
+    "id": "gpu-vllm",
+    "label": "GPU 机 vLLM · Qwen2.5-7B-Instruct（经 SSH 隧道 :8000）",
+    "type": "openai",
+    "base_url": "http://127.0.0.1:8000/v1",
+    "model": "Qwen2.5-7B-Instruct"
+  },
+  {
+    "id": "lmstudio",
+    "label": "LM Studio（本机 :1234）",
+    "type": "openai",
+    "base_url": "http://127.0.0.1:1234/v1",
+    "model": "qwen2.5-7b-instruct"
+  },
+  {
+    "id": "hf-local",
+    "label": "transformers 本地权重（与实验同一模型）",
+    "type": "transformers",
+    "model_path": "~/models/Qwen2.5-7B-Instruct"
+  }
+]
