@@ -279,3 +279,17 @@ Frozen-boundary rules (non-negotiable):
   episodes. Rule explanation carried the clean gain, the menu helped under
   attack and hurt on boundary (J6 added), confirm_empty had no effect (no
   empty first plans). README, direction review and roadmap updated.
+
+- 2026-10-19: presentation and reproducibility tooling, no research change.
+  `demo/` is a step-by-step attack/defense page (attacker, model plan, per-write
+  guard checks, recovery feedback, oracle verdict) with editable prompts,
+  parameters, tasks and model endpoints; `demo/engine.js` ports the v3 guard,
+  recovery and oracle and is cross-checked against `runner_v3` on every task ×
+  variant × condition. `skills/` records the experiment-design, demo-building
+  and literature-review procedures as reusable skills. A laptop recheck
+  (`docs/week13_local_recheck.md`) re-ran tests, corpus checkers, all three
+  freeze records (HEAD and sealed tarballs), corpus regeneration and a
+  7,128-episode scripted-planner pass through the frozen pipeline with zero
+  oracle disagreements; `scripts/run_v3_local.py` is the no-GPU/local-model
+  reproduction path, always labelled exploratory. Frozen files untouched;
+  `freeze_v3_prereg.py --verify` still passes.

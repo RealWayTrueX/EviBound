@@ -1,10 +1,13 @@
 """Cross-check the demo's JavaScript engine against the real Python v3 runner.
 
-Node runs every v3 task x variant x condition through demo/engine.js with three
-scripted planners and records each planner reply. The same replies are then fed
-to ``runner_v3.run_seed`` as its "model", keyed by the exact prompt text the
+Node runs every v3 task x variant x condition through demo/engine.js with the
+three scripted planners and a set of adversarial personas (malformed JSON,
+prototype-named levels, extra keys, wrong ids, float/bool-typed numbers) and
+records each planner reply. The same replies are then fed to
+``runner_v3.run_seed`` as its "model", keyed by the exact prompt text the
 Python side builds. Any difference in prompts, recovery messages, guard events
-or oracle metrics fails the test.
+or oracle metrics fails the test. The bundle is built into a temporary file so
+the test never touches demo/data/bundle.js.
 
     PYTHONPATH=src:. python3 -m unittest demo.tests.test_demo_engine -v
 """
@@ -15,6 +18,7 @@ import json
 import shutil
 import subprocess
 import sys
+import tempfile
 import unittest
 from collections import defaultdict
 from pathlib import Path
@@ -43,18 +47,34 @@ def _scenarios():
 class DemoEngineMatchesPython(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
-        subprocess.run([sys.executable, str(ROOT / "demo" / "build_demo_data.py")], check=True,
-                       capture_output=True)
-        out = subprocess.run(["node", str(ROOT / "demo" / "tests" / "crosscheck_dump.js")],
+        cls.tmp = tempfile.TemporaryDirectory()
+        bundle = Path(cls.tmp.name) / "bundle.js"
+        subprocess.run([sys.executable, str(ROOT / "demo" / "build_demo_data.py"), "--output", str(bundle)],
+                       check=True, capture_output=True)
+        out = subprocess.run(["node", str(ROOT / "demo" / "tests" / "crosscheck_dump.js"), str(bundle)],
                              check=True, capture_output=True, text=True).stdout
         cls.js = [json.loads(line) for line in out.splitlines()]
+
+    @classmethod
+    def tearDownClass(cls):
+        cls.tmp.cleanup()
+
+    def test_committed_bundle_matches_repository(self):
+        """demo/data/bundle.js must be a current export (same content digest)."""
+        committed = (ROOT / "demo" / "data" / "bundle.js").read_text()
+        committed_json = json.loads(committed.split("=", 1)[1].strip().rstrip(";"))
+        fresh = json.loads((Path(self.tmp.name) / "bundle.js").read_text().split("=", 1)[1].strip().rstrip(";"))
+        self.assertEqual(committed_json["content_sha256"], fresh["content_sha256"],
+                         "run python3 demo/build_demo_data.py and commit demo/data/bundle.js")
 
     def test_every_episode_matches(self):
         scenarios = _scenarios()
         by_persona = defaultdict(list)
         for row in self.js:
             by_persona[row["persona"]].append(row)
-        self.assertEqual(len(self.js), 3 * len(scenarios) * len(VARIANTS) * len(V3_CONDITIONS))
+        personas = {row["persona"] for row in self.js}
+        self.assertGreaterEqual(len(personas), 3)
+        self.assertEqual(len(self.js), len(personas) * len(scenarios) * len(VARIANTS) * len(V3_CONDITIONS))
         checked = 0
         for persona, rows in by_persona.items():
             first_reply, retry_reply = {}, {}
@@ -90,7 +110,7 @@ class DemoEngineMatchesPython(unittest.TestCase):
                 self.assertEqual(episode["recovery_trigger"], js["trigger"], label)
                 events = [[e["kind"], e["device"], e["value"], e["reason"], e["before"], e["after"]]
                           for e in episode["trace"]["events"]]
-                self.assertEqual(events, js["events"], label)
+                self.assertEqual(json.loads(json.dumps(events)), js["events"], label)
                 for metric in METRICS:
                     self.assertEqual(episode["metrics"][metric], js["metrics"][metric], f"{label} {metric}")
                 checked += 1

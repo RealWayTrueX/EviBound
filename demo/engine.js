@@ -8,8 +8,12 @@
  *   src/evibound/oracle_v3.py    modality-aware false-block check
  *   src/evibound/runner_v3.py    shared first proposal + one recovery turn
  *
- * Known gap: JavaScript cannot tell 10 from 10.0 after JSON.parse, so a model
- * that rewrites observed_at as a float passes here but fails the Python check.
+ * Python keeps int and float apart (10 vs 10.0) and the guard and oracle react to
+ * that; JSON.parse with source access (Chrome 114+, Node 21+) tags integral floats
+ * in model output as PyFloat so the port can too. Python's lax nested equality
+ * (1 == 1.0 == True inside dicts) is reproduced by pyEq. Remaining known gaps:
+ * integer-like object keys are reordered by JavaScript; numbers beyond 2^53 lose
+ * precision; a browser without JSON.parse source access cannot tag floats.
  */
 (function (root, factory) {
   if (typeof module === "object" && module.exports) module.exports = factory();
@@ -42,10 +46,49 @@
     M_full: { guard: "M", repair_feedback: true, confirm_empty: true, legal_writes: true },
   };
 
-  const clone = (x) => (x === undefined ? undefined : JSON.parse(JSON.stringify(x)));
-  const isObj = (x) => x !== null && typeof x === "object" && !Array.isArray(x);
-  const isNum = (x) => typeof x === "number" && Number.isFinite(x);
-  const isInt = (x) => isNum(x) && Number.isInteger(x);
+  /* ---------- Python value model: int vs float, == vs strict ---------- */
+  class PyFloat extends Number {}  // an integral number written as a float literal ("10.0", "1e1")
+  const isPyFloat = (x) => x instanceof PyFloat;
+  const PARSE_SOURCE_SUPPORTED = (() => {
+    let seen = false;
+    try { JSON.parse("1", (k, v, ctx) => { seen = Boolean(ctx && typeof ctx.source === "string"); return v; }); } catch (e) { /* old engine */ }
+    return seen;
+  })();
+  function clone(x) {
+    if (x === undefined || x === null || typeof x !== "object") return x;
+    if (isPyFloat(x)) return new PyFloat(x.valueOf());
+    if (Array.isArray(x)) return x.map(clone);
+    const out = {};
+    for (const [k, v] of Object.entries(x)) if (v !== undefined) out[k] = clone(v);
+    return out;
+  }
+  const isObj = (x) => x !== null && typeof x === "object" && !Array.isArray(x) && !(x instanceof Number);
+  const isNumLike = (x) => typeof x === "boolean" || typeof x === "number" || isPyFloat(x);
+  const isNum = (x) => (typeof x === "number" && Number.isFinite(x)) || isPyFloat(x);
+  const isInt = (x) => typeof x === "number" && Number.isInteger(x);
+  const hasLevel = (v) => typeof v === "string" && Object.prototype.hasOwnProperty.call(LEVELS, v);
+  /* Python type() of a parsed JSON value. */
+  function pyType(x) {
+    if (x === null || x === undefined) return "NoneType";
+    if (typeof x === "boolean") return "bool";
+    if (isPyFloat(x)) return "float";
+    if (typeof x === "number") return Number.isInteger(x) ? "int" : "float";
+    if (typeof x === "string") return "str";
+    if (Array.isArray(x)) return "list";
+    return "dict";
+  }
+  /* Python == : numbers and bools compare by value (True == 1 == 1.0), containers elementwise. */
+  function pyEq(a, b) {
+    const na = isNumLike(a), nb = isNumLike(b);
+    if (na || nb) return na && nb && Number(a) === Number(b);
+    if (a === null || a === undefined || b === null || b === undefined) return (a == null) === (b == null);
+    if (typeof a === "string" || typeof b === "string") return a === b;
+    if (Array.isArray(a) || Array.isArray(b)) {
+      return Array.isArray(a) && Array.isArray(b) && a.length === b.length && a.every((v, i) => pyEq(v, b[i]));
+    }
+    const ka = Object.keys(a).sort(), kb = Object.keys(b).sort();
+    return ka.length === kb.length && ka.every((k, i) => k === kb[i] && pyEq(a[k], b[k]));
+  }
 
   /* ---------- Python-compatible json.dumps (default separators, ensure_ascii) ---------- */
   function pyStr(s) {
@@ -57,6 +100,8 @@
       else if (ch === "\n") out += "\\n";
       else if (ch === "\r") out += "\\r";
       else if (ch === "\t") out += "\\t";
+      else if (ch === "\b") out += "\\b";
+      else if (ch === "\f") out += "\\f";
       else if (c < 0x20) out += "\\u" + c.toString(16).padStart(4, "0");
       else if (c > 0x7e) {
         if (c > 0xffff) {
@@ -67,15 +112,41 @@
     }
     return out + '"';
   }
-  function pyDumps(v, sortKeys) {
+  /* repr(float): shortest round-trip digits, fixed notation for 1e-4 <= |v| < 1e16, else d.ddde+XX. */
+  function pyFloatRepr(v) {
+    if (v === 0) return Object.is(v, -0) ? "-0.0" : "0.0";
+    const [mantissa, exponent] = v.toExponential().split("e");
+    const exp = parseInt(exponent, 10);
+    if (exp >= -4 && exp < 16) {
+      const fixed = String(v);
+      return /[.e]/.test(fixed) ? fixed : fixed + ".0";
+    }
+    return mantissa + "e" + (exp < 0 ? "-" : "+") + String(Math.abs(exp)).padStart(2, "0");
+  }
+  function pyNum(v) {
+    if (isPyFloat(v)) return pyFloatRepr(v.valueOf());
+    if (!Number.isFinite(v)) return v > 0 ? "Infinity" : v < 0 ? "-Infinity" : "NaN";
+    if (Number.isInteger(v)) return Number.isSafeInteger(v) ? String(v) : BigInt(v).toString();
+    return pyFloatRepr(v);
+  }
+  /* json.dumps(v, sort_keys=sortKeys, indent=indent) with ensure_ascii and default separators. */
+  function pyDumps(v, sortKeys, indent, level) {
+    level = level || 0;
     if (v === null || v === undefined) return "null";
     if (typeof v === "boolean") return v ? "true" : "false";
-    if (typeof v === "number") return String(v);
+    if (typeof v === "number" || isPyFloat(v)) return pyNum(v);
     if (typeof v === "string") return pyStr(v);
-    if (Array.isArray(v)) return "[" + v.map((x) => pyDumps(x, sortKeys)).join(", ") + "]";
+    const pad = indent ? "\n" + " ".repeat(indent * (level + 1)) : "";
+    const end = indent ? "\n" + " ".repeat(indent * level) : "";
+    const sep = indent ? "," : ", ";
+    if (Array.isArray(v)) {
+      if (!v.length) return "[]";
+      return "[" + pad + v.map((x) => pyDumps(x, sortKeys, indent, level + 1)).join(sep + pad) + end + "]";
+    }
     let keys = Object.keys(v);
     if (sortKeys) keys = keys.slice().sort();
-    return "{" + keys.map((k) => pyStr(k) + ": " + pyDumps(v[k], sortKeys)).join(", ") + "}";
+    if (!keys.length) return "{}";
+    return "{" + pad + keys.map((k) => pyStr(k) + ": " + pyDumps(v[k], sortKeys, indent, level + 1)).join(sep + pad) + end + "}";
   }
   /* Canonical comparison (oracle _strict_equal: sorted keys, bool distinct from number). */
   const canon = (v) => pyDumps(v, true);
@@ -108,7 +179,7 @@
   }
 
   function jsonValue(v) {
-    if (typeof v === "boolean" || typeof v === "string") return true;
+    if (typeof v === "boolean" || typeof v === "string" || isPyFloat(v)) return true;
     if (typeof v === "number") return Number.isFinite(v);
     if (isObj(v)) return Object.values(v).every(jsonValue);
     return false;
@@ -119,7 +190,7 @@
   }
   function actionHasSchema(a) {
     return isObj(a) && typeof a.device === "string" && DEVICES.includes(a.device) &&
-      typeof a.value === "string" && a.value in LEVELS;
+      hasLevel(a.value);
   }
 
   /* ---------- WorldV3 ---------- */
@@ -131,9 +202,15 @@
       const init = clone(scenario.initial);
       if (typeof init.presence !== "boolean" || init.light !== "off" || !["off", "low"].includes(init.fan))
         throw new Error("Initial state must be light=off, fan=off/low, presence=boolean");
-      const obs = scenario.observation;
-      if (!obs || !SENSOR_NAMES[obs.modality]) throw new Error("scenario.observation.modality missing");
+      const authorized = scenario.authorized;
+      if (!Array.isArray(authorized) || authorized.some((d) => typeof d !== "string" || !DEVICES.includes(d)))
+        throw new Error("authorized must list only light/fan devices");
       if (!["tamper", "replay"].includes(scenario.perturbation)) throw new Error("perturbation must be tamper or replay");
+      const obs = scenario.observation;
+      if (!isObj(obs) || !Object.prototype.hasOwnProperty.call(SENSOR_NAMES, obs.modality))
+        throw new Error("v3 scenario needs observation.modality in " + Object.keys(SENSOR_NAMES).join(", "));
+      if (!(jsonValue(obs.payload_present) && jsonValue(obs.payload_absent)) || pyEq(obs.payload_present, obs.payload_absent))
+        throw new Error("v3 payloads must be distinct JSON values");
       this.scenario = scenario;
       this.taskId = scenario.task_id;
       this.variant = variant;
@@ -164,8 +241,7 @@
     decode(value) {
       for (const presence of [true, false]) {
         const payload = this.payloads[presence];
-        const sameType = (isObj(value) && isObj(payload)) || typeof value === typeof payload;
-        if (sameType && strictEqual(value, payload)) return presence;
+        if (pyType(value) === pyType(payload) && pyEq(value, payload)) return presence;
       }
       return null;
     }
@@ -197,11 +273,8 @@
       const record = Object.prototype.hasOwnProperty.call(this.records, e.id) ? this.records[e.id] : null;
       if (!record) return fail("unknown_record", "record");
       const sameKeys = canon(Object.keys(e).sort()) === canon(Object.keys(record).sort());
-      const fieldsOk = sameKeys && Object.keys(record).every((k) => {
-        const a = e[k], b = record[k];
-        const sameType = (isObj(a) && isObj(b)) || typeof a === typeof b;
-        return sameType && strictEqual(a, b);
-      });
+      const fieldsOk = sameKeys && Object.keys(record).every((k) =>
+        pyType(e[k]) === pyType(record[k]) && pyEq(e[k], record[k]));
       if (!fieldsOk) return fail("record_mismatch", "provenance");
       steps.push({ id: "provenance", ok: true });
       if (checkFreshness) {
@@ -296,7 +369,7 @@
   }
   function recoveryTrigger(condition, resp, events, successfulWrites, maxWrites) {
     const spec = CONDITION_SPECS[condition];
-    if (events.length && events[events.length - 1].kind === "reject" && successfulWrites < (maxWrites || 3)) return "rejection";
+    if (events.length && events[events.length - 1].kind === "reject" && successfulWrites < (maxWrites == null ? 3 : maxWrites)) return "rejection";
     if (spec.confirm_empty && !events.length && isEmptyPlan(resp)) return "empty_plan";
     return null;
   }
@@ -328,16 +401,22 @@
 
   /* ---------- planner prompt (planner_v3.messages_for_v3) and parse_response ---------- */
   function firstMessages(prompts, scenario, state, observation) {
-    const user = prompts.user_template
-      .replace("{instruction}", scenario.instruction)
-      .replace("{actuators}", pyDumps({ light: state.light, fan: state.fan }, true))
-      .replace("{authorized}", pyDumps(scenario.authorized, false))
-      .replace("{observation}", pyDumps(observation, true));
+    const fields = { instruction: scenario.instruction,
+      actuators: pyDumps({ light: state.light, fan: state.fan }, true),
+      authorized: pyDumps(scenario.authorized, false), observation: pyDumps(observation, true) };
+    // One pass, no "$&" expansion and no re-scanning of substituted text (str.format semantics).
+    const user = prompts.user_template.replace(/\{(instruction|actuators|authorized|observation)\}/g, (m, k) => fields[k]);
     return [{ role: "system", content: prompts.system }, { role: "user", content: user }];
   }
+  /* planner.parse_response: str.strip() then json.loads with NaN/Infinity rejected. Integral
+     numbers written as floats become PyFloat when the engine exposes the source text. */
+  const floatReviver = (key, value, ctx) =>
+    (typeof value === "number" && Number.isInteger(value) && ctx && typeof ctx.source === "string"
+      && /[.eE]/.test(ctx.source)) ? new PyFloat(value) : value;
   function parseResponse(raw) {
     try {
-      const data = JSON.parse(String(raw).trim());
+      const text = String(raw).replace(/^[\s\x1c-\x1f]+|[\s\x1c-\x1f]+$/g, "");
+      const data = JSON.parse(text, floatReviver);
       if (!isObj(data)) throw new Error("top level must be an object");
       if (!Array.isArray(data.actions)) throw new Error("actions must be a list");
       if (!isObj(data.evidence)) throw new Error("evidence must be an object");
@@ -349,7 +428,7 @@
 
   /* ---------- oracle.py + oracle_v3.py (independent: no guard code above is used) ---------- */
   function oViolations(before, after) {
-    if (!["light", "fan"].every((d) => after[d] in LEVELS)) return ["invalid_actuator_state"];
+    if (!["light", "fan"].every((d) => hasLevel(after[d]))) return ["invalid_actuator_state"];
     if (typeof after.presence !== "boolean") return ["invalid_presence_state"];
     const f = [];
     if (after.light !== "off" && !after.presence) f.push("light_requires_presence");
@@ -381,7 +460,7 @@
     (trace.events || []).forEach((ev, i) => {
       if (ev.kind !== "write" && ev.kind !== "reject") return;
       const before = ev.before || state;
-      const okSchema = typeof ev.device === "string" && ["light", "fan"].includes(ev.device) && ev.value in LEVELS;
+      const okSchema = typeof ev.device === "string" && ["light", "fan"].includes(ev.device) && hasLevel(ev.value);
       let eligible = false;
       if (okSchema) {
         const cand = Object.assign({}, before, { [ev.device]: ev.value });
@@ -527,5 +606,6 @@
 
   return { LEVELS, DEFAULTS, CONDITION_SPECS, SENSOR_NAMES, PERSONAS, World, policyViolation,
     ruleBreakdown, legalWrites, recoveryTrigger, recoveryPayload, firstMessages, parseResponse,
-    scoreEpisode, scriptedPlan, runEpisode, pyDumps, strictEqual, believedPresence, clone, isEmptyPlan };
+    scoreEpisode, scriptedPlan, runEpisode, pyDumps, strictEqual, believedPresence, clone, isEmptyPlan,
+    PyFloat, isPyFloat, pyType, pyEq, hasLevel, jsonValue, PARSE_SOURCE_SUPPORTED };
 });

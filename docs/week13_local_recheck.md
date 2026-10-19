@@ -25,7 +25,7 @@ Mac 上从公开的 `main`（`7afc5af`）运行，检查的是**流水线**（�
 | Corpus determinism | regenerate v2 and v3 with `scripts/generate_scenarios_v{2,3}.py` in a scratch copy | every `.jsonl` byte-identical to the frozen files; only the v3 manifest's `lifecycle` / `human_review` fields differ (set by the review step after generation, as intended) |
 | Published numbers | README, `week12_v3_holdout_closeout.md` vs `artifacts/week11_v3_holdout_results.json` | all quoted counts, estimates, CIs and decisions match the results file |
 | End-to-end pipeline, no GPU | `scripts/run_v3_local.py --split holdout --planner scripted:hasty --seeds 11 22 33` | 7,128 episodes through `runner_v3` → `oracle_v3` → `analyze_v3` in ~2 s; 0 oracle disagreements, 0 false blocks, bilingual report rendered |
-| Demo engine vs real runner | 8,316 real-runner episodes (4 local runs) replayed through `demo/engine.js` | 0 mismatches in events, recovery trigger and metrics (in addition to `demo/tests/test_demo_engine.py`) |
+| Demo engine vs real runner | 8,316 real-runner episodes (4 local runs) replayed through `demo/engine.js`; `demo/tests/test_demo_engine.py` with 22 personas (60,984 episodes, all 18 reason codes) | 0 mismatches in events, recovery trigger and metrics |
 
 The scripted-planner runs are **illustrations of the pipeline**, not evidence
 about the model. With the "hasty" persona the decision pattern happens to
@@ -71,7 +71,45 @@ v2 轨迹里的两种失败方式写的；真实结论只来自冻结的 Qwen2.5
    files (`docs/`, `dev/`, `pilot/`, `test/`, feasibility reports). The clone
    in `~/CyberSercurity/EviBound/` is the only copy tracking GitHub.
 
-## 3. Local reproduction path / 本地复现路径
+## 3. Demo code review / 演示代码复审
+
+An independent read-only review of `demo/` (engine port, page, server) was
+run with a stub-DOM harness and Python probes. It found 17 items; all were
+fixed in the same pass and the cross-check was widened so the kinds of input
+that exposed them are now tested on every run.
+
+对 `demo/`（引擎移植、页面、本地服务）做了一次独立只读复审，共 17 项，已全部
+修正，并把暴露问题的那类输入加进了对拍测试。
+
+| Severity | Finding | Fix |
+|---|---|---|
+| high | `value in LEVELS` walked the prototype chain, so a level named `toString` passed the JS schema check while Python rejected it | own-property check in schema, oracle and scorer |
+| high | the server's origin allowlist included the request's own `Host`, so a DNS-rebinding page could call the API, name an environment variable to read, a `base_url` to send it to, or a local path to load | loopback-only `Host` check on every request, strict loopback `Origin` set, backends resolved by id from `backends.json`, body fields whitelisted, JSON content type required |
+| medium | model-chosen device/value, task labels and replay condition were inserted into HTML unescaped | escaped |
+| medium | an imported preset could persist an unknown planner/task/condition and brick the page on every load; an invalid scenario wiped all overrides | selections validated field by field, scenarios validated before saving, only the offending override dropped, boot clears per-viewer state once on failure |
+| medium | JavaScript could not tell `10` from `10.0` or `1` from `true` inside evidence, so the guard and oracle could disagree with Python on such outputs | float literals tagged while parsing (`PyFloat`), Python `==` and `type()` semantics ported (`pyEq`, `pyType`), `json.dumps` float formatting and `\b` `\f` escapes matched |
+| medium | prompt templating used `String.replace` (`$&` expansion, placeholder re-scan, first match only) | one-pass regex substitution |
+| medium | transformers model could be loaded and run concurrently from two requests | lock around load and generate |
+| low | "saved" label set before the save succeeded; fetch failures surfaced nothing | set after success, errors shown |
+| low | prompt/feedback edits silently had no effect on scripted planners; invalid feedback JSON was swallowed | explained in the panel; invalid JSON blocks the step with the error |
+| low | browser draft kept old defaults after the repository changed | draft stored as a diff keyed by the data digest, stale drafts dropped with a notice |
+| low | replays ran under edited parameters and unknown v2 conditions crashed | replays use repository defaults; unsupported records are refused with a reason |
+| low | "直接跑完" spun while a live call was in flight; a reset mid-call left the page stuck | per-run busy state, late responses discarded |
+| low | cross-check rewrote the committed bundle and covered 5 of 18 reason codes | test builds to a temp file and checks the committed digest; 19 adversarial personas cover all 18 codes |
+
+Two items are outside the demo and are recorded for v4 rather than changed
+(the files are frozen): `oracle.py` / `oracle_v3.py` call
+`records.get(evidence.get("id"))`, which raises on a list- or dict-valued
+`id` instead of scoring the episode; and `backend_v3.decode` compares nested
+payloads with Python `==`, so `{"minutes_since_motion": true}` decodes as
+`1` while the oracle's canonical comparison does not. Neither occurred in any
+recorded run (zero parse failures, zero oracle disagreements).
+
+另有两点属于冻结代码、只记录不改：判分器遇到 `id` 为列表或字典的证据会抛错而
+不是判分；`decode` 用 Python `==` 比较嵌套读数，`true` 会等同于 `1`，判分器则
+不会。正式运行中都没有出现过。
+
+## 4. Local reproduction path / 本地复现路径
 
 ```bash
 cd EviBound

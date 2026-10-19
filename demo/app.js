@@ -6,7 +6,7 @@
   const $ = (id) => document.getElementById(id);
   const clone = E.clone;
   const esc = (s) => String(s == null ? "" : s).replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
-  const pretty = (v) => JSON.stringify(v, null, 2);
+  const pretty = (v) => E.pyDumps(v, true, 2, 0, false);
   const store = {
     get(k) { try { return JSON.parse(localStorage.getItem("evibound-demo:" + k)); } catch (e) { return null; } },
     set(k, v) { try { localStorage.setItem("evibound-demo:" + k, JSON.stringify(v)); } catch (e) { /* storage blocked */ } },
@@ -104,7 +104,26 @@
     backend: { id: "ollama-qwen7b", custom: { type: "openai", base_url: "http://127.0.0.1:11434/v1", model: "qwen2.5:7b-instruct" } },
     scenarios: {},
   };
-  let settings = mergeDeep(clone(DEFAULTS), store.get("draft") || {});
+  const DRAFT_KEY = "draft-v2";
+  let staleDraftDropped = false;
+  function loadDraft() {
+    const d = store.get(DRAFT_KEY);
+    if (!d || typeof d !== "object") return {};
+    if (d.content_sha256 !== D.content_sha256) { staleDraftDropped = true; store.set(DRAFT_KEY, null); return {}; }
+    return d.diff && typeof d.diff === "object" ? d.diff : {};
+  }
+  /* Settings that differ from the repository defaults (what presets and drafts store). */
+  function diffSettings(cur, def) {
+    const out = {};
+    for (const [k, v] of Object.entries(cur)) {
+      if (v && typeof v === "object" && !Array.isArray(v) && def && def[k] && typeof def[k] === "object" && k !== "scenarios") {
+        const d = diffSettings(v, def[k]);
+        if (Object.keys(d).length) out[k] = d;
+      } else if (JSON.stringify(v) !== JSON.stringify(def ? def[k] : undefined)) out[k] = clone(v);
+    }
+    return out;
+  }
+  let settings = mergeDeep(clone(DEFAULTS), loadDraft());
   function mergeDeep(base, extra) {
     for (const [k, v] of Object.entries(extra || {})) {
       if (v && typeof v === "object" && !Array.isArray(v) && base[k] && typeof base[k] === "object") base[k] = mergeDeep(base[k], v);
@@ -128,7 +147,10 @@
     return out.filter((k) => k !== "scenarios");
   }
   const protocolChanged = () => changedKeys().some((k) => k.startsWith("params") || k.startsWith("prompts") || k.startsWith("scenario:"));
-  function saveDraft() { store.set("draft", settings); renderMeta(); renderSavebar(); }
+  function saveDraft() {
+    store.set(DRAFT_KEY, { content_sha256: D.content_sha256, diff: diffSettings(settings, DEFAULTS) });
+    renderMeta(); renderSavebar();
+  }
 
   const scenarios = D.scenarios;
   const scenarioById = (id) => settings.scenarios[id] || scenarios.find((s) => s.task_id === id);
@@ -155,7 +177,7 @@
     const sampling = settings.sampling;
     if (server) {
       const r = await fetch("api/generate", { method: "POST", headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ backend: b, messages, sampling }) });
+        body: JSON.stringify({ backend_id: b.id, custom: b.id === "custom" ? settings.backend.custom : undefined, messages, sampling }) });
       const data = await r.json();
       if (!r.ok) throw new Error(data.error || "模型调用失败");
       return data.raw;
@@ -171,10 +193,30 @@
   }
 
   /* ---------------- UI state ---------------- */
-  const ui = Object.assign({ taskId: "v3_dev_focus_02", variant: "perturbed", condition: "M_full", planner: "scripted:hasty",
-    filters: {}, tab: "compare" }, store.get("ui") || {});
-  if (!scenarios.some((s) => s.task_id === ui.taskId)) ui.taskId = scenarios[0].task_id;
+  const UI_DEFAULTS = { taskId: "v3_dev_focus_02", variant: "perturbed", condition: "M_full", planner: "scripted:hasty",
+    filters: {}, tab: "compare" };
+  const ui = Object.assign({}, UI_DEFAULTS);
   let replay = { episodes: [], selected: null, fileName: "" };
+  function plannerAllowed(p) {
+    if (typeof p !== "string") return false;
+    if (p === "manual") return true;
+    if (p === "replay") return Boolean(replay.selected);
+    if (p.startsWith("scripted:")) return Object.prototype.hasOwnProperty.call(E.PERSONAS, p.slice(9));
+    if (p.startsWith("live:")) return backends().some((b) => b.id === p.slice(5));
+    return false;
+  }
+  /* Never trust persisted or imported selections: fall back field by field. */
+  function sanitizeUi(u) {
+    const out = Object.assign({}, UI_DEFAULTS, u || {});
+    if (!scenarios.some((s) => s.task_id === out.taskId)) out.taskId = UI_DEFAULTS.taskId;
+    if (!scenarios.some((s) => s.task_id === out.taskId)) out.taskId = scenarios[0].task_id;
+    if (!VARIANT[out.variant]) out.variant = UI_DEFAULTS.variant;
+    if (!E.CONDITION_SPECS[out.condition]) out.condition = UI_DEFAULTS.condition;
+    if (!plannerAllowed(out.planner)) out.planner = UI_DEFAULTS.planner;
+    if (!out.filters || typeof out.filters !== "object" || Array.isArray(out.filters)) out.filters = {};
+    if (!["compare", "edit", "scenario", "results", "replay", "about"].includes(out.tab)) out.tab = "compare";
+    return out;
+  }
   const saveUi = () => store.set("ui", { taskId: ui.taskId, variant: ui.variant, condition: ui.condition, planner: ui.planner.startsWith("replay") ? "scripted:hasty" : ui.planner, filters: ui.filters, tab: ui.tab });
 
   /* ---------------- episode run (step machine) ---------------- */
@@ -187,7 +229,10 @@
       this.spec = E.CONDITION_SPECS[this.condition];
       this.planner = ui.planner;
       this.replay = rep || null;
-      this.world = new E.World(this.scenario, this.variant, settings.params);
+      // A replayed record was produced by the frozen code, so it is re-executed with the
+      // repository defaults, never with the page's edited prompts or parameters.
+      this.prompts = rep ? DEFAULTS.prompts : settings.prompts;
+      this.world = new E.World(this.scenario, this.variant, rep ? DEFAULTS.params : settings.params);
       this.steps = [];
       this.phase = "setup";
       this.turn = 0;
@@ -226,7 +271,7 @@
     describePlan() {
       const p = this.planner;
       const base = { title: this.turn === 0 ? "模型生成计划" : "模型重新提交计划", edit: "raw" };
-      if (p === "replay") return Object.assign(base, { why: "回放：使用真实实验中模型的原始输出。" , raw: this.replay.proposals[this.turn] ? this.replay.proposals[this.turn].raw : "" });
+      if (p === "replay") return Object.assign(base, { why: "回放：使用导入记录里模型的原始输出，并按仓库默认参数和提示词重新执行。", raw: this.replay.proposals[this.turn] ? this.replay.proposals[this.turn].raw : "" });
       if (p === "manual") return Object.assign(base, { why: "手动模式：你来扮演模型，写出 JSON 计划。下方已按理想规划器预填，可以随意修改。", raw: E.scriptedPlan("careful", this.planCtx()) });
       if (p.startsWith("live:")) return Object.assign(base, { why: "实时模型：点击后把左侧消息发给所选模型，返回的原文会原样交给守卫。", raw: null });
       return Object.assign(base, { why: E.PERSONAS[this.persona()] + "。这是脚本模拟，不是实验里的真实模型；返回内容可以先改再执行。", raw: E.scriptedPlan(this.persona(), this.planCtx()) });
@@ -255,10 +300,10 @@
         let actor = "collector", title = "传感器读数送达", body;
         if (read.source === "value_corruption") {
           actor = "attacker"; title = "攻击者篡改读数";
-          body = `真实记录说<b>${w.actualPresence ? "有人" : "没人"}</b>，攻击者把内容换成 ${esc(obsText(this.observation.value))}。id <code>${this.observation.id}</code> 和时间戳都是真的，看上去完全可信。`;
+          body = `真实记录说<b>${w.actualPresence ? "有人" : "没人"}</b>，攻击者把内容换成 ${esc(obsText(this.observation.value))}。id <code>${esc(this.observation.id)}</code> 和时间戳都是真的，看上去完全可信。`;
         } else if (read.source === "replay") {
           actor = "attacker"; title = "攻击者重放旧记录";
-          body = `攻击者拿出 t=${this.observation.observed_at} 的旧记录 <code>${this.observation.id}</code>（已过去 ${age} 个时间单位），内容是 ${esc(obsText(this.observation.value))}，和现在相反。`;
+          body = `攻击者拿出 t=${this.observation.observed_at} 的旧记录 <code>${esc(this.observation.id)}</code>（已过去 ${age} 个时间单位），内容是 ${esc(obsText(this.observation.value))}，和现在相反。`;
         } else if (read.source === "boundary") {
           body = `真实记录 <code>obs-boundary</code>，t=${this.observation.observed_at}，年龄 ${age}，正好在上限 ${w.p.maxAge} 上：${esc(obsText(this.observation.value))}。`;
         } else body = `真实的当前记录 <code>obs-current</code>（年龄 ${age}）：${esc(obsText(this.observation.value))}。`;
@@ -268,8 +313,8 @@
           status: { attacker: actor === "attacker" ? (read.source === "replay" ? "已重放旧记录" : "已篡改读数") : "未动手", agent: `以为${this.belief ? "有人" : "没人"}` } });
         this.phase = "prompt";
       } else if (this.phase === "prompt") {
-        this.messages = input.messages || E.firstMessages(settings.prompts, sc, w.state, this.observation);
-        if (input.edited) this.edited = true;
+        this.messages = input.messages || E.firstMessages(this.prompts, sc, w.state, this.observation);
+        if (input.edited && this.planner.startsWith("live:")) this.edited = true;
         this.push({ actor: "agent", from: "agent", to: "agent", title: "提示词已发给模型" + (input.edited ? "（手动修改过）" : ""),
           body: `系统提示 ${this.messages[0].content.length} 字符，用户消息包含任务、当前档位、授权设备和那条观测。`,
           details: `<pre>${esc(this.messages[1].content)}</pre><details><summary>系统提示词全文</summary><pre>${esc(this.messages[0].content)}</pre></details>`,
@@ -291,7 +336,7 @@
         let body;
         if (resp.parse_error) body = `<span class="cell-bad">输出不是合法 JSON 计划</span>：${esc(resp.parse_error)}`;
         else if (!acts.length) body = "模型交了<b>空计划</b>：一条写入都没有。";
-        else body = `计划 ${acts.length} 条写入：${acts.map((a) => `${DEV[a.device] || a.device}→${LV[a.value] || a.value}`).join("，")}。引用证据 <code>${esc(evid.id)}</code>。`;
+        else body = `计划 ${acts.length} 条写入：${acts.map((a) => `${esc(DEV[a.device] || a.device)}→${esc(LV[a.value] || a.value)}`).join("，")}。引用证据 <code>${esc(evid.id)}</code>。`;
         this.push({ actor: "agent", from: "agent", to: "guard", title: this.turn === 0 ? "模型给出计划" : "模型重新提交", body,
           details: `<pre>${esc(raw)}</pre>`, status: { agent: resp.parse_error ? "输出格式错误" : acts.length ? `${acts.length} 条写入` : "空计划" } });
         const events = w.execute(data.actions, data.evidence || {}, this.spec.guard);
@@ -303,20 +348,20 @@
       } else if (this.phase === "exec") {
         const ev = this.eventQueue.shift();
         this.push(eventStep(ev, this));
-        if (!this.eventQueue.length) { this.phase = "after"; return this.advanceAfter(true); }
+        if (!this.eventQueue.length) { this.phase = "after"; return this.advanceAfter(); }
       } else if (this.phase === "reread") {
         this.fresh = w.observe();
         this.push({ actor: "collector", from: "collector", to: "agent", title: "重新读取：真实当前记录",
-          body: `这次绕过攻击者，直接拿到 <code>${this.fresh.id}</code>：${esc(obsText(this.fresh.value))}。`,
+          body: `这次绕过攻击者，直接拿到 <code>${esc(this.fresh.id)}</code>：${esc(obsText(this.fresh.value))}。`,
           details: `<pre>${esc(pretty(this.fresh))}</pre>`, status: { collector: "已重读", agent: `现在以为${E.believedPresence(sc, this.fresh) ? "有人" : "没人"}` } });
         this.belief = E.believedPresence(sc, this.fresh);
         const reason = this.trigger === "rejection" ? this.firstEvents[this.firstEvents.length - 1].reason : null;
-        this.feedbackObj = E.recoveryPayload(settings.prompts, this.condition, w.state, this.fresh, this.trigger, reason,
+        this.feedbackObj = E.recoveryPayload(this.prompts, this.condition, w.state, this.fresh, this.trigger, reason,
           w.p.maxWrites - w.successfulWrites, w.decode(this.fresh.value), sc.authorized);
         this.phase = "feedback";
       } else if (this.phase === "feedback") {
         let text = input.text || E.pyDumps(this.feedbackObj, true);
-        if (input.edited) { this.edited = true; try { this.feedbackObj = JSON.parse(text); } catch (e) { /* keep for live model only */ } }
+        if (input.edited) { this.edited = true; this.feedbackObj = JSON.parse(text); }
         this.retryMessages = this.messages.concat([{ role: "assistant", content: this.proposals[0].raw }, { role: "user", content: text }]);
         const f = this.feedbackObj;
         const bits = [`结果：${f.execution_result === "write rejected" ? "写入被拒，原因 <code>" + esc(f.reason) + "</code>" : "没有提交写入"}`];
@@ -344,7 +389,7 @@
         this.phase = "done";
       }
     }
-    advanceAfter(fromExec) {
+    advanceAfter() {
       if (this.turn === 0) {
         this.trigger = E.recoveryTrigger(this.condition, this.proposals[0], this.firstEvents, this.world.successfulWrites, this.world.p.maxWrites);
         if (this.trigger) {
@@ -352,9 +397,6 @@
         }
         this.phase = this.trigger ? "reread" : "score";
       } else this.phase = "score";
-      if (!fromExec && !this.trigger && this.phase === "score" && this.turnEvents.length === 0) {
-        /* empty plan without confirmation: nothing more happens */
-      }
     }
   }
 
@@ -408,7 +450,8 @@
   function replayAgreement(run) {
     const rec = (run.replay.trace && run.replay.trace.events) || [];
     const mine = run.world.events;
-    const same = rec.length === mine.length && rec.every((e, i) => e.kind === mine[i].kind && e.device === mine[i].device && e.value === mine[i].value && e.reason === mine[i].reason);
+    const nz = (x) => (x === undefined ? null : x);
+    const same = rec.length === mine.length && rec.every((e, i) => e.kind === mine[i].kind && nz(e.device) === nz(mine[i].device) && nz(e.value) === nz(mine[i].value) && e.reason === mine[i].reason);
     const rm = run.replay.metrics || {};
     const keys = ["unsafe_effect", "goal_completion", "safe_completion", "safe_utility_completion", "false_blocks"];
     const diff = keys.filter((k) => k in rm && rm[k] !== run.metrics[k]);
@@ -418,11 +461,12 @@
   /* ---------------- rendering: header / setup ---------------- */
   function renderMeta() {
     const chips = [
-      `<span class="chip">数据 <b>git ${esc(D.git_head)}</b></span>`,
+      `<span class="chip" title="导出时的提交 ${esc(D.git_head)}">数据 <b>${esc(String(D.content_sha256 || "").slice(0, 7))}</b> · git ${esc(D.git_head)}</span>`,
       `<span class="chip">${scenarios.length} 个 v3 任务</span>`,
       server ? `<span class="chip ok dot">本地服务已连接</span>` : `<span class="chip dot">静态页面模式</span>`,
     ];
     if (protocolChanged()) chips.push(`<span class="chip warn dot">已偏离冻结协议（${changedKeys().length} 项修改）</span>`);
+    if (!E.PARSE_SOURCE_SUPPORTED) chips.push(`<span class="chip warn dot" title="JSON.parse 没有源文本访问，10 和 10.0 无法区分">此浏览器不能区分整数和浮点</span>`);
     $("metaChips").innerHTML = chips.join("");
   }
 
@@ -468,7 +512,7 @@
       `<option value="scripted:${k}">${v.split("：")[0]}</option>`).join("") + `</optgroup>`);
     opts.push(`<optgroup label="实时模型">` + backends().map((b) => `<option value="live:${b.id}">${esc(b.label)}</option>`).join("") + `</optgroup>`);
     opts.push(`<option value="manual">手动输入（你来扮演模型）</option>`);
-    if (replay.selected) opts.push(`<option value="replay">回放：${esc(replay.selected.task_id)} / ${replay.selected.condition}</option>`);
+    if (replay.selected) opts.push(`<option value="replay">回放：${esc(replay.selected.task_id)} / ${esc(replay.selected.condition)}</option>`);
     $("plannerSelect").innerHTML = opts.join("");
     $("plannerSelect").value = ui.planner;
     if ($("plannerSelect").value !== ui.planner) { ui.planner = "scripted:hasty"; $("plannerSelect").value = ui.planner; }
@@ -484,7 +528,7 @@
     const tags = [
       `<span class="tag">${esc(labelZh(sc, "modality"))}</span>`, `<span class="tag">${esc(labelZh(sc, "language"))}</span>`,
       `<span class="tag attack">${esc(labelZh(sc, "attack"))}</span>`, `<span class="tag">${esc(labelZh(sc, "task_type"))}</span>`,
-      `<span class="tag">需 ${sc.labels.writes_needed} 步</span>`, `<span class="tag">涉及 ${(sc.labels.rules_stressed || []).join("、")}</span>`,
+      `<span class="tag">需 ${esc(sc.labels.writes_needed)} 步</span>`, `<span class="tag">涉及 ${esc((sc.labels.rules_stressed || []).join("、"))}</span>`,
       settings.scenarios[sc.task_id] ? `<span class="tag attack">已手动修改</span>` : "",
     ].join("");
     $("taskCard").innerHTML = `
@@ -607,13 +651,15 @@
     const p = run.describePending();
     const box = $("pending");
     let editor = "";
+    const live = run.planner.startsWith("live:");
+    const reach = live ? "" : `<p class="hint">当前不是实时模型：${run.planner === "manual" ? "手动" : run.planner === "replay" ? "回放" : "脚本"}规划器不读这段文字，改动只会在接实时模型时生效。</p>`;
     if (p.edit === "messages") {
-      const msgs = E.firstMessages(settings.prompts, run.scenario, run.world.state, run.observation);
+      const msgs = E.firstMessages(run.prompts, run.scenario, run.world.state, run.observation);
       editor = `<div class="edit-box"><label for="pendUser">用户消息 <span class="src">planner_v3.messages_for_v3</span></label><textarea id="pendUser" rows="8">${esc(msgs[1].content)}</textarea></div>
         <details><summary>系统提示词（${msgs[0].content.length} 字符，默认读自 PROMPT_V3）</summary><textarea id="pendSystem" rows="12">${esc(msgs[0].content)}</textarea>
-        <div class="row"><button class="btn small" type="button" id="btnSystemDefault">把这段设为默认系统提示词</button></div></details>`;
+        <div class="row"><button class="btn small" type="button" id="btnSystemDefault">把这段设为默认系统提示词</button></div></details>${reach}`;
     } else if (p.edit === "feedback") {
-      editor = `<div class="edit-box"><label for="pendFeedback">反馈消息 <span class="src">recovery.recovery_messages</span></label><textarea id="pendFeedback" rows="10">${esc(E.pyDumps(run.feedbackObj, true))}</textarea></div>`;
+      editor = `<div class="edit-box"><label for="pendFeedback">反馈消息 <span class="src">recovery.recovery_messages</span></label><textarea id="pendFeedback" rows="10">${esc(E.pyDumps(run.feedbackObj, true))}</textarea></div>${live ? "" : `<p class="hint">脚本规划器会读这个 JSON 里的 legal_writes_now、rule_explanation 和 execution_result 字段；其余文字只有实时模型会读。</p>`}`;
     } else if (p.edit === "raw") {
       if (p.raw === null) editor = `<div class="edit-box"><label>将发送给模型的最后一条消息</label><pre>${esc((run.turn === 0 ? run.messages : run.retryMessages).slice(-1)[0].content)}</pre></div>`;
       else editor = `<div class="edit-box"><label for="pendRaw">模型输出（原文，可修改）</label><textarea id="pendRaw" rows="7">${esc(p.raw)}</textarea></div>`;
@@ -631,14 +677,16 @@
   function collectPendingInput() {
     const p = run.describePending();
     if (p.edit === "messages") {
-      const def = E.firstMessages(settings.prompts, run.scenario, run.world.state, run.observation);
+      const def = E.firstMessages(run.prompts, run.scenario, run.world.state, run.observation);
       const user = $("pendUser").value, system = $("pendSystem").value;
       const edited = user !== def[1].content || system !== def[0].content;
       return { messages: [{ role: "system", content: system }, { role: "user", content: user }], edited };
     }
     if (p.edit === "feedback") {
       const text = $("pendFeedback").value;
-      return { text, edited: text !== E.pyDumps(run.feedbackObj, true) };
+      const edited = text !== E.pyDumps(run.feedbackObj, true);
+      if (edited) { try { JSON.parse(text); } catch (err) { throw new Error("反馈消息不是合法 JSON，没有执行：" + err.message); } }
+      return { text, edited };
     }
     if (p.edit === "raw" && $("pendRaw")) {
       const raw = $("pendRaw").value;
@@ -649,12 +697,20 @@
   }
 
   /* ---------------- run control ---------------- */
-  let run = null, autoplay = null, busy = false;
+  let run = null, autoplay = null;
   function resetRun() {
     stopAuto();
     pendingError = "";
     try { run = new Run(); }
-    catch (err) { toast("任务数据无效：" + err.message); settings.scenarios = {}; saveDraft(); run = new Run(); }
+    catch (err) {
+      // Only the offending override is dropped; everything else the user edited stays.
+      const bad = ui.planner === "replay" && replay.selected ? null : ui.taskId;
+      if (bad && settings.scenarios[bad]) { delete settings.scenarios[bad]; saveDraft(); }
+      replay.selected = null;
+      Object.assign(ui, sanitizeUi(ui));
+      toast("任务数据无效，已恢复仓库定义：" + err.message);
+      try { run = new Run(); } catch (err2) { Object.assign(ui, sanitizeUi({})); run = new Run(); }
+    }
     saveUi();
     renderConditionSelect(); renderPlannerSelect(); renderTaskCard();
     applyStatuses([]);
@@ -666,38 +722,47 @@
   }
   function renderAllRun() { renderTimeline(); renderPending(); renderRooms(); }
   async function step() {
-    if (busy || run.done()) return;
-    busy = true;
+    const r = run;
+    if (!r || r.busy || r.done()) return;
+    r.busy = true;
     $("btnStep").disabled = true;
-    const before = run.steps.length;
+    const before = r.steps.length;
     try {
       const input = collectPendingInput();
-      if (run.phase === "plan" && run.planner.startsWith("live:")) { $("pending").querySelector(".why").textContent = "正在调用模型……"; }
-      await run.advance(input);
+      if (r.phase === "plan" && r.planner.startsWith("live:")) { $("pending").querySelector(".why").textContent = "正在调用模型……"; }
+      await r.advance(input);
+      if (run !== r) return;  // the run was reset while a model call was in flight: discard it
       pendingError = "";
     } catch (err) {
+      if (run !== r) return;
       pendingError = err.message || String(err);
       stopAuto();
+    } finally {
+      r.busy = false;
+      if (run === r) $("btnStep").disabled = false;
     }
-    busy = false;
-    $("btnStep").disabled = false;
-    if (run.steps.length > before) {
-      applyStatuses(run.steps);
-      movePacket(run.steps[run.steps.length - 1]);
+    if (r.steps.length > before) {
+      applyStatuses(r.steps);
+      movePacket(r.steps[r.steps.length - 1]);
     }
     renderAllRun();
-    if (run.done()) { stopAuto(); renderCompare(); }
+    if (r.done()) { stopAuto(); renderCompare(); }
   }
   function stopAuto() { if (autoplay) clearInterval(autoplay); autoplay = null; $("btnPlay").textContent = "自动播放"; }
   function startAuto() {
     if (run.done()) resetRun();
     $("btnPlay").textContent = "暂停";
-    autoplay = setInterval(() => { if (!busy) step(); }, +$("speedSelect").value);
+    autoplay = setInterval(() => { if (!run.busy) step(); }, +$("speedSelect").value);
   }
   async function finish() {
     stopAuto();
+    const r = run;
     let guard = 0;
-    while (!run.done() && guard++ < 40) { await step(); if (pendingError) break; }
+    while (run === r && !r.done() && guard++ < 80) {
+      if (r.busy) { await new Promise((res) => setTimeout(res, 120)); continue; }
+      await step();
+      if (pendingError) break;
+    }
   }
 
   /* ---------------- tab: compare all conditions ---------------- */
@@ -708,7 +773,7 @@
     const retryPlan = (c) => E.scriptedPlan(persona, c);
     const conds = Object.keys(E.CONDITION_SPECS);
     const rows = conds.map((cond) => {
-      const ep = E.runEpisode(sc, run.variant, cond, retryPlan, { prompts: settings.prompts, params: settings.params, firstRaw: first || undefined });
+      const ep = E.runEpisode(sc, run.variant, cond, retryPlan, { prompts: run.prompts, params: run.world.p, firstRaw: first || undefined });
       return { cond, ep };
     });
     const evText = (events) => events.map((e) => e.kind === "write" ? `${DEV[e.device]}→${LV[e.value]}` : `<span class="cell-bad">拦 ${esc((REASON[e.reason] || e.reason).split("：")[0])}</span>`).join("，") || "—";
@@ -729,7 +794,7 @@
     }).join("");
     const variants = ["clean", "perturbed", "boundary"];
     const matrix = conds.map((cond) => `<tr><td>${cond}</td>${variants.map((v) => {
-      const ep = E.runEpisode(sc, v, cond, retryPlan, { prompts: settings.prompts, params: settings.params });
+      const ep = E.runEpisode(sc, v, cond, retryPlan, { prompts: run.prompts, params: run.world.p });
       const m = ep.metrics;
       return `<td class="${m.unsafe_effect ? "cell-bad" : m.safe_utility_completion ? "cell-ok" : "cell-mute"}">${m.unsafe_effect ? "不安全" : m.safe_utility_completion ? "安全完成" : "安全未完成"}</td>`;
     }).join("")}</tr>`).join("");
@@ -808,6 +873,25 @@
   }
 
   /* ---------------- tab: scenario JSON ---------------- */
+  /* Everything the page or the engine reads from a task; returns an error message or null. */
+  function validateScenario(obj) {
+    if (!obj || typeof obj !== "object" || Array.isArray(obj)) return "必须是一个 JSON 对象";
+    for (const k of ["instruction", "context", "split", "family", "perturbation"]) {
+      if (typeof obj[k] !== "string" || !obj[k]) return `缺少字符串字段 ${k}`;
+    }
+    const goalOk = (g) => g && typeof g === "object" && !Array.isArray(g) &&
+      Object.entries(g).every(([d, v]) => Object.prototype.hasOwnProperty.call(DEV, d) && E.hasLevel(v));
+    for (const k of ["goal_present", "goal_absent"]) if (!goalOk(obj[k])) return `${k} 必须是 {light|fan: off|low|high}`;
+    for (const k of ["authorized_subgoal_present", "authorized_subgoal_absent"]) {
+      if (obj[k] != null && !goalOk(obj[k])) return `${k} 必须是 null 或 {light|fan: off|low|high}`;
+    }
+    const labels = obj.labels;
+    if (!labels || typeof labels !== "object" || Array.isArray(labels)) return "缺少 labels 对象";
+    if (!Number.isInteger(labels.writes_needed) || !Array.isArray(labels.rules_stressed)) return "labels 需要 writes_needed（整数）和 rules_stressed（数组）";
+    for (const k of ["modality", "language", "attack", "task_type"]) if (typeof labels[k] !== "string") return `labels.${k} 必须是字符串`;
+    try { new E.World(obj, "perturbed"); } catch (err) { return err.message; }
+    return null;
+  }
   function renderScenarioEditor() {
     const sc = scenarioById(ui.taskId);
     const edited = Boolean(settings.scenarios[ui.taskId]);
@@ -821,8 +905,9 @@
       </div>`;
     $("btnScenarioApply").addEventListener("click", () => {
       let obj;
-      try { obj = JSON.parse($("scenarioJson").value); new E.World(obj, "perturbed"); }
-      catch (err) { $("scenarioErr").textContent = "没有应用：" + err.message; return; }
+      try { obj = JSON.parse($("scenarioJson").value); } catch (err) { $("scenarioErr").textContent = "没有应用：" + err.message; return; }
+      const problem = validateScenario(obj);
+      if (problem) { $("scenarioErr").textContent = "没有应用：" + problem; return; }
       obj.task_id = ui.taskId;
       settings.scenarios[ui.taskId] = obj;
       saveDraft(); renderTaskSelect(); resetRun(); toast("已应用到这个任务（草稿）。");
@@ -899,8 +984,17 @@
     if ($("btnReplayLoad")) $("btnReplayLoad").addEventListener("click", () => {
       const i = +$("replayPick").value;
       if (!Number.isFinite(i) || !list[i]) { toast("先选一个回合"); return; }
-      replay.selected = list[i];
+      const ep = list[i];
+      if (!E.CONDITION_SPECS[ep.condition]) { toast(`条件 ${ep.condition} 不在 v3 的 11 个条件里（v2 的 B1/M_no_freshness/Always_refresh 轨迹不能回放）`); return; }
+      if (!VARIANT[ep.variant]) { toast(`未知的观测情况 ${ep.variant}`); return; }
+      const problem = validateScenario(ep.scenario);
+      if (problem) { toast("这个回合的任务定义演示引擎读不了：" + problem); return; }
+      if (!Array.isArray(ep.proposals) || !ep.proposals.length || typeof ep.proposals[0].raw !== "string") { toast("回合里没有模型输出（proposals[].raw）"); return; }
+      replay.selected = ep;
       ui.planner = "replay";
+      ui.variant = ep.variant; ui.condition = ep.condition;
+      if (scenarios.some((s) => s.task_id === ep.scenario.task_id)) ui.taskId = ep.scenario.task_id;
+      renderVariantSeg(); renderTaskSelect();
       resetRun();
       document.querySelector(".stage").scrollIntoView({ behavior: "smooth" });
     });
@@ -937,27 +1031,24 @@ python3 demo/serve.py               # 打开 http://127.0.0.1:8765/
 
   /* ---------------- save bar ---------------- */
   function presetPayload() {
-    const diff = (cur, def) => {
-      const out = {};
-      for (const [k, v] of Object.entries(cur)) {
-        if (v && typeof v === "object" && !Array.isArray(v) && def && def[k] && typeof def[k] === "object" && k !== "scenarios") {
-          const d = diff(v, def[k]);
-          if (Object.keys(d).length) out[k] = d;
-        } else if (JSON.stringify(v) !== JSON.stringify(def ? def[k] : undefined)) out[k] = clone(v);
-      }
-      return out;
-    };
-    return { kind: "evibound-demo-preset", version: 1, data_git_head: D.git_head,
-      note: "Only settings that differ from the repository defaults are stored.", settings: diff(settings, DEFAULTS),
+    return { kind: "evibound-demo-preset", version: 1, data_git_head: D.git_head, data_content_sha256: D.content_sha256,
+      note: "Only settings that differ from the repository defaults are stored.", settings: diffSettings(settings, DEFAULTS),
       selection: { taskId: ui.taskId, variant: ui.variant, condition: ui.condition, planner: ui.planner } };
   }
   function applyPreset(p) {
     if (!p || p.kind !== "evibound-demo-preset") { toast("这不是演示台的预设文件"); return; }
-    settings = mergeDeep(clone(DEFAULTS), p.settings || {});
-    Object.assign(ui, p.selection || {});
+    const incoming = p.settings && typeof p.settings === "object" && !Array.isArray(p.settings) ? clone(p.settings) : {};
+    const dropped = [];
+    for (const [id, obj] of Object.entries(incoming.scenarios || {})) {
+      const problem = validateScenario(obj);
+      if (problem || obj.task_id !== id) { dropped.push(id); delete incoming.scenarios[id]; }
+    }
+    settings = mergeDeep(clone(DEFAULTS), incoming);
+    for (const k of Object.keys(settings)) if (!(k in DEFAULTS)) delete settings[k];
+    Object.assign(ui, sanitizeUi(Object.assign({}, ui, p.selection || {})));
     lastSaved = { name: "（已载入）", sig: JSON.stringify(settings) };
     saveDraft(); renderTaskSelect(); renderVariantSeg(); renderEdit(); resetRun();
-    toast("预设已载入");
+    toast(dropped.length ? `预设已载入；${dropped.length} 个无效的任务定义被忽略（${dropped.join("、")}）` : "预设已载入");
   }
   let lastSaved = null;
   function renderSavebar() {
@@ -975,13 +1066,18 @@ python3 demo/serve.py               # 打开 http://127.0.0.1:8765/
       const name = $("presetName").value.trim() || "my-demo";
       store.set("presetName", name);
       const payload = presetPayload();
-      lastSaved = { name, sig: JSON.stringify(settings) };
       if (server) {
-        const r = await fetch("api/presets", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ name, preset: payload }) });
-        const d = await r.json();
-        if (r.ok) { toast("已保存到 " + d.saved); renderSavebar(); server.presets = [...new Set(server.presets.concat([name.replace(/[^\w.-]/g, "_")]))]; renderSavebar(); }
-        else toast("保存失败：" + d.error);
+        try {
+          const r = await fetch("api/presets", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ name, preset: payload }) });
+          const d = await r.json();
+          if (!r.ok) { toast("保存失败：" + d.error); return; }
+          lastSaved = { name, sig: JSON.stringify(settings) };
+          server.presets = [...new Set(server.presets.concat([name.replace(/[^\w.-]/g, "_")]))];
+          renderSavebar();
+          toast("已保存到 " + d.saved);
+        } catch (err) { toast("保存失败：连不上本地服务（" + err.message + "）"); }
       } else {
+        lastSaved = { name, sig: JSON.stringify(settings) };
         const a = document.createElement("a");
         a.href = URL.createObjectURL(new Blob([JSON.stringify(payload, null, 2)], { type: "application/json" }));
         a.download = name + ".json";
@@ -991,8 +1087,10 @@ python3 demo/serve.py               # 打开 http://127.0.0.1:8765/
     });
     if ($("presetPick")) $("presetPick").addEventListener("change", async (e) => {
       if (!e.target.value) return;
-      const r = await fetch("api/presets/" + encodeURIComponent(e.target.value));
-      applyPreset(await r.json());
+      try {
+        const r = await fetch("api/presets/" + encodeURIComponent(e.target.value));
+        applyPreset(await r.json());
+      } catch (err) { toast("载入失败：" + err.message); }
     });
     $("presetFile").addEventListener("change", async (e) => {
       const f = e.target.files[0];
@@ -1025,6 +1123,10 @@ python3 demo/serve.py               # 打开 http://127.0.0.1:8765/
 
   async function boot() {
     await detectServer();
+    Object.assign(ui, sanitizeUi(Object.assign({}, ui, store.get("ui") || {})));
+    for (const [id, obj] of Object.entries(settings.scenarios || {})) {
+      if (validateScenario(obj) || obj.task_id !== id) delete settings.scenarios[id];
+    }
     renderMeta();
     renderPipeline();
     renderFilters();
@@ -1045,7 +1147,19 @@ python3 demo/serve.py               # 打开 http://127.0.0.1:8765/
     renderSavebar();
     resetRun();
     selectTab(ui.tab || "compare");
+    if (staleDraftDropped) toast("仓库数据已更新，旧的浏览器草稿已清除（预设文件不受影响）。");
     window.addEventListener("resize", () => { if (run && run.steps.length) movePacket(run.steps[run.steps.length - 1]); });
   }
-  boot();
+  boot().catch((err) => {
+    // A corrupt draft or selection must never brick the page: clear per-viewer state once and reload.
+    let retried = false;
+    try { retried = sessionStorage.getItem("evibound-demo:boot-retry") === "1"; } catch (e) { /* storage blocked */ }
+    if (!retried) {
+      try { sessionStorage.setItem("evibound-demo:boot-retry", "1"); } catch (e) { /* storage blocked */ }
+      store.set(DRAFT_KEY, null); store.set("ui", null);
+      location.reload();
+      return;
+    }
+    document.body.insertAdjacentHTML("afterbegin", `<p class="toast" style="position:static;margin:16px">页面初始化失败：${esc(err.message || err)}</p>`);
+  });
 })();

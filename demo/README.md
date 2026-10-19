@@ -46,6 +46,23 @@ transformers. API keys are read from the environment variable named in
 aborts with a duplicate-OpenMP error, the local-weights path sets
 `KMP_DUPLICATE_LIB_OK=TRUE` before importing torch (Ollama avoids the issue).
 
+## Fidelity notes / 保真说明
+
+- The engine keeps Python's int/float distinction in model output (`10` vs
+  `10.0`, `1` vs `1.0`) by tagging float literals while parsing, which needs
+  `JSON.parse` source access (Chrome/Edge 114+, Node 21+). In an older
+  browser the header shows a warning chip and such outputs may be judged
+  differently from the Python guard.
+- `demo/tests/test_demo_engine.py` runs 22 planner personas (3 scripted, 19
+  adversarial: malformed JSON, prototype-named levels, extra keys, wrong ids,
+  float/bool-typed numbers, budget overruns, opposite-branch plans) over all
+  84 tasks x 3 variants x 11 conditions and requires identical events,
+  recovery messages and oracle metrics from `runner_v3`. All 18 guard reason
+  codes are exercised. It is part of the standard `discover -s tests` run.
+- The server resolves backends by id from `backends.json`; the page cannot
+  name a model path, key variable or timeout. Requests with a non-loopback
+  `Host` or a foreign `Origin` are refused.
+
 ## Test / 测试
 
 ```bash
