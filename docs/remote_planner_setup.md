@@ -46,6 +46,26 @@ cat /mnt/HDD-8T-0/evibound_yanke/planner_token         # the bearer token the Ma
 - Sampling is the frozen planner's (temperature 0.2, top-p 0.9, top-k 20,
   224 tokens); a request can only choose `seed`. Replies are exploratory.
 
+### 1b. Adjustable sampling: `scripts/model_server.py` / 可调采样参数
+
+`serve_planner.py` fixes temperature, top-p, top-k and length to the frozen
+values. When the demo's parameter controls should take effect, run
+`scripts/model_server.py` instead on the same port: same weights (bf16, one
+GPU), same routes (`/health`, `/v1/models`, `/v1/chat/completions`, `/runs`,
+`/runs/<name>/episodes`), same token file, Tailscale-only binding, but each
+request may set `temperature`, `top_p`, `top_k`, `max_tokens` and `seed`
+(frozen values are the defaults; the reply's `evibound.sampling` echoes what
+was used). Run only one of the two servers on port 8000.
+
+`serve_planner.py` 把采样参数固定为冻结值；如果希望演示页面里调的温度等参数生效，
+改用 `scripts/model_server.py`：同样的权重、路由、口令文件和只绑 Tailscale 地址，
+但每个请求可以设置 `temperature`、`top_p`、`top_k`、`max_tokens`、`seed`，默认就是
+冻结值。同一端口只开其中一个。
+
+```bash
+tmux new-session -d -s evibound_model_server 'cd /home/yanke/EviBound && source scripts/env.sh && CUDA_VISIBLE_DEVICES=1 python scripts/model_server.py --preload'
+```
+
 ## 2. On the Mac / Mac 端
 
 ```bash
