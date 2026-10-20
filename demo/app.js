@@ -768,6 +768,26 @@
       return `<span class="ln ${cls}">${esc(line) || " "}</span>`;
     }).join("");
   }
+  /* The same payload as the wire panel, as a pop-up inside the stage (fixed viewpoint). */
+  function calloutFor(step, idx) {
+    const w = step && step.wire;
+    if (!w) return EviStage.callout(null);
+    let n = 0;
+    const lines = (text, against, mark) => {
+      const other = against ? new Set(against.split("\n").map((l) => l.trim())) : null;
+      return text.split("\n").map((line) => {
+        const cls = other && !other.has(line.trim()) ? "diff" : mark && line.includes(mark) ? "mark" : "";
+        return `<span class="ln ${cls}" style="animation-delay:${Math.min(40, n++) * 18}ms">${esc(line) || " "}</span>`;
+      }).join("");
+    };
+    // the long system prompt stays in the full panel below; the pop-up keeps the hop readable
+    const panes = w.panes.filter((p) => !(p.tone === "" && p.text.length > 600)).slice(0, 2);
+    const tone = panes.some((p) => p.tone === "attack") ? "attack" : panes.some((p) => p.tone === "bad") ? "bad" : (panes[panes.length - 1] || {}).tone || "";
+    EviStage.callout(`<div class="callout-head"><b>#${idx + 1} ${step.title}</b><span class="grow"></span><span>${esc(w.hop)}</span>
+        <button class="callout-close" type="button" aria-label="${L("关闭", "Close")}">×</button></div>
+      <div class="callout-panes">${panes.map((p) => `<div class="callout-pane ${p.tone ? "tone-" + p.tone : ""}"><h5>${esc(p.label)}</h5><pre>${lines(p.text, p.against, p.mark)}</pre></div>`).join("")}</div>
+      ${w.note ? `<p class="callout-note">${w.note}</p>` : ""}`, { tone });
+  }
   function renderWire() {
     const box = $("wire");
     const idx = inspected === null ? run.steps.length - 1 : inspected;
@@ -786,7 +806,7 @@
         <pre class="wire-code">${codeLines(p.text, p.against, p.mark)}</pre></div>`).join("")}</div>
       ${w.note ? `<p class="wire-note">${w.note}</p>` : ""}${step.extra || ""}`;
     const latest = $("btnWireLatest");
-    if (latest) latest.addEventListener("click", () => { inspected = null; renderTimeline(); renderWire(); });
+    if (latest) latest.addEventListener("click", () => { inspected = null; renderTimeline(); renderWire(); calloutFor(run.steps[run.steps.length - 1], run.steps.length - 1); });
   }
 
   /* ---------------- rendering: timeline + pending ---------------- */
@@ -802,12 +822,12 @@
         <div class="step-body">${s.body}</div>
       </li>`).join("");
     tl.querySelectorAll("li.step").forEach((li) => {
-      const pick = () => { inspected = +li.dataset.i === run.steps.length - 1 ? null : +li.dataset.i; renderTimeline(); renderWire(); $("wire").scrollIntoView({ block: "nearest", behavior: "smooth" }); };
+      const pick = () => { inspected = +li.dataset.i === run.steps.length - 1 ? null : +li.dataset.i; renderTimeline(); renderWire(); calloutFor(run.steps[+li.dataset.i], +li.dataset.i); };
       li.addEventListener("click", pick);
       li.addEventListener("keydown", (e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); pick(); } });
     });
-    const last = tl.lastElementChild;
-    if (last && last.scrollIntoView && autoplay) last.scrollIntoView({ block: "nearest", behavior: "smooth" });
+    // The page never scrolls on its own: the viewpoint stays on the stage; the log scrolls inside itself.
+    tl.scrollTop = tl.scrollHeight;
   }
 
   let pendingError = "";
@@ -939,6 +959,7 @@
       inspected = null;
       applyStatuses(r.steps);
       renderTimeline(); renderPending(); renderWire();
+      calloutFor(r.steps[r.steps.length - 1], r.steps.length - 1);
       r.busy = true;
       $("btnStep").disabled = true;
       // An animation must never hold the run: cap it, then carry on.

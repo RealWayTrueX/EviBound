@@ -67,8 +67,23 @@
   /* ---------------- construction ---------------- */
   function mount(host, canvas, overlay) {
     S.canvas = canvas; S.overlay = overlay;
+    // inner: one positioned box holding the star field, the drawing and the payload callouts,
+    // so all three scale and scroll together.
+    const inner = document.createElement("div");
+    inner.className = "stage-inner";
+    host.appendChild(inner);
+    S.inner = inner;
+    const sky = document.createElement("canvas");
+    sky.className = "starfield";
+    sky.setAttribute("aria-hidden", "true");
+    inner.appendChild(sky);
+    S.sky = sky;
     const svg = EL("svg", { viewBox: "0 0 1280 720", class: "stage-svg", role: "img", "aria-label": L("智能家居平面图与数据链路", "Smart-home floor plan and data chain") });
-    host.appendChild(svg);
+    inner.appendChild(svg);
+    const calloutLayer = document.createElement("div");
+    calloutLayer.className = "callout-layer";
+    inner.appendChild(calloutLayer);
+    S.calloutLayer = calloutLayer;
     S.svg = svg;
     buildDefs(svg);
     EL("rect", { x: 0, y: 0, width: 1280, height: 720, fill: "url(#grid)" }, svg);
@@ -83,6 +98,7 @@
     setState({ truth: false, belief: null, actuators: { light: "off", fan: "off" } });
     resizeCanvas();
     root.addEventListener("resize", resizeCanvas);
+    startSky();
   }
   function buildDefs(svg) {
     const defs = EL("defs", {}, svg);
@@ -270,6 +286,7 @@
     S.nodes.attacker.g.classList.add("hidden-node");
     for (const R of Object.values(S.rooms)) { R.g.classList.remove("unsafe", "blocked"); R.status.textContent = ""; }
     if (S.overlay) S.overlay.className = "fx-overlay";
+    if (S.calloutLayer) S.calloutLayer.innerHTML = "";
     document.body.classList.remove("shake");
     S.particles = [];
   }
@@ -440,6 +457,78 @@
   const roomCenter = () => { const r = S.rooms[S.active].r; return { x: r.x + r.w / 2, y: r.y + r.h / 2 + 10 }; };
   const devicePos = (device) => { const r = S.rooms[S.active].r; return device === "light" ? { x: r.x + r.w / 2, y: r.y + 48 } : { x: r.x + r.w - 54, y: r.y + r.h / 2 + 4 }; };
 
+  /* ---------------- star field (cheap: one canvas, ~30 fps, paused when off-screen) ---------------- */
+  function startSky() {
+    const cv = S.sky, ctx = cv.getContext("2d");
+    let stars = [], shooting = null, visible = true, last = 0, w = 0, h = 0, dpr = 1;
+    const seed = () => {
+      dpr = Math.min(2, root.devicePixelRatio || 1);
+      w = cv.clientWidth; h = cv.clientHeight;
+      cv.width = Math.round(w * dpr); cv.height = Math.round(h * dpr);
+      const n = Math.round((w * h) / 5200);
+      const hues = ["210,235,255", "170,225,255", "255,236,200", "200,190,255"];
+      stars = Array.from({ length: n }, () => ({
+        x: Math.random() * w, y: Math.random() * h, r: Math.random() < 0.08 ? 1.6 + Math.random() : 0.4 + Math.random() * 0.9,
+        base: 0.25 + Math.random() * 0.55, amp: 0.15 + Math.random() * 0.45, speed: 0.4 + Math.random() * 1.6,
+        phase: Math.random() * Math.PI * 2, drift: 0.02 + Math.random() * 0.06, c: hues[(Math.random() * hues.length) | 0] }));
+    };
+    const draw = (t) => {
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      ctx.clearRect(0, 0, w, h);
+      for (const st of stars) {
+        const a = Math.max(0, Math.min(1, st.base + st.amp * Math.sin(st.phase + t * 0.001 * st.speed)));
+        st.x -= st.drift; if (st.x < -2) st.x = w + 2;
+        ctx.fillStyle = `rgba(${st.c},${a})`;
+        ctx.beginPath(); ctx.arc(st.x, st.y, st.r, 0, Math.PI * 2); ctx.fill();
+        if (st.r > 1.5 && a > 0.6) {  // a soft cross glint on the brightest stars
+          ctx.strokeStyle = `rgba(${st.c},${(a - 0.6) * 0.8})`; ctx.lineWidth = 0.6;
+          ctx.beginPath(); ctx.moveTo(st.x - 5, st.y); ctx.lineTo(st.x + 5, st.y); ctx.moveTo(st.x, st.y - 5); ctx.lineTo(st.x, st.y + 5); ctx.stroke();
+        }
+      }
+      if (!shooting && Math.random() < 0.004) shooting = { x: Math.random() * w * 0.8 + w * 0.2, y: Math.random() * h * 0.4, vx: -7 - Math.random() * 4, vy: 2.5 + Math.random() * 2, life: 1 };
+      if (shooting) {
+        const g = ctx.createLinearGradient(shooting.x, shooting.y, shooting.x - shooting.vx * 12, shooting.y - shooting.vy * 12);
+        g.addColorStop(0, `rgba(220,245,255,${shooting.life})`); g.addColorStop(1, "rgba(220,245,255,0)");
+        ctx.strokeStyle = g; ctx.lineWidth = 1.4;
+        ctx.beginPath(); ctx.moveTo(shooting.x, shooting.y); ctx.lineTo(shooting.x - shooting.vx * 12, shooting.y - shooting.vy * 12); ctx.stroke();
+        shooting.x += shooting.vx; shooting.y += shooting.vy; shooting.life -= 0.02;
+        if (shooting.life <= 0 || shooting.x < -50) shooting = null;
+      }
+    };
+    const loop = (t) => {
+      if (visible && !document.hidden && t - last > 33) { last = t; draw(t); }
+      requestAnimationFrame(loop);
+    };
+    seed();
+    if (reduced()) { draw(0); return; }
+    if ("IntersectionObserver" in root) new IntersectionObserver((es) => { visible = es[0].isIntersecting; }).observe(cv);
+    root.addEventListener("resize", () => { seed(); });
+    requestAnimationFrame(loop);
+  }
+
+  /* ---------------- payload callouts: the content of the current hop, inside the stage ---------------- */
+  /* Placed in the half of the house away from the active room, so it never hides the action. */
+  function callout(html, opts) {
+    const layer = S.calloutLayer;
+    if (!layer) return;
+    layer.innerHTML = "";
+    if (!html) return;
+    const r = S.rooms[S.active].r;
+    // the other row of rooms; in the top row it stops above the hub node (y≈275)
+    const top = r.y < 300 ? 372 : 64, height = r.y < 300 ? 280 : 206;
+    const box = document.createElement("div");
+    box.className = "callout " + ((opts && opts.tone) ? "tone-" + opts.tone : "");
+    box.style.left = (60 / 1280 * 100) + "%";
+    box.style.top = (top / 720 * 100) + "%";
+    box.style.width = (720 / 1280 * 100) + "%";
+    box.style.height = (height / 720 * 100) + "%";
+    box.innerHTML = html;
+    if (dur(1) === 0) box.classList.add("instant");
+    layer.appendChild(box);
+    const close = box.querySelector(".callout-close");
+    if (close) close.addEventListener("click", () => { box.remove(); });
+  }
+
   /* ---------------- choreographed effects ---------------- */
   const FX = {
     async setup() {
@@ -557,5 +646,5 @@
     try { await f(detail || {}); } catch (err) { console.warn("fx", name, err); }
   }
 
-  root.EviStage = { mount, setScene, setState, status, setSpeed, reset, fx, ROOMS, NODES };
+  root.EviStage = { mount, setScene, setState, status, setSpeed, reset, fx, callout, ROOMS, NODES };
 })(window);
