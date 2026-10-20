@@ -22,15 +22,19 @@
     nursery: { zh: "婴儿房", en: "NURSERY", x: 540, y: 360, w: 240, h: 290 },
   };
   const NODES = {
-    hub: { x: 352, y: 302, zh: "网关 · 可信记录库", en: "HUB · RECORD STORE", w: 150 },
-    cloud: { x: 1000, y: 112, zh: "云端 / 集成层", en: "CLOUD · INTEGRATIONS", w: 210 },
-    attacker: { x: 1196, y: 112, zh: "攻击者", en: "ATTACKER", w: 120 },
-    agent: { x: 1000, y: 332, zh: "智能体 · Qwen2.5-7B", en: "LLM AGENT", w: 210 },
-    guard: { x: 1000, y: 540, zh: "EviBound 守卫", en: "EVIBOUND GUARD", w: 210 },
-    oracle: { x: 1196, y: 650, zh: "独立判分", en: "ORACLE", w: 120 },
+    hub: { x: 352, y: 302, zh: "网关 · 可信记录库", en: "HUB · RECORD STORE", w: 150, enName: "Hub · record store" },
+    cloud: { x: 1000, y: 112, zh: "云端 / 集成层", en: "CLOUD · INTEGRATIONS", w: 210, enName: "Cloud / integrations" },
+    attacker: { x: 1196, y: 112, zh: "攻击者", en: "ATTACKER", w: 120, enName: "Attacker" },
+    agent: { x: 1000, y: 332, zh: "智能体 · Qwen2.5-7B", en: "LLM AGENT", w: 210, enName: "Agent · Qwen2.5-7B" },
+    guard: { x: 1000, y: 540, zh: "EviBound 守卫", en: "EVIBOUND GUARD", w: 210, enName: "EviBound guard" },
+    oracle: { x: 1196, y: 650, zh: "独立判分", en: "ORACLE", w: 120, enName: "Independent oracle" },
   };
-  const LED_LABELS = ["来源", "时效", "授权", "R1", "R2", "R3", "R4", "R5", "R6"];
+  const EN = () => root.EVI_LANG === "en";
+  const L = (zh, en) => (EN() ? en : zh);
+  const LED_LABELS = () => [L("来源", "Prov"), L("时效", "Fresh"), L("授权", "Auth"), "R1", "R2", "R3", "R4", "R5", "R6"];
   const LEVEL_ZH = { off: "关", low: "1档", high: "2档" };
+  const LEVEL_EN = { off: "off", low: "low", high: "high" };
+  const LV = (v) => (EN() ? LEVEL_EN : LEVEL_ZH)[v];
   const FURNITURE = {
     kitchen: ["M20 40 h70 v40 h-70 z", "M20 80 v160 h40 v-160", "M32 110 a6 6 0 1 0 12 0 a6 6 0 1 0 -12 0", "M32 140 a6 6 0 1 0 12 0 a6 6 0 1 0 -12 0", "M150 200 h60 v40 h-60 z", "M160 210 h40 v20 h-40 z"],
     hallway: ["M40 80 h160 v120 h-160 z", "M52 92 h136 v96 h-136 z", "M20 240 h80 v22 h-80 z"],
@@ -63,7 +67,7 @@
   /* ---------------- construction ---------------- */
   function mount(host, canvas, overlay) {
     S.canvas = canvas; S.overlay = overlay;
-    const svg = EL("svg", { viewBox: "0 0 1280 720", class: "stage-svg", role: "img", "aria-label": "智能家居平面图与数据链路" });
+    const svg = EL("svg", { viewBox: "0 0 1280 720", class: "stage-svg", role: "img", "aria-label": L("智能家居平面图与数据链路", "Smart-home floor plan and data chain") });
     host.appendChild(svg);
     S.svg = svg;
     buildDefs(svg);
@@ -71,7 +75,7 @@
     for (const k of ["links", "house", "chain", "packets", "stamps"]) S.layers[k] = EL("g", { class: "layer-" + k }, svg);
     // house outline
     EL("rect", { x: 48, y: 58, width: 744, height: 604, rx: 6, class: "house-outline" }, S.layers.house);
-    TEXT(S.layers.house, 60, 48, "SIMULATED HOME · 模拟住宅 · 平面图", "stage-eyebrow");
+    TEXT(S.layers.house, 60, 48, L("SIMULATED HOME · 模拟住宅 · 平面图", "SIMULATED HOME · FLOOR PLAN"), "stage-eyebrow");
     for (const [key, r] of Object.entries(ROOMS)) buildRoom(key, r);
     for (const [key, n] of Object.entries(NODES)) buildNode(key, n);
     buildLinks();
@@ -111,25 +115,25 @@
     for (const d of FURNITURE[key] || []) EL("path", { d, transform: "translate(14 40)" }, furniture);
     EL("rect", { x: 0, y: 0, width: r.w, height: r.h, class: "room-wall" }, g);
     // door gap on the wall facing the hallway
-    TEXT(g, 14, 24, r.zh, "room-name");
-    TEXT(g, 14 + r.zh.length * 16 + 6, 24, r.en, "room-name-en");
+    if (EN()) TEXT(g, 14, 24, r.en.charAt(0) + r.en.slice(1).toLowerCase(), "room-name");
+    else { TEXT(g, 14, 24, r.zh, "room-name"); TEXT(g, 14 + r.zh.length * 16 + 6, 24, r.en, "room-name-en"); }
     const status = TEXT(g, r.w - 14, 24, "", "room-status", { "text-anchor": "end" });
     // light fixture
     const light = EL("g", { class: "light", transform: `translate(${r.w / 2} 48)` }, g);
     EL("circle", { r: 13, class: "light-ring" }, light);
     EL("circle", { r: 7, class: "light-bulb" }, light);
     EL("path", { d: "M-4 -18 h8 M0 -22 v4", class: "light-wire" }, light);
-    const lightLabel = TEXT(light, 0, 32, "灯 关", "fixture-label", { "text-anchor": "middle" });
+    const lightLabel = TEXT(light, 0, 32, L("灯 关", "light off"), "fixture-label", { "text-anchor": "middle" });
     // fan
     const fan = EL("g", { class: "fan", transform: `translate(${r.w - 54} ${r.h / 2 + 4})` }, g);
     const blades = EL("g", { class: "fan-blades" }, fan);
     for (const a of [0, 90, 180, 270]) EL("path", { d: "M0 0 C 6 -8 12 -26 0 -30 C -12 -26 -6 -8 0 0 z", transform: `rotate(${a})` }, blades);
     EL("circle", { r: 5, class: "fan-hub" }, fan);
-    const fanLabel = TEXT(fan, 0, 46, "风扇 关", "fixture-label", { "text-anchor": "middle" });
+    const fanLabel = TEXT(fan, 0, 46, L("风扇 关", "fan off"), "fixture-label", { "text-anchor": "middle" });
     // sensor
     const sensor = EL("g", { class: "sensor", transform: `translate(26 ${r.h / 2})` }, g);
     const sensorIcon = EL("g", { class: "sensor-icon" }, sensor);
-    const sensorLabel = TEXT(sensor, 0, 36, "传感器", "fixture-label", { "text-anchor": "middle" });
+    const sensorLabel = TEXT(sensor, 0, 36, L("传感器", "sensor"), "fixture-label", { "text-anchor": "middle" });
     // people
     const px = r.w / 2 - 10, py = r.h / 2 + 34;
     const person = EL("g", { class: "person", transform: `translate(${px} ${py})` }, g);
@@ -139,7 +143,7 @@
     const ghost = EL("g", { class: "ghost", transform: `translate(${px + 44} ${py})` }, g);
     EL("circle", { cx: 0, cy: -34, r: 10 }, ghost);
     EL("path", { d: "M-16 24 C -16 -6 -10 -18 0 -18 C 10 -18 16 -6 16 24 Z" }, ghost);
-    const ghostLabel = TEXT(ghost, 0, 42, "幻影", "ghost-label", { "text-anchor": "middle" });
+    const ghostLabel = TEXT(ghost, 0, 42, L("幻影", "phantom"), "ghost-label", { "text-anchor": "middle" });
     S.rooms[key] = { g, r, glow, light, lightLabel, fan, blades, fanLabel, sensor, sensorIcon, sensorLabel, person, personLabel, ghost, ghostLabel, status };
   }
   function sensorGlyph(modality) {
@@ -166,14 +170,14 @@
       oracle: ["M-10 -10 h20 v20 h-20 z", "M-6 2 l4 4 l8 -9"],
     };
     for (const d of glyphs[key]) EL("path", { d }, icon);
-    TEXT(g, -w / 2 + 44, -3, n.zh, "node-zh");
+    TEXT(g, -w / 2 + 44, -3, EN() ? n.enName : n.zh, "node-zh");
     TEXT(g, -w / 2 + 44, 13, n.en, "node-en");
     const status = TEXT(g, 0, h / 2 + 18, "", "node-status", { "text-anchor": "middle" });
     const ring = EL("circle", { cx: 0, cy: 0, r: 0, class: "node-ring" }, g);
     S.nodes[key] = { g, n, status, ring };
     if (key === "guard") {
       const leds = EL("g", { class: "leds", transform: `translate(${-w / 2 + 10} ${h / 2 + 30})` }, g);
-      LED_LABELS.forEach((label, i) => {
+      LED_LABELS().forEach((label, i) => {
         const x = i * 22;
         const c = EL("circle", { cx: x + 6, cy: 0, r: 4.5, class: "led" }, leds);
         TEXT(leds, x + 6, 16, label, "led-label", { "text-anchor": "middle" });
@@ -212,7 +216,7 @@
     const R = S.rooms[S.active], r = R.r;
     R.sensorIcon.innerHTML = "";
     for (const d of sensorGlyph(S.modality)) EL("path", { d }, R.sensorIcon);
-    R.sensorLabel.textContent = { presence_flag: "存在传感器", motion_timer: "运动传感器", camera_caption: "摄像头", multi_sensor: "摄像头+运动" }[S.modality] || "传感器";
+    R.sensorLabel.textContent = (EN() ? { presence_flag: "presence sensor", motion_timer: "motion sensor", camera_caption: "camera", multi_sensor: "camera + motion" } : { presence_flag: "存在传感器", motion_timer: "运动传感器", camera_caption: "摄像头", multi_sensor: "摄像头+运动" })[S.modality] || L("传感器", "sensor");
     const sx = r.x + 26, sy = r.y + r.h / 2;
     const hub = NODES.hub;
     S.paths.sensorHub.setAttribute("d", `M ${sx} ${sy} C ${sx} ${sy - 60} ${hub.x - 75} ${hub.y - 40} ${hub.x - 75} ${hub.y}`);
@@ -231,22 +235,22 @@
     R.glow.setAttribute("r", glowR);
     R.light.classList.toggle("on", a.light !== "off");
     R.light.classList.toggle("high", a.light === "high");
-    R.lightLabel.textContent = "灯 " + LEVEL_ZH[a.light];
+    R.lightLabel.textContent = L("灯 ", "light ") + LV(a.light);
     R.fan.classList.remove("low", "high");
     if (a.fan !== "off") R.fan.classList.add(a.fan);
-    R.fanLabel.textContent = "风扇 " + LEVEL_ZH[a.fan];
+    R.fanLabel.textContent = L("风扇 ", "fan ") + LV(a.fan);
     R.g.classList.toggle("unsafe", S.state.unsafe);
     // truth figure
     R.person.style.display = truth ? "" : "none";
-    R.personLabel.textContent = truth ? "真实：有人" : "";
+    R.personLabel.textContent = truth ? L("真实：有人", "truth: occupied") : "";
     // belief phantom
     const known = beliefKnown !== undefined ? beliefKnown : belief !== null && belief !== undefined;
     const wrong = known && belief !== truth;
     R.ghost.style.display = wrong && belief ? "" : "none";
-    R.ghostLabel.textContent = "幻影：智能体以为有人";
+    R.ghostLabel.textContent = L("幻影：智能体以为有人", "phantom: agent thinks occupied");
     R.person.classList.toggle("hidden-from-agent", wrong && !belief);
-    R.personLabel.textContent = truth ? (wrong && !belief ? "真实：有人 · 智能体以为没人" : "真实：有人") : "";
-    R.status.textContent = truth ? "有人" : "没人";
+    R.personLabel.textContent = truth ? (wrong && !belief ? L("真实：有人 · 智能体以为没人", "truth: occupied · agent thinks empty") : L("真实：有人", "truth: occupied")) : "";
+    R.status.textContent = truth ? L("有人", "occupied") : L("没人", "empty");
     R.status.classList.toggle("ok", !known || !wrong);
     S.nodes.agent.g.classList.toggle("deceived", wrong);
   }
@@ -443,36 +447,36 @@
       hot("hub", true); await sleep(dur(300)); hot("hub", false);
     },
     async "read-clean"(d) {
-      await travel(S.paths.sensorHub, { color: C.cyan, label: "读数", ms: 700 });
+      await travel(S.paths.sensorHub, { color: C.cyan, label: L("读数", "reading"), ms: 700 });
       pulse("hub", C.cyan);
       await travel(S.paths.hubCloud, { color: C.cyan, label: d && d.label, ms: 800 });
       await travel(S.paths.cloudAgent, { color: C.cyan, ms: 500 });
       pulse("agent", C.cyan);
     },
-    async "read-boundary"(d) { return FX["read-clean"]({ label: "年龄 = 2.0（上限）" }); },
+    async "read-boundary"(d) { return FX["read-clean"]({ label: (d && d.label) || L("年龄 = 2.0（上限）", "age = 2.0 (limit)") }); },
     async "attack-tamper"(d) {
       S.nodes.attacker.g.classList.remove("hidden-node");
-      await travel(S.paths.sensorHub, { color: C.cyan, label: "真实读数", ms: 700 });
+      await travel(S.paths.sensorHub, { color: C.cyan, label: L("真实读数", "true reading"), ms: 700 });
       pulse("hub", C.cyan);
-      await travel(S.paths.hubCloud, { color: C.cyan, ms: 800 });
+      await travel(S.paths.hubCloud, { color: C.cyan, label: d && d.truthLabel, ms: 800 });
       hot("attacker", true);
-      await travel(S.paths.attackerCloud, { color: C.ember, label: "篡改", ms: 350 });
+      await travel(S.paths.attackerCloud, { color: C.ember, label: (d && d.injectLabel) || L("篡改", "tamper"), ms: 350 });
       overlay("scan", 700);
       await glitch("cloud", 500);
-      stamp("TAMPERED", "读数内容被改成相反含义 · 来源与时间戳未变", C.ember, { x: NODES.cloud.x - 230, y: NODES.cloud.y + 60 });
+      stamp("TAMPERED", L("读数内容被改成相反含义 · 来源与时间戳未变", "value flipped · id and timestamp unchanged"), C.ember, { x: NODES.cloud.x - 230, y: NODES.cloud.y + 60 });
       await travel(S.paths.cloudAgent, { color: C.ember, label: d && d.label, ms: 600, dashed: true });
       await glitch("agent", 400);
       hot("attacker", false);
     },
     async "attack-replay"(d) {
       S.nodes.attacker.g.classList.remove("hidden-node");
-      const p = travel(S.paths.sensorHub, { color: C.cyan, label: "真实读数", ms: 700 }).then(() => travel(S.paths.hubCloud, { color: C.cyan, label: "被扣下", ms: 800, dashed: true }));
+      const p = travel(S.paths.sensorHub, { color: C.cyan, label: L("真实读数", "true reading"), ms: 700 }).then(() => travel(S.paths.hubCloud, { color: C.cyan, label: L("被扣下", "held back"), ms: 800, dashed: true }));
       await p;
       hot("attacker", true);
-      await travel(S.paths.attackerCloud, { color: C.ember, label: "旧记录 t=0", ms: 400 });
+      await travel(S.paths.attackerCloud, { color: C.ember, label: (d && d.injectLabel) || L("旧记录 t=0", "old record t=0"), ms: 400 });
       overlay("scan", 700);
       await glitch("cloud", 450);
-      stamp("REPLAYED", "一条真实但过期的旧记录被当成当前读数", C.ember, { x: NODES.cloud.x - 230, y: NODES.cloud.y + 60 });
+      stamp("REPLAYED", L("一条真实但过期的旧记录被当成当前读数", "a genuine but stale record served as current"), C.ember, { x: NODES.cloud.x - 230, y: NODES.cloud.y + 60 });
       await travel(S.paths.cloudAgent, { color: C.ember, label: d && d.label, ms: 600, dashed: true });
       await glitch("agent", 400);
       hot("attacker", false);
@@ -483,7 +487,7 @@
       hot("agent", false);
     },
     async plan(d) {
-      const label = d && d.parseError ? "格式错误" : d && d.empty ? "空计划" : (d && d.label) || "计划";
+      const label = d && d.parseError ? L("格式错误", "malformed") : d && d.empty ? L("空计划", "empty plan") : (d && d.label) || L("计划", "plan");
       await travel(S.paths.agentGuard, { color: d && d.parseError ? C.ember : C.violet, label, ms: 650, dashed: Boolean(d && d.parseError) });
       pulse("guard", C.violet);
     },
@@ -503,7 +507,7 @@
     async unsafe(d) {
       const R = S.rooms[S.active];
       R.g.classList.add("unsafe");
-      stamp("UNSAFE EFFECT", d.label || "不安全后果", C.rose, roomCenter());
+      stamp("UNSAFE EFFECT", d.label || L("不安全后果", "unsafe effect"), C.rose, roomCenter());
       await Promise.all([overlay("flash-rose", 1600), shake(600)]);
       hot("oracle", true); await sleep(dur(200)); hot("oracle", false);
     },
@@ -513,35 +517,35 @@
       burst(NODES.guard.x, NODES.guard.y, "#ff5c3a", { n: 70, speed: 7, life: 55 });
       S.nodes.guard.g.classList.add("jolt");
       setTimeout(() => S.nodes.guard.g.classList.remove("jolt"), 500);
-      stamp("BLOCKED", d.label || "已拦截", C.mint, { x: NODES.guard.x - 220, y: NODES.guard.y - 10 });
+      stamp("BLOCKED", d.label || L("已拦截", "blocked"), C.mint, { x: NODES.guard.x - 220, y: NODES.guard.y - 10 });
       await overlay("wave-mint", 900, { x: NODES.guard.x, y: NODES.guard.y });
       hot("guard", false);
     },
     async reread() {
       S.nodes.attacker.g.classList.add("hidden-node");
-      await travel(S.paths.sensorHub, { color: C.cyan, label: "重新读取", ms: 600 });
+      await travel(S.paths.sensorHub, { color: C.cyan, label: L("重新读取", "re-read"), ms: 600 });
       pulse("hub", C.cyan);
-      await travel(S.paths.hubAgent, { color: C.cyan, label: "真实当前记录", ms: 800 });
+      await travel(S.paths.hubAgent, { color: C.cyan, label: L("真实当前记录", "authentic current record"), ms: 800 });
       pulse("agent", C.cyan);
     },
     async feedback(d) {
-      await travel(S.paths.agentGuard, { color: C.mint, label: d && d.label ? d.label : "反馈", ms: 650, reverse: true });
+      await travel(S.paths.agentGuard, { color: C.mint, label: d && d.label ? d.label : L("反馈", "feedback"), ms: 650, reverse: true });
       pulse("agent", C.mint);
     },
     async score(d) {
       hot("oracle", true);
       await travel(S.paths.guardOracle, { color: C.ember, ms: 500 });
       if (d.unsafe) {
-        stamp("VERDICT · UNSAFE", d.label || "出现不安全后果", C.rose, { x: 640, y: 560 });
+        stamp("VERDICT · UNSAFE", d.label || L("出现不安全后果", "unsafe effect occurred"), C.rose, { x: 640, y: 560 });
         await overlay("flash-rose", 900);
       } else if (d.complete) {
-        stamp("VERDICT · SAFE", d.label || "安全完成任务", C.mint, { x: 640, y: 560 });
+        stamp("VERDICT · SAFE", d.label || L("安全完成任务", "task completed safely"), C.mint, { x: 640, y: 560 });
         const c = roomCenter();
         burst(c.x, c.y, "#46f2b6", { n: 90, speed: 6, gravity: 0.12, life: 80, shape: "confetti" });
         burst(c.x, c.y, "#5ee1ff", { n: 50, speed: 5, gravity: 0.12, life: 80, shape: "confetti" });
         await overlay("sweep-mint", 1100);
       } else {
-        stamp("VERDICT · INCOMPLETE", d.label || "安全但任务未完成", C.amber, { x: 640, y: 560 });
+        stamp("VERDICT · INCOMPLETE", d.label || L("安全但任务未完成", "safe but task not completed"), C.amber, { x: 640, y: 560 });
         await sleep(dur(500));
       }
       hot("oracle", false);

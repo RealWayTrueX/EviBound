@@ -8,6 +8,16 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@500;700;800&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
 <link rel="stylesheet" href="style.css">
+<script>
+  // Language is chosen before anything renders; the toggle stores it and reloads.
+  (function () {
+    var lang = "zh";
+    try { lang = JSON.parse(localStorage.getItem("evibound-demo:lang")) || "zh"; } catch (e) { /* storage blocked */ }
+    window.EVI_LANG = lang === "en" ? "en" : "zh";
+    document.documentElement.lang = window.EVI_LANG === "en" ? "en" : "zh-CN";
+    if (window.EVI_LANG === "en") document.title = "EviBound Attack/Defense Demo";
+  })();
+</script>
 </head>
 <body>
 <div class="fx-overlay" id="fxOverlay" aria-hidden="true"></div>
@@ -17,73 +27,79 @@
   <div class="brand">
     <svg class="brand-mark" viewBox="0 0 32 32" aria-hidden="true"><path d="M16 2 4 7v8c0 7.5 5 12.7 12 15 7-2.3 12-7.5 12-15V7L16 2Z" fill="none" stroke="var(--mint)" stroke-width="2"/><path d="m10 16 4 4 8-9" fill="none" stroke="var(--mint)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
     <div>
-      <h1>EVIBOUND <span class="h1-zh">攻防演示台</span></h1>
-      <p class="sub">智能家居智能体的证据约束运行时防护 · 看攻击如何沿链路传导、EviBound 在哪一步拦下</p>
+      <h1>EVIBOUND <span class="h1-zh" data-en="ATTACK / DEFENSE DEMO">攻防演示台</span></h1>
+      <p class="sub" data-en="Evidence-bound runtime enforcement for smart-home agents · watch an attack travel the chain and where EviBound stops it">智能家居智能体的证据约束运行时防护 · 看攻击如何沿链路传导、EviBound 在哪一步拦下</p>
     </div>
   </div>
-  <div class="meta-chips" id="metaChips"></div>
+  <div class="top-right">
+    <div class="meta-chips" id="metaChips"></div>
+    <div class="lang-switch" role="group" aria-label="Language">
+      <button type="button" data-lang="zh">中文</button><button type="button" data-lang="en">English</button>
+    </div>
+  </div>
 </header>
 
 <main>
-  <section class="mission" aria-label="场景设置">
+  <section class="mission" aria-label="场景设置" data-en-aria="Setup">
     <div class="field wide">
-      <label for="taskSelect">任务</label>
+      <label for="taskSelect" data-en="Task">任务</label>
       <select id="taskSelect"></select>
       <div class="filters" id="filters"></div>
     </div>
     <div class="field">
-      <span class="label" id="variantLabel">观测情况</span>
+      <span class="label" id="variantLabel" data-en="Sensor reading">观测情况</span>
       <div class="seg" id="variantSeg" role="radiogroup" aria-labelledby="variantLabel"></div>
     </div>
     <div class="field">
-      <label for="conditionSelect">防护条件</label>
+      <label for="conditionSelect" data-en="Defense condition">防护条件</label>
       <select id="conditionSelect"></select>
       <p class="hint" id="conditionHint"></p>
     </div>
     <div class="field">
-      <label for="plannerSelect">智能体</label>
+      <label for="plannerSelect" data-en="Agent">智能体</label>
       <select id="plannerSelect"></select>
       <p class="hint" id="plannerHint"></p>
     </div>
   </section>
 
-  <section class="brief" aria-label="任务与战况">
+  <section class="brief" aria-label="任务与战况" data-en-aria="Task and score">
     <article class="brief-card" id="taskCard"></article>
     <aside class="score-card" id="scoreboard"></aside>
   </section>
 
-  <section class="theatre" aria-label="攻防舞台">
+  <section class="theatre" aria-label="攻防舞台" data-en-aria="Attack/defense stage">
     <div class="stage"><div class="stage-scroll" id="stage"></div></div>
+    <div class="wire" id="wire" aria-live="polite"></div>
     <div class="transport">
-      <button id="btnReset" class="tbtn ghost" type="button" title="重置到第 0 步">重置</button>
-      <button id="btnStep" class="tbtn primary" type="button">下一步 ▸</button>
-      <button id="btnPlay" class="tbtn" type="button">自动播放</button>
-      <button id="btnFinish" class="tbtn ghost" type="button">直接跑完</button>
-      <label class="speed" for="speedSelect">动画
-        <select id="speedSelect"><option value="2">慢</option><option value="1" selected>正常</option><option value="0.5">快</option><option value="0">瞬间</option></select>
+      <button id="btnReset" class="tbtn ghost" type="button" title="重置到第 0 步" data-en="Reset">重置</button>
+      <button id="btnStep" class="tbtn primary" type="button" data-en="Next step ▸">下一步 ▸</button>
+      <button id="btnPlay" class="tbtn" type="button" data-en="Autoplay">自动播放</button>
+      <button id="btnFinish" class="tbtn ghost" type="button" data-en="Run to end">直接跑完</button>
+      <label class="speed" for="speedSelect"><span data-en="Animation">动画</span>
+        <select id="speedSelect"><option value="2" data-en="slow">慢</option><option value="1" selected data-en="normal">正常</option><option value="0.5" data-en="fast">快</option><option value="0" data-en="instant">瞬间</option></select>
       </label>
     </div>
   </section>
 
-  <section class="console" aria-label="逐步记录">
+  <section class="console" aria-label="逐步记录" data-en-aria="Step log">
     <div class="console-log">
-      <h2 class="eyebrow">逐步记录 · STEP LOG</h2>
+      <h2 class="eyebrow" data-en="STEP LOG">逐步记录 · STEP LOG</h2>
       <ol class="timeline" id="timeline"></ol>
     </div>
     <div class="console-pending">
-      <h2 class="eyebrow">下一步 · NEXT</h2>
+      <h2 class="eyebrow" data-en="NEXT STEP">下一步 · NEXT</h2>
       <div class="pending" id="pending"></div>
     </div>
   </section>
 
   <section class="tabs-section">
     <div class="tabbar" role="tablist" id="tabbar">
-      <button role="tab" id="tab-compare" aria-controls="panel-compare" aria-selected="true" type="button">全条件对比</button>
-      <button role="tab" id="tab-edit" aria-controls="panel-edit" aria-selected="false" type="button">Prompt 与参数</button>
-      <button role="tab" id="tab-scenario" aria-controls="panel-scenario" aria-selected="false" type="button">任务 JSON</button>
-      <button role="tab" id="tab-results" aria-controls="panel-results" aria-selected="false" type="button">正式实验结果</button>
-      <button role="tab" id="tab-replay" aria-controls="panel-replay" aria-selected="false" type="button">回放真实轨迹</button>
-      <button role="tab" id="tab-about" aria-controls="panel-about" aria-selected="false" type="button">说明</button>
+      <button role="tab" id="tab-compare" aria-controls="panel-compare" aria-selected="true" type="button" data-en="Compare conditions">全条件对比</button>
+      <button role="tab" id="tab-edit" aria-controls="panel-edit" aria-selected="false" type="button" data-en="Prompts &amp; parameters">Prompt 与参数</button>
+      <button role="tab" id="tab-scenario" aria-controls="panel-scenario" aria-selected="false" type="button" data-en="Task JSON">任务 JSON</button>
+      <button role="tab" id="tab-results" aria-controls="panel-results" aria-selected="false" type="button" data-en="Formal results">正式实验结果</button>
+      <button role="tab" id="tab-replay" aria-controls="panel-replay" aria-selected="false" type="button" data-en="Replay real traces">回放真实轨迹</button>
+      <button role="tab" id="tab-about" aria-controls="panel-about" aria-selected="false" type="button" data-en="About">说明</button>
     </div>
     <div class="savebar" id="savebar"></div>
     <div role="tabpanel" id="panel-compare" aria-labelledby="tab-compare" class="panel"></div>

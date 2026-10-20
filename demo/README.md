@@ -33,6 +33,21 @@ the full-screen effects.
 在房间里生成"幻影"；拦截会在守卫处碎裂并盖 BLOCKED 印章；真正执行了不安全写入时
 整屏变红、晃动并盖 UNSAFE EFFECT 印章；判分以绿色扫光或红色闪烁收尾。
 
+## Attack content and language / 攻击内容与语言
+
+"On the wire" (链路数据), directly under the stage, shows what actually travels on
+each hop: the true record next to the reading the attacker hands the agent
+(altered fields highlighted), the full prompt with the injected observation
+line marked, the raw model output, the evidence the guard compares against
+the trusted record, and the feedback message. Click any step in the log to
+inspect it. At the "Read the sensor" step the payload the agent will receive
+is editable, with presets for tamper, replay, a forged record id, or no
+attack. The 中文 / English switch in the header renders the whole page in
+either language.
+
+舞台下方的“链路数据”显示每一跳实际传输的内容；“读取传感器”这一步可以直接改攻击
+载荷（预设：篡改、重放、伪造 id、取消攻击）；右上角可切换中文 / English。
+
 ## Run / 运行
 
 ```bash
