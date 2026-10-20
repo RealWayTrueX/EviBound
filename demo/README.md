@@ -62,6 +62,18 @@ Presets `chain-*` in `presets/` load the hops the page can already show
 结果和防御建议见 [docs/chain_attack_surface.md](../docs/chain_attack_surface.md)，
 `presets/chain-*` 是现在就能载入的演示预设。
 
+On the page: pick a hop under 攻击环节 / Attacked hop. The attacker moves to that
+hop on the stage, strikes it at the step where the attack applies (COMPROMISED
+stamp; guard LEDs dashed when the hop is in the trusted base), and the episode
+runs step by step with the attack's hooks, scored against the user's real task.
+A rule-compliant takeover of an occupied room ends with a violet HIJACKED
+verdict instead of SAFE. Worst-case attacks on text channels use the attacker's
+plan with scripted planners and the real model's answer with a live model.
+
+页面上：在“攻击环节”里选一个环节，攻击者会移到舞台上对应位置，在攻击生效的那一步
+发动（COMPROMISED 印章；可信基环节时守卫指示灯变虚线），按用户真实任务判分；
+有人房间里被合规劫持时以紫色 HIJACKED 收尾。
+
 ## Run / 运行
 
 ```bash

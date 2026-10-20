@@ -190,7 +190,7 @@
     TEXT(g, -w / 2 + 44, 13, n.en, "node-en");
     const status = TEXT(g, 0, h / 2 + 18, "", "node-status", { "text-anchor": "middle" });
     const ring = EL("circle", { cx: 0, cy: 0, r: 0, class: "node-ring" }, g);
-    S.nodes[key] = { g, n, status, ring };
+    S.nodes[key] = { g, n, status, ring, pos };
     if (key === "guard") {
       const leds = EL("g", { class: "leds", transform: `translate(${-w / 2 + 10} ${h / 2 + 30})` }, g);
       LED_LABELS().forEach((label, i) => {
@@ -529,6 +529,37 @@
     if (close) close.addEventListener("click", () => { box.remove(); });
   }
 
+  /* ---------------- whole-chain attacks: where the attacker sits for each hop ---------------- */
+  /* Returns {at: attacker position, target: injection point, node: node to glitch or null, room: bool}. */
+  function hopGeometry(hop) {
+    const r = S.rooms[S.active].r, N = NODES;
+    const mid = (path) => { const t = path.getTotalLength(); const p = path.getPointAtLength(t / 2); return { x: p.x, y: p.y }; };
+    switch (hop) {
+      case "H0": return { at: { x: 1196, y: 250 }, target: { x: N.agent.x + 60, y: N.agent.y - 27 }, node: "agent" };
+      case "H1": return { at: { x: r.x + 120, y: r.y + r.h / 2 - 70 }, target: { x: r.x + 26, y: r.y + r.h / 2 }, node: null, room: true };
+      case "H2": { const m = mid(S.paths.sensorHub); return { at: { x: m.x + 70, y: m.y - 70 }, target: m, node: null }; }
+      case "H3": return { at: { x: N.hub.x + 70, y: N.hub.y - 90 }, target: { x: N.hub.x, y: N.hub.y - 27 }, node: "hub" };
+      case "H4": return { at: { x: N.attacker.x, y: N.attacker.y }, target: { x: N.cloud.x + 105, y: N.cloud.y }, node: "cloud" };
+      case "H5": return { at: { x: 1196, y: 400 }, target: { x: N.agent.x + 105, y: N.agent.y }, node: "agent" };
+      case "H6": return { at: { x: 1196, y: 436 }, target: { x: N.agent.x + 30, y: N.agent.y + 60 }, node: "agent" };
+      case "H7": return { at: { x: 820, y: 436 }, target: { x: N.agent.x - 10, y: 436 }, node: null };
+      case "H8": { const m = mid(S.paths.hubAgent); return { at: { x: m.x, y: m.y - 80 }, target: m, node: null }; }
+      case "H9": return { at: { x: 1196, y: 470 }, target: { x: N.guard.x + 105, y: N.guard.y - 10 }, node: "guard" };
+      case "H10": { const m = mid(S.paths.guardLight); return { at: { x: m.x + 40, y: m.y + 90 }, target: m, node: null }; }
+      default: return null;
+    }
+  }
+  function setAttackHop(hop) {
+    S.attackHop = hop || null;
+    const A = S.nodes.attacker;
+    const geo = hop ? hopGeometry(hop) : hopGeometry("H4");
+    A.pos.setAttribute("transform", `translate(${geo.at.x} ${geo.at.y})`);
+    S.paths.attackerCloud.setAttribute("d", `M ${geo.at.x} ${geo.at.y + (geo.at.y < geo.target.y ? 27 : -27)} L ${geo.target.x} ${geo.target.y}`);
+    S.paths.attackerCloud.style.display = "";
+    A.g.classList.toggle("hidden-node", !hop);
+    for (const led of S.leds) led.classList.remove("tcb");
+  }
+
   /* ---------------- choreographed effects ---------------- */
   const FX = {
     async setup() {
@@ -621,7 +652,40 @@
       await travel(S.paths.agentGuard, { color: C.mint, label: d && d.label ? d.label : L("反馈", "feedback"), ms: 650, reverse: true });
       pulse("agent", C.mint);
     },
+    /* A whole-chain attack strikes its hop: attacker lights up, a payload flies to the hop, the hop glitches. */
+    async "attack-hop"(d) {
+      const geo = hopGeometry(d.hop);
+      if (!geo) return;
+      S.nodes.attacker.g.classList.remove("hidden-node");
+      hot("attacker", true);
+      await travel(S.paths.attackerCloud, { color: C.ember, label: d.label, ms: 650 });
+      if (geo.room) { roomPulse(C.ember); S.rooms[S.active].g.classList.add("unsafe"); setTimeout(() => S.rooms[S.active].g.classList.remove("unsafe"), dur(900)); }
+      if (geo.node) await glitch(geo.node, 450);
+      overlay("scan", 600);
+      stamp(`COMPROMISED · ${d.hop}`, d.stampSub || "", C.ember, { x: geo.target.x - 40, y: geo.target.y + 70 });
+      if (d.trusted) {
+        for (const led of S.leds) led.classList.add("tcb");
+        status("guard", L("可信基被破坏：守卫看到的也是假的", "trusted base compromised: the guard is fooled too"));
+      }
+      await sleep(dur(400));
+      hot("attacker", false);
+    },
+    async bypass(d) {
+      await FX["attack-hop"]({ hop: "H10", label: d.label, stampSub: d.stampSub });
+      stageStateSet();
+      await Promise.all([overlay("flash-rose", 1400), shake(500)]);
+    },
     async score(d) {
+      if (d.hijacked) {
+        hot("oracle", true);
+        await travel(S.paths.guardOracle, { color: C.violet, ms: 500 });
+        stamp("HIJACKED", d.label || L("规则没被违反，但房间被设成了攻击者想要的样子", "no rule broken, but the room is set the attacker's way"), C.violet, { x: 640, y: 560 });
+        const c = roomCenter();
+        burst(c.x, c.y, "#b89bff", { n: 70, speed: 5, gravity: 0.1, life: 70 });
+        await overlay("flash-violet", 1200);
+        hot("oracle", false);
+        return;
+      }
       hot("oracle", true);
       await travel(S.paths.guardOracle, { color: C.ember, ms: 500 });
       if (d.unsafe) {
@@ -646,5 +710,6 @@
     try { await f(detail || {}); } catch (err) { console.warn("fx", name, err); }
   }
 
-  root.EviStage = { mount, setScene, setState, status, setSpeed, reset, fx, callout, ROOMS, NODES };
+  let stageStateSet = () => {};
+  root.EviStage = { mount, setScene, setState, status, setSpeed, reset, fx, callout, setAttackHop, onBypass: (f) => { stageStateSet = f; }, ROOMS, NODES };
 })(window);
