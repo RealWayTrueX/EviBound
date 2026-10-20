@@ -769,9 +769,11 @@
     }).join("");
   }
   /* The same payload as the wire panel, as a pop-up inside the stage (fixed viewpoint). */
+  const wideLayout = () => window.matchMedia("(min-width: 1101px)").matches;
   function calloutFor(step, idx) {
+    renderLive(step, idx);
     const w = step && step.wire;
-    if (!w) return EviStage.callout(null);
+    if (!w || wideLayout()) return EviStage.callout(null);
     let n = 0;
     const lines = (text, against, mark) => {
       const other = against ? new Set(against.split("\n").map((l) => l.trim())) : null;
@@ -787,6 +789,43 @@
         <button class="callout-close" type="button" aria-label="${L("关闭", "Close")}">×</button></div>
       <div class="callout-panes">${panes.map((p) => `<div class="callout-pane ${p.tone ? "tone-" + p.tone : ""}"><h5>${esc(p.label)}</h5><pre>${lines(p.text, p.against, p.mark)}</pre></div>`).join("")}</div>
       ${w.note ? `<p class="callout-note">${w.note}</p>` : ""}`, { tone });
+  }
+  /* Right-hand live column: the current hop narrated, its payload streaming in, and a clickable trail. */
+  let liveShown = -1;
+  function liveLines(text, against, mark) {
+    let n = 0;
+    const other = against ? new Set(against.split("\n").map((l) => l.trim())) : null;
+    return text.split("\n").map((line) => {
+      const cls = other && !other.has(line.trim()) ? "diff" : mark && line.includes(mark) ? "mark" : "";
+      return `<span class="ln ${cls}" style="animation-delay:${300 + Math.min(40, n++) * 22}ms">${esc(line) || " "}</span>`;
+    }).join("");
+  }
+  function renderLive(step, idx) {
+    const box = $("liveNow");
+    if (!box) return;
+    if (!step) {
+      liveShown = -1;
+      box.removeAttribute("data-actor");
+      box.innerHTML = `<div class="live-meta">${L("实时解说", "LIVE")}</div><p class="live-title">${L("按“下一步”或“自动播放”开始", "Press “Next step” or “Autoplay”")}</p>
+        <p class="live-body">${L("这里会逐步解说：谁在这一跳做了什么、传输的原文是什么、被攻击改动的字段在哪里。下方保留完整的调试面板。", "Each hop is narrated here: who acted, the raw content that travelled, and which fields the attack changed. The full debug panels stay below.")}</p>`;
+      $("liveTrail").innerHTML = "";
+      return;
+    }
+    liveShown = idx;
+    const w = step.wire || { panes: [], hop: "" };
+    const panes = w.panes.filter((p) => !(p.tone === "" && p.text.length > 600)).slice(0, 2);
+    const title = String(step.title).replace(/<[^>]*>/g, "");
+    box.dataset.actor = step.actor;
+    box.innerHTML = `<div class="live-meta"><span>#${idx + 1}</span><span class="actor">${actorName(step.actor)}</span><span>${esc(w.hop)}</span></div>
+      <p class="live-title">${[...title].map((ch, i) => `<span class="ch" style="animation-delay:${Math.min(i, 40) * 18}ms">${ch === " " ? "&nbsp;" : esc(ch)}</span>`).join("")}</p>
+      <div class="live-body">${step.body}</div>
+      <div class="live-panes">${panes.map((p, i) => `<div class="callout-pane ${p.tone ? "tone-" + p.tone : ""}" style="animation-delay:${200 + i * 150}ms"><h5>${esc(p.label)}</h5><pre>${liveLines(p.text, p.against, p.mark)}</pre></div>`).join("")}</div>
+      ${w.note ? `<p class="live-note">${w.note}</p>` : ""}`;
+    const trail = $("liveTrail");
+    trail.innerHTML = run.steps.map((s2, i) => `<li data-actor="${s2.actor}" data-i="${i}" class="${i === idx ? "on" : ""}"><span class="dot"></span><span>#${i + 1} ${String(s2.title).replace(/<[^>]*>/g, "")}</span></li>`).join("");
+    trail.querySelectorAll("li").forEach((li) => li.addEventListener("click", () => { const i = +li.dataset.i; inspected = i === run.steps.length - 1 ? null : i; renderTimeline(); renderWire(); calloutFor(run.steps[i], i); }));
+    const on = trail.querySelector("li.on");
+    if (on) trail.scrollTop = on.offsetTop - trail.offsetTop - 40;
   }
   function renderWire() {
     const box = $("wire");
@@ -930,6 +969,8 @@
     EviStage.setScene({ room: run.scenario.context, modality: run.scenario.observation.modality, authorized: run.scenario.authorized });
     applyStatuses([]);
     stageState();
+    renderLive(null);
+    EviStage.callout(null);
     renderAllRun();
     renderCompare();
     renderScenarioEditor();
@@ -1419,6 +1460,11 @@ python3 demo/serve.py               # 打开 http://127.0.0.1:8765/</pre>
     $("btnPlay").addEventListener("click", () => (autoplay ? stopAuto() : startAuto()));
     $("btnFinish").addEventListener("click", finish);
     $("btnReset").addEventListener("click", resetRun);
+    $("btnFull").addEventListener("click", () => {
+      const t = document.querySelector(".theatre");
+      if (document.fullscreenElement) document.exitFullscreen().catch(() => {});
+      else if (t.requestFullscreen) t.requestFullscreen().catch(() => toast(L("浏览器不允许全屏", "Fullscreen is not allowed here")));
+    });
     document.querySelectorAll("#tabbar [role=tab]").forEach((t) => t.addEventListener("click", () => selectTab(t.id.replace("tab-", ""))));
     $("foot").innerHTML = L(`数据导出于 ${esc(D.generated_utc)}（git ${esc(D.git_head)}）· 正式结果文件 sha256 ${esc(D.results.sha256.slice(0, 12))}… · 全部为模拟设备与合成任务`,
       `Data exported ${esc(D.generated_utc)} (git ${esc(D.git_head)}) · formal results sha256 ${esc(D.results.sha256.slice(0, 12))}… · simulated devices and synthetic tasks only`);

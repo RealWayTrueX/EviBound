@@ -64,12 +64,11 @@
 
   <section class="brief" aria-label="任务与战况" data-en-aria="Task and score">
     <article class="brief-card" id="taskCard"></article>
-    <aside class="score-card" id="scoreboard"></aside>
   </section>
 
   <section class="theatre" aria-label="攻防舞台" data-en-aria="Attack/defense stage">
+    <div class="theatre-main">
     <div class="stage"><div class="stage-scroll" id="stage"></div></div>
-    <div class="wire" id="wire" aria-live="polite"></div>
     <div class="transport">
       <button id="btnReset" class="tbtn ghost" type="button" title="重置到第 0 步" data-en="Reset">重置</button>
       <button id="btnStep" class="tbtn primary" type="button" data-en="Next step ▸">下一步 ▸</button>
@@ -78,7 +77,18 @@
       <label class="speed" for="speedSelect"><span data-en="Animation">动画</span>
         <select id="speedSelect"><option value="2" data-en="slow">慢</option><option value="1" selected data-en="normal">正常</option><option value="0.5" data-en="fast">快</option><option value="0" data-en="instant">瞬间</option></select>
       </label>
+      <button id="btnFull" class="tbtn ghost" type="button" data-en="Present ⛶">全屏演示 ⛶</button>
     </div>
+    </div>
+    <aside class="live" aria-live="polite">
+      <div class="score-card" id="scoreboard"></div>
+      <div class="live-now" id="liveNow"></div>
+      <ol class="live-trail" id="liveTrail"></ol>
+    </aside>
+  </section>
+
+  <section aria-label="链路数据" data-en-aria="On the wire">
+    <div class="wire" id="wire"></div>
   </section>
 
   <section class="console" aria-label="逐步记录" data-en-aria="Step log">
