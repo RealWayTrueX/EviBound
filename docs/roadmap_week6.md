@@ -132,6 +132,12 @@ Frozen-boundary rules (non-negotiable):
 - [ ] J6. Multi-step legal menu (fix for the boundary penalty of the one-step
       `legal_writes` aid: M_mask 95/216 vs M 117/216) on a fresh preregistered
       holdout; drop `confirm_empty` unless empty first plans recur
+- [ ] J7. Whole-chain attack surface: every hop assumed attackable
+      (`docs/chain_attack_surface.md`, 20 attacks over 12 hops, exploratory
+      matrix in `artifacts/chain_attack_matrix_exploratory.json`). Next: live-model
+      injection success rates for H0/H4/H5, an intent-binding guard `M_intent`
+      for rule-compliant hijacks, record signing (H3) and a fallback for
+      persistent tampering (H8), each behind a new preregistration
 
 ## Progress Log
 
@@ -299,3 +305,16 @@ Frozen-boundary rules (non-negotiable):
   machines' existing Tailscale network, `scripts/run_planner_server.sh`
   launches it in tmux with a bearer token, and the demo's live backend and
   replay tab call it (`docs/remote_planner_setup.md`).
+
+- 2026-10-20: whole-chain attack surface (J7), exploratory, no v3 change.
+  `demo/attacks/chain_attacks.js` defines attacks on all 12 hops (instruction,
+  sensor, radio, record store, cloud, prompt assembly, model API, feedback,
+  re-read, config, commit path, traces); `run_chain_attacks.js` runs them on all
+  84 tasks × 5 conditions × scripted planners after checking the no-attack run
+  equals `engine.runEpisode`. With the trusted base intact, M/M_full had zero
+  unsafe or unauthorized episodes on every untrusted hop, including a fully
+  hijacked model; rule-compliant hijacks still executed (30/79 tasks) and
+  persistent tampering dropped safe completion to 0/84; trusted-base attacks
+  defeat the guard (14/29 to 84/84). Four loadable demo presets, a dataset
+  survey (InjecAgent, ASB, AgentDojo, ToolEmu, R-Judge, HomeBench, SmartBench)
+  and `tests/test_chain_attacks.py`; 64 tests pass.

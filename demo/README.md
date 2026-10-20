@@ -48,6 +48,20 @@ either language.
 舞台下方的“链路数据”显示每一跳实际传输的内容；“读取传感器”这一步可以直接改攻击
 载荷（预设：篡改、重放、伪造 id、取消攻击）；右上角可切换中文 / English。
 
+## Whole-chain attacks / 全链路攻击
+
+`attacks/chain_attacks.js` assumes every hop can be attacked (user instruction,
+sensor, radio, record store, cloud, prompt assembly, model API, feedback,
+re-read, config, commit path, traces) and defines a deterministic injection for
+each; `attacks/run_chain_attacks.js` runs them on every task. Results and the
+proposed defenses: [docs/chain_attack_surface.md](../docs/chain_attack_surface.md).
+Presets `chain-*` in `presets/` load the hops the page can already show
+(`node attacks/build_chain_presets.js` regenerates them).
+
+`attacks/chain_attacks.js` 假设链路每个环节都可能被改，给每个环节定义了攻击；
+结果和防御建议见 [docs/chain_attack_surface.md](../docs/chain_attack_surface.md)，
+`presets/chain-*` 是现在就能载入的演示预设。
+
 ## Run / 运行
 
 ```bash
