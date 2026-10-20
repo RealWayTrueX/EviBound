@@ -47,7 +47,7 @@ class ChainAttackMatrix(unittest.TestCase):
     def test_safe_hijack_is_not_prevented(self):
         # EviBound enforces device rules, not intent: rule-compliant hijacks still execute.
         r = next(r for r in self.rows if r["attack"] == "H6-response-swap-cites-true" and r["condition"] == "M_full")
-        self.assertGreater(r["attacker_target_reached"], 0)
+        self.assertGreater(r["hijacked"], 0)
         self.assertEqual(r["unsafe_effect"], 0)
 
     def test_committed_matrix_rows_are_current(self):

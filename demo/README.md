@@ -68,7 +68,9 @@ stamp; guard LEDs dashed when the hop is in the trusted base), and the episode
 runs step by step with the attack's hooks, scored against the user's real task.
 A rule-compliant takeover of an occupied room ends with a violet HIJACKED
 verdict instead of SAFE. Worst-case attacks on text channels use the attacker's
-plan with scripted planners and the real model's answer with a live model.
+plan with scripted planners and the real model's answer with a live model; a
+model-API hijack (H6) replaces the reply after the model answers, so it applies
+to live models too.
 
 页面上：在“攻击环节”里选一个环节，攻击者会移到舞台上对应位置，在攻击生效的那一步
 发动（COMPROMISED 印章；可信基环节时守卫指示灯变虚线），按用户真实任务判分；
@@ -139,3 +141,13 @@ PYTHONPATH=src:. python3 -m unittest demo.tests.test_demo_engine -v
 ```
 
 Run it after any change to `src/evibound` or `engine.js`.
+
+After a change to `app.js` or `attacks/chain_attacks.js`, check that the page
+still plays every whole-chain attack exactly as the library does (headless
+Chromium through Playwright; scripted planners on the dev tasks under five
+conditions, plus a stub live model for the model-API swap):
+
+```bash
+NODE_PATH=$(npm root -g) node demo/tests/page_matches_library.js          # ~5 min, 424 episodes
+NODE_PATH=$(npm root -g) node demo/tests/page_matches_library.js --quick  # M_full only
+```

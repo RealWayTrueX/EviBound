@@ -317,4 +317,7 @@ Frozen-boundary rules (non-negotiable):
   persistent tampering dropped safe completion to 0/84; trusted-base attacks
   defeat the guard (14/29 to 84/84). Four loadable demo presets, a dataset
   survey (InjecAgent, ASB, AgentDojo, ToolEmu, R-Judge, HomeBench, SmartBench)
-  and `tests/test_chain_attacks.py`; 64 tests pass.
+  and `tests/test_chain_attacks.py`; 64 tests pass. The demo page now runs every
+  hop from the same library (Attacked hop selector, HIJACKED verdict); page and
+  library agree on 400 scripted episodes driven headlessly, and model-API swaps
+  (H6) also replace a live model's reply.
