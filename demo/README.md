@@ -48,6 +48,34 @@ either language.
 舞台下方的“链路数据”显示每一跳实际传输的内容；“读取传感器”这一步可以直接改攻击
 载荷（预设：篡改、重放、伪造 id、取消攻击）；右上角可切换中文 / English。
 
+## Whole-chain attacks / 全链路攻击
+
+`attacks/chain_attacks.js` assumes every hop can be attacked (user instruction,
+sensor, radio, record store, cloud, prompt assembly, model API, feedback,
+re-read, config, commit path, traces) and defines a deterministic injection for
+each; `attacks/run_chain_attacks.js` runs them on every task. Results and the
+proposed defenses: [docs/chain_attack_surface.md](../docs/chain_attack_surface.md).
+Presets `chain-*` in `presets/` load the hops the page can already show
+(`node attacks/build_chain_presets.js` regenerates them).
+
+`attacks/chain_attacks.js` 假设链路每个环节都可能被改，给每个环节定义了攻击；
+结果和防御建议见 [docs/chain_attack_surface.md](../docs/chain_attack_surface.md)，
+`presets/chain-*` 是现在就能载入的演示预设。
+
+On the page: pick a hop under 攻击环节 / Attacked hop. The attacker moves to that
+hop on the stage, strikes it at the step where the attack applies (COMPROMISED
+stamp; guard LEDs dashed when the hop is in the trusted base), and the episode
+runs step by step with the attack's hooks, scored against the user's real task.
+A rule-compliant takeover of an occupied room ends with a violet HIJACKED
+verdict instead of SAFE. Worst-case attacks on text channels use the attacker's
+plan with scripted planners and the real model's answer with a live model; a
+model-API hijack (H6) replaces the reply after the model answers, so it applies
+to live models too.
+
+页面上：在“攻击环节”里选一个环节，攻击者会移到舞台上对应位置，在攻击生效的那一步
+发动（COMPROMISED 印章；可信基环节时守卫指示灯变虚线），按用户真实任务判分；
+有人房间里被合规劫持时以紫色 HIJACKED 收尾。
+
 ## Run / 运行
 
 ```bash
@@ -113,3 +141,13 @@ PYTHONPATH=src:. python3 -m unittest demo.tests.test_demo_engine -v
 ```
 
 Run it after any change to `src/evibound` or `engine.js`.
+
+After a change to `app.js` or `attacks/chain_attacks.js`, check that the page
+still plays every whole-chain attack exactly as the library does (headless
+Chromium through Playwright; scripted planners on the dev tasks under five
+conditions, plus a stub live model for the model-API swap):
+
+```bash
+NODE_PATH=$(npm root -g) node demo/tests/page_matches_library.js          # ~5 min, 424 episodes
+NODE_PATH=$(npm root -g) node demo/tests/page_matches_library.js --quick  # M_full only
+```

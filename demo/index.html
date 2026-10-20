@@ -60,6 +60,11 @@
       <select id="plannerSelect"></select>
       <p class="hint" id="plannerHint"></p>
     </div>
+    <div class="field wide">
+      <label for="attackSelect" data-en="Attacked hop">攻击环节</label>
+      <select id="attackSelect"></select>
+      <p class="hint" id="attackHint"></p>
+    </div>
   </section>
 
   <section class="brief" aria-label="任务与战况" data-en-aria="Task and score">
@@ -124,6 +129,7 @@
 <div class="toast" id="toast" role="status" aria-live="polite" hidden></div>
 <script src="data/bundle.js"></script>
 <script src="engine.js"></script>
+<script src="attacks/chain_attacks.js"></script>
 <script src="stage.js"></script>
 <script src="app.js"></script>
 </body>

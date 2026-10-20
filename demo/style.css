@@ -71,7 +71,7 @@ main { display: grid; gap: 18px; padding-block: 16px 0; max-width: 1400px; margi
 section { min-width: 0; }
 
 /* ---------- mission bar ---------- */
-.mission { display: grid; grid-template-columns: 1.5fr 1fr 1fr 1.1fr; gap: 14px; background: rgba(11, 35, 71, .7); border: 1px solid var(--line-2); border-radius: 12px; padding: 12px 14px; }
+.mission { display: grid; grid-template-columns: 1.4fr 1fr 1fr 1fr 1.3fr; gap: 14px; background: rgba(11, 35, 71, .7); border: 1px solid var(--line-2); border-radius: 12px; padding: 12px 14px; }
 .field { display: grid; gap: 6px; align-content: start; min-width: 0; }
 .field label, .field .label { font: 700 12px/1 var(--f-display); letter-spacing: .14em; text-transform: uppercase; color: var(--ink-3); }
 select, input[type="text"], input[type="number"], textarea { width: 100%; background: var(--code-bg); border: 1px solid var(--line-2); border-radius: 8px; padding: 7px 10px; color: var(--ink); }
@@ -434,3 +434,11 @@ tr.sel td { background: rgba(94, 225, 255, .08); color: var(--ink); }
 .step.inspected { outline: 1px solid var(--cyan); }
 .attack-edit textarea { border-color: var(--ember); min-height: 150px; }
 .attack-presets { display: flex; flex-wrap: wrap; gap: 6px; }
+
+/* whole-chain attacks */
+.led.tcb { stroke: var(--ember); stroke-dasharray: 2 2; }
+.fx-overlay.flash-violet { opacity: 1; background: radial-gradient(ellipse at center, rgba(184, 155, 255, .18), rgba(120, 80, 255, .45) 90%); animation: flashRose 1.2s ease-out forwards; }
+.attack-brief { margin-top: 8px; border: 1px solid var(--ember); border-radius: 8px; padding: 6px 10px; font-size: 12.5px; color: var(--ink-2); background: rgba(255, 92, 58, .07); }
+.attack-brief b { color: var(--ember); }
+.attack-brief .tcb-tag { display: inline-block; margin-left: 6px; font-size: 11px; color: var(--amber); border: 1px dashed var(--amber); border-radius: 5px; padding: 0 5px; }
+.seg.disabled { opacity: .45; pointer-events: none; }
