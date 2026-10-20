@@ -302,28 +302,37 @@
     pathEl.classList.add("lit");
     const duration = dur(ms || 900);
     return new Promise((resolve) => {
-      let cancelled = false;
-      const cancel = () => { cancelled = true; g.remove(); pathEl.classList.remove("lit"); };
+      // requestAnimationFrame does not fire in hidden or background tabs, so a timer also
+      // finishes the packet; a reset cancels it. Either way the promise always settles.
+      let done = false;
+      const finish = (removeNow) => {
+        if (done) return;
+        done = true;
+        S.packets.delete(cancel);
+        clearTimeout(fallback);
+        if (removeNow) { g.remove(); pathEl.classList.remove("lit"); }
+        else setTimeout(() => { g.remove(); pathEl.classList.remove("lit"); }, duration === 0 ? 0 : 120);
+        resolve();
+      };
+      const cancel = () => finish(true);
       S.packets.add(cancel);
+      const fallback = setTimeout(() => finish(false), duration + 400);
+      if (duration === 0) { finish(true); return; }
       const start = performance.now();
       const place = (el, t) => {
         const p = pathEl.getPointAtLength(Math.max(0, Math.min(total, (reverse ? 1 - t : t) * total)));
         el.setAttribute("transform", `translate(${p.x} ${p.y})`);
       };
       const frame = (now) => {
-        if (cancelled) return;
-        const t = duration === 0 ? 1 : Math.min(1, (now - start) / duration);
+        if (done) return;
+        const t = Math.min(1, (now - start) / duration);
         const e = t < 0.5 ? 2 * t * t : -1 + (4 - 2 * t) * t;  // ease in-out
         place(dot, e);
         if (text) text.setAttribute("transform", dot.getAttribute("transform"));
         g.querySelector("circle[filter='url(#soft)']").setAttribute("transform", dot.getAttribute("transform"));
         trail.forEach((c, i) => place(c, Math.max(0, e - (i + 1) * 0.035)));
         if (t < 1) requestAnimationFrame(frame);
-        else {
-          S.packets.delete(cancel);
-          setTimeout(() => { g.remove(); pathEl.classList.remove("lit"); }, duration === 0 ? 0 : 120);
-          resolve();
-        }
+        else finish(false);
       };
       requestAnimationFrame(frame);
     });

@@ -728,7 +728,8 @@
       renderTimeline(); renderPending();
       r.busy = true;
       $("btnStep").disabled = true;
-      try { await playStepFx(r.steps[r.steps.length - 1]); }
+      // An animation must never hold the run: cap it, then carry on.
+      try { await Promise.race([playStepFx(r.steps[r.steps.length - 1]), new Promise((res) => setTimeout(res, 12000))]); }
       finally { r.busy = false; if (run === r) $("btnStep").disabled = false; }
       if (run !== r) return;
     }
