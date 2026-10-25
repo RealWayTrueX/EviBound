@@ -44,7 +44,7 @@ are also picked up when a session is started here and pointed at `skills/`.
 | Writing or improving a skill and testing it | `skill-creator` | Anthropic skills |
 | Browser checks of a page | `playwright` | Codex skill already on this Mac |
 | Paper figures: architecture diagrams, method overviews, mechanism schematics as editable vectors (draw.io / SVG); not data charts / 论文插图：架构图、方法流程图、机制示意图 | `academic-diagram` | [`plbbl/academic-diagram-skill`](https://github.com/plbbl/academic-diagram-skill) @ `501efb0` (2026-09-04); see [External skills](#external-skills--外部-skills) |
-| Academic writing (primary): coursework, reports and paper sections that read as one careful author, with a measured style audit; humanizer rules merged in / 学术作业写作（主） | `academic-assignment-writing` | [`RealWayTrueX/academic-assignment-writing`](https://github.com/RealWayTrueX/academic-assignment-writing) @ `04970a6` (Xin's own skill); see [External skills](#external-skills--外部-skills) |
+| Academic writing (primary): coursework, reports and paper sections that read as one careful author, with a measured style audit; humanizer rules merged in / 学术作业写作（主） | `academic-assignment-writing` | [`RealWayTrueX/academic-assignment-writing`](https://github.com/RealWayTrueX/academic-assignment-writing) @ `9e45a36` (Xin's own skill); see [External skills](#external-skills--外部-skills) |
 | Academic writing (supplement, already merged into the row above) / 学术写作润色（补充） | `academic-humanizer` | [`AIScientists-Dev/academic-humanizer`](https://github.com/AIScientists-Dev/academic-humanizer) @ `94b88b2` (v0.3.3, 2026-07-03); see [External skills](#external-skills--外部-skills) |
 
 The project skills below reference these instead of copying them, so an
