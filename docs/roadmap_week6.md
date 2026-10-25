@@ -321,3 +321,11 @@ Frozen-boundary rules (non-negotiable):
   hop from the same library (Attacked hop selector, HIJACKED verdict); page and
   library agree on 400 scripted episodes driven headlessly, and model-API swaps
   (H6) also replace a live model's reply.
+
+- 2026-10-25: writing and figure skills registered, no research change.
+  `skills/README.md` lists three external skills cloned on the GPU machine's
+  data disk (`external_skills/`), not vendored: `academic-diagram` for
+  architecture and method figures (its reference figures carry no
+  redistribution licence, so they stay out of the repository), and Xin's own
+  `academic-assignment-writing` as the primary writing skill, with the
+  `academic-humanizer` rules merged into it as a secondary reference.
