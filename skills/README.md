@@ -44,7 +44,8 @@ are also picked up when a session is started here and pointed at `skills/`.
 | Writing or improving a skill and testing it | `skill-creator` | Anthropic skills |
 | Browser checks of a page | `playwright` | Codex skill already on this Mac |
 | Paper figures: architecture diagrams, method overviews, mechanism schematics as editable vectors (draw.io / SVG); not data charts / 论文插图：架构图、方法流程图、机制示意图 | `academic-diagram` | [`plbbl/academic-diagram-skill`](https://github.com/plbbl/academic-diagram-skill) @ `501efb0` (2026-09-04); see [External skills](#external-skills--外部-skills) |
-| Academic writing: clearer, evidence-matched prose for papers, reports and proposals without changing numbers or citations / 学术写作润色 | `academic-humanizer` | [`AIScientists-Dev/academic-humanizer`](https://github.com/AIScientists-Dev/academic-humanizer) @ `94b88b2` (v0.3.3, 2026-07-03); see [External skills](#external-skills--外部-skills) |
+| Academic writing (primary): coursework, reports and paper sections that read as one careful author, with a measured style audit; humanizer rules merged in / 学术作业写作（主） | `academic-assignment-writing` | [`RealWayTrueX/academic-assignment-writing`](https://github.com/RealWayTrueX/academic-assignment-writing) @ `04970a6` (Xin's own skill); see [External skills](#external-skills--外部-skills) |
+| Academic writing (supplement, already merged into the row above) / 学术写作润色（补充） | `academic-humanizer` | [`AIScientists-Dev/academic-humanizer`](https://github.com/AIScientists-Dev/academic-humanizer) @ `94b88b2` (v0.3.3, 2026-07-03); see [External skills](#external-skills--外部-skills) |
 
 The project skills below reference these instead of copying them, so an
 improvement upstream reaches this project too.
@@ -58,7 +59,8 @@ clone picks up fixes. 第三方 skills 只放在服务器数据盘，不进本�
 | Skill | Local clone (UQ server) | License | Notes |
 |---|---|---|---|
 | `academic-diagram` | `/mnt/HDD-8T-0/evibound_yanke/external_skills/academic-diagram-skill` | MIT for the instructions and docs only; the 30 conference figures in `references/` and the files in `examples/` carry no license | Use the reference figures for style study only; never put them or the examples into our report, slides or repository. Output is editable `.drawio` + `.drawio.svg`. Use `dataviz` / `data:create-viz` for result charts instead. |
-| `academic-humanizer` | `/mnt/HDD-8T-0/evibound_yanke/external_skills/academic-humanizer` | MIT | Keeps numbers, results and citations unchanged. Not a tool for hiding AI use: keep the course's AI-use disclosure. |
+| `academic-assignment-writing` | `/mnt/HDD-8T-0/evibound_yanke/external_skills/academic-assignment-writing` | MIT | Primary writing skill. `references/humanizer-additions.md` carries the academic-humanizer rules it lacked (hype, citation dumping, claim and evidence check, proposal mode); where they conflict this skill wins (first person singular for coursework, 35 to 45 word sentences allowed). Its `scripts/style_audit.py` is our own code and is the audit to run. |
+| `academic-humanizer` | `/mnt/HDD-8T-0/evibound_yanke/external_skills/academic-humanizer` | MIT | Kept as a clone for reference only and not linked into `~/.claude/skills`, so it does not compete with the primary skill. Not a tool for hiding AI use: keep the course's AI-use disclosure. |
 
 Install or refresh (on another machine, clone to any folder and link it the
 same way; check out the pinned commit above when reproducibility matters):
@@ -66,14 +68,14 @@ same way; check out the pinned commit above when reproducibility matters):
 ```bash
 D=/mnt/HDD-8T-0/evibound_yanke/external_skills
 git -C "$D/academic-diagram-skill" pull --ff-only
-git -C "$D/academic-humanizer" pull --ff-only
-for s in academic-diagram-skill:academic-diagram academic-humanizer:academic-humanizer; do
+git -C "$D/academic-assignment-writing" pull --ff-only
+for s in academic-diagram-skill:academic-diagram academic-assignment-writing:academic-assignment-writing; do
   ln -sfn "$D/${s%%:*}" ~/.claude/skills/"${s##*:}"
   ln -sfn "$D/${s%%:*}" ~/.codex/skills/"${s##*:}"
 done
 ```
 
-Neither repository ships scripts; both are instructions plus reference files.
+The two third-party repositories ship no scripts; only our own `academic-assignment-writing` has one (`scripts/style_audit.py`, standard library).
 Read an upstream diff before pulling a new version into use.
 
 ## Where Jev fits / JEV 放在哪里
