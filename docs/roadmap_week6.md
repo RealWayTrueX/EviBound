@@ -111,14 +111,17 @@ Frozen-boundary rules (non-negotiable):
       report, decisions recorded (U1, U2, S1, R1–R3)
 
 ### J. Post-course direction (v4; nothing here touches v3 after its freeze)
-- [ ] J1. Formal statement of evidence-bound actuation: per-write soundness
+- [~] J1. Formal statement of evidence-bound actuation: per-write soundness
       under the channel-fault model with residual window Δ (the freshness bound);
       position against CommitGuard (2607.10487), Stale≠Unsafe (2609.29522),
-      Freshness-Bounded Shield (2608.26306) — see `docs/week12_direction_review.md`
+      Freshness-Bounded Shield (2608.26306) — see `docs/week12_direction_review.md`.
+      Draft 2026-11-03: `docs/v4_formal_model.md` (assumptions A1–A8,
+      Theorem 1, Corollary 2, Lemma 3) with `tests/test_formal_properties.py`
 - [ ] J2. Precision ablation `M_scoped`: require fresh evidence only for writes
       whose rule evaluation reads the observation (R1/R2), answering the
       "freshness guards over-block benign writes" critique; report benign-block
-      rate head-to-head with the boundary variant
+      rate head-to-head with the boundary variant. Designed as MS / MS_full and
+      hypotheses Q2–Q4 in `docs/v4_preregistration_draft.md`
 - [ ] J3. External worlds: HomeBench (ACL 2025) state blocks + invalid
       instructions as a second world generator; ToolEmu Apache-2.0 smart-home
       cases (lock guest-access windows) as an authorization-scope family;
@@ -151,11 +154,32 @@ Frozen-boundary rules (non-negotiable):
       agreement covers the APC for Scopus top-15% journals); fallback
       Computers & Security. Course deliverables are derived from the same
       manuscript.
-- [~] K1. External multi-agent review of all materials and corpora with
+- [x] K1. External multi-agent review of all materials and corpora with
       `docs/external_review_brief.md`; findings are triaged and fixed before
-      any new run.
-- [ ] K2. v4 preregistration (models, conditions, corpus, decisions, J8
-      decision) frozen before any v4 holdout output.
+      any new run. First report (Codex, 16 findings) triaged in
+      `docs/review_response_2026-11-03.md`; further reviewer reports, if any,
+      are triaged the same way.
+- [~] K2. v4 preregistration (models, conditions, corpus, decisions, J8
+      decision) frozen before any v4 holdout output. Draft:
+      `docs/v4_preregistration_draft.md` (Tier A: six conditions with
+      Always_refresh as co-primary baseline, optional Tier B for the full
+      guard × aid factorial; U_dec primary; Qwen3-8B and Llama-3.1-8B
+      confirmatory, Qwen2.5-7B for continuity; 200 structures; an
+      external-world arm; stop rules and a week-4 gate after review E2/E6);
+      waits for the owner decisions D1–D14 listed there.
+- [ ] K3. Owner decisions D1–D14 and the v4 world design
+      (`docs/design_v4_world.md`, rules R7+ signed off) before any v4 code
+      or corpus is generated.
+- [ ] K4. Licence for code and data (review A-01) and `SAFETY.md` before any
+      public release of the v4 artifact. Owner accepted the defaults on
+      2026-11-03 (MIT for code, CC BY 4.0 for the synthetic corpora); files
+      to be added after a third-party content check.
+- [x] K5. Human review desk (`review_desk/`, `scripts/build_review_desk.py`,
+      `tests/test_review_desk.py`): one item at a time with a Chinese
+      translation, a state diagram, per-question hints, independent automatic
+      checks and keyboard shortcuts; exports the v2/v3 `checklist.csv` format
+      plus a full JSON. Built on the frozen v3 corpus as a practice run; v4
+      needs an adapter and its sampling rule.
 
 ## Progress Log
 
@@ -357,3 +381,42 @@ Frozen-boundary rules (non-negotiable):
   corpus owner chose IEEE TDSC (K0) and deferred paid APIs (J8 placeholder).
   `docs/external_review_brief.md` is the one-file brief for independent
   reviewer agents (K1); their reports come back before v4 work continues.
+
+- 2026-11-03: independent review received and answered, no frozen file
+  changed. The Codex report (16 findings on commit `34eabf9`) was verified
+  claim by claim; all 16 hold, D-01 only in part (the implementation always
+  enforced `0 ≤ age`, the written predicate did not). Fixes: the predicate,
+  counts and wording in seven documents; a v2/v3 datasheet with an
+  independent physical-overlap audit (v2 test shares 12 structures with v1, v3
+  shares none) and a composition audit; six guard property tests (70 tests
+  pass). Exploratory reanalysis on the real holdout traces
+  (`artifacts/week11_v3_review_reanalysis.json`, 0 oracle disagreements):
+  under the original protocol (S1 ∧ U1) joint feasibility is not supported;
+  U2's +29.2 pp equals U1 (−7.4 pp) plus B0's non-compliant completions
+  (+36.6 pp); the safety-decoupled utility U_dec is +1.4 pp [−5.6, +8.3]
+  (inconclusive; about 157–197 structures needed). Related work updated with
+  five October 2026 preprints and a narrowed contribution. The v4 draft
+  preregistration and the owner decisions are open (K2, K3).
+
+- 2026-11-03: review desk for the human corpus review (K5), no research
+  change. The corpus owner accepted the default licence decisions (D4 Llama
+  licence, D6 contact the HomeBench/SmartBench authors, D7 MIT + CC BY 4.0).
+  `scripts/build_review_desk.py` builds a one-item-at-a-time page: 6 rules,
+  3 reading conventions, 39 camera captions and 84 tasks (125 required).
+  - Each item shows the English text, a Chinese translation parsed from the
+    words, a state diagram, task-specific hints for q1–q4 and automatic checks.
+  - The checks come from an independent re-implementation of the rules, the
+    plan search, the observation reader and the instruction parser; all agree
+    with the frozen v3 corpus.
+  - The v3 desk is a practice run; its export must not be used to sign off v3.
+
+- 2026-11-03: review desk quick-start guide (K5), no research change. Every
+  open now shows an eight-page guide (purpose, devices and permission, rules
+  with the legal-state grid, sensors and phrases, attacks and A3, how to judge
+  q1–q4, card anatomy and keys) and a three-question warm-up.
+  - The rule question is generated from the rule table the builder exports;
+    the other two come from a pool on sensors, attacks and judgement.
+  - Verdicts on the published page now live under each annotator's own record
+    (`reviewers/<id>/...`; self-write, owner-read rules), so several
+    annotators cannot overwrite each other.
+  - The guide record (pages seen, time, quiz score) is stored with them.

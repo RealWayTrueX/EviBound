@@ -2,8 +2,10 @@
 
 > **适用范围 / Scope:** 本数据卡只描述 v1 语料（`data/scenarios/`，48 个任务，2026-09-23）。
 > v2 语料（56 个任务，含越权任务）见 `docs/design_v2_dataset.md` 和
-> `data/scenarios_v2/manifest.json`；v3 语料（44 个任务）见
-> `docs/week11_v3_preregistration.md`。下文“全部授权两个执行器”“六个共享模板”等限制只针对 v1，
+> `data/scenarios_v2/manifest.json`；v3 语料（84 个任务：dev 12、holdout 72，48 个物理结构；
+> 2026-10-11 扩充前曾是 44 个任务）见 `docs/week11_v3_preregistration.md`。v2/v3 的机器生成数据
+> 说明（含 v2 与 v1 的物理结构重叠）见 `docs/datasheet_v2_v3.md`（2026-11-03 更正）。
+> 下文“全部授权两个执行器”“六个共享模板”等限制只针对 v1，
 > 已在 v2 中修正。档位 `low`/`high` 读作 1 档/2 档，场景名（reading、economy 等）只是标签，
 > 见 `docs/reading_guide.md`。
 > This card covers the v1 corpus only; v2 and v3 are described in the documents above.
