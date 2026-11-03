@@ -59,6 +59,8 @@ datasets come next: [Week-12 direction review](docs/week12_direction_review.md).
 | Reusable project skills (experiment design, demo, literature review) | [skills/](skills/README.md) |
 | Laptop recheck of the whole pipeline and a no-GPU reproduction path | [docs/week13_local_recheck.md](docs/week13_local_recheck.md), `scripts/run_v3_local.py` |
 | Mac demo calling the frozen planner on the GPU machine (no SSH, Tailscale) | [docs/remote_planner_setup.md](docs/remote_planner_setup.md), `scripts/serve_planner.py` |
+| One-click demo start / stop from the Mac (GPU planner is off by default) | `demo/launch/EviBound-Demo-Start.command`, `demo/launch/EviBound-Demo-Stop.command` |
+| Independent review brief for reviewer agents (v4 / IEEE TDSC) | [docs/external_review_brief.md](docs/external_review_brief.md) |
 
 Task corpora: `data/scenarios/` (v1, 48 tasks, frozen), `data/scenarios_v2/`
 (56 tasks, frozen and human-reviewed), `data/scenarios_v3/` (84 tasks across 4

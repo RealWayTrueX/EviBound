@@ -2,9 +2,11 @@
 
 The Mac only shows the demo; every model call and every experiment runs on
 the GPU machine. `scripts/serve_planner.py` exposes the frozen planner and the
-experiment traces over HTTP, and the demo on the Mac talks to it. No SSH is
-involved anywhere: the two machines are already on the same Tailscale
-network, which uses outbound WireGuard/HTTPS only.
+experiment traces over HTTP, and the demo on the Mac talks to it. The demo
+itself needs no SSH: the two machines are already on the same Tailscale
+network, which uses outbound WireGuard/HTTPS only. Since 2026-11-03 the
+planner is off by default and the one-click launcher in section 5 starts and
+stops it over SSH.
 
 Mac 只做演示，模型调用和实验都在 GPU 机上跑。`scripts/serve_planner.py` 把冻结的
 规划器和数据盘上的运行记录以 HTTP 方式提供，Mac 上的 demo 直接调用。全程不用 SSH：
@@ -109,3 +111,34 @@ reachable only from Xin's own devices.
   its own page on a loopback host.
 - Traces served over `/runs` are synthetic experiment data; no personal data
   is involved.
+
+## 5. One-click start and stop from the Mac / Mac 一键启动、关闭
+
+The GPU planner is **off by default** (stopped 2026-11-03 so both GPUs are free
+for experiments). For a demo, double-click on the Mac:
+
+| File | What it does |
+|---|---|
+| `demo/launch/EviBound-Demo-Start.command` | SSH to `yanke@100.72.39.67`, start `scripts/model_server.py --preload` in tmux `evibound_model_server` on the GPU with the most free memory (refuses if none has ≥ 19,000 MiB free), wait for `/health` over Tailscale, then start `demo/serve.py` and open `http://127.0.0.1:8765/` |
+| `demo/launch/EviBound-Demo-Stop.command` | kill the tmux session on the server (frees the GPU) and stop the local demo page |
+
+Copies of both files also sit in `~/CyberSercurity/` on Xin's Mac, outside
+the git clone, so they work before the clone is updated. They assume the clone
+at `~/CyberSercurity/EviBound` (override with `EVIBOUND_MAC_REPO`) and the
+token file `~/.config/evibound/planner_token` from section 2.
+
+The Mac has no key login to the server yet, so each start or stop asks for the
+server password once. To make it truly one click, the owner can set up key
+login once (a deliberate security choice, so it is not automated):
+
+```bash
+ls ~/.ssh/id_ed25519.pub || ssh-keygen -t ed25519      # on the Mac, only if no key exists
+ssh-copy-id yanke@100.72.39.67                         # asks for the server password one last time
+```
+
+GPU 规划器默认关闭（2026-11-03 关掉，两张卡都留给实验）。演示时在 Mac 上双击
+`EviBound-Demo-Start.command`：它通过 SSH 在空闲显存最多的 GPU 上启动
+`model_server.py`（tmux 会话 `evibound_model_server`），等 Tailscale 上的 `/health`
+就绪后启动本机演示页并打开浏览器。用完双击 `EviBound-Demo-Stop.command` 释放 GPU。
+目前 Mac 没有免密登录，每次会问一次服务器密码；需要真正"一键"时由负责人自己运行上面
+两行配置免密（安全设置，不自动改）。
