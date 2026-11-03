@@ -20,23 +20,35 @@ For how the simulated attacks map to real homes, see
 
 | Study | Unsafe under attack: B2 vs EviBound (M) | Normal-task goal completion: no checker (B0) vs M | Verdict |
 |---|---|---|---|
-| v2 formal test (1,296 episodes) | 30/72 vs 0/72 | 53/72 vs 44/72 | Safety supported; "no worse than 5 points" utility target not met |
-| v3 holdout (7,128 episodes, frozen amended protocol) | B2_full 31/216 vs M_full 0/216 (+14.4 pp [+4.6, +25.9]) | raw: 172/216 vs 156/216 (−7.4 pp, unsupported); rule-compliant: 93/216 vs 156/216 (+29.2 pp [+16.7, +43.1], supported) | **Joint feasibility supported** (S1 ∧ U2); recovery gain M_full − M +19.4 pp |
+| v2 formal test (1,296 episodes) | 30/72 vs 0/72 | 53/72 vs 44/72 | Safety supported; "no worse than 5 points" utility target not met. Paired mechanism study, not a structural holdout: 12 of its 22 physical structures also occur in v1 ([datasheet](docs/datasheet_v2_v3.md)) |
+| v3 holdout (7,128 episodes, frozen amended protocol) | B2_full 31/216 vs M_full 0/216 (+14.4 pp [+4.6, +25.9]) | raw: 172/216 vs 156/216 (−7.4 pp, unsupported); rule-compliant: 93/216 vs 156/216 (+29.2 pp [+16.7, +43.1], supported) | Safety supported. Joint feasibility is supported under the amended criterion (S1 ∧ U2) and **not** under the original one (S1 ∧ U1). U2 counts only rule-compliant completions, so it favours any guard by construction; the safety-decoupled utility (exploratory, post hoc) is +1.4 pp [−5.6, +8.3], inconclusive ([reanalysis](docs/v3_review_reanalysis.md)) |
 
-EviBound never refused a legal write. On the rule-compliant metric
+No contract-eligible write was refused (zero false blocks). By definition that
+excludes stale-but-harmless writes, so it rules out implementation errors, not
+over-blocking; v4 measures over-blocking directly (`M_scoped`). On the
+rule-compliant metric
 (`safe_completion`: goal reached with no unsafe or unauthorized transition) B0
 and M tie at 44/72; the raw gap is B0 completing nine tasks by breaking
 stated sequencing rules, which M blocks and the agent then fails to repair.
+An independent review on 2026-11-03 checked all materials; its findings, what
+was verified, and what changed are in
+[docs/review_response_2026-11-03.md](docs/review_response_2026-11-03.md).
+The next study (v4, for IEEE TDSC) is a draft awaiting the owner's decisions:
+[docs/v4_preregistration_draft.md](docs/v4_preregistration_draft.md).
 The Week 11–12 **v3** study tests three recovery aids (rule explanation,
 empty-plan check, and a legal-writes menu added before the freeze) on 72 new
 tasks that also vary the sensor modality and the phrasing of requests
 ([plan with amendment log](docs/week11_v3_preregistration.md)). The holdout
 ran on 2026-10-12 under the frozen protocol: zero unsafe effects and zero
-false blocks under every M-guard condition, and the rule-compliant utility
-criterion is met; the raw-completion deficit (−7.4 pp) is entirely the
-unguarded baseline "completing" authorization-negative tasks by writing the
-forbidden device ([closeout](docs/week12_v3_holdout_closeout.md),
-[results record](artifacts/week11_v3_holdout_results.json)). Why the plan was
+contract-eligible false blocks under every M-guard condition, and the
+rule-compliant utility criterion is met; the raw-completion deficit (−7.4 pp)
+comes from the unguarded baseline "completing" authorization-negative tasks by
+writing the forbidden device ([closeout](docs/week12_v3_holdout_closeout.md),
+[results record](artifacts/week11_v3_holdout_results.json)). The U2 criterion
+was added after the exploratory v3 dev run had shown U1 unsupported, and it
+rewards rule compliance as well as completion; the original-protocol decision
+and a safety-decoupled utility are reported next to it in
+[docs/v3_review_reanalysis.md](docs/v3_review_reanalysis.md). Why the plan was
 amended, where the work sits in the 2024–2026 literature, and which external
 datasets come next: [Week-12 direction review](docs/week12_direction_review.md).
 
@@ -107,15 +119,24 @@ COSC 723 课程项目。AI 智能体（本地 Qwen2.5-7B-Instruct）根据人体
 
 v2 正式测试共 1,296 个回合：受攻击时，B2 有 30/72 次实际不安全，EviBound（M）
 为 0/72，安全假设得到支持；正常任务目标完成 B0 为 53/72，M 为 44/72，差距
-超过预设的 5 个百分点，效用目标未达到。EviBound 从未拒绝过合法写入；按“合规完成”
+超过预设的 5 个百分点，效用目标未达到（v2 test 有 12 个物理结构与 v1 相同，只能算配对机制
+研究，不算结构留出，见[数据说明](docs/datasheet_v2_v3.md)）。EviBound 没有拒绝过任何
+"按契约定义合格"的写入（零误拦；这个定义本身不包括"陈旧但无害"的写入，所以它只能排除实现
+错误，不能证明没有过度拦截，v4 用 `M_scoped` 专门测量）；按“合规完成”
 口径（达到目标且全程无不安全/越权写入）B0 与 M 都是 44/72，差距来自 B0 靠违反
 既定顺序规则“完成”的 9 个任务被 M 正确拦下后，智能体没能修好计划。Week 11–12 的
 **v3** 实验在 72 个新任务上测试三种恢复辅助（规则说明、空计划确认、冻结前新增的
 “合法写入清单”），同时改变传感器模态和用户说法（[计划与修订记录](docs/week11_v3_preregistration.md)）。
 holdout 已于 2026-10-12 按冻结协议跑完 7,128 回合：所有 M 守卫条件零不安全、
-零误拦；合规完成口径达标（+29.2 pp），联合可行性首次支持；raw 口径 −7.4 pp 的差额
-全部来自无守卫基线在越权任务上写了未授权设备（[收尾记录](docs/week12_v3_holdout_closeout.md)、
-[结果文件](artifacts/week11_v3_holdout_results.json)）。为什么修订、工作在
+零误拦；合规完成口径达标（+29.2 pp），按修订后的标准（S1 ∧ U2）联合可行性支持，
+按原定标准（S1 ∧ U1）不支持；raw 口径 −7.4 pp 的差额来自无守卫基线在越权任务上写了
+未授权设备（[收尾记录](docs/week12_v3_holdout_closeout.md)、
+[结果文件](artifacts/week11_v3_holdout_results.json)）。注意：U2 是在看到 v3 dev
+的 U1 不支持之后加入的，而且它把"合规"算进了效用，天然偏向有守卫的一方；与安全解耦的
+效用（探索性、事后）为 +1.4 pp [−5.6, +8.3]，尚不确定，见
+[复核再分析](docs/v3_review_reanalysis.md)。2026-11-03 的独立复核及处理见
+[复核回应](docs/review_response_2026-11-03.md)；下一项研究（v4，投 IEEE TDSC）的预注册草稿见
+[v4 预注册草稿](docs/v4_preregistration_draft.md)，待语料负责人决定后冻结。为什么修订、工作在
 2024–2026 文献中的位置、下一步并入哪些外部数据集：
 [第 12 周方向复审](docs/week12_direction_review.md)。
 
