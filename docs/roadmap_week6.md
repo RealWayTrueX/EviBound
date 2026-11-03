@@ -161,10 +161,13 @@ Frozen-boundary rules (non-negotiable):
       are triaged the same way.
 - [~] K2. v4 preregistration (models, conditions, corpus, decisions, J8
       decision) frozen before any v4 holdout output. Draft:
-      `docs/v4_preregistration_draft.md` (9-condition guard × aid factorial,
-      U_dec primary, Always_refresh co-primary, 3 planners, 200 structures);
-      waits for the owner decisions D1–D12 listed there.
-- [ ] K3. Owner decisions D1–D12 and the v4 world design
+      `docs/v4_preregistration_draft.md` (Tier A: six conditions with
+      Always_refresh as co-primary baseline, optional Tier B for the full
+      guard × aid factorial; U_dec primary; Qwen3-8B and Llama-3.1-8B
+      confirmatory, Qwen2.5-7B for continuity; 200 structures; an
+      external-world arm; stop rules and a week-4 gate after review E2/E6);
+      waits for the owner decisions D1–D14 listed there.
+- [ ] K3. Owner decisions D1–D14 and the v4 world design
       (`docs/design_v4_world.md`, rules R7+ signed off) before any v4 code
       or corpus is generated.
 - [ ] K4. Licence for code and data (review A-01) and `SAFETY.md` before any

@@ -54,14 +54,53 @@ reading is in `docs/v3_review_reanalysis.md`. No frozen file was changed.
 
 **Recommendations, not decisions.** Items marked (owner) wait for Xin.
 
-1. **Primary object: M or M_full?** (owner) Make the guard predicate the contribution and evaluate it as a factorial, guard {B2, Always_refresh, M, M_scoped} × recovery aids {none, full}. Safety is then attributed to the guard and utility recovery to the aids. v3 already shows both effects: the guard alone costs about 15 pp of decoupled utility, and the aids recover it.
+1. **Primary object: M or M_full?** (owner) Make the guard predicate the contribution and report M_full as the headline system.
+   - **Attribution.** The required v4 tier (Tier A) contains both M and M_full, so safety is attributed to the guard and utility recovery to the aids.
+   - **Full factorial.** Guard {B2, Always_refresh, M, M_scoped} × aids {none, full} is Tier B, run if compute allows.
+   - **v3 already shows both effects.** The guard alone costs about 15 pp of decoupled utility, and the aids recover it.
 2. **Demote U2?** (owner, recommended) In v4, preregister U_dec as the primary utility endpoint (non-inferiority, −5 pp) and report U1 and safe completion (U2) as secondary.
 3. **Was the v2/v1 overlap intended?** No. It is a generator and checker gap: the v2 checker compared a `structure_id` that includes split and family. The paper will call v2 a paired mechanism study and v3 the confirmatory structural holdout.
 4. **Release traces and review cards to artifact reviewers?** (owner) Recommended. The traces are synthetic, contain no personal data and are hash-pinned, so a GitHub release or Zenodo archive works. Review cards contain only task judgments. AGENTS.md keeps them local-only today, so this needs an explicit decision.
 5. **Always_refresh as a co-primary baseline?** (owner, recommended) Yes. The claim narrows to "as safe as refresh, fewer sensor reads, no sensor path needed at the guard, interpretable rejections". M is not claimed to dominate refresh.
 6. **HomeBench / SmartBench licences.** (owner action) Not contacted yet. Recommended: email the authors now. Until they answer, v4 uses only the project's own generator and the ToolEmu smart-home cases (Apache-2.0), re-implemented deterministically.
-7. **v4 dimensions.** Proposed in `docs/v4_preregistration_draft.md`: a door lock and a heater, door-contact and temperature sensors, several rooms, time-windowed guest authorization, conflicting and paraphrased observations, and 200 independent structures (240 if the dev estimate of the SD exceeds 0.25).
+7. **v4 dimensions.** Proposed in `docs/v4_preregistration_draft.md` §4:
+   - devices and rooms: a door lock, a heater, door-contact and temperature sensors, and two rooms;
+   - state: at least four independent state dimensions;
+   - authorization: temporary, revoked and cross-room;
+   - tasks: 1 to 8 writes, including infeasible and clarification-needed tasks;
+   - observations: paraphrased, noisy, corrupted and conflicting;
+   - size: 200 independent structures (240 if the dev estimate of the SD exceeds 0.25).
+
+   Language, encoding and attack are paired factors and never add clusters.
 8. **Boundary design and `M_scoped` as core ablations.** Yes. Both enter the v4 matrix.
+
+## How the v4 draft takes up the review's v4 advice (§6 E1–E6, §7)
+
+| Review item | Recommendation | Where in `docs/v4_preregistration_draft.md` | Status |
+|---|---|---|---|
+| E1, J1 | Conditional soundness with `0 ≤ age ≤ Δ`, unique records, arbitration, atomic commit and state stability; a worst-case residual-window counterexample | `docs/v4_formal_model.md` (A1–A8, Theorem 1, Corollary 2, case C3) | drafted |
+| E1, J2 | Four-quadrant precision report (stale but safe, truly unsafe, refresh cost, completion) | §6 four-quadrant table; Q2–Q4; the Δ sweep in §7 | adopted |
+| E1, J3 | At least one external world, not template rewriting | §4.3: an EviBound proxy that keeps the environment's own semantics and success criteria | adopted; choice is D13 |
+| E1, J4 | A second model and its heterogeneity | §3: Qwen3-8B and Llama-3.1-8B (Mistral fallback); claims per planner | adopted |
+| E1, J6 | Multi-step menu or constrained decoding | §2 | adopted |
+| E1, J5 / J7 / J8 | Deferrable | J5 kept as the XR family, which is cheap inside the matrix; J7 out of scope (device-rule safety only); J8 placeholder, with claims excluding hosted models | adopted |
+| E2 | 10–12 weeks, two 24 GB GPUs, stop-loss at week 4 | §11 | adopted |
+| E3 | Licences | §4.3; D6 | adopted |
+| E4 | Model pair; no quantized model as a planner factor; Mistral template caveat | §3 | adopted |
+| E5 | Fact dependencies, new tasks, cluster unit, external semantics, stratified human review, independent oracle and checker, no padding | §4.1–4.2 | adopted; review load is D14 |
+| E6 | Stop rules | §10, with measurable thresholds | adopted |
+| §7.8 | 150 independent worlds; new devices; 4–8 environment variables; ≥100 multi-device and ≥50 cross-device structures; observation quality; authorization; 1–8 steps; attacks not bound to families; one-factor encoding and language pairs; power simulation first | §4, §8 | adopted, with two deviations below |
+
+**Deviations from the reviewer's minimum package**
+
+- **200 structures, not 150.** At 150, single-planner power at a true effect
+  of zero is 0.78, against 0.89 at 200 (draft §8).
+- **Six conditions, not three.** Tier A adds:
+  - AR_full, which D-02 requires;
+  - M, needed to attribute effects to the guard (question 1);
+  - MS_full, needed for J2.
+
+  Tier B is optional.
 
 **Licence recommendation (A-01).**
 
@@ -92,14 +131,16 @@ reading is in `docs/v3_review_reanalysis.md`. No frozen file was changed.
 - 相关工作对比与收窄后的贡献表述；
 - 真实轨迹上的再分析（BCa、置换检验、功效）。
 
-**进入 v4 的：**
+**进入 v4 的（复核第 6、7 节的 v4 建议已逐条并入草稿，见上表）：**
 
 - 200 个独立结构（dev 估计的标准差超过 0.25 时扩到 240）；
 - U_dec 作主要效用终点；
 - Always_refresh 并列主基线；
 - `M_scoped` 精度消融；
 - 第二、第三个模型；
-- 冲突与改写观测。
+- 冲突、改写、噪声与损坏观测；
+- 保留外部环境自身语义的外部世界代理；
+- 预先写明的止损规则和第 4 周检查点。
 
 **等你决定的：**
 
