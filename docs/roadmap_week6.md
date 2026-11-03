@@ -138,6 +138,24 @@ Frozen-boundary rules (non-negotiable):
       injection success rates for H0/H4/H5, an intent-binding guard `M_intent`
       for rule-compliant hijacks, record signing (H3) and a fallback for
       persistent tampering (H8), each behind a new preregistration
+- [ ] J8. (placeholder, deferred by the corpus owner on 2026-11-03) a closed
+      or paid-API planner (e.g. a GPT or Claude model) as an extra model
+      family next to J4. Needs explicit approval, a budget, a data disclosure
+      and a pinned request schema (AGENTS.md). **Remind the corpus owner
+      before the v4 preregistration is frozen**, so the decision is taken,
+      not forgotten.
+
+### K. v4 towards IEEE TDSC (from 2026-11-03; v1-v3 stay frozen)
+- [x] K0. Target venue chosen by the corpus owner: IEEE Transactions on
+      Dependable and Secure Computing (JCR Q1; KU's IEEE open-access
+      agreement covers the APC for Scopus top-15% journals); fallback
+      Computers & Security. Course deliverables are derived from the same
+      manuscript.
+- [~] K1. External multi-agent review of all materials and corpora with
+      `docs/external_review_brief.md`; findings are triaged and fixed before
+      any new run.
+- [ ] K2. v4 preregistration (models, conditions, corpus, decisions, J8
+      decision) frozen before any v4 holdout output.
 
 ## Progress Log
 
@@ -329,3 +347,13 @@ Frozen-boundary rules (non-negotiable):
   redistribution licence, so they stay out of the repository), and Xin's own
   `academic-assignment-writing` as the primary writing skill, with the
   `academic-humanizer` rules merged into it as a secondary reference.
+
+- 2026-11-03: server inventory and v4 kickoff, no research change. The UQ
+  clone is clean at `34eabf9`; no corpus or run has changed since 2026-10-25
+  (last run 2026-10-19). The demo planner (`evibound_model_server`, GPU 1) was
+  stopped so both GPUs are free; `demo/launch/EviBound-Demo-{Start,Stop}.command`
+  start and stop it from the Mac in one double-click (server password asked
+  until key login is set up; `docs/remote_planner_setup.md` section 5). The
+  corpus owner chose IEEE TDSC (K0) and deferred paid APIs (J8 placeholder).
+  `docs/external_review_brief.md` is the one-file brief for independent
+  reviewer agents (K1); their reports come back before v4 work continues.
