@@ -106,6 +106,26 @@ class ReviewDeskTest(unittest.TestCase):
             self.assertNotIn('confirm(', page)
             self.assertLess(len(page.encode()), 16 * 1024 * 1024)
 
+    def test_guide_rule_table_matches_the_rule_engine(self):
+        table = self.data['meta']['rule_table']
+        for branch in ('present', 'absent'):
+            for light in desk.VALUES:
+                for fan in desk.VALUES:
+                    self.assertEqual(table[branch][light][fan],
+                                     desk.state_violations({'light': light, 'fan': fan}, branch == 'present'))
+        legal = {b: sum(not table[b][l][f] for l in desk.VALUES for f in desk.VALUES) for b in table}
+        self.assertEqual(legal, {'present': 7, 'absent': 2})  # the guide states these counts
+
+    def test_guide_opens_on_every_load_and_storage_is_per_annotator(self):
+        sample = self.data['meta']['sample_task']
+        self.assertTrue(next(i for i in self.items if i['id'] == sample)['required'])
+        page = desk.render(self.data, body_only=True)
+        self.assertIn('id="guideOv"', page)
+        self.assertIn('openGuide(0);', page)
+        self.assertEqual(page.count("{ eyebrow: '"), 8)
+        self.assertIn("'reviewers/' + uid + '/runs/' + RUN + '/verdicts'", page)
+        self.assertNotIn("collection('runs/'", page)
+
     def test_practice_mode_for_the_frozen_corpus(self):
         meta = self.data['meta']
         self.assertEqual(meta['mode'], 'practice')

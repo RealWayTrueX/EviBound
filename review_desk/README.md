@@ -20,12 +20,66 @@ python3 scripts/build_review_desk.py          # writes reviews/v3/review_desk.ht
 - **`--artifact-out PATH`.** Also writes the body-only page that is published
   as a claude.ai artifact.
 - **Where results go.**
-  - On the published page, verdicts go to the artifact's shared store
-    (`runs/<run_key>/verdicts`), where Claude can read them.
+  - On the published page, verdicts go to the artifact's store, under each
+    annotator's own record (see "Several annotators"), where Claude can read
+    them.
   - In a local file, they stay in that browser; use **导出** to save them.
 
 **The v3 corpus is frozen.** Its desk is a practice run. Do not overwrite
 `reviews/v3/checklist.csv` with its export, and do not run `--signoff` for v3.
+
+## Quick-start guide
+
+**When it appears.** On every open, an eight-page guide comes up before the
+desk. It takes one to two minutes and can be skipped with `Esc`. The 引导
+button in the header reopens it.
+
+**The pages:**
+
+1. What is being reviewed and why, with the system diagram.
+2. Devices, levels, presence and permission.
+3. The six rules, with the legal-state grid and the jump rule.
+4. Reading the sensors and the everyday phrases.
+5. Tamper, replay and authorization-negative tasks.
+6. What each question asks, with examples of failures.
+7. How to read a card, and the fastest keys.
+8. A warm-up of three questions.
+
+**The warm-up.**
+
+- **Rule question.** One question is generated from the rule table, so it is
+  always correct and different each time.
+- **Other questions.** The other two come from a pool on sensors, attacks and
+  judgement.
+- **Wrong answers.** A wrong answer shows the reason and a link back to the
+  page that covers it.
+
+**What is recorded.** On the published page, each annotator's last guide run
+is written to their own record:
+
+- pages seen;
+- time taken;
+- quiz score, by topic.
+
+## Several annotators
+
+**Storage.** On the published page every annotator writes only their own
+subtree: `reviewers/<id>/runs/<run_key>/verdicts/<item>`, plus a profile
+document `reviewers/<id>`.
+
+| Path | Read | Write |
+|---|---|---|
+| `reviewers` | `admin` (owner and Editors read everyone) | `self` |
+| `reviewers/{self}` | `interact` | `interact` |
+
+Annotators therefore cannot read or overwrite each other's verdicts, and the
+owner (or Claude, reading as the owner) can compare them.
+
+**Sharing.**
+
+- Inside the organization: share as Contributor.
+- Outside the organization: annotators can only view a shared artifact, so
+  they use the offline file and send back the exported JSON.
 
 ## What is reviewed
 

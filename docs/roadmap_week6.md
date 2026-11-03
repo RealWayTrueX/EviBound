@@ -409,3 +409,14 @@ Frozen-boundary rules (non-negotiable):
     plan search, the observation reader and the instruction parser; all agree
     with the frozen v3 corpus.
   - The v3 desk is a practice run; its export must not be used to sign off v3.
+
+- 2026-11-03: review desk quick-start guide (K5), no research change. Every
+  open now shows an eight-page guide (purpose, devices and permission, rules
+  with the legal-state grid, sensors and phrases, attacks and A3, how to judge
+  q1–q4, card anatomy and keys) and a three-question warm-up.
+  - The rule question is generated from the rule table the builder exports;
+    the other two come from a pool on sensors, attacks and judgement.
+  - Verdicts on the published page now live under each annotator's own record
+    (`reviewers/<id>/...`; self-write, owner-read rules), so several
+    annotators cannot overwrite each other.
+  - The guide record (pages seen, time, quiz score) is stored with them.

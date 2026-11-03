@@ -758,6 +758,14 @@ def build(corpus):
                         'q5_label_confidence', 'decision', 'comment'],
         'counts': dict(Counter(i['kind'] for i in items)),
         'required': sum(i['required'] for i in items),
+        'required_by_kind': dict(Counter(i['kind'] for i in items if i['required'])),
+        # The quick-start guide and its warm-up questions read the rules from
+        # this table, so the page carries one implementation of them.
+        'rule_table': {branch: {l: {f: state_violations({'light': l, 'fan': f}, branch == 'present') for f in VALUES}
+                                for l in VALUES} for branch in ('present', 'absent')},
+        'jump_rules': {'fan': 'R4', 'light': 'R5'},
+        'sample_task': next((i['id'] for i in items if i['kind'] == 'task' and i['required']
+                             and i['diagram']['a3'] is False and i['instruction']['style'] == 'everyday'), None),
     }
     return {'meta': meta, 'items': items}
 
