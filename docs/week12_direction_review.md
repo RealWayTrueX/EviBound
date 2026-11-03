@@ -14,6 +14,20 @@ or the v3 holdout.
 
 ---
 
+> **Corrections and updates (2026-11-03), after an independent review.**
+> (1) v2 safety was supported on the formal test only; the pilot decision was
+> inconclusive (§1.1, corrected in place). (2) The guard predicate lacked the
+> lower bound `0 ≤ t_c − c.t` (§5, corrected in place; theorem and
+> assumptions in `docs/v4_formal_model.md`). (3) The U2 endpoint adds rule
+> compliance to utility and was introduced after the exploratory v3 dev run;
+> the "metric artefact" reading of §1.2 is one-sided. The original-protocol
+> decision and a safety-decoupled utility are in `docs/v3_review_reanalysis.md`.
+> (4) The gap statement of §2 predates five October 2026 preprints (PACE, TRAP,
+> StateWise, From Evidence to Action, MFOTL runtime verification); the narrowed
+> contribution is in `docs/related_work_2026-11.md`. (5) v2 shares 12 physical
+> structures with v1 (`docs/datasheet_v2_v3.md`). Full triage:
+> `docs/review_response_2026-11-03.md`.
+
 ## 1. What the results so far actually say / 现有结果到底说明了什么
 
 ### 1.1 Safety (v2 formal test, public record)
@@ -22,8 +36,10 @@ Perturbed episodes: B2 30/72 unsafe vs M 0/72; cluster effect +36.4 pp
 [+18.2, +59.1]. The freshness ablation carries +22.7 pp of that on its own
 (M_no_freshness 18/72 unsafe). Always_refresh is equally safe (0/72) at
 +1.46 reads/episode. Zero false blocks in 1,296 episodes, including the
-boundary variant (age exactly 2). **Supported, and robust across pilot and
-test.**
+boundary variant (age exactly 2). **Supported on the formal test.** The pilot
+pointed the same way, but its preregistered decision was *inconclusive* (lower
+bound exactly 0; `artifacts/week8_pilot_results.json`). *[Corrected
+2026-11-03; the earlier text said "robust across pilot and test".]*
 
 ### 1.2 Utility: the gap is a metric artefact, then a planner-recovery problem
 
@@ -87,7 +103,12 @@ B0 在越权任务上的越权"完成"。两点修正下文第 3 节的预期：
   criterion for the metric problem (AgentDojo reports utility and security
   separately; τ-bench scores policy compliance, not raw completion).
 - Hence amendments A1–A3, made before the freeze and justified only from the
-  public v2 record.
+  public v2 record. *[Added 2026-11-03: the amendment commit (`63a2b72`,
+  07:46Z) came about two hours after the exploratory v3 dev evidence, which
+  showed U1 unsupported, was committed (`d488161`, 05:49Z). Holdout data did
+  not exist yet, but the endpoint change cannot be called independent of the
+  dev result; the paper reports both protocols. See
+  `docs/review_response_2026-11-03.md`, C-01 and C-02.]*
 
 ---
 
@@ -234,7 +255,10 @@ modified.
 ## 5. v4: what a venue-grade EviBound needs / 会议级版本还缺什么
 
 1. **Formal statement.** Define the guard as a predicate
-   `G(w, c, t_c) = c ∈ Store ∧ t_c − c.t ≤ Δ ∧ Rules(ledger, w, c.value) ∧ w.device ∈ Auth`
+   `G(w, c, t_c) = c ∈ Store ∧ 0 ≤ t_c − c.t ≤ Δ ∧ Rules(ledger, w, c.value) ∧ w.device ∈ Auth`
+   *[lower bound added 2026-11-03; the implementation always had it,
+   `backend.py` `_validated_presence`; full statement with its assumptions in
+   `docs/v4_formal_model.md`]*
    and prove the per-write soundness in §2 for the channel-fault model; state
    explicitly that the store, clock and ledger are the TCB and that Δ is the
    residual window. Position against CommitGuard (witness freshness, digital)
