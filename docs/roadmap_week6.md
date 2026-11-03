@@ -171,7 +171,15 @@ Frozen-boundary rules (non-negotiable):
       (`docs/design_v4_world.md`, rules R7+ signed off) before any v4 code
       or corpus is generated.
 - [ ] K4. Licence for code and data (review A-01) and `SAFETY.md` before any
-      public release of the v4 artifact.
+      public release of the v4 artifact. Owner accepted the defaults on
+      2026-11-03 (MIT for code, CC BY 4.0 for the synthetic corpora); files
+      to be added after a third-party content check.
+- [x] K5. Human review desk (`review_desk/`, `scripts/build_review_desk.py`,
+      `tests/test_review_desk.py`): one item at a time with a Chinese
+      translation, a state diagram, per-question hints, independent automatic
+      checks and keyboard shortcuts; exports the v2/v3 `checklist.csv` format
+      plus a full JSON. Built on the frozen v3 corpus as a practice run; v4
+      needs an adapter and its sampling rule.
 
 ## Progress Log
 
@@ -389,3 +397,15 @@ Frozen-boundary rules (non-negotiable):
   (inconclusive; about 157–197 structures needed). Related work updated with
   five October 2026 preprints and a narrowed contribution. The v4 draft
   preregistration and the owner decisions are open (K2, K3).
+
+- 2026-11-03: review desk for the human corpus review (K5), no research
+  change. The corpus owner accepted the default licence decisions (D4 Llama
+  licence, D6 contact the HomeBench/SmartBench authors, D7 MIT + CC BY 4.0).
+  `scripts/build_review_desk.py` builds a one-item-at-a-time page: 6 rules,
+  3 reading conventions, 39 camera captions and 84 tasks (125 required).
+  - Each item shows the English text, a Chinese translation parsed from the
+    words, a state diagram, task-specific hints for q1–q4 and automatic checks.
+  - The checks come from an independent re-implementation of the rules, the
+    plan search, the observation reader and the instruction parser; all agree
+    with the frozen v3 corpus.
+  - The v3 desk is a practice run; its export must not be used to sign off v3.

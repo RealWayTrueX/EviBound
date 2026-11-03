@@ -483,6 +483,30 @@ Models, caches and raw traces go under `/mnt/HDD-8T-0/evibound_yanke/`, as
 | D13 | External world | Start with the ToolEmu toolkits (licence clear, small); add SimuHome if it runs offline on the server |
 | D14 | Human-review load | The E5 coverage in §4.2 (about half the corpus); confirm you can review at that rate in weeks 3–4 |
 
+**Recorded on 2026-11-03.** The corpus owner accepted the defaults for the
+three licence decisions:
+
+- **D4.** Use Llama-3.1-8B-Instruct. The owner accepts its licence on Hugging
+  Face with their own account; until that is done, Mistral-7B-Instruct-v0.3
+  is the fallback.
+- **D6.** Contact the HomeBench and SmartBench authors. Until written
+  permission arrives, neither dataset is used in the confirmatory holdout or
+  the public artifact.
+- **D7.** Code under MIT, synthetic corpora under CC BY 4.0, plus a
+  `SAFETY.md`. The files are added at the K4 release step, after a check for
+  third-party content.
+
+**D14 (review load).** The review desk (`review_desk/`,
+`scripts/build_review_desk.py`) shows one item at a time with:
+
+- a Chinese translation;
+- a diagram;
+- per-question hints;
+- independent automatic checks;
+- keyboard shortcuts.
+
+Its v3 practice run is the timing test for the §4.2 review coverage.
+
 ## 中文摘要
 
 **状态。** 这是草稿，还没有冻结。你拍板第 13 节的决定、冻结脚本记录哈希之后才生效。复核报告第 6 节（E1–E6）和第 7 节（数据规模追加复核）的建议都已并入。
