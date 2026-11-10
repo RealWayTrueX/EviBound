@@ -1,0 +1,259 @@
+{
+ "what": "Independent re-run of the frozen runners on a second machine, compared episode by episode with the original runs",
+ "status": "reproduction record; post hoc; changes no frozen decision",
+ "date_utc": "2026-11-10",
+ "machine": {
+  "provider": "Google Colab runtime on the corpus owner's existing subscription (used for reproduction only)",
+  "gpu": "NVIDIA A100-SXM4-40GB, 40960 MiB, driver 580.82.07",
+  "original_machine": "NVIDIA GeForce RTX 4090, 24564 MiB, driver 580.178.04 (artifacts/environment_v2.json)"
+ },
+ "timeline_utc": {
+  "cell_started": "2026-11-10T18:38:57Z",
+  "libraries_pinned": "2026-11-10T18:42:16Z",
+  "model_verified_and_run_started": "2026-11-10T18:43:40Z",
+  "runs_finished": "2026-11-10T18:59:41Z",
+  "reports_finished": "2026-11-10T18:59:48Z",
+  "runtime_released": "automatically, by the notebook's last cell"
+ },
+ "wall_minutes": 21,
+ "commands": [
+  "git clone -q --depth 1 -b claude/review-response-v4-prep https://github.com/RealWayTrueX/EviBound.git /content/EviBound; bash /content/EviBound/scripts/reproduce_cloud.sh",
+  "cd /content/EviBound && git pull -q && REPORT_ONLY=1 bash scripts/reproduce_cloud.sh",
+  "from google.colab import runtime; runtime.unassign()"
+ ],
+ "commits": {
+  "model_runs": "859ea8fce6430f55b2d7bab560535d22b5409ece",
+  "reports": "da69a58a2c624d8ec058d57a80108df90daa76ef"
+ },
+ "environment": {
+  "python": "3.13.16",
+  "platform": "Linux-6.6.159+-x86_64-with-glibc2.39",
+  "torch": "2.9.0+cu128",
+  "cuda_compiled": "12.8",
+  "transformers": "4.57.1",
+  "tokenizers": "0.22.2",
+  "accelerate": "1.11.0",
+  "safetensors": "0.5.3",
+  "huggingface_hub": "0.36.0",
+  "numpy": "2.4.6",
+  "node": "v22.23.4"
+ },
+ "differences_from_original_environment": {
+  "gpu": "A100 instead of RTX 4090",
+  "python": "3.13.16 instead of 3.12.7",
+  "numpy": "2.4.6 instead of 1.26.4",
+  "same": "torch, CUDA build, transformers, tokenizers, accelerate, safetensors, huggingface-hub"
+ },
+ "model": {
+  "repository": "Qwen/Qwen2.5-7B-Instruct",
+  "revision": "a09a35458c702b33eeacc393d103063234e8bc28",
+  "verification": "14 of 14 downloaded files match artifacts/model_manifest.json (SHA-256)"
+ },
+ "checks_on_that_machine": {
+  "unit_tests": "90 ran, OK",
+  "corpus_checkers": "v2 56 tasks OK; v3 84 tasks, 48 physical structures OK",
+  "protocol_freezes": "4 of 4 ok",
+  "scripts_reproduce_sh_exit_code": 0
+ },
+ "rerun": {
+  "v2_formal_test": {
+   "episodes": 1296,
+   "seeds": [
+    11,
+    22,
+    33
+   ],
+   "runner": "scripts/run_experiment.py (frozen), batch size 8"
+  },
+  "v3_holdout": {
+   "episodes": 2376,
+   "seeds": [
+    11
+   ],
+   "runner": "scripts/run_experiment_v3.py (frozen), batch size 8",
+   "note": "one of the three seeds; the original run has 7,128 episodes"
+  }
+ },
+ "rerun_trace_sha256": {
+  "seed_11.jsonl": "7ab211f5d230dd86d1c63be38b9e5a1331ec4039b4f5afade25ac46f95771456",
+  "seed_22.jsonl": "acd894317fd98dbf2b6926b7c63f537e97c68aaeb272ca5b6804eee75a8604a9",
+  "seed_33.jsonl": "644a7a98ebff84bf9c65a9911570140118add90860068fea90da07fed8c72760",
+  "v3_holdout_rerun.jsonl": "34f6962cdfc19721d212f92336ab388a7a75169d7c51fb2449f259d82e2e8563"
+ },
+ "retained": {
+  "fingerprints": {
+   "artifacts/reproduction_colab_a100_fingerprints_v2.json.gz": "f430c1f0616cc7b61ca970b2f8077ce1565a04d4f7a269052f6a0a26d8674674",
+   "artifacts/reproduction_colab_a100_fingerprints_v3.json.gz": "6d07abdd5e56cc6a9642cae4e76b35bc3d567efc0333171cd5de4f7e5856747a"
+  },
+  "fingerprint_transfer": "the notebook printed each fingerprint file as a checksummed block; the bytes copied out of the page have the SHA-256 the notebook printed",
+  "notebook": "EviBound_independent_reproduction_2026-11-10.ipynb in the owner's Colab notebooks, with the full output of all three cells",
+  "raw_rerun_traces": "not retained: the runtime was released when the run ended. Their SHA-256 values are above; the fingerprints hold the per-episode response hash, executed writes and oracle outcomes"
+ },
+ "episode_level_agreement": {
+  "v2_formal_test": {
+   "episodes_compared": 1296,
+   "first_proposal_text": {
+    "count": 1181,
+    "rate": 0.9113
+   },
+   "executed_writes": {
+    "count": 1167,
+    "rate": 0.9005
+   },
+   "oracle_outcomes": {
+    "count": 1221,
+    "rate": 0.9421
+   }
+  },
+  "v3_holdout_seed_11": {
+   "episodes_compared": 2376,
+   "first_proposal_text": {
+    "count": 2178,
+    "rate": 0.9167
+   },
+   "executed_writes": {
+    "count": 2227,
+    "rate": 0.9373
+   },
+   "oracle_outcomes": {
+    "count": 2321,
+    "rate": 0.9769
+   }
+  }
+ },
+ "primary_contrasts": {
+  "v2_formal_test": {
+   "original": {
+    "safety_B2_minus_M_unsafe": {
+     "estimate": 0.36363636363636365,
+     "ci95_low": 0.18181818181818182,
+     "ci95_high": 0.5909090909090909,
+     "n_tasks": 22,
+     "n_paired_episodes": 72,
+     "left_count": 30,
+     "right_count": 0,
+     "episodes_per_condition": 72
+    },
+    "utility_M_minus_B0_goal": {
+     "estimate": -0.13636363636363635,
+     "ci95_low": -0.2727272727272727,
+     "ci95_high": 0.0,
+     "n_tasks": 22,
+     "n_paired_episodes": 72,
+     "left_count": 44,
+     "right_count": 53,
+     "episodes_per_condition": 72
+    }
+   },
+   "rerun": {
+    "safety_B2_minus_M_unsafe": {
+     "estimate": 0.36363636363636365,
+     "ci95_low": 0.18181818181818182,
+     "ci95_high": 0.5909090909090909,
+     "n_tasks": 22,
+     "n_paired_episodes": 72,
+     "left_count": 30,
+     "right_count": 0,
+     "episodes_per_condition": 72
+    },
+    "utility_M_minus_B0_goal": {
+     "estimate": -0.13636363636363635,
+     "ci95_low": -0.2727272727272727,
+     "ci95_high": 0.0,
+     "n_tasks": 22,
+     "n_paired_episodes": 72,
+     "left_count": 45,
+     "right_count": 54,
+     "episodes_per_condition": 72
+    }
+   }
+  },
+  "v3_holdout_seed_11": {
+   "original_same_seed": {
+    "S1_B2full_minus_Mfull_unsafe": {
+     "estimate": 0.1527777777777778,
+     "ci95_low": 0.05555555555555555,
+     "ci95_high": 0.2638888888888889,
+     "n_tasks": 36,
+     "n_paired_episodes": 72,
+     "left_count": 11,
+     "right_count": 0,
+     "episodes_per_condition": 72
+    },
+    "U1_Mfull_minus_B0_goal": {
+     "estimate": -0.08333333333333333,
+     "ci95_low": -0.20833333333333334,
+     "ci95_high": 0.027777777777777776,
+     "n_tasks": 36,
+     "n_paired_episodes": 72,
+     "left_count": 52,
+     "right_count": 58,
+     "episodes_per_condition": 72
+    },
+    "U2_Mfull_minus_B0_safe_completion": {
+     "estimate": 0.2916666666666667,
+     "ci95_low": 0.16666666666666666,
+     "ci95_high": 0.4305555555555556,
+     "n_tasks": 36,
+     "n_paired_episodes": 72,
+     "left_count": 52,
+     "right_count": 31,
+     "episodes_per_condition": 72
+    }
+   },
+   "rerun": {
+    "S1_B2full_minus_Mfull_unsafe": {
+     "estimate": 0.1527777777777778,
+     "ci95_low": 0.05555555555555555,
+     "ci95_high": 0.2638888888888889,
+     "n_tasks": 36,
+     "n_paired_episodes": 72,
+     "left_count": 11,
+     "right_count": 0,
+     "episodes_per_condition": 72
+    },
+    "U1_Mfull_minus_B0_goal": {
+     "estimate": -0.09722222222222222,
+     "ci95_low": -0.2361111111111111,
+     "ci95_high": 0.027777777777777776,
+     "n_tasks": 36,
+     "n_paired_episodes": 72,
+     "left_count": 51,
+     "right_count": 58,
+     "episodes_per_condition": 72
+    },
+    "U2_Mfull_minus_B0_safe_completion": {
+     "estimate": 0.2916666666666667,
+     "ci95_low": 0.16666666666666666,
+     "ci95_high": 0.4305555555555556,
+     "n_tasks": 36,
+     "n_paired_episodes": 72,
+     "left_count": 51,
+     "right_count": 30,
+     "episodes_per_condition": 72
+    }
+   }
+  }
+ },
+ "unsafe_effects_in_full_guard_conditions": {
+  "v2": "0 of 432 episodes in both runs (M and Always_refresh)",
+  "v3_seed_11": "0 of 1,296 episodes in both runs (the six M conditions)"
+ },
+ "unsafe_effect_identical": {
+  "v2": "1,295 of 1,296 episodes",
+  "v3_seed_11": "2,372 of 2,376 episodes"
+ },
+ "reports": [
+  "artifacts/reproduction_colab_a100_v2.json",
+  "artifacts/reproduction_colab_a100_v3.json",
+  "artifacts/reproduction_colab_a100_summary_v2.json",
+  "artifacts/reproduction_colab_a100_summary_v3.json"
+ ],
+ "decisions": {
+  "v2 safety (B2 minus M unsafe effects under attack)": "supported in both runs, identical estimate and interval",
+  "v2 utility (M minus B0 clean goal completion, margin -5 pp)": "unsupported in both runs, identical estimate and interval",
+  "v3 S1": "supported in both runs",
+  "v3 U1": "unsupported in both runs",
+  "v3 U2": "supported in both runs"
+ }
+}

@@ -110,3 +110,78 @@ a GPU that has been idle for ten consecutive checks, never shares a GPU,
 stops the command at once if another job appears on that GPU, and ends within
 a fixed deadline with every child process stopped. It is the way to run
 level 3 on a machine that other people use.
+
+## 7. Recorded runs / 复现记录
+
+### 7.1 Published numbers recomputed from the raw traces (2026-11-10)
+
+Fresh clone on the original machine, CPU only.
+`scripts/verify_published_results.py` recomputed every primary number, count,
+interval, hash and decision of the v2 formal test and the v3 holdout from the
+retained traces: **23 checks, 0 failed**
+(`artifacts/reproduction_published_results_check.json`). The oracle rescored
+all 8,424 episodes with no disagreement. `scripts/contract_outcomes.py`
+derived the outcomes the research contract lists and the frozen analyses do
+not tabulate, attack-goal success among them
+(`artifacts/contract_outcomes_v2_v3.json`).
+
+### 7.2 Model re-run on a second machine (2026-11-10)
+
+`scripts/reproduce_cloud.sh` on a Google Colab runtime with an NVIDIA A100
+(40 GB): same library versions (torch 2.9.0 with CUDA 12.8, transformers
+4.57.1), same pinned model revision (14 of 14 files match the manifest),
+frozen runners, batch size 8. It ran the full v2 formal-test matrix (seeds
+11, 22, 33; 1,296 episodes) and seed 11 of the v3 holdout (2,376 of 7,128
+episodes) in 21 minutes including set-up. The original runs used an RTX 4090.
+Record: `artifacts/reproduction_colab_a100_record.json`.
+
+Episode-level agreement with the original runs:
+
+| Study | Episodes | Identical first response | Identical executed writes | Identical oracle outcomes | Identical unsafe-effect outcome |
+|---|---|---|---|---|---|
+| v2 formal test | 1,296 | 1,181 (91.1%) | 1,167 (90.0%) | 1,221 (94.2%) | 1,295 |
+| v3 holdout, seed 11 | 2,376 | 2,178 (91.7%) | 2,227 (93.7%) | 2,321 (97.7%) | 2,372 |
+
+About one first response in eleven differs between the two GPUs, as expected
+for sampling on different hardware (section 2). The preregistered contrasts:
+
+| Contrast | Original run | Re-run on the second machine | Decision in both |
+|---|---|---|---|
+| v2 safety: B2 − M unsafe effects under attack | +36.4 pp [18.2, 59.1], 30 vs 0 of 72 | +36.4 pp [18.2, 59.1], 30 vs 0 of 72 | supported |
+| v2 utility: M − B0 clean goal completion (margin −5 pp) | −13.6 pp [−27.3, 0.0], 44 vs 53 of 72 | −13.6 pp [−27.3, 0.0], 45 vs 54 of 72 | not supported |
+| v3 S1, seed 11: B2_full − M_full unsafe effects under attack | +15.3 pp [5.6, 26.4], 11 vs 0 of 72 | +15.3 pp [5.6, 26.4], 11 vs 0 of 72 | supported |
+| v3 U1, seed 11: M_full − B0 clean goal completion | −8.3 pp [−20.8, 2.8], 52 vs 58 of 72 | −9.7 pp [−23.6, 2.8], 51 vs 58 of 72 | not supported |
+| v3 U2, seed 11: M_full − B0 clean rule-compliant completion | +29.2 pp [16.7, 43.1], 52 vs 31 of 72 | +29.2 pp [16.7, 43.1], 51 vs 30 of 72 | supported |
+
+No episode under a full guard had an unsafe effect in either run: 0 of 432 in
+v2 (M and Always_refresh) and 0 of 1,296 in v3 seed 11 (the six M
+conditions). The v3 rows use one seed, so they are compared with the same
+seed of the original run, not with the published three-seed values.
+
+The re-run's episode fingerprints are committed
+(`artifacts/reproduction_colab_a100_fingerprints_v{2,3}.json.gz`), so the
+table can be recomputed from the repository alone:
+
+```bash
+python3 scripts/compare_runs.py --study v2 \
+    --original artifacts/episode_fingerprints_v2_formal_test.json.gz \
+    --rerun artifacts/reproduction_colab_a100_fingerprints_v2.json.gz --output /tmp/v2_comparison.json
+```
+
+`tests/test_reproduction_tools.py` runs this on every test run and fails if
+the committed record stops matching the committed fingerprints. The raw
+traces of the re-run were not kept (the runtime was released when the run
+ended); their SHA-256 values are in the record.
+
+Limits of this reproduction: same model revision, prompts, tasks and code, so
+it tests whether the published numbers follow from the published procedure
+on other hardware. It says nothing about other models, other tasks or other
+attacks. The second machine was the corpus owner's existing Colab
+subscription and was used only for this re-run; every confirmatory number in
+the project comes from the original runs.
+
+第二台机器（Colab A100，库版本和模型版本与原实验一致）上的重跑：v2 全部 1,296 回合、
+v3 holdout 种子 11 的 2,376 回合，共 21 分钟。约九成回合的首个回复逐字一致；预注册的
+主要对比结论全部相同：v2 安全假设成立（30 比 0，估计值和区间完全一致），效用假设不
+成立（−13.6 个百分点，同样完全一致）。完整守卫条件在两次运行中都没有出现不安全后果。
+重跑的逐回合指纹已提交，表中数字可以只靠仓库重新算出。
