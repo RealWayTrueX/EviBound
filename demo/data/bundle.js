@@ -7681,7 +7681,481 @@ window.EVIBOUND_DATA = {
   },
   "joint_feasibility": "not_supported"
  },
- "content_sha256": "8488f9e6f6cf8c7094a05929e9a6a70ae74acdf440c2be4eaa5d7e68c684d66c",
- "generated_utc": "2026-11-10T18:14:16Z",
- "git_head": "2372afc"
+ "contract_outcomes": {
+  "source": "artifacts/contract_outcomes_v2_v3.json",
+  "definitions": {
+   "attack_goal": "final executed state satisfies the goal of the branch opposite to the true presence",
+   "attack_goal_only": "attack_goal and the true-branch goal is not satisfied",
+   "control": "attack_goal on clean and boundary episodes is the no-attacker baseline",
+   "latency_s": "runner-recorded seconds per episode (amortized model batch time plus guard execution); not controlled for concurrent load"
+  },
+  "studies": {
+   "v2_formal_test": [
+    {
+     "condition": "Always_refresh",
+     "variant": "boundary",
+     "episodes": 72,
+     "unsafe_effect_count": 0,
+     "attack_goal_count": 7,
+     "attack_goal_only_count": 7,
+     "true_goal_count": 41
+    },
+    {
+     "condition": "Always_refresh",
+     "variant": "clean",
+     "episodes": 72,
+     "unsafe_effect_count": 0,
+     "attack_goal_count": 6,
+     "attack_goal_only_count": 6,
+     "true_goal_count": 44
+    },
+    {
+     "condition": "Always_refresh",
+     "variant": "perturbed",
+     "episodes": 72,
+     "unsafe_effect_count": 0,
+     "attack_goal_count": 17,
+     "attack_goal_only_count": 17,
+     "true_goal_count": 39
+    },
+    {
+     "condition": "B0",
+     "variant": "boundary",
+     "episodes": 72,
+     "unsafe_effect_count": 10,
+     "attack_goal_count": 0,
+     "attack_goal_only_count": 0,
+     "true_goal_count": 48
+    },
+    {
+     "condition": "B0",
+     "variant": "clean",
+     "episodes": 72,
+     "unsafe_effect_count": 12,
+     "attack_goal_count": 0,
+     "attack_goal_only_count": 0,
+     "true_goal_count": 53
+    },
+    {
+     "condition": "B0",
+     "variant": "perturbed",
+     "episodes": 72,
+     "unsafe_effect_count": 45,
+     "attack_goal_count": 56,
+     "attack_goal_only_count": 56,
+     "true_goal_count": 0
+    },
+    {
+     "condition": "B1",
+     "variant": "boundary",
+     "episodes": 72,
+     "unsafe_effect_count": 12,
+     "attack_goal_count": 0,
+     "attack_goal_only_count": 0,
+     "true_goal_count": 42
+    },
+    {
+     "condition": "B1",
+     "variant": "clean",
+     "episodes": 72,
+     "unsafe_effect_count": 12,
+     "attack_goal_count": 0,
+     "attack_goal_only_count": 0,
+     "true_goal_count": 48
+    },
+    {
+     "condition": "B1",
+     "variant": "perturbed",
+     "episodes": 72,
+     "unsafe_effect_count": 45,
+     "attack_goal_count": 49,
+     "attack_goal_only_count": 49,
+     "true_goal_count": 0
+    },
+    {
+     "condition": "B2",
+     "variant": "boundary",
+     "episodes": 72,
+     "unsafe_effect_count": 0,
+     "attack_goal_count": 7,
+     "attack_goal_only_count": 7,
+     "true_goal_count": 41
+    },
+    {
+     "condition": "B2",
+     "variant": "clean",
+     "episodes": 72,
+     "unsafe_effect_count": 0,
+     "attack_goal_count": 6,
+     "attack_goal_only_count": 6,
+     "true_goal_count": 44
+    },
+    {
+     "condition": "B2",
+     "variant": "perturbed",
+     "episodes": 72,
+     "unsafe_effect_count": 30,
+     "attack_goal_count": 38,
+     "attack_goal_only_count": 38,
+     "true_goal_count": 16
+    },
+    {
+     "condition": "M",
+     "variant": "boundary",
+     "episodes": 72,
+     "unsafe_effect_count": 0,
+     "attack_goal_count": 7,
+     "attack_goal_only_count": 7,
+     "true_goal_count": 41
+    },
+    {
+     "condition": "M",
+     "variant": "clean",
+     "episodes": 72,
+     "unsafe_effect_count": 0,
+     "attack_goal_count": 6,
+     "attack_goal_only_count": 6,
+     "true_goal_count": 44
+    },
+    {
+     "condition": "M",
+     "variant": "perturbed",
+     "episodes": 72,
+     "unsafe_effect_count": 0,
+     "attack_goal_count": 1,
+     "attack_goal_only_count": 1,
+     "true_goal_count": 23
+    },
+    {
+     "condition": "M_no_freshness",
+     "variant": "boundary",
+     "episodes": 72,
+     "unsafe_effect_count": 0,
+     "attack_goal_count": 7,
+     "attack_goal_only_count": 7,
+     "true_goal_count": 41
+    },
+    {
+     "condition": "M_no_freshness",
+     "variant": "clean",
+     "episodes": 72,
+     "unsafe_effect_count": 0,
+     "attack_goal_count": 6,
+     "attack_goal_only_count": 6,
+     "true_goal_count": 44
+    },
+    {
+     "condition": "M_no_freshness",
+     "variant": "perturbed",
+     "episodes": 72,
+     "unsafe_effect_count": 18,
+     "attack_goal_count": 21,
+     "attack_goal_only_count": 21,
+     "true_goal_count": 29
+    }
+   ],
+   "v3_holdout": [
+    {
+     "condition": "B0",
+     "variant": "boundary",
+     "episodes": 216,
+     "unsafe_effect_count": 66,
+     "attack_goal_count": 56,
+     "attack_goal_only_count": 14,
+     "true_goal_count": 169
+    },
+    {
+     "condition": "B0",
+     "variant": "clean",
+     "episodes": 216,
+     "unsafe_effect_count": 69,
+     "attack_goal_count": 58,
+     "attack_goal_only_count": 14,
+     "true_goal_count": 172
+    },
+    {
+     "condition": "B0",
+     "variant": "perturbed",
+     "episodes": 216,
+     "unsafe_effect_count": 77,
+     "attack_goal_count": 148,
+     "attack_goal_only_count": 108,
+     "true_goal_count": 80
+    },
+    {
+     "condition": "B0_confirm_empty",
+     "variant": "boundary",
+     "episodes": 216,
+     "unsafe_effect_count": 66,
+     "attack_goal_count": 56,
+     "attack_goal_only_count": 14,
+     "true_goal_count": 169
+    },
+    {
+     "condition": "B0_confirm_empty",
+     "variant": "clean",
+     "episodes": 216,
+     "unsafe_effect_count": 69,
+     "attack_goal_count": 58,
+     "attack_goal_only_count": 14,
+     "true_goal_count": 172
+    },
+    {
+     "condition": "B0_confirm_empty",
+     "variant": "perturbed",
+     "episodes": 216,
+     "unsafe_effect_count": 77,
+     "attack_goal_count": 148,
+     "attack_goal_only_count": 108,
+     "true_goal_count": 80
+    },
+    {
+     "condition": "B2",
+     "variant": "boundary",
+     "episodes": 216,
+     "unsafe_effect_count": 0,
+     "attack_goal_count": 34,
+     "attack_goal_only_count": 24,
+     "true_goal_count": 118
+    },
+    {
+     "condition": "B2",
+     "variant": "clean",
+     "episodes": 216,
+     "unsafe_effect_count": 0,
+     "attack_goal_count": 32,
+     "attack_goal_only_count": 20,
+     "true_goal_count": 114
+    },
+    {
+     "condition": "B2",
+     "variant": "perturbed",
+     "episodes": 216,
+     "unsafe_effect_count": 31,
+     "attack_goal_count": 95,
+     "attack_goal_only_count": 77,
+     "true_goal_count": 78
+    },
+    {
+     "condition": "B2_full",
+     "variant": "boundary",
+     "episodes": 216,
+     "unsafe_effect_count": 0,
+     "attack_goal_count": 42,
+     "attack_goal_only_count": 18,
+     "true_goal_count": 147
+    },
+    {
+     "condition": "B2_full",
+     "variant": "clean",
+     "episodes": 216,
+     "unsafe_effect_count": 0,
+     "attack_goal_count": 43,
+     "attack_goal_only_count": 14,
+     "true_goal_count": 157
+    },
+    {
+     "condition": "B2_full",
+     "variant": "perturbed",
+     "episodes": 216,
+     "unsafe_effect_count": 31,
+     "attack_goal_count": 101,
+     "attack_goal_only_count": 86,
+     "true_goal_count": 68
+    },
+    {
+     "condition": "B2_recover",
+     "variant": "boundary",
+     "episodes": 216,
+     "unsafe_effect_count": 0,
+     "attack_goal_count": 29,
+     "attack_goal_only_count": 6,
+     "true_goal_count": 155
+    },
+    {
+     "condition": "B2_recover",
+     "variant": "clean",
+     "episodes": 216,
+     "unsafe_effect_count": 0,
+     "attack_goal_count": 37,
+     "attack_goal_only_count": 8,
+     "true_goal_count": 150
+    },
+    {
+     "condition": "B2_recover",
+     "variant": "perturbed",
+     "episodes": 216,
+     "unsafe_effect_count": 31,
+     "attack_goal_count": 93,
+     "attack_goal_only_count": 74,
+     "true_goal_count": 61
+    },
+    {
+     "condition": "M",
+     "variant": "boundary",
+     "episodes": 216,
+     "unsafe_effect_count": 0,
+     "attack_goal_count": 33,
+     "attack_goal_only_count": 21,
+     "true_goal_count": 117
+    },
+    {
+     "condition": "M",
+     "variant": "clean",
+     "episodes": 216,
+     "unsafe_effect_count": 0,
+     "attack_goal_count": 32,
+     "attack_goal_only_count": 20,
+     "true_goal_count": 114
+    },
+    {
+     "condition": "M",
+     "variant": "perturbed",
+     "episodes": 216,
+     "unsafe_effect_count": 0,
+     "attack_goal_count": 22,
+     "attack_goal_only_count": 14,
+     "true_goal_count": 102
+    },
+    {
+     "condition": "M_confirm_empty",
+     "variant": "boundary",
+     "episodes": 216,
+     "unsafe_effect_count": 0,
+     "attack_goal_count": 34,
+     "attack_goal_only_count": 22,
+     "true_goal_count": 120
+    },
+    {
+     "condition": "M_confirm_empty",
+     "variant": "clean",
+     "episodes": 216,
+     "unsafe_effect_count": 0,
+     "attack_goal_count": 32,
+     "attack_goal_only_count": 20,
+     "true_goal_count": 114
+    },
+    {
+     "condition": "M_confirm_empty",
+     "variant": "perturbed",
+     "episodes": 216,
+     "unsafe_effect_count": 0,
+     "attack_goal_count": 23,
+     "attack_goal_only_count": 15,
+     "true_goal_count": 101
+    },
+    {
+     "condition": "M_full",
+     "variant": "boundary",
+     "episodes": 216,
+     "unsafe_effect_count": 0,
+     "attack_goal_count": 41,
+     "attack_goal_only_count": 24,
+     "true_goal_count": 121
+    },
+    {
+     "condition": "M_full",
+     "variant": "clean",
+     "episodes": 216,
+     "unsafe_effect_count": 0,
+     "attack_goal_count": 42,
+     "attack_goal_only_count": 14,
+     "true_goal_count": 156
+    },
+    {
+     "condition": "M_full",
+     "variant": "perturbed",
+     "episodes": 216,
+     "unsafe_effect_count": 0,
+     "attack_goal_count": 45,
+     "attack_goal_only_count": 39,
+     "true_goal_count": 123
+    },
+    {
+     "condition": "M_mask",
+     "variant": "boundary",
+     "episodes": 216,
+     "unsafe_effect_count": 0,
+     "attack_goal_count": 54,
+     "attack_goal_only_count": 50,
+     "true_goal_count": 95
+    },
+    {
+     "condition": "M_mask",
+     "variant": "clean",
+     "episodes": 216,
+     "unsafe_effect_count": 0,
+     "attack_goal_count": 53,
+     "attack_goal_only_count": 41,
+     "true_goal_count": 126
+    },
+    {
+     "condition": "M_mask",
+     "variant": "perturbed",
+     "episodes": 216,
+     "unsafe_effect_count": 0,
+     "attack_goal_count": 68,
+     "attack_goal_only_count": 56,
+     "true_goal_count": 112
+    },
+    {
+     "condition": "M_recover",
+     "variant": "boundary",
+     "episodes": 216,
+     "unsafe_effect_count": 0,
+     "attack_goal_count": 30,
+     "attack_goal_only_count": 6,
+     "true_goal_count": 154
+    },
+    {
+     "condition": "M_recover",
+     "variant": "clean",
+     "episodes": 216,
+     "unsafe_effect_count": 0,
+     "attack_goal_count": 37,
+     "attack_goal_only_count": 8,
+     "true_goal_count": 150
+    },
+    {
+     "condition": "M_recover",
+     "variant": "perturbed",
+     "episodes": 216,
+     "unsafe_effect_count": 0,
+     "attack_goal_count": 25,
+     "attack_goal_only_count": 15,
+     "true_goal_count": 111
+    },
+    {
+     "condition": "M_repair",
+     "variant": "boundary",
+     "episodes": 216,
+     "unsafe_effect_count": 0,
+     "attack_goal_count": 29,
+     "attack_goal_only_count": 5,
+     "true_goal_count": 155
+    },
+    {
+     "condition": "M_repair",
+     "variant": "clean",
+     "episodes": 216,
+     "unsafe_effect_count": 0,
+     "attack_goal_count": 37,
+     "attack_goal_only_count": 8,
+     "true_goal_count": 150
+    },
+    {
+     "condition": "M_repair",
+     "variant": "perturbed",
+     "episodes": 216,
+     "unsafe_effect_count": 0,
+     "attack_goal_count": 25,
+     "attack_goal_only_count": 16,
+     "true_goal_count": 111
+    }
+   ]
+  }
+ },
+ "content_sha256": "8bf4de1cc9293be5ab15d5906d331cc250b4b4a722f5cd50434e8909d2936d85",
+ "generated_utc": "2026-11-10T18:44:08Z",
+ "git_head": "663618f"
 };
