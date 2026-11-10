@@ -13,13 +13,17 @@ runs, so agreement is reported at three levels:
   and safe completion are all identical (both sides rescored here by the
   independent oracle).
 
-It also recomputes the two contract contrasts on the compared episodes for
-both runs (B2 minus M unsafe effects on perturbed episodes; M minus B0 goal
-completion on clean episodes), with the preregistered cluster bootstrap.
+It also recomputes the preregistered primary contrasts on the compared
+episodes for both runs, with the preregistered cluster bootstrap:
+
+- ``--study v2``: B2 minus M unsafe effects (perturbed); M minus B0 goal
+  completion (clean);
+- ``--study v3``: S1 (B2_full minus M_full unsafe effects, perturbed), U1 and
+  U2 (M_full minus B0 goal completion and safe completion, clean).
 
 Usage::
 
-    python3 scripts/compare_runs.py --original runs/week8_v2_main_test/seed_11.jsonl \
+    python3 scripts/compare_runs.py --study v2 --original runs/week8_v2_main_test/seed_11.jsonl \
         --rerun out/seed_11.jsonl --output out/reproduction_report.json
 """
 from __future__ import annotations
@@ -36,12 +40,28 @@ sys.path.insert(0, str(ROOT / 'src'))
 sys.path.insert(0, str(ROOT / 'scripts'))
 
 OUTCOMES = ('unsafe_effect', 'authorization_violation', 'goal_completion', 'safe_completion')
-BOOTSTRAP_SEED, RESAMPLES = 20260923, 10000
+RESAMPLES = 10000
+STUDIES = {
+    'v2': {'bootstrap_seed': 20260923, 'contrasts': (
+        ('safety_B2_minus_M_unsafe', 'perturbed', 'B2', 'M', 'unsafe_effect'),
+        ('utility_M_minus_B0_goal', 'clean', 'M', 'B0', 'goal_completion'))},
+    'v3': {'bootstrap_seed': 20261011, 'contrasts': (
+        ('S1_B2full_minus_Mfull_unsafe', 'perturbed', 'B2_full', 'M_full', 'unsafe_effect'),
+        ('U1_Mfull_minus_B0_goal', 'clean', 'M_full', 'B0', 'goal_completion'),
+        ('U2_Mfull_minus_B0_safe_completion', 'clean', 'M_full', 'B0', 'safe_completion'))},
+}
 
 
-def load(paths):
+def scorer(study):
+    if study == 'v3':
+        from evibound.oracle_v3 import score_episode_v3
+        return score_episode_v3
     from evibound.oracle import score_episode
+    return score_episode
 
+
+def load(paths, study):
+    score_episode = scorer(study)
     rows = {}
     for path in paths:
         for line in Path(path).read_text(encoding='utf-8').splitlines():
@@ -65,15 +85,15 @@ def first_text(row):
     return proposals[0].get('raw')
 
 
-def contrasts(rows):
+def contrasts(rows, study):
     import analyze
 
     out = {}
-    for name, variant, left, right, metric in (('safety_B2_minus_M_unsafe', 'perturbed', 'B2', 'M', 'unsafe_effect'),
-                                               ('utility_M_minus_B0_goal', 'clean', 'M', 'B0', 'goal_completion')):
+    spec = STUDIES[study]
+    for name, variant, left, right, metric in spec['contrasts']:
         group = [r for r in rows if r['variant'] == variant]
-        effect = analyze.paired_contrast(group, left, right, metric, seed=BOOTSTRAP_SEED, resamples=RESAMPLES,
-                                         group={'variant': variant})
+        effect = analyze.paired_contrast(group, left, right, metric, seed=spec['bootstrap_seed'],
+                                         resamples=RESAMPLES, group={'variant': variant})
         if effect:
             out[name] = {k: effect[k] for k in ('estimate', 'ci95_low', 'ci95_high', 'n_tasks', 'n_paired_episodes')}
             out[name]['left_count'] = sum(bool(r['metrics'][metric]) for r in group if r['condition'] == left)
@@ -82,7 +102,7 @@ def contrasts(rows):
     return out
 
 
-def compare(original, rerun):
+def compare(original, rerun, study):
     common = sorted(original.keys() & rerun.keys())
     levels = Counter()
     by_condition = {}
@@ -109,18 +129,22 @@ def compare(original, rerun):
                       for k in ('first_proposal_text', 'executed_writes', 'oracle_outcomes')},
         'agreement_by_condition': {c: dict(v) for c, v in sorted(by_condition.items())},
         'episodes_with_different_outcomes': differing,
-        'contrasts_original_subset': contrasts([original[i] for i in common]),
-        'contrasts_rerun': contrasts([rerun[i] for i in common]),
+        'contrasts_original_subset': contrasts([original[i] for i in common], study),
+        'contrasts_rerun': contrasts([rerun[i] for i in common], study),
     }
 
 
 def main(argv=None):
     parser = argparse.ArgumentParser(description=__doc__.split('\n\n')[0])
+    parser.add_argument('--study', choices=sorted(STUDIES), default='v2')
     parser.add_argument('--original', type=Path, nargs='+', required=True)
     parser.add_argument('--rerun', type=Path, nargs='+', required=True)
     parser.add_argument('--output', type=Path, required=True)
     args = parser.parse_args(argv)
-    result = compare(load(args.original), load(args.rerun))
+    result = compare(load(args.original, args.study), load(args.rerun, args.study), args.study)
+    result['study'] = args.study
+    result['note'] = ('contrasts_original_subset is the original run restricted to the re-run episodes; '
+                      'it equals the published estimate only when every seed was re-run')
     result['inputs'] = {
         'original': [{'file': p.name, 'sha256': hashlib.sha256(p.read_bytes()).hexdigest()} for p in args.original],
         'rerun': [{'file': p.name, 'sha256': hashlib.sha256(p.read_bytes()).hexdigest()} for p in args.rerun],
@@ -132,7 +156,7 @@ def main(argv=None):
           f'{agreement["first_proposal_text"]["count"]}, identical executed writes '
           f'{agreement["executed_writes"]["count"]}, identical oracle outcomes '
           f'{agreement["oracle_outcomes"]["count"]}')
-    for name in ('safety_B2_minus_M_unsafe', 'utility_M_minus_B0_goal'):
+    for name, *_ in STUDIES[args.study]['contrasts']:
         a, b = result['contrasts_original_subset'].get(name), result['contrasts_rerun'].get(name)
         if a and b:
             print(f'  {name}: original {a["estimate"]:+.4f} [{a["ci95_low"]:+.4f}, {a["ci95_high"]:+.4f}] '

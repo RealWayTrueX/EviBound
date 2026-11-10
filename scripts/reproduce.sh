@@ -6,6 +6,8 @@
 #   bash scripts/reproduce.sh --traces DIR --gpu 0 --model PATH
 #                                                  # level 3: also re-run the v2 formal-test seed-11 matrix
 #                                                  #          (432 episodes) with the frozen runner and compare
+#   options for level 3:  --seeds "11 22 33"       # re-run every v2 seed (the full 1,296-episode matrix)
+#                         --v3-seeds "11"          # also re-run the v3 holdout for these seeds (2,376 episodes each)
 #
 # Level 1 checks the code and the evidence chain: unit tests, corpus checkers, all protocol
 # freezes, and the full v3 pipeline (runner -> guard -> oracle -> analysis) with a scripted planner.
@@ -25,14 +27,16 @@ set -euo pipefail
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 cd "$ROOT"
 
-TRACES="" GPU="" MODEL="${EVIBOUND_MODEL:-}" OUT="" PY="${EVIBOUND_PYTHON:-}"
+TRACES="" GPU="" MODEL="${EVIBOUND_MODEL:-}" OUT="" PY="${EVIBOUND_PYTHON:-}" SEEDS="11" V3_SEEDS=""
 while [ $# -gt 0 ]; do
   case "$1" in
     --traces) TRACES="$2"; shift 2 ;;
     --gpu)    GPU="$2"; shift 2 ;;
     --model)  MODEL="$2"; shift 2 ;;
     --out)    OUT="$2"; shift 2 ;;
-    -h|--help) sed -n 2,22p "${BASH_SOURCE[0]}" | sed 's/^# \{0,1\}//'; exit 0 ;;
+    --seeds)  SEEDS="$2"; shift 2 ;;
+    --v3-seeds) V3_SEEDS="$2"; shift 2 ;;
+    -h|--help) sed -n 2,24p "${BASH_SOURCE[0]}" | sed 's/^# \{0,1\}//'; exit 0 ;;
     *) echo "unknown argument: $1 (see --help)" >&2; exit 2 ;;
   esac
 done
@@ -80,15 +84,32 @@ fi
 
 if [ -n "$GPU" ]; then
   [ -n "$MODEL" ] || { echo "--gpu needs --model PATH (or EVIBOUND_MODEL / EVIBOUND_DATA)" | tee -a "$LOG"; exit 2; }
-  step "6/6 Re-run the v2 formal-test seed-11 matrix on GPU $GPU with the frozen runner (432 episodes)"
-  CUDA_VISIBLE_DEVICES="$GPU" run "$PY" scripts/run_experiment.py --corpus v2 --split test \
-      --conditions B0 B1 B2 M M_no_freshness Always_refresh --variants clean perturbed boundary \
-      --seeds 11 --batch-size 8 --model "$MODEL" --output "$OUT/seed_11.jsonl" || status=1
-  if [ -n "$TRACES" ] && [ -f "$TRACES/week8_v2_main_test/seed_11.jsonl" ]; then
-    run "$PY" scripts/compare_runs.py --original "$TRACES/week8_v2_main_test/seed_11.jsonl" \
-        --rerun "$OUT/seed_11.jsonl" --output "$OUT/reproduction_report.json" || status=1
+  step "6/6 Re-run the v2 formal test on GPU $GPU with the frozen runner (seeds: $SEEDS; 432 episodes each)"
+  originals=() reruns=()
+  for seed in $SEEDS; do
+    # One invocation per seed, as in the original run (scripts/run_v2_main_test.sh).
+    CUDA_VISIBLE_DEVICES="$GPU" run "$PY" scripts/run_experiment.py --corpus v2 --split test \
+        --conditions B0 B1 B2 M M_no_freshness Always_refresh --variants clean perturbed boundary \
+        --seeds "$seed" --batch-size 8 --model "$MODEL" --output "$OUT/seed_${seed}.jsonl" || status=1
+    reruns+=("$OUT/seed_${seed}.jsonl")
+    [ -n "$TRACES" ] && [ -f "$TRACES/week8_v2_main_test/seed_${seed}.jsonl" ] \
+      && originals+=("$TRACES/week8_v2_main_test/seed_${seed}.jsonl")
+  done
+  if [ "${#originals[@]}" -eq "${#reruns[@]}" ]; then
+    run "$PY" scripts/compare_runs.py --study v2 --original "${originals[@]}" --rerun "${reruns[@]}" \
+        --output "$OUT/reproduction_report.json" || status=1
   else
-    echo "no original seed_11.jsonl to compare with; the re-run is in $OUT/seed_11.jsonl" | tee -a "$LOG"
+    echo "no original traces to compare with; the re-run is in $OUT" | tee -a "$LOG"
+  fi
+  if [ -n "$V3_SEEDS" ]; then
+    step "6b Re-run the v3 holdout on GPU $GPU with the frozen runner (seeds: $V3_SEEDS; 2,376 episodes each)"
+    # shellcheck disable=SC2086
+    CUDA_VISIBLE_DEVICES="$GPU" run "$PY" scripts/run_experiment_v3.py --split holdout --seeds $V3_SEEDS \
+        --batch-size 8 --model "$MODEL" --output "$OUT/v3_holdout_rerun.jsonl" || status=1
+    if [ -n "$TRACES" ] && [ -f "$TRACES/week11_v3_holdout/episodes.jsonl" ]; then
+      run "$PY" scripts/compare_runs.py --study v3 --original "$TRACES/week11_v3_holdout/episodes.jsonl" \
+          --rerun "$OUT/v3_holdout_rerun.jsonl" --output "$OUT/reproduction_report_v3.json" || status=1
+    fi
   fi
 else
   step "6/6 Skipped: no GPU re-run (pass --gpu N --model PATH)"
