@@ -16,6 +16,10 @@
 #      original run when artifacts/episode_fingerprints_*.json.gz exist, and prints the reports and a
 #      packed fingerprint block of the re-run between marker lines.
 #
+#   REPORT_ONLY=1 bash EviBound/scripts/reproduce_cloud.sh   # step 4 again on a finished re-run, for
+#                                                            # example after `git pull` brought the
+#                                                            # original run's fingerprints
+#
 # Nothing is uploaded anywhere. Outputs stay under $WORK (default /content/evibound_work on Colab).
 # The machine differs from the original (GPU model, drivers), so sampled responses are not expected to
 # be identical episode by episode; the reports say how far they agree.
@@ -37,6 +41,7 @@ export PYTHONPATH="$ROOT/src:$ROOT${PYTHONPATH:+:$PYTHONPATH}"
 say() { printf '\n[%s] %s\n' "$(date -u +%H:%M:%S)" "$*"; }
 START="$(date +%s)"
 
+run_model_steps() {
 say "Commit $(git rev-parse --short HEAD) on $(git rev-parse --abbrev-ref HEAD)"
 nvidia-smi --query-gpu=name,memory.total,driver_version --format=csv,noheader \
   || { echo "no NVIDIA GPU is visible: choose a GPU runtime"; exit 2; }
@@ -138,13 +143,22 @@ code="$(cat "$OUT/exit_code")"
 say "reproduce.sh finished with exit code $code after $(( ($(date +%s) - START) / 60 )) minutes"
 grep -E '^(== |Ran |OK|FAILED|\[ok\]|\[FAIL\]|COMPLETE|compared |  [A-Za-z0-9_]+: original)' "$OUT/reproduce.log" \
   | cut -c1-220 | tail -40
+}
+
+if [ "${REPORT_ONLY:-0}" = 1 ]; then
+  say "Report only: using the finished re-run in $OUT (commit $(git rev-parse --short HEAD))"
+  code="$(cat "$OUT/exit_code" 2>/dev/null || echo 0)"
+else
+  run_model_steps
+fi
 
 say "4/4 Reports"
+pack=(--pack); [ "${REPORT_ONLY:-0}" = 1 ] && pack=()   # the block is printed once, by the full run
 v2_files=(); for seed in $SEEDS; do [ -s "$OUT/seed_${seed}.jsonl" ] && v2_files+=("$OUT/seed_${seed}.jsonl"); done
 if [ "${#v2_files[@]}" -gt 0 ]; then
   python3 scripts/summarize_rerun.py --study v2 --rerun "${v2_files[@]}" --output "$OUT/rerun_summary_v2.json"
   python3 scripts/episode_fingerprints.py --study v2 --inputs "${v2_files[@]}" \
-      --output "$OUT/rerun_fingerprints_v2.json" --pack
+      --output "$OUT/rerun_fingerprints_v2.json" "${pack[@]}"
   original="artifacts/episode_fingerprints_v2_formal_test.json.gz"
   [ -f "$original" ] && python3 scripts/compare_runs.py --study v2 --original "$original" \
       --rerun "$OUT/rerun_fingerprints_v2.json" --output "$OUT/episode_comparison_v2.json"
@@ -153,7 +167,7 @@ if [ -s "$OUT/v3_holdout_rerun.jsonl" ]; then
   python3 scripts/summarize_rerun.py --study v3 --rerun "$OUT/v3_holdout_rerun.jsonl" \
       --output "$OUT/rerun_summary_v3.json"
   python3 scripts/episode_fingerprints.py --study v3 --inputs "$OUT/v3_holdout_rerun.jsonl" \
-      --output "$OUT/rerun_fingerprints_v3.json" --pack
+      --output "$OUT/rerun_fingerprints_v3.json" "${pack[@]}"
   original="artifacts/episode_fingerprints_v3_holdout.json.gz"
   [ -f "$original" ] && python3 scripts/compare_runs.py --study v3 --original "$original" \
       --rerun "$OUT/rerun_fingerprints_v3.json" --output "$OUT/episode_comparison_v3.json"
