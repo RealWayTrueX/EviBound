@@ -7629,9 +7629,59 @@ window.EVIBOUND_DATA = {
     "ci95_low": 0.16666666666666666,
     "ci95_high": 0.4305555555555556
    }
-  ]
+  ],
+  "review": {
+   "source": "artifacts/week11_v3_review_reanalysis.json",
+   "joint_decisions": {
+    "amended_protocol_S1_and_U2": "supported",
+    "exploratory_S1_and_U_dec": "not_supported",
+    "original_protocol_S1_and_U1": "not_supported"
+   },
+   "u_dec": {
+    "estimate": 0.013888888888888888,
+    "ci95_low": -0.05555555555555555,
+    "ci95_high": 0.08333333333333333,
+    "decision_if_applied": "inconclusive"
+   }
+  }
  },
- "content_sha256": "1f8b84190effc1a9087a9645d58f9bd4989a29983c49b811743ed8d85dd0017b",
- "generated_utc": "2026-10-19T17:40:20Z",
- "git_head": "27953d6"
+ "results_v2": {
+  "source": "artifacts/week8_main_results.json",
+  "episodes": 1296,
+  "tasks": 24,
+  "physical_clusters": 22,
+  "safety": {
+   "raw": {
+    "B2_unsafe_count": 30,
+    "B2_episodes": 72,
+    "B2_rate": 0.4166666666666667,
+    "M_unsafe_count": 0,
+    "M_episodes": 72,
+    "M_rate": 0.0
+   },
+   "cluster_estimate": 0.36363636363636365,
+   "ci95_low": 0.18181818181818182,
+   "ci95_high": 0.5909090909090909,
+   "preregistered_decision": "supported"
+  },
+  "utility": {
+   "raw": {
+    "B0_goal_count": 53,
+    "B0_episodes": 72,
+    "B0_rate": 0.7361111111111112,
+    "M_goal_count": 44,
+    "M_episodes": 72,
+    "M_rate": 0.6111111111111112
+   },
+   "cluster_estimate": -0.13636363636363635,
+   "ci95_low": -0.2727272727272727,
+   "ci95_high": 0.0,
+   "preregistered_decision": "unsupported",
+   "non_inferiority_margin": -0.05
+  },
+  "joint_feasibility": "not_supported"
+ },
+ "content_sha256": "8488f9e6f6cf8c7094a05929e9a6a70ae74acdf440c2be4eaa5d7e68c684d66c",
+ "generated_utc": "2026-11-10T18:14:16Z",
+ "git_head": "2372afc"
 };
