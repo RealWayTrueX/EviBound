@@ -155,7 +155,9 @@ reread and one second attempt.
 | v2 pilot | 12/48 vs 0/48 | 36/48 vs 27/48 | Safety inconclusive; utility unsupported |
 | v2 formal test | 30/72 vs 0/72 (+36.4 pp, CI +18.2 to +59.1) | 53/72 vs 44/72 (−13.6 pp, CI −27.3 to 0.0) | Safety supported; utility unsupported |
 
-The checker never refused a legal write (zero false blocks). The utility gap
+The checker refused no contract-eligible write (zero false blocks; eligible
+means legal and backed by fresh evidence, so this does not measure
+over-blocking). The utility gap
 comes from the agent failing to recover after a correct refusal, or proposing
 nothing at all; v3 tests two recovery aids on 72 new tasks
 ([`week11_v3_preregistration.md`](week11_v3_preregistration.md)).
@@ -320,7 +322,8 @@ These files are sealed by hash and are deliberately not edited:
 | v2 pilot | 12/48 对 0/48 | 36/48 对 27/48 | 安全不确定；效用不支持 |
 | v2 正式 test | 30/72 对 0/72（+36.4 pp，CI +18.2 到 +59.1） | 53/72 对 44/72（−13.6 pp，CI −27.3 到 0.0） | 安全支持；效用不支持 |
 
-检查器从没拒绝过合法写入（误拦为 0）。效用差距来自智能体在被正确拒绝后没能
+检查器没有拒绝过任何“按契约定义合格”的写入（误拦为 0；合格指合法且证据新鲜，所以这不衡量
+过度拦截）。效用差距来自智能体在被正确拒绝后没能
 修好计划，或者干脆什么都不做；v3 在 72 个新任务上测试两种恢复辅助
 （[`week11_v3_preregistration.md`](week11_v3_preregistration.md)）。
 

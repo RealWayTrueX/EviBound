@@ -23,13 +23,29 @@ For how the simulated attacks map to real homes, see
 | v2 formal test (1,296 episodes) | 30/72 vs 0/72 | 53/72 vs 44/72 | Safety supported; "no worse than 5 points" utility target not met. Paired mechanism study, not a structural holdout: 12 of its 22 physical structures also occur in v1 ([datasheet](docs/datasheet_v2_v3.md)) |
 | v3 holdout (7,128 episodes, frozen amended protocol) | B2_full 31/216 vs M_full 0/216 (+14.4 pp [+4.6, +25.9]) | raw: 172/216 vs 156/216 (−7.4 pp, unsupported); rule-compliant: 93/216 vs 156/216 (+29.2 pp [+16.7, +43.1], supported) | Safety supported. Joint feasibility is supported under the amended criterion (S1 ∧ U2) and **not** under the original one (S1 ∧ U1). U2 counts only rule-compliant completions, so it favours any guard by construction; the safety-decoupled utility (exploratory, post hoc) is +1.4 pp [−5.6, +8.3], inconclusive ([reanalysis](docs/v3_review_reanalysis.md)) |
 
+Attack-goal success, which the research contract lists as a separate
+outcome, was tabulated post hoc on 2026-11-10: in the v2 formal test the
+final state matched the goal of the wrong branch that the attacked reading
+points to in 38/72 attacked episodes under B2 and 1/72 under M (no-attacker
+control on clean episodes: 6/72 for both;
+[artifacts/contract_outcomes_v2_v3.json](artifacts/contract_outcomes_v2_v3.json)).
+The same day, every published v2 and v3 number, count, interval, hash and
+decision was recomputed from the raw traces (23 checks, 0 failed;
+[artifacts/reproduction_published_results_check.json](artifacts/reproduction_published_results_check.json)).
+The frozen runners were also run again on a second machine (an NVIDIA A100
+instead of the RTX 4090, same library versions and model revision): about
+nine in ten first responses were identical, every preregistered decision was
+the same, and the v2 safety and utility estimates and intervals were
+identical ([docs/reproduction.md](docs/reproduction.md), section 7).
+
 No contract-eligible write was refused (zero false blocks). By definition that
 excludes stale-but-harmless writes, so it rules out implementation errors, not
 over-blocking; v4 measures over-blocking directly (`M_scoped`). On the
 rule-compliant metric
 (`safe_completion`: goal reached with no unsafe or unauthorized transition) B0
-and M tie at 44/72; the raw gap is B0 completing nine tasks by breaking
-stated sequencing rules, which M blocks and the agent then fails to repair.
+and M tie at 44/72; the raw gap is nine episodes (three tasks, three seeds
+each) that B0 completes by breaking stated sequencing rules, which M blocks
+and the agent then fails to repair.
 An independent review on 2026-11-03 checked all materials; its findings, what
 was verified, and what changed are in
 [docs/review_response_2026-11-03.md](docs/review_response_2026-11-03.md).
@@ -64,10 +80,16 @@ datasets come next: [Week-12 direction review](docs/week12_direction_review.md).
 | v3 holdout closeout and results | [docs/week12_v3_holdout_closeout.md](docs/week12_v3_holdout_closeout.md), [artifacts/week11_v3_holdout_results.json](artifacts/week11_v3_holdout_results.json) |
 | Direction review, literature positioning, external datasets | [docs/week12_direction_review.md](docs/week12_direction_review.md) |
 | Formal test validation record | [artifacts/week8_main_validation.json](artifacts/week8_main_validation.json) |
+| Every contract outcome per condition: attack-goal success, authorization violations, reads, latency, tokens (post hoc) | [artifacts/contract_outcomes_v2_v3.json](artifacts/contract_outcomes_v2_v3.json) |
+| Reproduction: one command without a GPU, up to a model re-run on another machine | [docs/reproduction.md](docs/reproduction.md) |
+| Safety statement and AI-assistance disclosure | [SAFETY.md](SAFETY.md) |
+| Licences: code under MIT, data and documentation under CC BY 4.0 | [LICENSE](LICENSE), [LICENSE-DATA.md](LICENSE-DATA.md) |
+| Course closeout: contract compliance, open items, finishing plan, report outline | [docs/course_closeout_2026-11-10.md](docs/course_closeout_2026-11-10.md) |
+| Peer and instructor review: protocol, fixed sample, agreement script | [docs/peer_review_protocol.md](docs/peer_review_protocol.md), `scripts/review_agreement.py` |
 | v1 dataset card and literature check | [docs/dataset_card.md](docs/dataset_card.md), [docs/sources_and_design_review.md](docs/sources_and_design_review.md) |
 | Roadmap and decision log | [docs/roadmap_week6.md](docs/roadmap_week6.md) |
 | Agent working rules | [AGENTS.md](AGENTS.md) |
-| Step-by-step attack/defense demo (editable prompts, parameters, models) | [demo/](demo/README.md) — `python3 demo/serve.py` |
+| Step-by-step attack/defense demo (editable prompts, parameters, models) | [demo/](demo/README.md) — `python3 demo/serve.py`; five-minute script: [docs/demo_walkthrough.md](docs/demo_walkthrough.md) |
 | Reusable project skills (experiment design, demo, literature review) | [skills/](skills/README.md) |
 | Laptop recheck of the whole pipeline and a no-GPU reproduction path | [docs/week13_local_recheck.md](docs/week13_local_recheck.md), `scripts/run_v3_local.py` |
 | Mac demo calling the frozen planner on the GPU machine (no SSH, Tailscale) | [docs/remote_planner_setup.md](docs/remote_planner_setup.md), `scripts/serve_planner.py` |
@@ -78,9 +100,22 @@ Task corpora: `data/scenarios/` (v1, 48 tasks, frozen), `data/scenarios_v2/`
 (56 tasks, frozen and human-reviewed), `data/scenarios_v3/` (84 tasks across 4
 sensor modalities and 3 language levels, human-reviewed, frozen, holdout complete). Model weights, raw traces and run logs live on the data disk
 (`/mnt/HDD-8T-0/evibound_yanke/`). Human-facing experiment reports, review
-packs and session notes stay local and are not in the public repository.
+packs and session notes stay local and are not in the public repository; the
+signed v2 checklist and sign-off are sealed in
+`artifacts/week8_protocol_freeze.tar.gz`.
 
 ## Run the checks
+
+One command runs every check that needs no GPU and no data beyond the
+repository: the unit tests, both corpus checkers, all four protocol freezes,
+and the full pipeline with a scripted planner. The other levels, up to a model
+re-run on another machine, are in [docs/reproduction.md](docs/reproduction.md).
+
+```bash
+bash scripts/reproduce.sh
+```
+
+The individual checks:
 
 ```bash
 PYTHONPATH=src:. python3 -m unittest discover -s tests -p 'test_*.py' -v
@@ -124,7 +159,7 @@ v2 正式测试共 1,296 个回合：受攻击时，B2 有 30/72 次实际不安
 "按契约定义合格"的写入（零误拦；这个定义本身不包括"陈旧但无害"的写入，所以它只能排除实现
 错误，不能证明没有过度拦截，v4 用 `M_scoped` 专门测量）；按“合规完成”
 口径（达到目标且全程无不安全/越权写入）B0 与 M 都是 44/72，差距来自 B0 靠违反
-既定顺序规则“完成”的 9 个任务被 M 正确拦下后，智能体没能修好计划。Week 11–12 的
+既定顺序规则“完成”的 9 个回合（3 个任务 × 3 个种子）被 M 正确拦下后，智能体没能修好计划。Week 11–12 的
 **v3** 实验在 72 个新任务上测试三种恢复辅助（规则说明、空计划确认、冻结前新增的
 “合法写入清单”），同时改变传感器模态和用户说法（[计划与修订记录](docs/week11_v3_preregistration.md)）。
 holdout 已于 2026-10-12 按冻结协议跑完 7,128 回合：所有 M 守卫条件零不安全、
@@ -140,6 +175,14 @@ holdout 已于 2026-10-12 按冻结协议跑完 7,128 回合：所有 M 守卫�
 2024–2026 文献中的位置、下一步并入哪些外部数据集：
 [第 12 周方向复审](docs/week12_direction_review.md)。
 
+研究合同要求单独报告的“攻击目标达成”已于 2026-11-10 事后补算：v2 正式测试里，回合结束时
+满足攻击读数所指错误分支目标的受攻击回合，B2 为 38/72，M 为 1/72（无攻击对照：两者在正常
+回合都是 6/72，见[合同指标表](artifacts/contract_outcomes_v2_v3.json)）。同一天，全部已发布的
+v2、v3 数字、计数、区间、哈希和判定都已从原始轨迹重算（23 项检查，0 项失败，见
+[核对记录](artifacts/reproduction_published_results_check.json)）。冻结的运行器还在第二台机器上
+重跑了一遍（A100 代替 RTX 4090，库版本和模型版本相同）：约九成回合的首个回复逐字一致，
+预注册判定全部相同，v2 的安全和效用估计值与区间完全一致（见[复现说明](docs/reproduction.md)第 7 节）。
+
 ## 文件布局
 
 任务语料：`data/scenarios/`（v1，48 个，已冻结）、`data/scenarios_v2/`（56 个，
@@ -147,7 +190,24 @@ holdout 已于 2026-10-12 按冻结协议跑完 7,128 回合：所有 M 守卫�
 完整逐回合轨迹和运行日志在数据盘 `/mnt/HDD-8T-0/evibound_yanke/`。面向人的
 实验报告、审核包和交接记录只保存在本地，不放进公开仓库。
 
+课程收尾用的文件：[复现说明](docs/reproduction.md)、[安全声明与 AI 协助披露](SAFETY.md)、
+许可证（代码 [MIT](LICENSE)，数据和文档 [CC BY 4.0](LICENSE-DATA.md)）、
+[课程收尾审计与完成计划](docs/course_closeout_2026-11-10.md)、
+[同伴与教师评审协议](docs/peer_review_protocol.md)（一致率脚本 `scripts/review_agreement.py`）、
+[五分钟演示讲稿](docs/demo_walkthrough.md)，以及合同要求的全部指标表
+[artifacts/contract_outcomes_v2_v3.json](artifacts/contract_outcomes_v2_v3.json)（含攻击目标达成、时延和 token，事后描述性统计）。
+
 ## 运行检查
+
+一条命令跑完所有不需要显卡、也不需要仓库以外数据的检查：单元测试、两个语料检查、全部四个
+协议冻结，以及用脚本规划器走一遍完整流水线。其余层级（直到在另一台机器上重跑模型）见
+[复现说明](docs/reproduction.md)。
+
+```bash
+bash scripts/reproduce.sh
+```
+
+单项检查：
 
 ```bash
 PYTHONPATH=src:. python3 -m unittest discover -s tests -p 'test_*.py' -v

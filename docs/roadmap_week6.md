@@ -170,10 +170,12 @@ Frozen-boundary rules (non-negotiable):
 - [ ] K3. Owner decisions D1–D14 and the v4 world design
       (`docs/design_v4_world.md`, rules R7+ signed off) before any v4 code
       or corpus is generated.
-- [ ] K4. Licence for code and data (review A-01) and `SAFETY.md` before any
+- [x] K4. Licence for code and data (review A-01) and `SAFETY.md` before any
       public release of the v4 artifact. Owner accepted the defaults on
-      2026-11-03 (MIT for code, CC BY 4.0 for the synthetic corpora); files
-      to be added after a third-party content check.
+      2026-11-03 (MIT for code, CC BY 4.0 for the synthetic corpora). Added
+      on 2026-11-10 after a third-party content check: `LICENSE`,
+      `LICENSE-DATA.md`, `SAFETY.md`; the owner still confirms the copyright
+      line and the AI-assistance table.
 - [x] K5. Human review desk (`review_desk/`, `scripts/build_review_desk.py`,
       `tests/test_review_desk.py`): one item at a time with a Chinese
       translation, a state diagram, per-question hints, independent automatic
@@ -420,3 +422,43 @@ Frozen-boundary rules (non-negotiable):
     (`reviewers/<id>/...`; self-write, owner-read rules), so several
     annotators cannot overwrite each other.
   - The guide record (pages seen, time, quiz score) is stored with them.
+
+- 2026-11-10: course closeout audit, no research change; frozen files
+  untouched (`scripts/verify_freezes.py`: all four freezes verify). The project
+  was checked item by item against the submitted research contract
+  (`docs/course_closeout_2026-11-10.md`: compliance matrix, hard flaws H1–H10,
+  should-fix items S1–S9, two-week plan, report outline).
+  - Found: the public `main` still shows the pre-review README (PR #4 not
+    merged). The contract's utility hypothesis, and so its joint hypothesis,
+    is not supported in v2 (−13.6 pp against a −5 pp margin), so the report and
+    the demo must state the contract's decisions first and label U2 as
+    amended. The report, an off-server copy of the raw traces, the peer or
+    instructor review of rules and representative traces, and an independent
+    model re-run did not exist; attack-goal success had never been reported;
+    the demo outline was still the September v1 version. The clean raw gap of
+    nine completions is nine episodes from three tasks (three seeds each),
+    each an off-to-level-2 jump that R4 or R5 forbids.
+  - Fixed today: one-command reproduction (`scripts/reproduce.sh`,
+    `scripts/reproduce_cloud.sh`, `docs/reproduction.md`); every published v2
+    and v3 number recomputed from the raw traces (23 checks, 0 failed);
+    episode fingerprints and the contract-outcome table
+    (`artifacts/contract_outcomes_v2_v3.json`; v2 attack-goal success B2
+    38/72, M 1/72); a raw-trace archive with a hash manifest on the server;
+    `SAFETY.md`, `LICENSE`, `LICENSE-DATA.md`; the demo's results tab in the
+    contract's terms; the final five-minute demo script
+    (`docs/demo_walkthrough.md`); a post hoc peer-review protocol with a fixed
+    sample (seed 20261110) and an agreement script
+    (`docs/peer_review_protocol.md`, `scripts/review_agreement.py`, 18 tests;
+    112 tests pass). The frozen runners were run again on a second machine
+    (Colab A100, reproduction only): full v2 matrix and v3 holdout seed 11;
+    about nine in ten first responses identical to the original run, every
+    preregistered decision the same, v2 safety and utility estimates and
+    intervals identical (`artifacts/reproduction_colab_a100_record.json`,
+    `docs/reproduction.md` section 7). The wording "nine tasks" in the
+    README, "never refused a legal write" in the reading guide and "no
+    licence chosen" in the datasheet were corrected.
+  - Open, owner: merge PR #4; keep an off-server copy of the trace archive and
+    decide on publishing it; settle dates, template, the status of v3 and the
+    form of the peer review with the instructor; find reviewer B; check
+    `SAFETY.md` and the licence line; rehearse the demo and record a backup;
+    approve the report.

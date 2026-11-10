@@ -74,7 +74,7 @@ Across v1, v2 and v3 there are **93 distinct physical structures** in total.
   - v2: the corpus owner signed 44 required rows (100% of test plus all authorization-negative tasks).
   - v3: the corpus owner signed 77 required cards, with zero open items. The checklist hash is recorded in `artifacts/week11_v3_prereg_freeze.json`.
   - The cards themselves are local-only (UQ server, `reviews/`).
-- **Licence.** No licence has been chosen yet for the code or the data. This needs the corpus owner's decision before any artifact release (`docs/review_response_2026-11-03.md`, A-01).
+- **Licence.** Code is under MIT (`LICENSE`); data, artifacts and documentation are under CC BY 4.0 (`LICENSE-DATA.md`), following the corpus owner's decision of 2026-11-03 (D7). *[Updated 2026-11-10: this line said that no licence had been chosen.]*
 - **Hashes.** File hashes are in each `manifest.json` and in `artifacts/corpus_composition_v2_v3.json`.
 
 本说明由脚本从冻结语料直接生成，用于回应 2026-11-03 复核的 B-01、B-02、B-04。

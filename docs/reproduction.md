@@ -13,7 +13,7 @@ changes a frozen file or a frozen decision.
 |---|---|---|---|---|
 | 1. Code and evidence chain | Python 3.10+ (node 21+ for two optional tests) | `bash scripts/reproduce.sh` | unit tests, corpus checkers, all four protocol freezes, and the full pipeline (runner → guard → oracle → analysis) with a scripted planner | about 1 min |
 | 2. Published numbers | level 1 + the raw traces | `bash scripts/reproduce.sh --traces DIR` | every primary number, count, interval, hash and decision of the v2 formal test and the v3 holdout, recomputed from the traces (23 checks), plus the contract-outcome table | about 1 min |
-| 3. Model re-run, original machine | level 2 + one 24 GB GPU + the pinned weights | `EVIBOUND_DATA=/path/to/data-disk bash scripts/reproduce.sh --gpu 0` | the v2 formal-test matrix run again with the frozen runner and compared episode by episode; `--seeds "11 22 33"` and `--v3-seeds "11"` widen it | 15 min to 2 h |
+| 3. Model re-run, original machine | level 2 + one 24 GB GPU + the pinned weights | `EVIBOUND_DATA=/path/to/data-disk bash scripts/reproduce.sh --gpu 0` | seed 11 of the v2 formal-test matrix (432 episodes) run again with the frozen runner and compared episode by episode; `--seeds "11 22 33"` runs the full matrix and `--v3-seeds "11"` adds the v3 holdout | 15 min to 2 h |
 | 4. Model re-run, another machine | a fresh GPU machine with internet (for example Google Colab, one GPU with at least 24 GB) | `bash scripts/reproduce_cloud.sh` | the same re-run on different hardware: pins the library versions, downloads and verifies the pinned model revision, runs the frozen runners, and reports the re-run beside the published results | about 1 h |
 
 Level 1 is the "one-command reproducible subset": it needs no GPU, no model
