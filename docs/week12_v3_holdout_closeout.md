@@ -131,3 +131,25 @@ boundary-variant drop is an effect of evidence expiring mid-plan by design
   empty first plans.
 - J2 (`M_scoped` precision ablation), J3 (external worlds), J4 (second
   planner) unchanged; `docs/week12_direction_review.md` §5.
+
+## 7. Addendum after the independent review (2026-11-03) / 复核后的补充
+
+The decisions above stand as recorded. Three readings are added, all from
+`docs/v3_review_reanalysis.md` (exploratory, post hoc, same traces):
+
+- **Original protocol.** Under the original protocol (S1 ∧ U1, before
+  amendment A2), joint feasibility is **not supported**. A2 was committed
+  about two hours after the exploratory dev run had shown U1 unsupported, so
+  both protocols are reported.
+- **What U2 measures.** U2 rewards rule compliance as well as completion. Its
+  +29.2 pp equals U1 (−7.4 pp) plus B0's non-compliant completions
+  (+36.6 pp). §2's "formal claim" therefore describes safe completion, not
+  unchanged utility.
+- **Safety-decoupled utility.** U_dec is +1.4 pp [−5.6, +8.3], inconclusive.
+  It is −15.3 pp without the recovery aids and −13.9 pp on the boundary
+  variant.
+- **Zero false blocks** means zero *contract-eligible* false blocks; it
+  excludes stale-but-harmless writes by definition (review C-03).
+
+按原定口径（S1 ∧ U1）联合可行性不支持；U2 的优势主要来自 B0 违规"完成"；与安全解耦的
+效用尚不确定（+1.4 pp [−5.6, +8.3]）。详见 `docs/v3_review_reanalysis.md`。
