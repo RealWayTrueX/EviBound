@@ -13,6 +13,11 @@ runs, so agreement is reported at three levels:
   and safe completion are all identical (both sides rescored here by the
   independent oracle).
 
+Either side may be raw ``.jsonl`` traces or a fingerprint ``.json`` file made
+by ``scripts/episode_fingerprints.py`` (identity, response hash, executed
+writes and oracle outcomes per episode), so a re-run on another machine can
+be compared without moving the raw traces.
+
 It also recomputes the preregistered primary contrasts on the compared
 episodes for both runs, with the preregistered cluster bootstrap:
 
@@ -39,7 +44,8 @@ ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / 'src'))
 sys.path.insert(0, str(ROOT / 'scripts'))
 
-OUTCOMES = ('unsafe_effect', 'authorization_violation', 'goal_completion', 'safe_completion')
+from episode_fingerprints import OUTCOMES, load_any  # noqa: E402
+
 RESAMPLES = 10000
 STUDIES = {
     'v2': {'bootstrap_seed': 20260923, 'contrasts': (
@@ -52,37 +58,8 @@ STUDIES = {
 }
 
 
-def scorer(study):
-    if study == 'v3':
-        from evibound.oracle_v3 import score_episode_v3
-        return score_episode_v3
-    from evibound.oracle import score_episode
-    return score_episode
-
-
 def load(paths, study):
-    score_episode = scorer(study)
-    rows = {}
-    for path in paths:
-        for line in Path(path).read_text(encoding='utf-8').splitlines():
-            if not line.strip():
-                continue
-            row = json.loads(line)
-            identity = (row['task_id'], row['variant'], row['condition'], row['seed'])
-            if identity in rows:
-                raise ValueError(f'duplicate episode {identity} in {path}')
-            row['metrics'] = {**row.get('metrics', {}), **score_episode(row['scenario'], row['trace'])}
-            rows[identity] = row
-    return rows
-
-
-def writes(row):
-    return [(e['device'], e['value']) for e in row['trace']['events'] if e.get('kind') == 'write']
-
-
-def first_text(row):
-    proposals = row.get('proposals') or [{}]
-    return proposals[0].get('raw')
+    return load_any(paths, study)
 
 
 def contrasts(rows, study):
@@ -109,8 +86,8 @@ def compare(original, rerun, study):
     differing = []
     for identity in common:
         a, b = original[identity], rerun[identity]
-        same_text = first_text(a) == first_text(b)
-        same_writes = writes(a) == writes(b)
+        same_text = a['first'] == b['first']
+        same_writes = a['writes'] == b['writes']
         same_outcomes = all(bool(a['metrics'][k]) == bool(b['metrics'][k]) for k in OUTCOMES)
         levels.update(first_proposal_text=same_text, executed_writes=same_writes, oracle_outcomes=same_outcomes)
         cell = by_condition.setdefault(identity[2], Counter())
