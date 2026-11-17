@@ -28,9 +28,42 @@ python3 scripts/build_review_desk.py          # writes reviews/v3/review_desk.ht
 **The v3 corpus is frozen.** Its desk is a practice run. Do not overwrite
 `reviews/v3/checklist.csv` with its export, and do not run `--signoff` for v3.
 
+## Whole-chain attack cards (exploratory)
+
+With `node` installed, the build also runs `demo/attacks/export_chain_cases.js`
+and adds two card kinds for the 21 attack forms of
+[`docs/chain_attack_surface.md`](../docs/chain_attack_surface.md), one or more
+on every hop H0–H11 of the sensor → agent → device chain:
+
+| Kind | Cards | Required | What the annotator checks |
+|---|---:|---:|---|
+| 攻击形式 / attack form | 21 | all | the hop and its trust status, the real-world counterpart, a clear before → after, the Chinese |
+| 攻击 × 任务 / attack x task | 1,444 | 160 | the before → after in this task, the agent's reaction, and the verdict under B0, B2 and M_full with and without the attack |
+
+- **Chain diagram.** Every attack card, every attack x task card and every v3
+  task card (as a fold-out, hop H4) draws the whole chain, with the trusted
+  base shaded, the attacked hop framed in red and the altered data path drawn
+  in red. The guide gained a page on it (nine pages).
+- **Required sample.** Per attack, one card for every distinct outcome
+  pattern, then spread over sensor kinds and task families, up to eight
+  (`CHAIN_SAMPLE_PER_ATTACK`); the remaining 1,284 cards are optional.
+- **Scripted agent.** "careful" (follows what it reads, keeps every rule), so
+  any harm comes from the attack; "hasty" for forged feedback and the two
+  scope attacks, which only bite an agent that makes mistakes. Text
+  injections are modelled at their worst case: the injection succeeds and
+  the model obeys.
+- **Saved verdicts are kept.** The run key and the hashes of the v3 cards do
+  not change; `--no-chain` builds the page without these cards.
+
+**Time (planning estimate).** About 1–2 minutes per attack-form card, 45–90
+seconds per sampled attack x task card (the first cards of each attack are
+slower), and 30–60 seconds per remaining card once an attack is familiar.
+Required: about 3–5 hours of attack cards on top of the v3 cards. All 1,444
+attack x task cards: about 12–24 hours.
+
 ## Quick-start guide
 
-**When it appears.** On every open, an eight-page guide comes up before the
+**When it appears.** On every open, a nine-page guide comes up before the
 desk. It takes one to two minutes and can be skipped with `Esc`. The 引导
 button in the header reopens it.
 
@@ -41,9 +74,10 @@ button in the header reopens it.
 3. The six rules, with the legal-state grid and the jump rule.
 4. Reading the sensors and the everyday phrases.
 5. Tamper, replay and authorization-negative tasks.
-6. What each question asks, with examples of failures.
-7. How to read a card, and the fastest keys.
-8. A warm-up of three questions.
+6. The whole chain: every hop can be attacked; the trusted base.
+7. What each question asks, with examples of failures.
+8. How to read a card, and the fastest keys.
+9. A warm-up of three questions.
 
 **The warm-up.**
 

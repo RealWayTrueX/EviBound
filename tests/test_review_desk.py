@@ -122,7 +122,7 @@ class ReviewDeskTest(unittest.TestCase):
         page = desk.render(self.data, body_only=True)
         self.assertIn('id="guideOv"', page)
         self.assertIn('openGuide(0);', page)
-        self.assertEqual(page.count("{ eyebrow: '"), 8)
+        self.assertEqual(page.count("{ eyebrow: '"), 9)
         self.assertIn("'reviewers/' + uid + '/runs/' + RUN + '/verdicts'", page)
         self.assertNotIn("collection('runs/'", page)
 
@@ -130,7 +130,94 @@ class ReviewDeskTest(unittest.TestCase):
         meta = self.data['meta']
         self.assertEqual(meta['mode'], 'practice')
         self.assertTrue(meta['run_key'].endswith('-practice'))
-        self.assertIn('--signoff', meta['banner']['zh'])
+        self.assertIn('reviews/v3/checklist.csv', meta['banner']['zh'])  # the export must not replace the signed checklist
+
+
+@unittest.skipIf(desk.load_chain_cases() is None, 'node or demo/data/bundle.js not available')
+class ChainCardsTest(unittest.TestCase):
+    """Whole-chain attack cards (exploratory): one card per attack form, one per attack x task."""
+
+    @classmethod
+    def setUpClass(cls):
+        cls.cases = desk.load_chain_cases()
+        cls.data = desk.build('v3', cls.cases)
+        cls.plain = desk.build('v3')
+        cls.items = cls.data['items']
+
+    def test_inventory_and_run_key(self):
+        counts = self.data['meta']['counts']
+        self.assertEqual(counts['attack'], len(self.cases['attacks']))
+        self.assertEqual(counts['chain'], len(self.cases['cases']))
+        self.assertEqual(len({i['id'] for i in self.items}), len(self.items))
+        # Adding cards must not move saved verdicts: same run key, same hashes for the v3 items.
+        self.assertEqual(self.data['meta']['run_key'], self.plain['meta']['run_key'])
+        old = {i['id']: i['hash'] for i in self.plain['items']}
+        for item in self.items:
+            if item['id'] in old:
+                self.assertEqual(item['hash'], old[item['id']], item['id'])
+
+    def test_every_hop_and_every_attack_is_covered(self):
+        hops = {a['hop'] for a in self.cases['attacks']}
+        self.assertEqual(hops, {f'H{i}' for i in range(12)})
+        for a in self.cases['attacks']:
+            card = next(i for i in self.items if i['id'] == f'atk-{a["id"]}')
+            self.assertTrue(card['required'])
+            self.assertIn(card['chain']['hop'], hops)
+
+    def test_required_sample_is_stratified(self):
+        chain = [i for i in self.items if i['kind'] == 'chain']
+        by_attack = {}
+        for item in chain:
+            by_attack.setdefault(item['group'], []).append(item)
+        for group, cards in by_attack.items():
+            required = [c for c in cards if c['required']]
+            self.assertTrue(1 <= len(required) <= desk.CHAIN_SAMPLE_PER_ATTACK, group)
+        sample = desk.chain_sample(self.cases['cases'])
+        self.assertEqual(sample, desk.chain_sample(self.cases['cases']))  # deterministic
+        sigs = {}
+        for c in self.cases['cases']:
+            sigs.setdefault(c['attack'], set()).add(desk._signature(c))
+        for attack, seen in sigs.items():
+            picked = {desk._signature(c) for c in self.cases['cases'] if (attack, c['task_id']) in sample and c['attack'] == attack}
+            usable = {desk._signature(c) for c in self.cases['cases'] if c['attack'] == attack
+                      and not any(ch['field'] == 'feedback_unused' for ch in c['changes'])}
+            self.assertTrue(picked == usable or len(picked) == desk.CHAIN_SAMPLE_PER_ATTACK, attack)
+
+    def test_cards_show_a_change_and_pass_their_checks(self):
+        for item in self.items:
+            if item['kind'] not in ('attack', 'chain'):
+                continue
+            self.assertTrue(all(c['ok'] for c in item['checks']), item['id'])
+            if item['kind'] == 'chain':
+                self.assertTrue(item['changes'], item['id'])
+                for row in item['changes']:
+                    self.assertIn('field', row)
+                    self.assertTrue(row['after']['zh'])
+                self.assertEqual(set(item['outcomes']), {'B0', 'B2', 'M_full'})
+
+    def test_untrusted_hops_never_harm_under_evibound(self):
+        trusted = {h['id'] for h in self.cases['hops'] if h['trusted']}
+        for c in self.cases['cases']:
+            o = c['outcomes']['M_full']['attack']
+            if c['hop'] not in trusted:
+                self.assertFalse(o['unsafe_effect'] or o['authorization_violation'], (c['attack'], c['task_id']))
+
+    def test_outcome_text_blames_only_new_violations(self):
+        events = [{'kind': 'write', 'device': 'light', 'value': 'low', 'bypass': False,
+                   'before': {'light': 'off', 'fan': 'low'}, 'after': {'light': 'low', 'fan': 'low'}},
+                  {'kind': 'write', 'device': 'fan', 'value': 'low', 'bypass': False,
+                   'before': {'light': 'low', 'fan': 'low'}, 'after': {'light': 'low', 'fan': 'low'}},
+                  {'kind': 'write', 'device': 'fan', 'value': 'high', 'bypass': False,
+                   'before': {'light': 'low', 'fan': 'low'}, 'after': {'light': 'low', 'fan': 'high'}}]
+        o = {'events': events, 'hijacked': False, 'safe_completion': False, 'final_state': {'light': 'low', 'fan': 'high'}}
+        text = desk._outcome_text(o, False, ['light', 'fan'])
+        self.assertEqual(text['verdict'], 'bad')
+        self.assertEqual(text['zh'], '灯 关→1 档 违反 R1；风扇 1 档→2 档 违反 R2')
+
+    def test_page_draws_the_chain(self):
+        page = desk.render(self.data, body_only=True)
+        for marker in ('function chainDiagram', 'function chainHtml', 'function attackDefHtml', 'data-k="chain"'):
+            self.assertIn(marker, page)
 
 
 if __name__ == '__main__':
