@@ -557,6 +557,7 @@ def task_item(task, required):
                         'reading_ok': goal_match},
         'modality': obs['modality'],
         'readings': readings,
+        'truth': true_branch, 'perturbation': task['perturbation'],
         'diagram': {'type': 'branch-flow', 'devices': list(DEVICES), 'authorized': authorized,
                     'initial': {d: init[d] for d in DEVICES}, 'presence': presence,
                     'goals': full, 'targets': {'present': task['goal_present'], 'absent': task['goal_absent']},

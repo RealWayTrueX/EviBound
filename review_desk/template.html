@@ -154,6 +154,11 @@ select.btn { padding-right: 26px; }
 .dl dt { color: var(--ink-3); font-size: 13px; white-space: nowrap; }
 .dl dd { margin: 0; }
 .dl dd.att { color: var(--ember); }
+.att-block .rd { grid-template-columns: 150px minmax(0, 1fr) auto; }
+.att-block .rd-true { border-left: 3px solid var(--ok, #0f7a55); padding-left: 10px; }
+.att-block .rd-att { border-left: 3px solid var(--bad, #c0264f); padding-left: 10px; }
+.att-block .att-arrow { color: var(--bad, #c0264f); font-weight: 600; font-size: 13px; margin: 2px 0 2px 12px; }
+.att-block .who .en-2 { display: block; }
 .checks summary { cursor: pointer; font-weight: 600; font-size: 13.5px; color: var(--ink-2); }
 .checks ul { list-style: none; margin: 8px 0 0; padding: 0; display: grid; gap: 4px; }
 .checks li { display: grid; grid-template-columns: 20px minmax(0, 1fr); gap: 6px; font-size: 13.5px; }
@@ -814,6 +819,24 @@ textarea#expText { width: 100%; min-height: 180px; border: 1px solid var(--line)
       + checks.map(function (c) { return '<li><span class="' + (c.ok ? 'i-ok' : 'i-bad') + '">' + (c.ok ? '✓' : '✗') + '</span><span>' + esc(c.zh) + '<span class="en en-2">' + esc(c.en) + '</span></span></li>'; }).join('')
       + '</ul></details></section>';
   }
+  function attackHtml(it) {
+    var truth = it.truth, sent = truth === 'present' ? 'absent' : 'present', tamper = it.perturbation === 'tamper';
+    var byB = {}; it.readings.forEach(function (r) { byB[r.branch] = r; });
+    var ZB = { present: '有人', absent: '没人' };
+    function row(lbl, sub, r, cls) {
+      return '<div class="rd ' + cls + '"><span class="who">' + lbl + '<span class="en en-2">' + sub + '</span></span><div><div class="src" lang="en">' + esc(r.en) + '</div><div class="zh">' + esc(r.zh) + '</div></div>'
+        + '<span class="' + (r.ok ? 'ok-badge' : 'bad-badge') + '">' + (r.decoded === true ? '读作有人' : r.decoded === false ? '读作没人' : '看不出') + (r.ok ? ' ✓' : ' ✗') + '</span></div>';
+    }
+    var modNote = { motion_timer: '运动计时：距上次动静 ≤ 5 分钟算有人。', multi_sensor: '多传感器：运动计时 + 摄像头，两者总是一致。', camera_caption: '摄像头描述：看句子里有没有人；猫、外套等不是人。', presence_flag: '存在标志：直接给出有人（true）/没人（false）。' }[it.modality] || '';
+    var how = tamper
+      ? '篡改：攻击者把这条记录的<b>内容</b>改成相反的值，记录编号和时间戳保持真实，所以记录看起来完全正常。'
+      : '重放：攻击者把一条<b>真实但已过期</b>的旧记录原样再发一次，内容是当时的情况（与现在相反），编号也是真的，只是时间早。';
+    return '<section class="block att-block"><div class="block-h"><h3>传感器读数与攻击</h3><span class="en">What is really there, and what the agent receives under this attack</span></div>'
+      + row('真实读数（实际' + ZB[truth] + '）', 'authentic, current', byB[truth], 'rd-true')
+      + '<div class="att-arrow">↓ ' + (tamper ? '篡改' : '重放') + '</div>'
+      + row('智能体收到的读数', tamper ? 'tampered: content flipped' : 'replayed: old record', byB[sent], 'rd-att')
+      + '<p class="note">' + how + '智能体据此以为' + ZB[sent] + '，于是走向示意图里的红色虚线。' + esc(modNote) + '</p></section>';
+  }
   function taskHtml(it) {
     var ins = it.instruction, d = it.diagram, h = headHtml(it);
     h += '<section class="block"><div class="block-h"><h3>用户原话</h3><span class="en">Instruction, exactly as the agent sees it</span></div>'
@@ -824,15 +847,10 @@ textarea#expText { width: 100%; min-height: 180px; border: 1px solid var(--line)
       + '<div class="reading"><span class="lbl">按原话解读</span><span class="val">' + (ins.reading_ok ? '<span class="ok-badge">✓ 与标注目标一致</span>' : '<span class="bad-badge">✗ 与标注目标不一致</span>') + '</span>'
       + '<span class="lbl">有人时</span><span class="val">' + stateChips(ins.reading.present) + '</span>'
       + '<span class="lbl">没人时</span><span class="val">' + stateChips(ins.reading.absent) + '</span></div></section>';
+    h += attackHtml(it);
     h += '<section class="block"><div class="block-h"><h3>示意图</h3><span class="en">Start state, both branch goals, the correct plan and what a trusting agent would do</span></div>'
       + '<div class="dgm">' + branchFlow(d) + '</div>'
       + '<div class="legend"><span><i class="l-true"></i>实际分支与正确做法</span><span><i class="l-att"></i>攻击诱导的分支</span><span>虚线圈 = 与开始时相比改变的设备</span><span>锁 = 没有权限的设备</span><span>人形 = 有人，虚线人形 = 没人</span></div></section>';
-    var rds = it.readings.map(function (r) {
-      return '<div class="rd"><span class="who">' + (r.branch === 'present' ? '有人时读数' : '没人时读数') + '</span><div><div class="src" lang="en">' + esc(r.en) + '</div><div class="zh">' + esc(r.zh) + '</div></div>'
-        + '<span class="' + (r.ok ? 'ok-badge' : 'bad-badge') + '">' + (r.decoded === true ? '读作有人' : r.decoded === false ? '读作没人' : '看不出') + (r.ok ? ' ✓' : ' ✗') + '</span></div>';
-    }).join('');
-    var modNote = { motion_timer: '运动计时：距上次动静 ≤ 5 分钟算有人。', multi_sensor: '多传感器：运动计时 + 摄像头，两者总是一致。', camera_caption: '摄像头描述：看句子里有没有人；猫、外套等不是人。', presence_flag: '存在标志：直接给出有人/没人。' }[it.modality] || '';
-    h += '<section class="block"><div class="block-h"><h3>传感器读数</h3><span class="en">The two payloads; the task uses one of them per variant</span></div>' + rds + '<p class="note">' + esc(modNote) + '</p></section>';
     h += '<section class="block"><div class="block-h"><h3>要点</h3><span class="en">Derived independently from the task record</span></div><dl class="dl">'
       + it.summary.map(function (r, i) { return '<dt>' + esc(r.k.zh) + '</dt><dd' + (i >= 5 ? ' class="att"' : '') + '>' + esc(r.v.zh) + '<span class="en en-2">' + esc(r.v.en) + '</span></dd>'; }).join('') + '</dl></section>';
     return h + checksHtml(it.checks);
