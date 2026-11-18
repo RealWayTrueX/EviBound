@@ -90,6 +90,7 @@ datasets come next: [Week-12 direction review](docs/week12_direction_review.md).
 | Safety statement and AI-assistance disclosure | [SAFETY.md](SAFETY.md) |
 | Licences: code under MIT, data and documentation under CC BY 4.0 | [LICENSE](LICENSE), [LICENSE-DATA.md](LICENSE-DATA.md) |
 | Course closeout: contract compliance, open items, finishing plan, report outline | [docs/course_closeout_2026-11-10.md](docs/course_closeout_2026-11-10.md) |
+| Release notes for the course version (draft; tagging is the owner's decision) | [docs/release_notes_course.md](docs/release_notes_course.md) |
 | Peer and instructor review: protocol, fixed sample, agreement script | [docs/peer_review_protocol.md](docs/peer_review_protocol.md), `scripts/review_agreement.py` |
 | v1 dataset card and literature check | [docs/dataset_card.md](docs/dataset_card.md), [docs/sources_and_design_review.md](docs/sources_and_design_review.md) |
 | Roadmap and decision log | [docs/roadmap_week6.md](docs/roadmap_week6.md) |
