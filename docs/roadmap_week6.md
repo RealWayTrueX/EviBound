@@ -183,6 +183,24 @@ Frozen-boundary rules (non-negotiable):
       plus a full JSON. Built on the frozen v3 corpus as a practice run; v4
       needs an adapter and its sampling rule.
 
+### L. Course closeout (Weeks 13-15; nothing here touches a frozen file)
+- [x] L1. Audit against the research contract and finishing plan
+      (`docs/course_closeout_2026-11-10.md`).
+- [x] L2. Reproduction: one command without a GPU, published numbers
+      recomputed from the traces, frozen runners re-run on a second machine
+      (`docs/reproduction.md`).
+- [x] L3. Safety statement, AI-assistance disclosure and licences
+      (`SAFETY.md`, `LICENSE`, `LICENSE-DATA.md`).
+- [x] L4. Course report, 2026-11-18: `report/evibound_report.pdf` (six pages
+      and a one-page appendix), every number generated from the committed
+      records by `scripts/build_report_numbers.py`.
+- [~] L5. Peer review: review desk with whole-chain attack cards built; the
+      owner's pass is reported done and a second review is in progress;
+      agreement statistics wait for the exports
+      (`docs/peer_review_protocol.md`).
+- [ ] L6. Owner decisions: read and approve the report, merge PR #4, release
+      tag, trace archive, demo rehearsal, submission.
+
 ## Progress Log
 
 - 2026-10-10: A1-A2 done. v1 confounds reconfirmed from current files: perturbation
@@ -462,3 +480,32 @@ Frozen-boundary rules (non-negotiable):
     form of the peer review with the instructor; find reviewer B; check
     `SAFETY.md` and the licence line; rehearse the demo and record a backup;
     approve the report.
+
+- 2026-11-18: course report written (L4), no research change. Completion
+  criterion: a six-to-eight-page report that states the contract's decisions
+  first, reports the unsupported utility hypothesis as such, and contains no
+  number that is not derived from a committed record.
+  - `report/evibound_report.tex` and `report/evibound_report.pdf`: six pages
+    with references plus a one-page appendix; sections for the system and
+    threat model, method, the contract's test, the v3 extension, the
+    exploratory whole-chain matrix, discussion, reproduction and review,
+    limitations (all fifteen from the closeout plan), related work and
+    conclusion.
+  - `scripts/build_report_numbers.py` generates 484 values, the condition
+    table, the whole-chain table, the artifact table and two figures from the
+    artifacts, the episode fingerprints and the task files, with assertions on
+    every derived fact; `tests/test_report_numbers.py` (9 tests) fails when
+    the generated files are stale or the report uses an unknown key. 128
+    tests pass; `verify_freezes.py` reports 4 of 4 `[ok]`.
+  - Facts derived for the report, post hoc and descriptive: in the v2 clean
+    episodes 12 of 72 have a goal outside the scope, 7 are empty plans in
+    both conditions, 44 are completed by B0 and M alike and 9 are the blocked
+    jumps; in the v3 clean episodes 48 of 216 have a goal outside the scope,
+    B0 completed 25 of them with an out-of-scope write, and on the other 168
+    M_full completed 156 against 147 for B0.
+  - Erratum: `secondary_results.a3.clean.B0_authorization_violations` in the
+    frozen `artifacts/week8_main_results.json` is 3; the traces show 0 (the
+    three episodes are R6 violations). The frozen file is unchanged; the
+    erratum is in `docs/reproduction.md`, section 7.1. No primary result is
+    affected.
+  - Open, owner: L5 exports and L6.

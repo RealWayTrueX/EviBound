@@ -7,6 +7,9 @@ Status: audit record and plan, written 2026-11-10 on branch
 Every result below is quoted from a committed file, which is named next to it;
 the times and dates in the plan (section 6) are planning estimates.
 
+**Update, 2026-11-18:** the report is written and the remaining items are the
+owner's decisions; see [section 10](#10-update-2026-11-18).
+
 ## 中文摘要
 
 - **这份文件是什么。** 对照提交给课程的研究合同逐条审计项目，列出硬伤（H1–H10）、应修项（S1–S9）、今天已修好和已核实的部分、负责人要做的事，以及到 Week 15 交报告为止的两周计划。没有改动任何冻结文件或研究结论。
@@ -394,3 +397,37 @@ Send on Wed 11 Nov, in one message.
 - [ ] Read and approve the report, or write it from the assistant's draft;
       follow the course's rule on AI use for the report text.
 - [ ] Submit the report through the course's channel.
+
+
+## 10. Update, 2026-11-18
+
+**中文摘要。** 课程报告已经写完并排版（`report/evibound_report.pdf`，正文 6 页加 1 页附录），报告里的全部数字、两张数据表和两张数据图都由脚本从已提交的记录生成，测试会检查它们是否与记录一致。写报告时发现冻结的 v2 结果文件里一个次要字段有误（B0 在无攻击任务上的越权写入应为 0，不是 3），冻结文件不改，已在复现说明里记为勘误，主要结论不受影响。剩下的都是负责人的决定：审定报告、合并 PR #4、打发布标签、轨迹压缩包是否公开、把评审导出文件放进仓库以计算一致率、排练演示。
+
+| Item | State on 2026-11-18 | Evidence |
+|---|---|---|
+| H3, 4.2, 5.2: the six-to-eight-page report | done, pending the owner's reading | [report/evibound_report.pdf](../report/evibound_report.pdf): six pages with references and a one-page appendix; source `report/evibound_report.tex`; the order of the results follows section 7 (contract decisions first; v3 as an extension; U2 labelled as amended; U_dec and attack-goal success labelled post hoc); all fifteen limitations of section 7 are in its section 9 |
+| Numbers in the report | generated, not typed | `scripts/build_report_numbers.py` writes 484 values, two tables and two figures from the committed records; `tests/test_report_numbers.py` (9 tests) fails if they go stale |
+| S2, S3, S5, S6, S9 | in the report | "paired mechanism study, not a structural holdout" (Method); clustering by physical structure (Method); B1 in Table 1; component tests in the appendix; the Colab re-run disclosed in section 8 and in the limitations |
+| 3.6: evidence-sufficient proposals | in the report as eligible writes | 99 for M on clean tasks and 48 under attack, with zero false blocks |
+| New facts derived for the report | post hoc, descriptive | the v2 clean episodes split into 12 whose goal lies outside the scope, 7 empty plans, 44 completed by both and the 9 blocked jumps; in v3, 48 of 216 clean episodes have a goal outside the scope, B0 completed 25 of them with an out-of-scope write, and on the other 168 M_full completed 156 against 147 for B0 |
+| Erratum | recorded | one secondary field of the frozen v2 record is wrong (clean out-of-scope writes for B0: the record says 3, the traces show 0); [reproduction.md](reproduction.md), section 7.1; no primary result is affected |
+| H8, 3.11: peer review | open | the owner reports having completed the review on the desk and that an independent second review is in progress; no export is in `reviews/peer_review/` yet, so no agreement statistic is computed and the report says so |
+| Whole-chain review material | done (2026-11-17) | the review desk shows 21 attack forms on every hop with before-and-after values and the attacked hop drawn on the chain (`review_desk/README.md`); the report's section 6 summarises the exploratory matrix |
+| Tests and freezes | pass | 128 tests; `python3 scripts/verify_freezes.py` reports 4 of 4 `[ok]` |
+
+**Still for the owner** (the checklist in section 9 stays valid):
+
+1. Read the report. Its last paragraph says the text was drafted with AI
+   assistance and checked by the author, so it must be read before it is
+   submitted; adapt that sentence to the course's rule on AI use.
+2. Merge PR #4, then approve a release tag so that the report can cite a fixed
+   version of the repository.
+3. Keep a copy of the trace archive off the server and decide whether to
+   publish it with the release.
+4. Put the review exports (yours and the second reviewer's JSON files) into
+   `reviews/peer_review/` and run `scripts/review_agreement.py`; the report's
+   review paragraph then gets its numbers.
+5. Confirm the dates, the template and the page rule with the instructor
+   (section 8). The report is A4, two columns, 10 pt; if a template is
+   prescribed, only the preamble of the source changes.
+6. Rehearse the demo twice and record a backup.
