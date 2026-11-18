@@ -1,0 +1,244 @@
+{
+  "cross_version": {
+    "v2_vs_v1": {
+      "dev": {
+        "structures": 3,
+        "task_ids": [
+          "dev_bright_work_01",
+          "dev_gentle_comfort_00",
+          "dev_reading_01"
+        ],
+        "task_rows": 3
+      },
+      "pilot": {
+        "structures": 3,
+        "task_ids": [
+          "pilot_economy_00",
+          "pilot_gentle_comfort_01",
+          "pilot_reading_00"
+        ],
+        "task_rows": 3
+      },
+      "test": {
+        "structures": 12,
+        "task_ids": [
+          "test_bright_ventilation_00",
+          "test_bright_ventilation_01",
+          "test_bright_work_00",
+          "test_bright_work_01",
+          "test_economy_00",
+          "test_economy_01",
+          "test_economy_02",
+          "test_gentle_comfort_00",
+          "test_gentle_comfort_01",
+          "test_reading_00",
+          "test_reading_01",
+          "test_reading_02",
+          "test_strong_ventilation_00",
+          "test_strong_ventilation_01"
+        ],
+        "task_rows": 14
+      }
+    },
+    "v3_vs_v1": {
+      "dev": {
+        "structures": 0,
+        "task_ids": [],
+        "task_rows": 0
+      },
+      "holdout": {
+        "structures": 0,
+        "task_ids": [],
+        "task_rows": 0
+      }
+    },
+    "v3_vs_v2": {
+      "dev": {
+        "structures": 0,
+        "task_ids": [],
+        "task_rows": 0
+      },
+      "holdout": {
+        "structures": 0,
+        "task_ids": [],
+        "task_rows": 0
+      }
+    }
+  },
+  "per_split": {
+    "v1/dev": {
+      "physical_structures": 12,
+      "tasks": 12
+    },
+    "v1/pilot": {
+      "physical_structures": 12,
+      "tasks": 12
+    },
+    "v1/test": {
+      "physical_structures": 18,
+      "tasks": 24
+    },
+    "v2/dev": {
+      "physical_structures": 15,
+      "tasks": 16
+    },
+    "v2/pilot": {
+      "physical_structures": 15,
+      "tasks": 16
+    },
+    "v2/test": {
+      "physical_structures": 22,
+      "tasks": 24
+    },
+    "v3/dev": {
+      "physical_structures": 12,
+      "tasks": 12
+    },
+    "v3/holdout": {
+      "physical_structures": 36,
+      "tasks": 72
+    }
+  },
+  "union_physical_structures": 93,
+  "within_version_cross_split": {
+    "v1": {
+      "groups": {
+        "1b5efe997b86b25c": [
+          "dev:dev_strong_ventilation_01",
+          "pilot:pilot_strong_ventilation_01",
+          "test:test_strong_ventilation_01"
+        ],
+        "1d8cdde86f5a8280": [
+          "dev:dev_economy_01",
+          "pilot:pilot_economy_01",
+          "test:test_economy_01"
+        ],
+        "254ad46c5daf2f3b": [
+          "dev:dev_bright_ventilation_00",
+          "pilot:pilot_bright_ventilation_00",
+          "test:test_bright_ventilation_00",
+          "test:test_bright_ventilation_02"
+        ],
+        "2bbf1ea71c008cff": [
+          "dev:dev_gentle_comfort_00",
+          "pilot:pilot_gentle_comfort_00",
+          "test:test_gentle_comfort_00",
+          "test:test_gentle_comfort_02"
+        ],
+        "3084fe55e8bef0a6": [
+          "dev:dev_bright_work_00",
+          "pilot:pilot_bright_work_00",
+          "test:test_bright_work_00",
+          "test:test_bright_work_02"
+        ],
+        "3875a3593234644c": [
+          "dev:dev_strong_ventilation_00",
+          "pilot:pilot_strong_ventilation_00",
+          "test:test_strong_ventilation_00",
+          "test:test_strong_ventilation_02"
+        ],
+        "4e107d5f116b05a2": [
+          "dev:dev_reading_00",
+          "pilot:pilot_reading_00",
+          "test:test_reading_00",
+          "test:test_reading_02"
+        ],
+        "8d6e0e66ad9b8ddc": [
+          "dev:dev_gentle_comfort_01",
+          "pilot:pilot_gentle_comfort_01",
+          "test:test_gentle_comfort_01"
+        ],
+        "a33bbaab0580c4d8": [
+          "dev:dev_bright_ventilation_01",
+          "pilot:pilot_bright_ventilation_01",
+          "test:test_bright_ventilation_01"
+        ],
+        "be51e5d8e3b95a0f": [
+          "dev:dev_economy_00",
+          "pilot:pilot_economy_00",
+          "test:test_economy_00",
+          "test:test_economy_02"
+        ],
+        "e3cf252aabc34dea": [
+          "dev:dev_bright_work_01",
+          "pilot:pilot_bright_work_01",
+          "test:test_bright_work_01"
+        ],
+        "fe360e54dcd0ae52": [
+          "dev:dev_reading_01",
+          "pilot:pilot_reading_01",
+          "test:test_reading_01"
+        ]
+      },
+      "physical_structures": 18,
+      "structures_spanning_splits": 12,
+      "task_rows_involved": 42
+    },
+    "v2": {
+      "groups": {
+        "0b23e4b1d090d762": [
+          "dev:dev_bright_work_00",
+          "pilot:pilot_bright_ventilation_00"
+        ],
+        "1d8cdde86f5a8280": [
+          "dev:dev_gentle_comfort_00",
+          "pilot:pilot_reading_00",
+          "test:test_economy_01"
+        ],
+        "23a23905ca1325d8": [
+          "pilot:pilot_economy_01",
+          "pilot:pilot_reading_01",
+          "test:test_gentle_comfort_02"
+        ],
+        "254ad46c5daf2f3b": [
+          "dev:dev_bright_work_01",
+          "test:test_bright_ventilation_00"
+        ],
+        "2bbf1ea71c008cff": [
+          "dev:dev_reading_01",
+          "test:test_economy_02",
+          "test:test_gentle_comfort_00"
+        ],
+        "4fc4f8ae996323b3": [
+          "pilot:pilot_bright_work_01",
+          "test:test_bright_ventilation_02"
+        ],
+        "82b84f99640f753e": [
+          "dev:dev_economy_01",
+          "pilot:pilot_strong_ventilation_01"
+        ],
+        "8d6e0e66ad9b8ddc": [
+          "pilot:pilot_economy_00",
+          "test:test_gentle_comfort_01"
+        ],
+        "be51e5d8e3b95a0f": [
+          "pilot:pilot_gentle_comfort_01",
+          "test:test_economy_00",
+          "test:test_reading_02"
+        ],
+        "d8f62c2f17905915": [
+          "dev:dev_bright_ventilation_00",
+          "pilot:pilot_bright_work_00"
+        ],
+        "eb768c1e8c6e4c8b": [
+          "pilot:pilot_bright_ventilation_01",
+          "test:test_bright_work_02"
+        ],
+        "f6ab5d4b47b03dae": [
+          "dev:dev_economy_00",
+          "dev:dev_reading_00",
+          "pilot:pilot_gentle_comfort_00"
+        ]
+      },
+      "physical_structures": 39,
+      "structures_spanning_splits": 12,
+      "task_rows_involved": 29
+    },
+    "v3": {
+      "groups": {},
+      "physical_structures": 48,
+      "structures_spanning_splits": 0,
+      "task_rows_involved": 0
+    }
+  }
+}

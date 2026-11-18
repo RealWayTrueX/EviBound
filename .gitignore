@@ -24,6 +24,7 @@ reports/
 
 # ---- Runtime artifacts (large assets live on /mnt/HDD-8T-0) ----
 runs/
+report/.build/
 *.log.tmp
 .DS_Store
 Background_dont_push_to_github/

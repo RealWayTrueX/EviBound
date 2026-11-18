@@ -1,0 +1,370 @@
+{
+ "study": "v3",
+ "episodes": 2376,
+ "seeds": [
+  11
+ ],
+ "tasks": 72,
+ "clusters": 36,
+ "cells": [
+  {
+   "condition": "B0",
+   "variant": "boundary",
+   "episodes": 72,
+   "unsafe_effect": 22,
+   "authorization_violation": 11,
+   "goal_completion": 57,
+   "safe_completion": 30
+  },
+  {
+   "condition": "B0",
+   "variant": "clean",
+   "episodes": 72,
+   "unsafe_effect": 23,
+   "authorization_violation": 10,
+   "goal_completion": 58,
+   "safe_completion": 30
+  },
+  {
+   "condition": "B0",
+   "variant": "perturbed",
+   "episodes": 72,
+   "unsafe_effect": 25,
+   "authorization_violation": 5,
+   "goal_completion": 26,
+   "safe_completion": 13
+  },
+  {
+   "condition": "B0_confirm_empty",
+   "variant": "boundary",
+   "episodes": 72,
+   "unsafe_effect": 22,
+   "authorization_violation": 11,
+   "goal_completion": 57,
+   "safe_completion": 30
+  },
+  {
+   "condition": "B0_confirm_empty",
+   "variant": "clean",
+   "episodes": 72,
+   "unsafe_effect": 23,
+   "authorization_violation": 10,
+   "goal_completion": 58,
+   "safe_completion": 30
+  },
+  {
+   "condition": "B0_confirm_empty",
+   "variant": "perturbed",
+   "episodes": 72,
+   "unsafe_effect": 25,
+   "authorization_violation": 5,
+   "goal_completion": 26,
+   "safe_completion": 13
+  },
+  {
+   "condition": "B2",
+   "variant": "boundary",
+   "episodes": 72,
+   "unsafe_effect": 0,
+   "authorization_violation": 0,
+   "goal_completion": 39,
+   "safe_completion": 39
+  },
+  {
+   "condition": "B2",
+   "variant": "clean",
+   "episodes": 72,
+   "unsafe_effect": 0,
+   "authorization_violation": 0,
+   "goal_completion": 37,
+   "safe_completion": 37
+  },
+  {
+   "condition": "B2",
+   "variant": "perturbed",
+   "episodes": 72,
+   "unsafe_effect": 11,
+   "authorization_violation": 0,
+   "goal_completion": 26,
+   "safe_completion": 20
+  },
+  {
+   "condition": "B2_full",
+   "variant": "boundary",
+   "episodes": 72,
+   "unsafe_effect": 0,
+   "authorization_violation": 0,
+   "goal_completion": 49,
+   "safe_completion": 49
+  },
+  {
+   "condition": "B2_full",
+   "variant": "clean",
+   "episodes": 72,
+   "unsafe_effect": 0,
+   "authorization_violation": 0,
+   "goal_completion": 51,
+   "safe_completion": 51
+  },
+  {
+   "condition": "B2_full",
+   "variant": "perturbed",
+   "episodes": 72,
+   "unsafe_effect": 11,
+   "authorization_violation": 0,
+   "goal_completion": 23,
+   "safe_completion": 17
+  },
+  {
+   "condition": "B2_recover",
+   "variant": "boundary",
+   "episodes": 72,
+   "unsafe_effect": 0,
+   "authorization_violation": 0,
+   "goal_completion": 52,
+   "safe_completion": 52
+  },
+  {
+   "condition": "B2_recover",
+   "variant": "clean",
+   "episodes": 72,
+   "unsafe_effect": 0,
+   "authorization_violation": 0,
+   "goal_completion": 50,
+   "safe_completion": 50
+  },
+  {
+   "condition": "B2_recover",
+   "variant": "perturbed",
+   "episodes": 72,
+   "unsafe_effect": 11,
+   "authorization_violation": 0,
+   "goal_completion": 20,
+   "safe_completion": 14
+  },
+  {
+   "condition": "M",
+   "variant": "boundary",
+   "episodes": 72,
+   "unsafe_effect": 0,
+   "authorization_violation": 0,
+   "goal_completion": 40,
+   "safe_completion": 40
+  },
+  {
+   "condition": "M",
+   "variant": "clean",
+   "episodes": 72,
+   "unsafe_effect": 0,
+   "authorization_violation": 0,
+   "goal_completion": 37,
+   "safe_completion": 37
+  },
+  {
+   "condition": "M",
+   "variant": "perturbed",
+   "episodes": 72,
+   "unsafe_effect": 0,
+   "authorization_violation": 0,
+   "goal_completion": 33,
+   "safe_completion": 33
+  },
+  {
+   "condition": "M_confirm_empty",
+   "variant": "boundary",
+   "episodes": 72,
+   "unsafe_effect": 0,
+   "authorization_violation": 0,
+   "goal_completion": 41,
+   "safe_completion": 41
+  },
+  {
+   "condition": "M_confirm_empty",
+   "variant": "clean",
+   "episodes": 72,
+   "unsafe_effect": 0,
+   "authorization_violation": 0,
+   "goal_completion": 37,
+   "safe_completion": 37
+  },
+  {
+   "condition": "M_confirm_empty",
+   "variant": "perturbed",
+   "episodes": 72,
+   "unsafe_effect": 0,
+   "authorization_violation": 0,
+   "goal_completion": 33,
+   "safe_completion": 33
+  },
+  {
+   "condition": "M_full",
+   "variant": "boundary",
+   "episodes": 72,
+   "unsafe_effect": 0,
+   "authorization_violation": 0,
+   "goal_completion": 40,
+   "safe_completion": 40
+  },
+  {
+   "condition": "M_full",
+   "variant": "clean",
+   "episodes": 72,
+   "unsafe_effect": 0,
+   "authorization_violation": 0,
+   "goal_completion": 51,
+   "safe_completion": 51
+  },
+  {
+   "condition": "M_full",
+   "variant": "perturbed",
+   "episodes": 72,
+   "unsafe_effect": 0,
+   "authorization_violation": 0,
+   "goal_completion": 41,
+   "safe_completion": 41
+  },
+  {
+   "condition": "M_mask",
+   "variant": "boundary",
+   "episodes": 72,
+   "unsafe_effect": 0,
+   "authorization_violation": 0,
+   "goal_completion": 31,
+   "safe_completion": 31
+  },
+  {
+   "condition": "M_mask",
+   "variant": "clean",
+   "episodes": 72,
+   "unsafe_effect": 0,
+   "authorization_violation": 0,
+   "goal_completion": 41,
+   "safe_completion": 41
+  },
+  {
+   "condition": "M_mask",
+   "variant": "perturbed",
+   "episodes": 72,
+   "unsafe_effect": 0,
+   "authorization_violation": 0,
+   "goal_completion": 38,
+   "safe_completion": 38
+  },
+  {
+   "condition": "M_recover",
+   "variant": "boundary",
+   "episodes": 72,
+   "unsafe_effect": 0,
+   "authorization_violation": 0,
+   "goal_completion": 51,
+   "safe_completion": 51
+  },
+  {
+   "condition": "M_recover",
+   "variant": "clean",
+   "episodes": 72,
+   "unsafe_effect": 0,
+   "authorization_violation": 0,
+   "goal_completion": 50,
+   "safe_completion": 50
+  },
+  {
+   "condition": "M_recover",
+   "variant": "perturbed",
+   "episodes": 72,
+   "unsafe_effect": 0,
+   "authorization_violation": 0,
+   "goal_completion": 36,
+   "safe_completion": 36
+  },
+  {
+   "condition": "M_repair",
+   "variant": "boundary",
+   "episodes": 72,
+   "unsafe_effect": 0,
+   "authorization_violation": 0,
+   "goal_completion": 51,
+   "safe_completion": 51
+  },
+  {
+   "condition": "M_repair",
+   "variant": "clean",
+   "episodes": 72,
+   "unsafe_effect": 0,
+   "authorization_violation": 0,
+   "goal_completion": 50,
+   "safe_completion": 50
+  },
+  {
+   "condition": "M_repair",
+   "variant": "perturbed",
+   "episodes": 72,
+   "unsafe_effect": 0,
+   "authorization_violation": 0,
+   "goal_completion": 37,
+   "safe_completion": 37
+  }
+ ],
+ "contrasts_rerun": {
+  "S1_B2full_minus_Mfull_unsafe": {
+   "estimate": 0.1527777777777778,
+   "ci95_low": 0.05555555555555555,
+   "ci95_high": 0.2638888888888889,
+   "n_tasks": 36,
+   "n_paired_episodes": 72,
+   "left_count": 11,
+   "right_count": 0,
+   "episodes_per_condition": 72
+  },
+  "U1_Mfull_minus_B0_goal": {
+   "estimate": -0.09722222222222222,
+   "ci95_low": -0.2361111111111111,
+   "ci95_high": 0.027777777777777776,
+   "n_tasks": 36,
+   "n_paired_episodes": 72,
+   "left_count": 51,
+   "right_count": 58,
+   "episodes_per_condition": 72
+  },
+  "U2_Mfull_minus_B0_safe_completion": {
+   "estimate": 0.2916666666666667,
+   "ci95_low": 0.16666666666666666,
+   "ci95_high": 0.4305555555555556,
+   "n_tasks": 36,
+   "n_paired_episodes": 72,
+   "left_count": 51,
+   "right_count": 30,
+   "episodes_per_condition": 72
+  }
+ },
+ "contrasts_published": {
+  "S1_B2full_minus_Mfull_unsafe": {
+   "estimate": 0.14351851851851852,
+   "ci95_low": 0.0462962962962963,
+   "ci95_high": 0.2592592592592593,
+   "left_count": 31,
+   "right_count": 0,
+   "episodes_per_condition": 216,
+   "decision": "supported"
+  },
+  "U1_Mfull_minus_B0_goal": {
+   "estimate": -0.07407407407407407,
+   "ci95_low": -0.1898148148148148,
+   "ci95_high": 0.03240740740740741,
+   "left_count": 156,
+   "right_count": 172,
+   "episodes_per_condition": 216,
+   "decision": "unsupported"
+  },
+  "U2_Mfull_minus_B0_safe_completion": {
+   "estimate": 0.2916666666666667,
+   "ci95_low": 0.16666666666666666,
+   "ci95_high": 0.4305555555555556,
+   "left_count": 156,
+   "right_count": 93,
+   "episodes_per_condition": 216,
+   "decision": "supported"
+  }
+ },
+ "note": "published values use every seed of the original run; compare rates and estimates when the re-run has fewer seeds"
+}

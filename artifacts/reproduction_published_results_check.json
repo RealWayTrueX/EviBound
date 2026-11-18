@@ -1,0 +1,147 @@
+{
+ "summary": {
+  "studies_verified": 2,
+  "checks": 23,
+  "failed": 0
+ },
+ "checks": [
+  {
+   "study": "v2_formal_test",
+   "check": "sha256 seed_11.jsonl",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "study": "v2_formal_test",
+   "check": "sha256 seed_22.jsonl",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "study": "v2_formal_test",
+   "check": "sha256 seed_33.jsonl",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "study": "v2_formal_test",
+   "check": "episode count",
+   "ok": true,
+   "detail": "1296"
+  },
+  {
+   "study": "v2_formal_test",
+   "check": "oracle rescoring disagreements",
+   "ok": true,
+   "detail": "0"
+  },
+  {
+   "study": "v2_formal_test",
+   "check": "false blocks",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "study": "v2_formal_test",
+   "check": "safety estimate and 95% CI",
+   "ok": true,
+   "detail": "+0.3636 [+0.1818, +0.5909]"
+  },
+  {
+   "study": "v2_formal_test",
+   "check": "safety clusters",
+   "ok": true,
+   "detail": "22"
+  },
+  {
+   "study": "v2_formal_test",
+   "check": "utility estimate and 95% CI",
+   "ok": true,
+   "detail": "-0.1364 [-0.2727, +0.0000]"
+  },
+  {
+   "study": "v2_formal_test",
+   "check": "utility clusters",
+   "ok": true,
+   "detail": "22"
+  },
+  {
+   "study": "v2_formal_test",
+   "check": "raw counts",
+   "ok": true,
+   "detail": "B2 30/72 vs M 0/72 unsafe; B0 53/72 vs M 44/72 goal"
+  },
+  {
+   "study": "v2_formal_test",
+   "check": "decisions",
+   "ok": true,
+   "detail": "safety supported, utility unsupported, joint not_supported"
+  },
+  {
+   "study": "v3_holdout",
+   "check": "sha256 episodes.jsonl",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "study": "v3_holdout",
+   "check": "episode count",
+   "ok": true,
+   "detail": "7128"
+  },
+  {
+   "study": "v3_holdout",
+   "check": "oracle rescoring disagreements",
+   "ok": true,
+   "detail": "0"
+  },
+  {
+   "study": "v3_holdout",
+   "check": "R1 estimate, 95% CI and decision",
+   "ok": true,
+   "detail": "+0.1944 [+0.0833, +0.3194] supported"
+  },
+  {
+   "study": "v3_holdout",
+   "check": "R2 estimate, 95% CI and decision",
+   "ok": true,
+   "detail": "+0.0972 [+0.0000, +0.1991] inconclusive"
+  },
+  {
+   "study": "v3_holdout",
+   "check": "R3 estimate, 95% CI and decision",
+   "ok": true,
+   "detail": "+0.0278 [-0.0278, +0.0833] inconclusive"
+  },
+  {
+   "study": "v3_holdout",
+   "check": "S1 estimate, 95% CI and decision",
+   "ok": true,
+   "detail": "+0.1435 [+0.0463, +0.2593] supported"
+  },
+  {
+   "study": "v3_holdout",
+   "check": "U1 estimate, 95% CI and decision",
+   "ok": true,
+   "detail": "-0.0741 [-0.1898, +0.0324] unsupported"
+  },
+  {
+   "study": "v3_holdout",
+   "check": "U2 estimate, 95% CI and decision",
+   "ok": true,
+   "detail": "+0.2917 [+0.1667, +0.4306] supported"
+  },
+  {
+   "study": "v3_holdout",
+   "check": "joint feasibility (frozen amended rule S1 and U2)",
+   "ok": true,
+   "detail": "supported"
+  },
+  {
+   "study": "v3_holdout",
+   "check": "per-cell unsafe, goal, safe-completion and false-block counts (33 cells)",
+   "ok": true,
+   "detail": ""
+  }
+ ]
+}

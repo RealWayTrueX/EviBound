@@ -93,7 +93,7 @@ models and saving presets to files (it downloads the preset JSON instead).
 | Prompts, recovery texts, rules, constants | exported from `src/evibound` by `build_demo_data.py` |
 | Guard, recovery and scoring logic | `engine.js`, a port of `backend*.py`, `recovery.py`, `oracle*.py`, verified by `tests/test_demo_engine.py` against `runner_v3.run_seed` on all 84 tasks x 3 variants x 11 conditions x 3 scripted planners |
 | "脚本规划器" plans | deterministic illustrations (careful / hasty / empty-plan), **not** model data |
-| "正式实验结果" charts and decisions | read from `artifacts/week11_v3_holdout_results.json` |
+| "正式实验结果" charts and decisions | read from `artifacts/week8_main_results.json` (v2, the contract's test, shown first), `artifacts/week11_v3_holdout_results.json`, `artifacts/week11_v3_review_reanalysis.json` and `artifacts/contract_outcomes_v2_v3.json` (attack-goal success) |
 | Live model plans | whatever endpoint is selected in `backends.json` (sampling differs from the frozen runs; not formal results) |
 | "回放真实轨迹" | episode JSONL from `/mnt/HDD-8T-0/evibound_yanke/runs/...`, re-executed and checked against the record |
 

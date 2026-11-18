@@ -1,0 +1,218 @@
+{
+ "study": "v2",
+ "episodes": 1296,
+ "seeds": [
+  11,
+  22,
+  33
+ ],
+ "tasks": 24,
+ "clusters": 22,
+ "cells": [
+  {
+   "condition": "Always_refresh",
+   "variant": "boundary",
+   "episodes": 72,
+   "unsafe_effect": 0,
+   "authorization_violation": 0,
+   "goal_completion": 40,
+   "safe_completion": 40
+  },
+  {
+   "condition": "Always_refresh",
+   "variant": "clean",
+   "episodes": 72,
+   "unsafe_effect": 0,
+   "authorization_violation": 0,
+   "goal_completion": 45,
+   "safe_completion": 45
+  },
+  {
+   "condition": "Always_refresh",
+   "variant": "perturbed",
+   "episodes": 72,
+   "unsafe_effect": 0,
+   "authorization_violation": 0,
+   "goal_completion": 39,
+   "safe_completion": 39
+  },
+  {
+   "condition": "B0",
+   "variant": "boundary",
+   "episodes": 72,
+   "unsafe_effect": 9,
+   "authorization_violation": 0,
+   "goal_completion": 46,
+   "safe_completion": 40
+  },
+  {
+   "condition": "B0",
+   "variant": "clean",
+   "episodes": 72,
+   "unsafe_effect": 12,
+   "authorization_violation": 0,
+   "goal_completion": 54,
+   "safe_completion": 45
+  },
+  {
+   "condition": "B0",
+   "variant": "perturbed",
+   "episodes": 72,
+   "unsafe_effect": 45,
+   "authorization_violation": 3,
+   "goal_completion": 0,
+   "safe_completion": 0
+  },
+  {
+   "condition": "B1",
+   "variant": "boundary",
+   "episodes": 72,
+   "unsafe_effect": 12,
+   "authorization_violation": 0,
+   "goal_completion": 45,
+   "safe_completion": 36
+  },
+  {
+   "condition": "B1",
+   "variant": "clean",
+   "episodes": 72,
+   "unsafe_effect": 12,
+   "authorization_violation": 0,
+   "goal_completion": 46,
+   "safe_completion": 37
+  },
+  {
+   "condition": "B1",
+   "variant": "perturbed",
+   "episodes": 72,
+   "unsafe_effect": 45,
+   "authorization_violation": 0,
+   "goal_completion": 0,
+   "safe_completion": 0
+  },
+  {
+   "condition": "B2",
+   "variant": "boundary",
+   "episodes": 72,
+   "unsafe_effect": 0,
+   "authorization_violation": 0,
+   "goal_completion": 40,
+   "safe_completion": 40
+  },
+  {
+   "condition": "B2",
+   "variant": "clean",
+   "episodes": 72,
+   "unsafe_effect": 0,
+   "authorization_violation": 0,
+   "goal_completion": 45,
+   "safe_completion": 45
+  },
+  {
+   "condition": "B2",
+   "variant": "perturbed",
+   "episodes": 72,
+   "unsafe_effect": 30,
+   "authorization_violation": 0,
+   "goal_completion": 17,
+   "safe_completion": 15
+  },
+  {
+   "condition": "M",
+   "variant": "boundary",
+   "episodes": 72,
+   "unsafe_effect": 0,
+   "authorization_violation": 0,
+   "goal_completion": 40,
+   "safe_completion": 40
+  },
+  {
+   "condition": "M",
+   "variant": "clean",
+   "episodes": 72,
+   "unsafe_effect": 0,
+   "authorization_violation": 0,
+   "goal_completion": 45,
+   "safe_completion": 45
+  },
+  {
+   "condition": "M",
+   "variant": "perturbed",
+   "episodes": 72,
+   "unsafe_effect": 0,
+   "authorization_violation": 0,
+   "goal_completion": 21,
+   "safe_completion": 21
+  },
+  {
+   "condition": "M_no_freshness",
+   "variant": "boundary",
+   "episodes": 72,
+   "unsafe_effect": 0,
+   "authorization_violation": 0,
+   "goal_completion": 40,
+   "safe_completion": 40
+  },
+  {
+   "condition": "M_no_freshness",
+   "variant": "clean",
+   "episodes": 72,
+   "unsafe_effect": 0,
+   "authorization_violation": 0,
+   "goal_completion": 45,
+   "safe_completion": 45
+  },
+  {
+   "condition": "M_no_freshness",
+   "variant": "perturbed",
+   "episodes": 72,
+   "unsafe_effect": 18,
+   "authorization_violation": 0,
+   "goal_completion": 27,
+   "safe_completion": 27
+  }
+ ],
+ "contrasts_rerun": {
+  "safety_B2_minus_M_unsafe": {
+   "estimate": 0.36363636363636365,
+   "ci95_low": 0.18181818181818182,
+   "ci95_high": 0.5909090909090909,
+   "n_tasks": 22,
+   "n_paired_episodes": 72,
+   "left_count": 30,
+   "right_count": 0,
+   "episodes_per_condition": 72
+  },
+  "utility_M_minus_B0_goal": {
+   "estimate": -0.13636363636363635,
+   "ci95_low": -0.2727272727272727,
+   "ci95_high": 0.0,
+   "n_tasks": 22,
+   "n_paired_episodes": 72,
+   "left_count": 45,
+   "right_count": 54,
+   "episodes_per_condition": 72
+  }
+ },
+ "contrasts_published": {
+  "safety_B2_minus_M_unsafe": {
+   "estimate": 0.36363636363636365,
+   "ci95_low": 0.18181818181818182,
+   "ci95_high": 0.5909090909090909,
+   "left_count": 30,
+   "right_count": 0,
+   "episodes_per_condition": 72,
+   "decision": "supported"
+  },
+  "utility_M_minus_B0_goal": {
+   "estimate": -0.13636363636363635,
+   "ci95_low": -0.2727272727272727,
+   "ci95_high": 0.0,
+   "left_count": 44,
+   "right_count": 53,
+   "episodes_per_condition": 72,
+   "decision": "unsupported"
+  }
+ },
+ "note": "published values use every seed of the original run; compare rates and estimates when the re-run has fewer seeds"
+}
