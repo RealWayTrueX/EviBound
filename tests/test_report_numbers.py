@@ -17,6 +17,7 @@ import build_report_numbers as report  # noqa: E402
 TEX = ROOT / 'report' / 'evibound_report.tex'
 
 
+@unittest.skipUnless(TEX.exists(), 'the course report is kept locally, not in the public repository')
 class ReportNumbersTest(unittest.TestCase):
     @classmethod
     def setUpClass(cls):

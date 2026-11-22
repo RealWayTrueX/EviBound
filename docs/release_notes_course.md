@@ -10,7 +10,7 @@ here changes a frozen file.
 
 | Deliverable of the research contract | Where |
 |---|---|
-| Report, six pages and a one-page appendix | [report/evibound_report.pdf](../report/evibound_report.pdf) |
+| Report, six pages and a one-page appendix | kept locally, not in the public repository |
 | Five-minute demo and its script | [demo/](../demo/README.md), [demo_walkthrough.md](demo_walkthrough.md) |
 | Versioned scenarios and prompts | `data/scenarios*/`, the frozen planner and recovery modules under `src/evibound/` |
 | Raw traces | one archive with a hash manifest on the data disk ([reproduction.md](reproduction.md), section 5); the episode fingerprints of both confirmatory runs are in `artifacts/` |
@@ -38,7 +38,7 @@ Every number above is in `artifacts/week8_main_results.json`.
 
 ```bash
 bash scripts/reproduce.sh                          # tests, corpus checkers, four freezes, scripted pipeline
-python3 scripts/build_report_numbers.py --check    # the report's numbers match the records
+python3 scripts/build_report_numbers.py --check    # with a local copy of report/: the report's numbers match the records
 bash scripts/reproduce.sh --traces DIR             # recompute the published numbers from the raw traces
 ```
 

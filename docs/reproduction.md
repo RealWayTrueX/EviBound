@@ -209,6 +209,12 @@ v3 holdout 种子 11 的 2,376 回合，共 21 分钟。约九成回合的首个
 
 ## 8. The course report / 课程报告
 
+The report itself is kept locally and is not in the public repository
+(`report/` is git-ignored). The commands below work with a local copy of
+`report/`; `tests/test_report_numbers.py` skips itself when it is absent.
+报告本身只保存在本地，不在公开仓库里（`report/` 已加入 .gitignore）；下面的命令需要本地的
+`report/` 目录，没有时 `tests/test_report_numbers.py` 会自动跳过。
+
 `report/evibound_report.pdf` is typeset from `report/evibound_report.tex`.
 The source contains no hand-typed result: `scripts/build_report_numbers.py`
 writes every number, both data tables and both data figures from the
