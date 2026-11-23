@@ -43,7 +43,19 @@ def _scenarios():
     return out
 
 
-@unittest.skipIf(shutil.which("node") is None, "node is not installed")
+def node_major():
+    """Major version of the installed node, or 0 when node is missing."""
+    exe = shutil.which("node")
+    if exe is None:
+        return 0
+    try:
+        version = subprocess.run([exe, "--version"], capture_output=True, text=True).stdout
+        return int(version.strip().lstrip("v").split(".")[0])
+    except (OSError, ValueError):
+        return 0
+
+
+@unittest.skipIf(node_major() < 21, "needs node 21 or newer (JSON.parse source access, see demo/README.md)")
 class DemoEngineMatchesPython(unittest.TestCase):
     @classmethod
     def setUpClass(cls):

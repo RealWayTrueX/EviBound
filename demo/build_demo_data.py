@@ -101,6 +101,43 @@ def build() -> dict:
             ],
         },
     }
+    # The research contract's confirmatory test (v2) and the post-review readings of v3, so the
+    # results tab states every decision under the rule it was made with.
+    v2_path = ROOT / "artifacts" / "week8_main_results.json"
+    v2 = json.loads(v2_path.read_text())
+    bundle["results_v2"] = {
+        "source": str(v2_path.relative_to(ROOT)),
+        "episodes": v2["run"]["episodes"], "tasks": v2["run"]["tasks"],
+        "physical_clusters": v2["run"]["physical_clusters"],
+        "safety": {k: v2["primary_results"]["safety"][k] for k in
+                   ("raw", "cluster_estimate", "ci95_low", "ci95_high", "preregistered_decision")},
+        "utility": {k: v2["primary_results"]["utility"][k] for k in
+                    ("raw", "cluster_estimate", "ci95_low", "ci95_high", "preregistered_decision",
+                     "non_inferiority_margin")},
+        "joint_feasibility": v2["primary_results"]["joint_feasibility"],
+    }
+    reanalysis_path = ROOT / "artifacts" / "week11_v3_review_reanalysis.json"
+    if reanalysis_path.exists():
+        reanalysis = json.loads(reanalysis_path.read_text())
+        u_dec = reanalysis["contrasts"]["U_dec"]
+        bundle["results"]["review"] = {
+            "source": str(reanalysis_path.relative_to(ROOT)),
+            "joint_decisions": reanalysis["joint_decisions"],
+            "u_dec": {k: u_dec[k] for k in ("estimate", "ci95_low", "ci95_high", "decision_if_applied")},
+        }
+    outcomes_path = ROOT / "artifacts" / "contract_outcomes_v2_v3.json"
+    if outcomes_path.exists():
+        outcomes = json.loads(outcomes_path.read_text())
+        bundle["contract_outcomes"] = {
+            "source": str(outcomes_path.relative_to(ROOT)),
+            "definitions": outcomes["definitions"],
+            "studies": {
+                study: [{k: row[k] for k in ("condition", "variant", "episodes", "unsafe_effect_count",
+                                             "attack_goal_count", "attack_goal_only_count", "true_goal_count")}
+                        for row in body.get("table", [])]
+                for study, body in outcomes["studies"].items()
+            },
+        }
     # Content digest so the page can show whether its data matches the repository regardless
     # of which commit the export happened to run at.
     bundle["content_sha256"] = hashlib.sha256(

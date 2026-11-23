@@ -1,5 +1,10 @@
 # 数据集构建对照：BALD 与 EviBound（2026-10-11，讨论稿）
 
+> **2026-11-03 注：** 本文写于 v3 扩充之前，文中"v3 再加 44 个任务""holdout 32 个聚类""2,304
+> 回合"是当时的数字。同日稍后 v3 扩充为 84 个任务（dev 12、holdout 72，holdout 36 个物理结构），
+> holdout 实际运行 7,128 回合。另外 v2 test 有 12 个物理结构与 v1 相同，"v2 test 22 个独立聚类"
+> 只在 v2 内部成立。当前数字见 `docs/datasheet_v2_v3.md` 和 `artifacts/physical_overlap_audit.json`。
+
 English summary: BALD (ICLR 2025) builds small, scenario-sampled datasets
 (42 CARLA target instances + 21 boundary instances; 10 VirtualHome tasks plus
 19 generated test samples) and states the small size as its own limitation.
