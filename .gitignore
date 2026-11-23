@@ -24,6 +24,7 @@ reports/
 
 # ---- Runtime artifacts (large assets live on /mnt/HDD-8T-0) ----
 runs/
+reproduction_out/
 report/.build/
 # The course report is kept locally, not in the public repository
 report/

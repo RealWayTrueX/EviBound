@@ -1,0 +1,24 @@
+{
+  "planners": [
+    {
+      "base_url": "http://127.0.0.1:8001/v1",
+      "model": "Qwen/Qwen2.5-7B-Instruct",
+      "name": "qwen2.5-7b",
+      "probe": {
+        "error": "<urlopen error [Errno 61] Connection refused>",
+        "ok": false
+      }
+    },
+    {
+      "base_url": "http://127.0.0.1:8002/v1",
+      "model": "Qwen/Qwen3-8B",
+      "name": "qwen3-8b",
+      "probe": {
+        "error": "<urlopen error [Errno 61] Connection refused>",
+        "ok": false
+      }
+    }
+  ],
+  "ready": false,
+  "schema": "evibound-v4-planner-preflight-v1"
+}

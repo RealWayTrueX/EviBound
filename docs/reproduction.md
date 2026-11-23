@@ -78,6 +78,34 @@ python3 scripts/summarize_rerun.py --study v2 --rerun out/seed_*.jsonl --output 
 | Hardware | 2 × NVIDIA RTX 4090 (24 GB), one GPU per run | `artifacts/environment_v2.json` |
 | Sampling | batch 8, seeds 11 / 22 / 33, batch seed derived from stage, seed and job ids | `src/evibound/planner.py` (frozen) |
 
+### v4 two-week core / 两周 v4 核心
+
+The v4 core uses only the Python standard library and the repository. It
+checks the preregistration freeze before producing holdout output:
+
+```bash
+python3 scripts/freeze_v4_prereg.py --approve RealWayTrueX --check
+python3 scripts/run_v4_core.py --check
+```
+
+The core writes `artifacts/v4_core_results.json`. Its A group contains 2,600
+holdout scenarios over 50 development and 200 holdout structures. C1 covers
+2,400 rate/safety-factor cases; C2 covers 7,200 expression/staleness cases.
+
+The SimuHome adapter requires an unmodified checkout at commit
+`83d28837b69f0cbf1bc02ed5334cb8b561a9d54d` and its public server:
+
+```bash
+python3 scripts/v4_simuhome_smoke.py \
+  --simuhome-root /path/to/SimuHome --base-url http://127.0.0.1:8000
+python3 scripts/run_v4_planner.py
+```
+
+The smoke script writes `artifacts/v4_simuhome_smoke.json`. The planner script
+probes the two OpenAI-compatible endpoints at ports 8001 and 8002 and writes
+`artifacts/v4_planner_preflight.json`; it never invents model rows when an
+endpoint is absent.
+
 `scripts/reproduce.sh` reads three optional variables instead of fixed paths:
 `EVIBOUND_DATA` (uses its `runs/`, `models/Qwen2.5-7B-Instruct` and
 `envs/runtime/bin/python` when present), `EVIBOUND_MODEL` and

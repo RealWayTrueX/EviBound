@@ -159,17 +159,21 @@ Frozen-boundary rules (non-negotiable):
       any new run. First report (Codex, 16 findings) triaged in
       `docs/review_response_2026-11-03.md`; further reviewer reports, if any,
       are triaged the same way.
-- [~] K2. v4 preregistration (models, conditions, corpus, decisions, J8
-      decision) frozen before any v4 holdout output. Draft:
+- [x] K2. Two-week v4 protocol, rules, source hashes and split frozen before
+      holdout output: `docs/v4_preregistration.md`,
+      `docs/design_v4_world.md`, `configs/v4_rules.json`, and
+      `artifacts/v4_prereg_freeze.json` (18 files). The longer TDSC draft
+      remains at
       `docs/v4_preregistration_draft.md` (Tier A: six conditions with
       Always_refresh as co-primary baseline, optional Tier B for the full
       guard × aid factorial; U_dec primary; Qwen3-8B and Llama-3.1-8B
       confirmatory, Qwen2.5-7B for continuity; 200 structures; an
       external-world arm; stop rules and a week-4 gate after review E2/E6);
-      waits for the owner decisions D1–D14 listed there.
-- [ ] K3. Owner decisions D1–D14 and the v4 world design
-      (`docs/design_v4_world.md`, rules R7+ signed off) before any v4 code
-      or corpus is generated.
+      it is not the protocol for the two-week run.
+- [x] K3. Owner choices from the two-week plan are recorded in the frozen
+      protocol: synthetic A is confirmatory, SimuHome is first, C1/C2 are the
+      required pressure tests, C3/C4 and PHYS-based falsification are optional,
+      and Qwen2.5-7B plus Qwen3-8B are the B-group planners.
 - [x] K4. Licence for code and data (review A-01) and `SAFETY.md` before any
       public release of the v4 artifact. Owner accepted the defaults on
       2026-11-03 (MIT for code, CC BY 4.0 for the synthetic corpora). Added
@@ -182,6 +186,21 @@ Frozen-boundary rules (non-negotiable):
       checks and keyboard shortcuts; exports the v2/v3 `checklist.csv` format
       plus a full JSON. Built on the frozen v3 corpus as a practice run; v4
       needs an adapter and its sampling rule.
+- [x] K6. EviBound-T core: append-only signed store, physical evidence
+      lifetime, three-valued short-circuit reread, nine comparison guards,
+      independent oracle, and A/C experiment runners under
+      `src/evibound/external_v4/`.
+- [x] K7. SimuHome G0: pinned commit
+      `83d28837b69f0cbf1bc02ed5334cb8b561a9d54d` ran offline and completed 10
+      QT4 feasible API smoke episodes with reset, reads, commands, scheduling,
+      clock advance and workflow status (`artifacts/v4_simuhome_smoke.json`).
+- [x] K8. Frozen core results: 50 dev / 200 holdout structures, 2,600 holdout
+      scenarios, zero SL static violations and zero clean/benign false blocks;
+      C1 and C2 passed (`artifacts/v4_core_results.json`,
+      `docs/v4_results_memo.md`).
+- [ ] K9. B-group Qwen runs. The strict planner harness and preflight exist,
+      but both planned endpoints were unreachable in this workspace and no
+      7B/8B weights are present. No model result is fabricated.
 
 ### L. Course closeout (Weeks 13-15; nothing here touches a frozen file)
 - [x] L1. Audit against the research contract and finishing plan
@@ -202,6 +221,16 @@ Frozen-boundary rules (non-negotiable):
       tag, trace archive, demo rehearsal, submission.
 
 ## Progress Log
+
+- 2026-11-24: two-week EviBound-T core completed and frozen. The 18-file SHA-256
+  freeze preceded the holdout. A group ran 2,600 holdout counterfactual
+  scenarios across nine guards; SL had zero static violations, zero clean and
+  benign false blocks, 1 mean read under context replay/forgery, and 5
+  fail-safe reads under transport freeze. C1 ran 2,400 rate scenarios with no
+  overshoot above the analytic bound; C2 ran 7,200 shape/staleness scenarios
+  and satisfied `SL <= MS <= AR` everywhere. SimuHome at the pinned commit
+  passed 10 QT4 G0 smoke episodes through the public API. The B-group preflight
+  found neither Qwen endpoint, so end-to-end model results remain pending.
 
 - 2026-10-10: A1-A2 done. v1 confounds reconfirmed from current files: perturbation
   type tied 1:1 to family (tamper<->reading/gentle_comfort/bright_ventilation;
