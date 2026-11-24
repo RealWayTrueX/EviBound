@@ -1290,6 +1290,8 @@ def render(data, body_only):
     template = TEMPLATE.read_text(encoding='utf-8')
     payload = json.dumps(data, ensure_ascii=False, separators=(',', ':')).replace('</', '<\\/')
     page = template.replace('/*__REVIEW_DATA__*/null', payload)
+    if data['meta']['corpus'] == 'v3_1':     # its own page title, so the two desks can be told apart
+        page = page.replace('<title>EviBound 语料审核台</title>', '<title>EviBound v3.1 语料核对台</title>', 1)
     if '/*__REVIEW_DATA__*/' in page or payload not in page:
         raise RuntimeError('template placeholder not found')
     if body_only:
