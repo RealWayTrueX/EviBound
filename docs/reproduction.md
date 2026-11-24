@@ -11,7 +11,7 @@ changes a frozen file or a frozen decision.
 
 | Level | Needs | Command | What it shows | Time |
 |---|---|---|---|---|
-| 1. Code and evidence chain | Python 3.10+ (node 21+ for two optional tests) | `bash scripts/reproduce.sh` | unit tests, corpus checkers, all four protocol freezes, and the full pipeline (runner → guard → oracle → analysis) with a scripted planner | about 1 min |
+| 1. Code and evidence chain | Python 3.10+ (node 21+ for two optional tests) | `bash scripts/reproduce.sh` | unit tests, corpus checkers, all five protocol freezes, the full pipeline (runner → guard → oracle → analysis) with a scripted planner, and the v3.1 records recomputed from the committed episode fingerprints (section 7.3) | about 2 min |
 | 2. Published numbers | level 1 + the raw traces | `bash scripts/reproduce.sh --traces DIR` | every primary number, count, interval, hash and decision of the v2 formal test and the v3 holdout, recomputed from the traces (23 checks), plus the contract-outcome table | about 1 min |
 | 3. Model re-run, original machine | level 2 + one 24 GB GPU + the pinned weights | `EVIBOUND_DATA=/path/to/data-disk bash scripts/reproduce.sh --gpu 0` | seed 11 of the v2 formal-test matrix (432 episodes) run again with the frozen runner and compared episode by episode; `--seeds "11 22 33"` runs the full matrix and `--v3-seeds "11"` adds the v3 holdout | 15 min to 2 h |
 | 4. Model re-run, another machine | a fresh GPU machine with internet (for example Google Colab, one GPU with at least 24 GB) | `bash scripts/reproduce_cloud.sh` | the same re-run on different hardware: pins the library versions, downloads and verifies the pinned model revision, runs the frozen runners, and reports the re-run beside the published results | about 1 h |
@@ -206,6 +206,61 @@ v3 holdout 种子 11 的 2,376 回合，共 21 分钟。约九成回合的首个
 主要对比结论全部相同：v2 安全假设成立（30 比 0，估计值和区间完全一致），效用假设不
 成立（−13.6 个百分点，同样完全一致）。完整守卫条件在两次运行中都没有出现不安全后果。
 重跑的逐回合指纹已提交，表中数字可以只靠仓库重新算出。
+
+### 7.3 The second extension, v3.1 (2026-11-24)
+
+The v3.1 study was run once, on the original machine. Its raw traces stay on
+the data disk and were not part of the trace bundle of 2026-11-10; what the
+repository holds is a fingerprint of every episode (executed writes, parsed
+plans, rejection reasons, kind of recovery turn, outcomes; no model text) and
+the records computed from them.
+
+| Run | Episodes | Fingerprints in `artifacts/` | SHA-256 of the raw trace (in the fingerprint header) |
+|---|---:|---|---|
+| Development, round 1 (v3 corpus; v3.1 development split) | 7,560; 4,320 | `v3_1_dev_d1_v3_fingerprints.json.gz`, `v3_1_dev_d1_fingerprints.json.gz` | in each file |
+| Development, round 2 | 3,780; 2,160 | `v3_1_dev_d2_v3_fingerprints.json.gz`, `v3_1_dev_d2_fingerprints.json.gz` | in each file |
+| Confirmatory run | 30,132 | `v3_1_holdout_fingerprints.json.gz` | `230cbc02de3b933b…` |
+| Planner characters (exploratory) | 13,392 each | `v3_1_role_<name>_fingerprints.json.gz` | in each file |
+
+What level 1 checks for v3.1 (step 4b of `scripts/reproduce.sh`, and the unit
+tests):
+
+```bash
+python3 scripts/check_scenarios_v3_1.py            # 420 tasks, every label recomputed, every task played through the simulator
+python3 scripts/freeze_v3_1_prereg.py --verify     # the 41 frozen files are unchanged
+python3 scripts/v3_1_dev_record.py --check         # every development number the plan quotes
+python3 scripts/analyze_v3_1.py --stage holdout --input artifacts/v3_1_holdout_fingerprints.json.gz \
+    --record artifacts/v3_1_holdout_results.json --doc docs/v3_1_results.md --check
+python3 scripts/v3_1_results_tables.py --check     # further tables and the summary's sentences
+python3 scripts/v3_1_roles.py --check              # the planner characters
+```
+
+What was checked when the run was recorded:
+
+- **The run used the frozen plan and code.** The run directory holds the
+  commit (`d7c8546`), the hashes of the ten source files it imported and a
+  copy of the freeze record. The hashes equal the frozen ones and the copy is
+  identical to `artifacts/v3_1_prereg_freeze.json`.
+- **Fingerprints against raw traces.** The frozen analysis script was run on
+  the experiment machine from the raw trace and here from the fingerprints.
+  For the confirmatory run the two records are identical in every field
+  except the name and hash of the input file. For the planner characters all
+  28 contrasts agree. The oracle rescored the raw traces without a
+  disagreement.
+- **The engine against v3.** With the v3 corpus, the v3.1 engine reproduced
+  the frozen v3 holdout run where it should: 648 of 648 first responses
+  identical, and every episode without a recovery turn identical
+  (`python3 scripts/v3_1_replication_check.py --dev-v3 artifacts/v3_1_dev_d1_v3_fingerprints.json.gz`).
+
+Not done: a re-run of v3.1 on a second machine. On the original machine the
+confirmatory run is `bash scripts/run_v3_1.sh holdout <gpu> <tag>` (about two
+and a half hours on one RTX 4090); the script refuses to start without the
+freeze and refuses a changed set of conditions.
+
+v3.1 只在原机器上跑了一次。原始轨迹留在数据盘上；仓库里保存的是每个回合的指纹（执行的写入、解析出的计划、拒绝原因、
+恢复回合类型、结局，不含模型输出文本）和由它们算出的记录。一键检查的第 4b 步会从这些指纹重算开发实验、正式实验和角色对照的
+全部数字。记录结果时核对过三件事：实验用的确实是冻结的计划和代码；实验机从原始轨迹算出的结果与这里从指纹算出的结果除输入
+文件名外逐字段相同；用 v3 语料时，v3.1 引擎与冻结的 v3 实验首次回答 648/648 逐字一致。v3.1 没有在第二台机器上重跑。
 
 ## 8. The course report / 课程报告
 

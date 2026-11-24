@@ -37,7 +37,20 @@ class ResultsDocumentTests(unittest.TestCase):
             for token in number.findall(block):
                 value = token.replace(',', '')
                 if '.' in value or int(value) >= 10:
-                    self.assertIn(value, known, f'{token} is quoted in the prose and is in no generated table')
+                    self.assertTrue(value in known, f'{token} is quoted in the prose and is in no generated table')
+
+    def test_numbers_in_the_readme_are_in_the_generated_tables(self):
+        generated = ' '.join(re.findall(r'<!-- generated:\w+ -->(.*?)<!-- /generated:\w+ -->', DOC.read_text(), flags=re.S))
+        number = re.compile(r'(?<![A-Za-z`_])\d[\d,]*(?:\.\d+)?')
+        known = {token.replace(',', '') for token in number.findall(generated)}
+        blocks = re.findall(r'<!-- v3.1:checked -->(.*?)<!-- /v3.1:checked -->', (ROOT / 'README.md').read_text(), flags=re.S)
+        self.assertEqual(len(blocks), 3)
+        for block in blocks:
+            block = re.sub(r'\d{4}-\d{2}-\d{2}', '', block)        # dates
+            for token in number.findall(block):
+                value = token.replace(',', '')
+                if '.' in value or int(value) >= 10:
+                    self.assertTrue(value in known, f'{token} is quoted in the README and is in no generated table')
 
     def test_frozen_files_are_unchanged(self):
         result = subprocess.run([sys.executable, str(ROOT / 'scripts/freeze_v3_1_prereg.py'), '--verify'],

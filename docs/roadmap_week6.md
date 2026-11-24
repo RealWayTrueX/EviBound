@@ -201,6 +201,33 @@ Frozen-boundary rules (non-negotiable):
 - [ ] L6. Owner decisions: read and approve the report, merge PR #4, release
       tag, trace archive, demo rehearsal, submission.
 
+### M. Second extension: v3.1 feedback ladder (from 2026-11-24; outside the contract's hypothesis; no frozen v1-v3 file is touched)
+- [x] M1. Attainability analysis of the frozen v3 holdout: for every task an
+      exhaustive search gives the best end state the rules and the scope
+      allow (`docs/v3_1_layer1_attainability.md`, post hoc).
+- [x] M2. Related work checked against arXiv and the question narrowed to
+      what a guard should say after it blocks (`docs/related_work_2026-11.md`).
+- [x] M3. Feedback ladder and engine: the guard is unchanged, only the one
+      message after a refusal varies (`src/evibound/recovery_v3_1.py`,
+      `src/evibound/runner_v3_1.py`); every v3 condition stays byte-identical.
+- [x] M4. Corpus v3.1: 420 new physical structures, 372 holdout (276 core
+      tasks, 96 attack-battery tasks) and 48 development, generated and
+      checked by programs (`data/scenarios_v3_1/`); the owner's review
+      follows the run (owner decision, 2026-11-24).
+- [x] M5. Development runs d1 and d2 (17,820 episodes) and the rewritten plan:
+      claims C1 to C6 replace the draft's H1 to H6, which stay as secondary
+      contrasts (`artifacts/v3_1_dev_record.json`).
+- [x] M6. Freeze, 2026-11-24 20:20:43 UTC (`artifacts/v3_1_prereg_freeze.json`).
+- [x] M7. Confirmatory run, 2026-11-24 20:21 to 22:50 UTC (30,132 episodes,
+      one process, no restart): five of six claims supported, C3 not
+      supported (`docs/v3_1_results.md`, `artifacts/v3_1_holdout_results.json`).
+      Exploratory arm with three planner characters in section 9 of the
+      results document.
+- [ ] M8. Owner: read the frozen plan and the results; check the corpus on
+      the review desk (a rejected task enters a sensitivity analysis and is
+      not replaced); decide on the forged-feedback attack arm and on other
+      planner models.
+
 ## Progress Log
 
 - 2026-10-10: A1-A2 done. v1 confounds reconfirmed from current files: perturbation
@@ -509,3 +536,37 @@ Frozen-boundary rules (non-negotiable):
     erratum is in `docs/reproduction.md`, section 7.1. No primary result is
     affected.
   - Open, owner: L5 exports and L6.
+
+- 2026-11-24: second extension v3.1 (section M), outside the contract's
+  hypothesis; no frozen v1-v3 file was touched. Completion criterion: a plan
+  frozen before any holdout output exists, one confirmatory run under it,
+  every reported number derived from committed episode fingerprints, and
+  unsupported claims reported as such.
+  - Question: the guard is fixed; what should the one message after a
+    refusal contain? Seven messages from the bare verdict to a sequence of
+    writes; measures from an exhaustive attainability search (exact target,
+    unrequested change).
+  - Development runs d1 and d2 (17,820 episodes on the v3 corpus and the
+    development split) changed the plan: the first draft's claims H1 to H4
+    would probably not have held in their first form on the new tasks. The
+    plan was rewritten as claims C1 to C6 and frozen at 20:20:43 UTC
+    (`artifacts/v3_1_prereg_freeze.json`).
+  - Confirmatory run: 372 new tasks, 9 conditions, 30,132 episodes. C1, C2,
+    C4, C5 and C6 supported; C3 not supported, with estimates below zero. A
+    list of legal writes harms in either wording; a review of the planner's
+    own plan does not, and ends in the attainable target slightly more often
+    than the reason alone. No unsafe effect in 23,436 evidence-bound
+    episodes. The record from the committed fingerprints equals the record
+    computed on the experiment machine from the raw trace.
+  - Process, stated as it was: the owner chose the direction and instructed
+    the assistant to carry the study through; an AI assistant wrote the plan,
+    froze it and ran it; the owner had seen a summary of the revised plan and
+    not its full text; the corpus is machine-generated and its human review
+    follows the run (`SAFETY.md`, section 5).
+  - Tooling: the experiment machine is driven from a stored terminal command
+    and a step file (`scripts/v3_1_step.sh`, `scripts/v3_1_step.txt`); each
+    finished run pushes its small outputs to the branch `claude/v3-1-results`.
+    The two planner servers of the v4 work were stopped before the runs; the
+    commands to start them again are recorded in the local handoff.
+  - Open, owner: M8; whether to restore the two v4 planner servers; reading
+    and approving the updated course report.

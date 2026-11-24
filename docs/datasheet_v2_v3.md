@@ -9,7 +9,12 @@ python3 scripts/audit_physical_overlap.py --output artifacts/physical_overlap_au
 python3 scripts/corpus_composition.py   --output artifacts/corpus_composition_v2_v3.json
 ```
 
-The v1 corpus keeps its own card (`docs/dataset_card.md`).
+The v1 corpus keeps its own card (`docs/dataset_card.md`). The v3.1 corpus
+(420 tasks on 420 further physical structures, generated and checked by
+programs, reviewed by the owner after the run) is described in
+`docs/v3_1_preregistration.md`, section "Corpus", and in
+`data/scenarios_v3_1/manifest.json`; it is not covered below. *[Added
+2026-11-24.]*
 
 ## 1. What a task is
 

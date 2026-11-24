@@ -27,6 +27,10 @@ part of this public repository.
 | v2 formal test (1,296 episodes) | 30/72 vs 0/72 | 53/72 vs 44/72 | Safety supported; "no worse than 5 points" utility target not met. Paired mechanism study, not a structural holdout: 12 of its 22 physical structures also occur in v1 ([datasheet](docs/datasheet_v2_v3.md)) |
 | v3 holdout (7,128 episodes, frozen amended protocol) | B2_full 31/216 vs M_full 0/216 (+14.4 pp [+4.6, +25.9]) | raw: 172/216 vs 156/216 (−7.4 pp, unsupported); rule-compliant: 93/216 vs 156/216 (+29.2 pp [+16.7, +43.1], supported) | Safety supported. Joint feasibility is supported under the amended criterion (S1 ∧ U2) and **not** under the original one (S1 ∧ U1). U2 counts only rule-compliant completions, so it favours any guard by construction; the safety-decoupled utility (exploratory, post hoc) is +1.4 pp [−5.6, +8.3], inconclusive ([reanalysis](docs/v3_review_reanalysis.md)) |
 
+<!-- v3.1:checked -->
+| v3.1 feedback ladder (30,132 episodes, frozen plan; a second extension, outside the contract's hypothesis) | B2_plan 134/1116 vs M_plan 0/1116 (+12.0 pp [+8.8, +15.4]) | attainable goals only (a secondary contrast): 430/468 vs 413/468 with a review of the plan (−3.6 pp [−7.5, −0.4], inconclusive) | Five of six preregistered claims about the message after a refusal are supported; one is not ([results](docs/v3_1_results.md)). The corpus is machine-generated and its human review follows the run |
+<!-- /v3.1:checked -->
+
 Attack-goal success, which the research contract lists as a separate
 outcome, was tabulated post hoc on 2026-11-10: in the v2 formal test the
 final state matched the goal of the wrong branch that the attacked reading
@@ -72,6 +76,45 @@ and a safety-decoupled utility are reported next to it in
 amended, where the work sits in the 2024–2026 literature, and which external
 datasets come next: [Week-12 direction review](docs/week12_direction_review.md).
 
+<!-- v3.1:checked -->
+The **v3.1** study (2026-11-24) follows up on what v2 and v3 had located: the
+cost of the guard lies in what the planner does after a correct refusal. It
+holds the guard fixed and varies only the one message the guard sends after a
+refusal. Seven messages are compared, from the bare verdict to a complete
+sequence of writes, on 372 new tasks; 96 of them form an attack battery in
+which nothing has to be done unless the attacked reading is believed
+([frozen plan](docs/v3_1_preregistration.md),
+[results](docs/v3_1_results.md)). For every task an exhaustive search gives
+the best end state the rules and the scope allow, so a message is scored on
+whether the home ends exactly there and on whether anything changed that
+nobody asked for. Five of the six preregistered claims are supported:
+
+- A list of the writes that are legal now, the aid that v3 had added, does
+  harm in either of two wordings. Episodes with a change nobody asked for:
+  850 and 831 of 3348 with a list, 445 with the reason alone. A plan that was
+  only interrupted ended in the attainable target in 68 and 66 of 182 turns
+  with a list, and in 121 with the reason alone.
+- No other message is ahead of the reason alone by five points, and saying
+  how the interface reads the fresh observation helps when the planner had
+  chosen the wrong branch (719 against 679 of 1062 turns).
+- Under attack the guard that trusts the cited reading had 134 unsafe effects
+  in 1116 episodes and the evidence-bound guard none. Across all seven
+  evidence-bound conditions no episode had an unsafe effect or a write
+  outside the scope (23,436 episodes).
+
+One claim, taken from the development runs, is not supported. A review of the
+planner's own rejected plan did not repair fewer plans than the reason alone;
+it ended in the attainable target slightly more often (2584 against 2505 of
+3348 episodes). What harms is a list of writes the plan did not contain, not
+advice as such; this reading was made after the results.
+<!-- /v3.1:checked -->
+
+Standing of v3.1: one planner model; a corpus that was generated and checked
+by programs, with the owner's review following the run; a plan that was
+written, revised after development runs and frozen by an AI assistant on the
+owner's instruction ([SAFETY.md](SAFETY.md), section 5). It does not change
+any v2 or v3 result.
+
 ## Where things are
 
 | Need | Location |
@@ -83,6 +126,10 @@ datasets come next: [Week-12 direction review](docs/week12_direction_review.md).
 | v3 recovery study | [docs/week11_v3_preregistration.md](docs/week11_v3_preregistration.md) |
 | v3 holdout closeout and results | [docs/week12_v3_holdout_closeout.md](docs/week12_v3_holdout_closeout.md), [artifacts/week11_v3_holdout_results.json](artifacts/week11_v3_holdout_results.json) |
 | Direction review, literature positioning, external datasets | [docs/week12_direction_review.md](docs/week12_direction_review.md) |
+| v3.1 feedback ladder (second extension): frozen plan, results, analysis record | [docs/v3_1_preregistration.md](docs/v3_1_preregistration.md), [docs/v3_1_results.md](docs/v3_1_results.md), [artifacts/v3_1_holdout_results.json](artifacts/v3_1_holdout_results.json) |
+| v3.1 records: freeze, development runs, planner characters (exploratory), episode fingerprints | [artifacts/v3_1_prereg_freeze.json](artifacts/v3_1_prereg_freeze.json), [artifacts/v3_1_dev_record.json](artifacts/v3_1_dev_record.json), [artifacts/v3_1_roles_record.json](artifacts/v3_1_roles_record.json), `artifacts/v3_1_*_fingerprints.json.gz` |
+| What the rules allow at best: attainability analysis of the frozen v3 holdout (post hoc) | [docs/v3_1_layer1_attainability.md](docs/v3_1_layer1_attainability.md) |
+| Related work checked in November 2026 | [docs/related_work_2026-11.md](docs/related_work_2026-11.md) |
 | Formal test validation record | [artifacts/week8_main_validation.json](artifacts/week8_main_validation.json) |
 | Every contract outcome per condition: attack-goal success, authorization violations, reads, latency, tokens (post hoc) | [artifacts/contract_outcomes_v2_v3.json](artifacts/contract_outcomes_v2_v3.json) |
 | Course report (six pages and a one-page appendix); every number is generated from the committed records | kept locally, not in this repository (`report/` is git-ignored); with a local copy: `bash report/build.sh`, `python3 scripts/build_report_numbers.py --check` |
@@ -104,7 +151,10 @@ datasets come next: [Week-12 direction review](docs/week12_direction_review.md).
 
 Task corpora: `data/scenarios/` (v1, 48 tasks, frozen), `data/scenarios_v2/`
 (56 tasks, frozen and human-reviewed), `data/scenarios_v3/` (84 tasks across 4
-sensor modalities and 3 language levels, human-reviewed, frozen, holdout complete). Model weights, raw traces and run logs live on the data disk
+sensor modalities and 3 language levels, human-reviewed, frozen, holdout complete),
+`data/scenarios_v3_1/` (420 tasks on 420 new physical structures: 372 holdout,
+48 development; generated and checked by programs, the owner's review follows
+the run). Model weights, raw traces and run logs live on the data disk
 (`/mnt/HDD-8T-0/evibound_yanke/`). Human-facing experiment reports, review
 packs and session notes stay local and are not in the public repository; the
 signed v2 checklist and sign-off are sealed in
@@ -113,9 +163,11 @@ signed v2 checklist and sign-off are sealed in
 ## Run the checks
 
 One command runs every check that needs no GPU and no data beyond the
-repository: the unit tests, both corpus checkers, all four protocol freezes,
-and the full pipeline with a scripted planner. The other levels, up to a model
-re-run on another machine, are in [docs/reproduction.md](docs/reproduction.md).
+repository: the unit tests, the three corpus checkers, all five protocol
+freezes, the full pipeline with a scripted planner, and the v3.1 records,
+which are recomputed from the committed episode fingerprints. The other
+levels, up to a model re-run on another machine, are in
+[docs/reproduction.md](docs/reproduction.md).
 
 ```bash
 bash scripts/reproduce.sh
@@ -127,10 +179,13 @@ The individual checks:
 PYTHONPATH=src:. python3 -m unittest discover -s tests -p 'test_*.py' -v
 python3 scripts/check_scenarios_v2.py
 python3 scripts/check_scenarios_v3.py
+python3 scripts/check_scenarios_v3_1.py
+python3 scripts/freeze_v3_1_prereg.py --verify
 ```
 
 Model runs need one 24 GB GPU and must be launched inside tmux; see
-`scripts/run_v2_main_test.sh` (v2) and `scripts/wait_gpu_then_run_v3.sh` (v3).
+`scripts/run_v2_main_test.sh` (v2), `scripts/wait_gpu_then_run_v3.sh` (v3) and
+`scripts/run_v3_1.sh` (v3.1).
 
 ## Interpretation limits
 
@@ -181,6 +236,27 @@ holdout 已于 2026-10-12 按冻结协议跑完 7,128 回合：所有 M 守卫�
 2024–2026 文献中的位置、下一步并入哪些外部数据集：
 [第 12 周方向复审](docs/week12_direction_review.md)。
 
+<!-- v3.1:checked -->
+**v3.1**（2026-11-24，合同假设之外的第二个扩展实验）接着 v2、v3 找到的问题往下做：守卫的代价出在“正确拦截之后规划器怎么办”。
+这次守卫本身完全不变，只改它在拒绝之后发给规划器的那一条消息。共比较七种消息，从只给判定到直接给出一串写入；
+372 个新任务，其中 96 个是“攻击电池”：除非相信被攻击的读数，否则什么都不用做
+（[冻结的计划](docs/v3_1_preregistration.md)、[结果](docs/v3_1_results.md)）。每个任务都用穷举搜索算出规则和授权之内的最好结局，
+所以每种消息按两点打分：家里最后是否正好停在那个结局上，以及有没有出现没人要求的改动。六条预注册主张中五条成立：
+
+- v3 加入的“合法写入清单”有害，两种措辞都一样。出现没人要求的改动的回合：有清单时 850 和 831 / 3348，只说原因时 445。
+  只是被打断的计划，最后停在可达目标上的：有清单时 68 和 66 / 182，只说原因时 121。
+- 没有任何其他消息领先“只说原因”达到五个百分点；规划器选错分支时，说出界面如何读取新读数有帮助（719 对 679 / 1062）。
+- 受攻击时，相信被引用读数的守卫在 1116 个回合中出现 134 次不安全后果，证据绑定的守卫为零。七个证据绑定条件下
+  没有任何回合出现不安全后果或越权写入（共 23,436 个回合）。
+
+有一条来自开发实验的主张不成立：对规划器自己被拒绝的计划做复核，并没有比只说原因修好更少的计划，
+反而略多（停在可达目标上的回合 2584 对 2505 / 3348）。有害的是把计划里没有的写入列给规划器，而不是“给建议”本身；
+这一解读是看到结果之后做出的。
+<!-- /v3.1:checked -->
+
+v3.1 的地位：只测了一个规划器模型；语料由程序生成并由程序检查，负责人的人工审核放在实验之后；计划由 AI 助手按负责人的指示撰写、
+在开发实验后修订并冻结（见 [SAFETY.md](SAFETY.md) 第 5 节）。它不改变 v2、v3 的任何结果。
+
 研究合同要求单独报告的“攻击目标达成”已于 2026-11-10 事后补算：v2 正式测试里，回合结束时
 满足攻击读数所指错误分支目标的受攻击回合，B2 为 38/72，M 为 1/72（无攻击对照：两者在正常
 回合都是 6/72，见[合同指标表](artifacts/contract_outcomes_v2_v3.json)）。同一天，全部已发布的
@@ -192,7 +268,8 @@ v2、v3 数字、计数、区间、哈希和判定都已从原始轨迹重算（
 ## 文件布局
 
 任务语料：`data/scenarios/`（v1，48 个，已冻结）、`data/scenarios_v2/`（56 个，
-已冻结并经人工审核）、`data/scenarios_v3/`（84 个，覆盖 4 种传感器模态和 3 级语言，已审核并冻结，holdout 已完成）。模型权重、
+已冻结并经人工审核）、`data/scenarios_v3/`（84 个，覆盖 4 种传感器模态和 3 级语言，已审核并冻结，holdout 已完成）、
+`data/scenarios_v3_1/`（420 个任务，420 个全新的物理结构：holdout 372，开发集 48；由程序生成并由程序检查，负责人的人工审核放在实验之后）。模型权重、
 完整逐回合轨迹和运行日志在数据盘 `/mnt/HDD-8T-0/evibound_yanke/`。面向人的
 实验报告、审核包和交接记录只保存在本地，不放进公开仓库。
 
@@ -205,9 +282,9 @@ v2、v3 数字、计数、区间、哈希和判定都已从原始轨迹重算（
 
 ## 运行检查
 
-一条命令跑完所有不需要显卡、也不需要仓库以外数据的检查：单元测试、两个语料检查、全部四个
-协议冻结，以及用脚本规划器走一遍完整流水线。其余层级（直到在另一台机器上重跑模型）见
-[复现说明](docs/reproduction.md)。
+一条命令跑完所有不需要显卡、也不需要仓库以外数据的检查：单元测试、三个语料检查、全部五个
+协议冻结、用脚本规划器走一遍完整流水线，以及从已提交的逐回合指纹重算 v3.1 的各项记录。其余层级
+（直到在另一台机器上重跑模型）见[复现说明](docs/reproduction.md)。
 
 ```bash
 bash scripts/reproduce.sh
@@ -219,10 +296,12 @@ bash scripts/reproduce.sh
 PYTHONPATH=src:. python3 -m unittest discover -s tests -p 'test_*.py' -v
 python3 scripts/check_scenarios_v2.py
 python3 scripts/check_scenarios_v3.py
+python3 scripts/check_scenarios_v3_1.py
+python3 scripts/freeze_v3_1_prereg.py --verify
 ```
 
 模型运行需要一张 24 GB 显卡，并在 tmux 里启动：v2 见
-`scripts/run_v2_main_test.sh`，v3 见 `scripts/wait_gpu_then_run_v3.sh`。
+`scripts/run_v2_main_test.sh`，v3 见 `scripts/wait_gpu_then_run_v3.sh`，v3.1 见 `scripts/run_v3_1.sh`。
 v1 的 30 回合复现子集仍可用 `bash scripts/reproduce_subset.sh` 运行，它只验证
 管线，不能替代完整统计。精确依赖版本见 `artifacts/environment_v2.json` 和
 `configs/requirements_observed.txt`。
