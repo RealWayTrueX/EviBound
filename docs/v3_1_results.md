@@ -78,6 +78,17 @@ so a row holds the same episodes in every column.
 <!-- generated:kinds -->
 <!-- /generated:kinds -->
 
+### The same message, sampled twice
+
+Descriptive, not planned. Outside turns of the kind `reselect`, `M_recover`
+and `M_reading` send the same message, byte for byte; the two answers are
+sampled separately. The table counts how often the two episodes then ran the
+same writes. What differs there is sampling alone, which gives a scale for
+reading a difference between two levels.
+
+<!-- generated:twice -->
+<!-- /generated:twice -->
+
 ### The claims of the first draft
 
 Written before any v3.1 run and replaced after the development runs (see the

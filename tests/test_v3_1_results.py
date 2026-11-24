@@ -43,6 +43,15 @@ class ResultsDocumentTests(unittest.TestCase):
                                 capture_output=True, text=True, cwd=ROOT)
         self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
         record = json.loads(RECORD.read_text())
+        # the descriptive table on identical messages covers the turns of the kinds table
+        rows = v3_1_results_tables.lib.read_fingerprints(HOLDOUT)
+        v3_1_results_tables.lib.annotate(rows, v3_1_results_tables.lib.load_tasks(ROOT / 'data/scenarios_v3_1/holdout.jsonl'))
+        pairs = v3_1_results_tables.twice(rows)
+        for kind, cell in pairs.items():
+            planned = record['kinds']['rows'][kind]['by_condition']
+            self.assertEqual((cell['turns'], cell['exact_reason'], cell['exact_reading']),
+                             (planned['M_recover']['n'], planned['M_recover']['exact_target'],
+                              planned['M_reading']['exact_target']), kind)
         totals = v3_1_results_tables.totals(record)
         self.assertEqual(sorted(totals), sorted(V31_CONDITIONS))
         for condition, total in totals.items():

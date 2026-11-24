@@ -1,13 +1,17 @@
 #!/usr/bin/env python3
-"""Two more tables for the v3.1 results document, built from the committed analysis record.
+"""Three more tables for the v3.1 results document.
 
 The frozen analysis script writes the tables its plan names. Two things the plan promises to
 report always are easier to read in tables of their own: every condition over all tasks (exact
 target, unrequested change, unsafe effect), and the raw completion of the unguarded run against
-the ceiling. This script only rearranges numbers of artifacts/v3_1_holdout_results.json; it runs
-no analysis and reads no episode.
+the ceiling. Both only rearrange numbers of artifacts/v3_1_holdout_results.json.
 
-  python scripts/v3_1_results_tables.py            # refresh the two tables in docs/v3_1_results.md
+The third table is descriptive and was not planned: outside turns of the kind `reselect`, the
+levels `M_recover` and `M_reading` send the same message, byte for byte, and their answers are
+sampled separately. How often the two then end differently shows how much of a difference
+between two levels is sampling alone. It is counted from the committed episode fingerprints.
+
+  python scripts/v3_1_results_tables.py            # refresh the tables in docs/v3_1_results.md
   python scripts/v3_1_results_tables.py --check    # fail if they are stale
 """
 import argparse
@@ -23,6 +27,8 @@ import v3_1_lib as lib  # noqa: E402
 from evibound.recovery_v3_1 import V31_CONDITIONS  # noqa: E402
 
 RECORD = ROOT / 'artifacts/v3_1_holdout_results.json'
+FINGERPRINTS = ROOT / 'artifacts/v3_1_holdout_fingerprints.json.gz'
+SAME_MESSAGE = ('interrupted', 'revise', 'empty', 'no review (malformed output and the like)')
 DOC = ROOT / 'docs/v3_1_results.md'
 VARIANTS = (('clean', 'clean'), ('boundary', 'boundary'), ('perturbed', 'attacked'))
 
@@ -44,11 +50,31 @@ def totals(record):
     return out
 
 
+def twice(rows):
+    """Recovery turns under `M_recover` and `M_reading`, by kind: how often the executed writes are the same."""
+    cells = {}
+    for row in rows:
+        if row['condition'] in ('M_recover', 'M_reading'):
+            cells.setdefault((row['task_id'], row['variant'], row['seed']), {})[row['condition']] = row
+    out = {}
+    for pair in cells.values():
+        a, b = pair['M_recover'], pair['M_reading']
+        if not a.get('trigger'):
+            continue
+        kind = a.get('form') or SAME_MESSAGE[-1]
+        cell = out.setdefault(kind, {'turns': 0, 'same_writes': 0, 'exact_reason': 0, 'exact_reading': 0})
+        cell['turns'] += 1
+        cell['same_writes'] += a['writes'] == b['writes']
+        cell['exact_reason'] += bool(a['metrics']['exact_target'])
+        cell['exact_reading'] += bool(b['metrics']['exact_target'])
+    return out
+
+
 def share(count, n):
     return f'{count} ({100 * count / n:.1f}%)'
 
 
-def blocks(record):
+def blocks(record, episodes=None):
     T = lib.table
     order = [c for c in V31_CONDITIONS if c in record['design']['conditions']]
     total = totals(record)
@@ -77,6 +103,19 @@ def blocks(record):
     out['ceiling'] = T(['Variant', '`B0`: goal reached, core tasks', 'of these without a violation', 'with a violation',
                         'Ceiling: episodes whose whole goal is attainable', '`B0` on those: goal reached',
                         '`M_recover` on those: goal reached'], rows)
+    if episodes is not None:
+        pairs = twice(episodes)
+        same = {k: sum(pairs.get(kind, {}).get(k, 0) for kind in SAME_MESSAGE)
+                for k in ('turns', 'same_writes', 'exact_reason', 'exact_reading')}
+        table = [[kind, 'the same', v['turns'], share(v['same_writes'], v['turns']), v['turns'] - v['same_writes'],
+                  v['exact_reason'], v['exact_reading']] for kind in SAME_MESSAGE if (v := pairs.get(kind))]
+        table.append(['all four', 'the same', same['turns'], share(same['same_writes'], same['turns']),
+                      same['turns'] - same['same_writes'], same['exact_reason'], same['exact_reading']])
+        if (v := pairs.get('reselect')):
+            table.append(['reselect', 'different', v['turns'], share(v['same_writes'], v['turns']),
+                          v['turns'] - v['same_writes'], v['exact_reason'], v['exact_reading']])
+        out['twice'] = T(['Kind of recovery turn', 'Message of `M_recover` and `M_reading`', 'Turns',
+                          'Same executed writes', 'Different', 'Exact target, `M_recover`', 'Exact target, `M_reading`'], table)
     return out
 
 
@@ -85,13 +124,15 @@ def main():
     parser.add_argument('--check', action='store_true')
     args = parser.parse_args()
     record = json.loads(RECORD.read_text())
+    episodes = lib.read_fingerprints(FINGERPRINTS)
+    lib.annotate(episodes, lib.load_tasks(ROOT / 'data/scenarios_v3_1/holdout.jsonl'))    # adds the outcome measures
     doc = DOC.read_text()
-    fresh = lib.refresh_blocks(doc, blocks(record))
+    fresh = lib.refresh_blocks(doc, blocks(record, episodes))
     if args.check:
-        print('the two extra tables are current' if fresh == doc else f'{DOC.relative_to(ROOT)} has stale extra tables')
+        print('the extra tables are current' if fresh == doc else f'{DOC.relative_to(ROOT)} has stale extra tables')
         return 0 if fresh == doc else 1
     DOC.write_text(fresh)
-    print(json.dumps({'document': str(DOC.relative_to(ROOT)), 'tables': ['totals', 'ceiling']}))
+    print(json.dumps({'document': str(DOC.relative_to(ROOT)), 'tables': ['totals', 'ceiling', 'twice']}))
     return 0
 
 
