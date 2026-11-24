@@ -155,11 +155,20 @@ publish() {
       >/dev/null 2>"$LOG_DIR/commit_error.txt" || say "COMMIT FAILED: $(head -2 "$LOG_DIR/commit_error.txt" | tr '\n' ' ' | cut -c1-160)"
   fi
   if [ -n "${V31_NO_PUSH:-}" ]; then say "push skipped (V31_NO_PUSH)"; return 0; fi
-  if timeout 60 git -C "$OUT" push -q -f origin claude/v3-1-results >/dev/null 2>"$LOG_DIR/push_error.txt"; then
-    say "published $(git -C "$OUT" rev-parse --short HEAD) to claude/v3-1-results"
-  else
-    say "PUSH FAILED: $(head -2 "$LOG_DIR/push_error.txt" | tr '\n' ' ' | cut -c1-160)"
-  fi
+  # Push with whatever access this account already has: the remote as configured, then the same
+  # repository over SSH. No prompt is answered and no credential file is read.
+  local url ssh_url target
+  url="$(git -C "$OUT" remote get-url origin)"
+  ssh_url="$(printf '%s' "$url" | sed -E 's#^https://github.com/#git@github.com:#')"
+  for target in "$url" "$ssh_url"; do
+    if GIT_TERMINAL_PROMPT=0 GIT_SSH_COMMAND='ssh -o BatchMode=yes -o ConnectTimeout=15' \
+        timeout 90 git -C "$OUT" push -q -f "$target" claude/v3-1-results >/dev/null 2>"$LOG_DIR/push_error.txt"; then
+      say "published $(git -C "$OUT" rev-parse --short HEAD) to claude/v3-1-results"
+      return 0
+    fi
+    [ "$target" = "$ssh_url" ] && break
+  done
+  say "PUSH FAILED: $(head -2 "$LOG_DIR/push_error.txt" | tr '\n' ' ' | cut -c1-160); outputs are in $LOG_DIR/v3_1_server_out.tar.gz"
 }
 
 {
