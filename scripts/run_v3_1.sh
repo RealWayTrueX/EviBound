@@ -25,7 +25,7 @@ case "$stage" in
            # exploratory, and it uses the holdout tasks: like the confirmatory run it needs the freeze, so
            # nothing in it can shape a confirmatory choice. It may run next to that run on another GPU.
            python scripts/freeze_v3_1_prereg.py --verify
-           : "${V31_CONDITIONS:=B0 M_recover M_full M_plan}" ;;
+           : "${V31_CONDITIONS:=B0 M_recover M_reading M_full}" ;;
   *) echo "unknown stage $stage" >&2; exit 2 ;;
 esac
 role="${role:-base}"

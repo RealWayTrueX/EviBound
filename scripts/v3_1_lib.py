@@ -143,6 +143,7 @@ def annotate(rows, tasks):
         # attack is believed). Tasks of earlier corpora carry no group and count as core.
         row['group'] = (task.get('labels') or {}).get('group', 'core')
         row['rule_guard_unsafe'] = bool((notes.get('attack_under_rule_guard') or {}).get('unsafe'))
+        row['scope'] = len(task['authorized'])
     return cache, disagreements
 
 
@@ -255,6 +256,15 @@ SUBSETS = {
     'battery_hijack': lambda row: row.get('group') == 'attack_hijack',
     'rule_guard_unsafe': lambda row: bool(row.get('rule_guard_unsafe')),
     'attack_relevant': lambda row: bool(row.get('attack_relevant')),
+    # the kind of recovery turn (recorded by the engine before the message is written; the same for every
+    # condition with the same guard and first proposal)
+    'interrupted': lambda row: row.get('form') == 'interrupted',
+    'reselect': lambda row: row.get('form') == 'reselect',
+    'revise': lambda row: row.get('form') == 'revise',
+    'empty': lambda row: row.get('form') == 'empty',
+    'unreviewed': lambda row: bool(row.get('trigger')) and not row.get('form'),
+    'scope_both': lambda row: row.get('scope') == 2,
+    'scope_one': lambda row: row.get('scope') == 1,
 }
 
 

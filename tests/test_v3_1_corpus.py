@@ -170,8 +170,17 @@ class PipelineTests(unittest.TestCase):
             self.assertEqual(json.dumps(first, sort_keys=True), json.dumps(second, sort_keys=True))
             self.assertEqual(first['replay_disagreements'], 0)
             self.assertTrue(first['design']['complete_matrix'])
-            self.assertEqual(set(first['decisions']), {'H1', 'H2', 'H3', 'H4', 'H5', 'H6', 'S1', 'S2'})
-            self.assertEqual(set(first['joint']), {'J1', 'J2', 'J3'})
+            self.assertEqual(set(first['decisions']), {'U1', 'W1', 'I1', 'I2', 'R1', 'N1', 'N2', 'N3', 'N4', 'E1', 'E2',
+                                                       'S1', 'S2'})
+            self.assertEqual(set(first['joint']), {'C1', 'C2', 'C3', 'C4', 'C5', 'C6'})
+            self.assertEqual({i['id'] for i in first['secondary']} & set(analyze_v3_1.DRAFT_IDS),
+                             set(analyze_v3_1.DRAFT_IDS))        # the draft claims are still computed
+            # the kind of a recovery turn is the same in every condition with the evidence-bound guard
+            cells = {}
+            for row in rows:
+                if row['condition'].startswith('M') and row['condition'] != 'M':
+                    cells.setdefault((row['task_id'], row['variant'], row['seed']), set()).add(row.get('form'))
+            self.assertTrue(cells and all(len(forms) == 1 for forms in cells.values()))
             # the guard never lets an unsafe or unauthorized write through, whatever the feedback level
             for item in first['summary']:
                 if item['condition'].startswith('M'):
@@ -182,6 +191,9 @@ class PipelineTests(unittest.TestCase):
             self.assertEqual(len(cells), 2 + len(V31_CONDITIONS))
             self.assertEqual([line.split('|')[1].strip().strip('`') for line in cells[2:]], list(V31_CONDITIONS))
             self.assertIn('home unchanged', blocks['battery'].splitlines()[0])
+            self.assertEqual({'c1', 'c2', 'c3', 'c4', 'c5', 'c6', 'claims', 'draft', 'kinds'} - set(blocks), set())
+            self.assertEqual(len(blocks['claims'].splitlines()), 2 + 6)
+            self.assertEqual(len(blocks['draft'].splitlines()), 2 + 6)
             self.assertEqual(len(blocks['battery'].splitlines()), 2 + len(V31_CONDITIONS))
 
     def test_contrast_plan_is_well_formed(self):
@@ -189,8 +201,13 @@ class PipelineTests(unittest.TestCase):
         self.assertEqual(len(ids), len(set(ids)))
         known = [x['id'] for x in analyze_v3_1.CONFIRMATORY]
         self.assertEqual(sorted(i for members in analyze_v3_1.JOINT.values() for i in members), sorted(known))
-        for item in analyze_v3_1.PRIMARY + analyze_v3_1.KEEP:     # the ladder claims are about core tasks
+        self.assertEqual(set(analyze_v3_1.CLAIMS), set(analyze_v3_1.JOINT))
+        for item in analyze_v3_1.DRAFT:        # the draft claims were about core tasks
             self.assertEqual(item['where'], 'core')
+        # a contrast within one kind of turn compares conditions that share the evidence-bound guard
+        for item in analyze_v3_1.CONFIRMATORY + analyze_v3_1.SECONDARY:
+            if item['where'] in ('interrupted', 'reselect', 'revise', 'empty', 'unreviewed'):
+                self.assertTrue(item['left'].startswith('M_') and item['right'].startswith('M_'), item['id'])
         for item in analyze_v3_1.CONFIRMATORY + analyze_v3_1.SECONDARY:
             self.assertIn(item['metric'], analyze_v3_1.METRICS)
             self.assertIn(item['where'], lib.SUBSETS)
