@@ -4,12 +4,23 @@ from __future__ import annotations
 
 from collections.abc import Mapping
 
-from .model import AllOf, AnyOf, Condition, Expression, Truth, conditions_in
+from .model import (
+    AllOf,
+    AnyOf,
+    BooleanConstant,
+    Condition,
+    Expression,
+    Truth,
+    condition_key,
+    conditions_in,
+)
 
 
 def evaluate(expression: Expression, values: Mapping[str, Truth]) -> Truth:
+    if isinstance(expression, BooleanConstant):
+        return Truth.TRUE if expression.value else Truth.FALSE
     if isinstance(expression, Condition):
-        return values.get(expression.fact, Truth.UNKNOWN)
+        return values.get(condition_key(expression), Truth.UNKNOWN)
     if isinstance(expression, AllOf):
         saw_unknown = False
         for term in expression.terms:
@@ -35,7 +46,7 @@ def unknown_conditions(
     return [
         condition
         for condition in conditions_in(expression)
-        if values.get(condition.fact, Truth.UNKNOWN) is Truth.UNKNOWN
+        if values.get(condition_key(condition), Truth.UNKNOWN) is Truth.UNKNOWN
     ]
 
 
@@ -49,9 +60,10 @@ def read_priority(expression: Expression, values: Mapping[str, Truth]) -> list[C
     seen: set[str] = set()
     unique: list[Condition] = []
     for condition in candidates:
-        if condition.fact not in seen:
+        key = condition_key(condition)
+        if key not in seen:
             unique.append(condition)
-            seen.add(condition.fact)
+            seen.add(key)
 
     if isinstance(expression, AllOf):
         return sorted(unique, key=lambda item: item.priority)

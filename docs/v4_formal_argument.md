@@ -8,7 +8,8 @@ scheduled execution and multiple facts.
 
 - A fact has kind, observed value, and, when continuous, a declared maximum
   change rate.
-- A condition is a comparison over one fact.
+- A condition is a comparison over one fact and is keyed by the complete tuple
+  `(fact, operator, value)`.
 - A proposal has an action, one authentic cited record per required fact, and a
   task-precondition expression built from `all_of` and `any_of`.
 - The static rule expression is supplied by the proxy and cannot be weakened by
@@ -40,6 +41,11 @@ Unknown conditions are read or cause rejection. Since all conditions map to
 evidence and the cited records are authentic, no adversarial context value can
 create a true assignment. Therefore every conjunct is true at execution. QED.
 
+Keying by predicate rather than fact is essential. If static `humidity > 60`
+and task `humidity > 40` share one stored truth value, the weaker predicate can
+overwrite the stronger one at 50 percent. The implementation stores both truth
+values independently and can assign both from one authenticated reading.
+
 The theorem covers declared task preconditions, not a planner's unstated user
 intent. A relative-rate violation follows the separately recorded overshoot
 bound.
@@ -64,6 +70,11 @@ rejects. Thus:
 
 Read order is a heuristic. The implementation does not claim a minimum read
 count.
+
+`MS` evaluates all dependency conditions but rereads only facts with at least
+one unknown dependency. `AR` rereads every dependency fact regardless of the
+current expression value. M uses a fixed two-minute window and writes every
+accepted reread back to the append-only store.
 
 ## Overshoot
 

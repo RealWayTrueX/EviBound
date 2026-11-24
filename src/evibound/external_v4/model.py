@@ -37,6 +37,7 @@ class Fact:
     name: str
     kind: FactKind
     max_rate: float | None = None
+    window_end: float | None = None
     description: str = ""
 
     def __post_init__(self) -> None:
@@ -47,6 +48,11 @@ class Fact:
                 raise ValueError("continuous facts need a finite non-negative max_rate")
         elif self.max_rate is not None:
             raise ValueError("max_rate is only valid for continuous facts")
+        if self.kind is FactKind.WINDOW:
+            if self.window_end is None or not math.isfinite(self.window_end):
+                raise ValueError("window facts need a finite window_end")
+        elif self.window_end is not None:
+            raise ValueError("window_end is only valid for window facts")
 
 
 @dataclass(frozen=True)
@@ -55,12 +61,24 @@ class Condition:
     operator: str
     value: Any
     priority: float = 0.0
+    _key: str = field(init=False, repr=False, compare=False)
 
     OPERATORS = frozenset(("eq", "ne", "lt", "le", "gt", "ge"))
 
     def __post_init__(self) -> None:
         if self.operator not in self.OPERATORS:
             raise ValueError(f"unknown comparison operator: {self.operator}")
+        object.__setattr__(
+            self,
+            "_key",
+            json.dumps(
+                [self.fact, self.operator, self.value],
+                sort_keys=True,
+                separators=(",", ":"),
+                ensure_ascii=True,
+                allow_nan=False,
+            ),
+        )
 
     def holds(self, observed: Any) -> bool:
         if self.operator == "eq":
@@ -97,7 +115,12 @@ class AnyOf:
             raise ValueError("any_of needs at least one term")
 
 
-Expression = Condition | AllOf | AnyOf
+@dataclass(frozen=True)
+class BooleanConstant:
+    value: bool
+
+
+Expression = Condition | AllOf | AnyOf | BooleanConstant
 
 
 def all_of(*terms: Expression) -> AllOf:
@@ -111,10 +134,17 @@ def any_of(*terms: Expression) -> AnyOf:
 def conditions_in(expression: Expression) -> tuple[Condition, ...]:
     if isinstance(expression, Condition):
         return (expression,)
+    if isinstance(expression, BooleanConstant):
+        return ()
     found: list[Condition] = []
     for term in expression.terms:
         found.extend(conditions_in(term))
     return tuple(found)
+
+
+def condition_key(condition: Condition) -> str:
+    """Semantic identity of one condition, excluding read-priority hints."""
+    return condition._key
 
 
 @dataclass(frozen=True)

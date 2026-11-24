@@ -11,6 +11,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 from datetime import datetime, timedelta
+import hashlib
 import json
 import math
 from pathlib import Path
@@ -197,7 +198,8 @@ def command_for_assert(device_id: str, attribute: str, value: Any) -> WorkflowCo
     return None
 
 
-def first_supported_command(episode: dict[str, Any]) -> WorkflowCommand | None:
+def supported_commands(episode: dict[str, Any]) -> list[WorkflowCommand]:
+    commands: list[WorkflowCommand] = []
     for goal in episode.get("eval", {}).get("goals", []):
         for target in goal.get("targets", []):
             device_id = target.get("device_id")
@@ -210,8 +212,13 @@ def first_supported_command(episode: dict[str, Any]) -> WorkflowCommand | None:
                     assertion.get("value"),
                 )
                 if command is not None:
-                    return command
-    return None
+                    commands.append(command)
+    return commands
+
+
+def first_supported_command(episode: dict[str, Any]) -> WorkflowCommand | None:
+    commands = supported_commands(episode)
+    return commands[0] if commands else None
 
 
 def _natural_episode_key(path: Path) -> tuple[str, int]:
@@ -258,26 +265,28 @@ def smoke_qt4_episodes(
         if sum(row["status"] == "ok" for row in rows) >= limit:
             break
         episode = json.loads(path.read_text(encoding="utf-8"))
-        command = first_supported_command(episode)
-        if command is None:
+        commands = supported_commands(episode)
+        if not commands:
             rows.append({"episode": path.name, "status": "skipped_no_supported_command"})
             continue
         try:
             reset = client.reset(episode["initial_home_config"])
             before = client.current_time()
-            attributes_before = client.attributes(command.device_id)
-            client.execute_command(
-                command.device_id,
-                endpoint_id=command.endpoint_id,
-                cluster_id=command.cluster_id,
-                command_id=command.command_id,
-                arguments=command.arguments,
-            )
+            first = commands[0]
+            attributes_before = client.attributes(first.device_id)
+            for command in commands:
+                client.execute_command(
+                    command.device_id,
+                    endpoint_id=command.endpoint_id,
+                    cluster_id=command.cluster_id,
+                    command_id=command.command_id,
+                    arguments=command.arguments,
+                )
             state = client.home_state()
             start_time = _future_time(before, 5)
             workflow_id = client.schedule_workflow(
                 start_time=start_time,
-                steps=[command.step()],
+                steps=[command.step() for command in commands],
                 description=f"EviBound smoke {path.name}",
             )
             tick_interval = float(state.get("tick_interval", 0.1))
@@ -286,19 +295,25 @@ def smoke_qt4_episodes(
             )
             client.fast_forward(target_tick)
             workflow = client.workflow_status(workflow_id)
+            attributes_after = client.attributes(first.device_id)
             rows.append(
                 {
                     "episode": path.name,
                     "status": "ok",
                     "query_type": episode.get("meta", {}).get("query_type"),
                     "num_rooms": reset.get("meta", {}).get("num_rooms"),
-                    "device_id": command.device_id,
-                    "command": command.command_id,
+                    "device_id": first.device_id,
+                    "commands_executed": len(commands),
                     "before_time": before,
                     "after_time": client.current_time(),
-                    "attribute_before": attributes_before,
+                    "attribute_before_sha256": hashlib.sha256(
+                        json.dumps(attributes_before, sort_keys=True).encode("utf-8")
+                    ).hexdigest(),
+                    "attribute_after_sha256": hashlib.sha256(
+                        json.dumps(attributes_after, sort_keys=True).encode("utf-8")
+                    ).hexdigest(),
                     "workflow_id": workflow_id,
-                    "workflow_status": workflow,
+                    "workflow_status": workflow.get("status"),
                 }
             )
         except Exception as error:  # pragma: no cover - live integration path

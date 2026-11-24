@@ -1,6 +1,6 @@
 # EviBound v4 execution specification
 
-Status: frozen implementation contract, 2026-11-23.
+Status: implementation contract awaiting the new freeze.
 
 This specification converts the two-week EviBound-T plan into executable work
 packages. A work package is complete only when its file exists, its public
@@ -13,7 +13,7 @@ interface is covered by a test, and its acceptance command passes.
 3. The planner returns an action, one cited record per required fact, and a
    machine-readable `requires` expression.
 4. At execution, the static rule expression is combined with `requires`.
-5. EviBound-T assigns each cited fact true, false, or unknown from its physical
+5. EviBound-T assigns each cited condition true, false, or unknown from its physical
    lifetime, rereads only decision-dependent unknown facts, and then executes,
    defers, or rejects.
 6. An independent oracle scores the actual environment state at execution.
@@ -30,11 +30,14 @@ The v4 package is `src/evibound/external_v4/`.
 | `lifetime.py` | lifetime formula, three-valued assignment, overshoot bound |
 | `expressions.py` | all-of/any-of evaluation and unknown read ordering |
 | `guards.py` | B0, PEEK, VER, FBS, PHYS, M, AR, MS, SL |
+| `scheduler.py` | due-time evaluation, defer/retry loop and deadline reasons |
+| `rules.py` | loads and validates the authoritative rule and rate table |
 | `oracle.py` | execution-time independent scoring |
-| `synthetic.py` | frozen-proposal counterfactual A group |
-| `experiments.py` | A summary, C1 rate stress, C2 short-circuit reads |
+| `synthetic.py` | five-template counterfactual A group with event timing |
+| `experiments.py` | A summary, seven ablations, C1 trajectory stress, C2 short-circuit reads |
 | `simuhome_adapter.py` | unmodified SimuHome HTTP adapter and G0 smoke runner |
-| `planner.py` | OpenAI-compatible B-group planner harness |
+| `simuhome_experiment.py` | live SimuHome counterfactual A group |
+| `planner.py`, `planner_b.py` | OpenAI-compatible B-group model-in-the-loop harness |
 
 ## Record format
 
@@ -76,6 +79,10 @@ evidence age.
 Static safety rules are supplied by the proxy and combined by conjunction with
 `requires`. The planner cannot remove them.
 
+Condition truth is keyed by `(fact, operator, value)`, not by fact name. Two
+predicates over the same fact therefore remain independent. One authenticated
+reread can assign several conditions over that fact without overwriting them.
+
 ## Work packages and gates
 
 | WP | Work | Acceptance |
@@ -83,12 +90,12 @@ Static safety rules are supplied by the proxy and combined by conjunction with
 | WP0 | Pin SimuHome commit and inventory 10 QT4 episodes | `scripts/v4_simuhome_smoke.py` reaches 10 successful external resets, reads, commands, schedules, clock advances |
 | WP1 | Device-signed record store | forged, future-dated, wrong-epoch, and replayed records are rejected |
 | WP2 | Static rules and independent oracle | all 12 rules have data declarations; oracle imports no guard module |
-| WP3 | Lifetime and three-valued evaluator | formula tests pass; false/unknown assignment matches conservative rules |
+| WP3 | Lifetime and three-valued evaluator | formula tests pass; false/unknown assignment is conservative; window expiry uses its declared end |
 | WP4 | EviBound-T short-circuit guard | context replay uses 1 read; transport freeze fails safe; no unsafe execution |
-| WP5 | Baselines and ablations | nine guards share one context interface; deterministic paired output |
+| WP5 | Baselines and ablations | nine guards plus seven ablations share one context interface; deterministic paired output |
 | WP6 | Counterfactual A group | 50 dev and 200 holdout structures; 2,600 holdout scenarios |
 | WP7 | C1/C2 pressure tests | C1 obeys overshoot bound; every case has `SL reads <= MS reads <= AR reads` |
-| WP8 | B-group planners | two endpoint probes and strict proposal parser; actual 7B/8B runs need their GPU hosts |
+| WP8 | B-group planners | two endpoint probes and strict model-in-the-loop runner on the UQ 4090 host |
 | WP9 | Freeze and reporting | SHA-256 freeze file precedes holdout; result memo records passes and limits |
 
 ## Cut order if time or infrastructure is short

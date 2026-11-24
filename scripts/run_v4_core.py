@@ -13,6 +13,7 @@ ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "src"))
 
 from evibound.external_v4.experiments import run_core  # noqa: E402
+from evibound.external_v4.synthetic import generate_structures  # noqa: E402
 
 
 def _freeze_errors() -> list[str]:
@@ -47,18 +48,18 @@ def main() -> int:
         default=ROOT / "artifacts" / "v4_core_results.json",
     )
     parser.add_argument("--check", action="store_true")
-    parser.add_argument(
-        "--allow-unfrozen",
-        action="store_true",
-        help="diagnostic only; do not use for a result that is reported as preregistered",
-    )
     args = parser.parse_args()
 
     changed = _freeze_errors()
-    if changed and not args.allow_unfrozen:
+    if changed:
         print("refusing holdout: freeze mismatch: " + ", ".join(changed), file=sys.stderr)
         return 1
-    results = run_core()
+    structures = [
+        structure
+        for structure in generate_structures()
+        if structure.split == "holdout"
+    ]
+    results = run_core(structures=structures)
     _compact_rows(results["c1"], "c1")
     _compact_rows(results["c2"], "c2")
     failed = [name for name, passed in results["acceptance"].items() if not passed]
@@ -67,7 +68,7 @@ def main() -> int:
         json.dumps(results, indent=2, sort_keys=True) + "\n", encoding="utf-8"
     )
     print(
-        f"wrote {args.output}: {results['acceptance']['a_holdout_scenario_count']} "
+        f"wrote {args.output}: {results['acceptance']['a_scenario_count']} "
         f"holdout scenarios, acceptance={'pass' if not failed else 'fail'}"
     )
     if failed:

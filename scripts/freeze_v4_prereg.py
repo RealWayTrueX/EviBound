@@ -53,6 +53,11 @@ def main() -> int:
         default=ROOT / "artifacts" / "v4_prereg_freeze.json",
     )
     parser.add_argument("--check", action="store_true")
+    parser.add_argument(
+        "--supersede",
+        action="store_true",
+        help="replace an earlier freeze after a documented invalidation",
+    )
     args = parser.parse_args()
 
     current = build_manifest()
@@ -67,19 +72,28 @@ def main() -> int:
     if args.output.exists():
         old = json.loads(args.output.read_text(encoding="utf-8"))
         changed = verify_manifest(old["sha256"])
-        if changed:
+        if changed and not args.supersede:
             print(
                 "refusing to overwrite a frozen protocol whose inputs changed: "
                 + ", ".join(changed),
                 file=sys.stderr,
             )
             return 1
+    else:
+        old = None
+    rules = json.loads((ROOT / "configs" / "v4_rules.json").read_text(encoding="utf-8"))
     record = {
-        "schema": "evibound-v4-prereg-freeze-v1",
+        "schema": "evibound-v4-prereg-freeze-v2",
         "approved_by": args.approve,
+        "approval_status": rules["status"],
+        "owner_signoff_required": rules["status"] != "owner_approved",
         "approved_at": datetime.now(timezone.utc).isoformat(),
         "sha256": current,
     }
+    if old is not None and args.supersede:
+        record["supersedes_sha256"] = hashlib.sha256(
+            json.dumps(old, sort_keys=True, separators=(",", ":")).encode("utf-8")
+        ).hexdigest()
     args.output.parent.mkdir(parents=True, exist_ok=True)
     args.output.write_text(json.dumps(record, indent=2, sort_keys=True) + "\n", encoding="utf-8")
     print(f"froze {len(current)} files -> {args.output}")

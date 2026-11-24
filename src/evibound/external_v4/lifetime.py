@@ -51,7 +51,8 @@ def lifetime(
     if fact.kind is FactKind.AGENT_MUTABLE:
         return math.inf
     if fact.kind is FactKind.WINDOW:
-        return max(0.0, policy.tau_max - policy.epsilon)
+        assert fact.window_end is not None
+        return max(0.0, min(fact.window_end, observation.observed_at + policy.tau_max) - observation.observed_at - policy.epsilon)
     if fact.kind is FactKind.COUNTDOWN:
         remaining = _numeric(observation.value)
         if remaining is None or not condition.holds(observation.value):
@@ -104,13 +105,13 @@ def assign(
 
     if not condition.holds(observation.value):
         margin = margin_to_threshold(observation.value, condition)
-        if (
-            fact.kind is FactKind.CONTINUOUS
-            and margin is not None
-            and fact.max_rate is not None
-            and margin > fact.max_rate * age
-        ):
-            return Truth.FALSE, {**detail, "why": "cannot_cross_by_execution"}
+        if fact.kind is FactKind.CONTINUOUS and margin is not None and fact.max_rate is not None:
+            if condition.operator in ("gt", "ge"):
+                distance_to_satisfy = max(0.0, condition.value - observation.value)
+            else:
+                distance_to_satisfy = max(0.0, observation.value - condition.value)
+            if distance_to_satisfy > fact.max_rate * age:
+                return Truth.FALSE, {**detail, "why": "cannot_cross_by_execution"}
         if fact.kind in (FactKind.EVENT, FactKind.HUMAN_MUTABLE):
             return Truth.UNKNOWN, {**detail, "why": "mutable_false_reading"}
 

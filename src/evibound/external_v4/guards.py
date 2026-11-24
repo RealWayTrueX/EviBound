@@ -1,13 +1,19 @@
-"""Implementations of the v4 guards and comparison baselines."""
+"""EviBound-T and the v4 comparison baselines.
+
+Condition truth is keyed by the full predicate, never by fact name. This
+prevents a planner's weak predicate from overwriting a stricter static rule
+over the same fact.
+"""
 
 from __future__ import annotations
 
-from dataclasses import dataclass, field
+from dataclasses import dataclass, field, replace
 from typing import Any
 
 from .expressions import evaluate, read_priority
 from .lifetime import LifetimePolicy, assign
 from .model import (
+    AllOf,
     Condition,
     Decision,
     DecisionStatus,
@@ -17,6 +23,7 @@ from .model import (
     Proposal,
     SignedObservation,
     Truth,
+    condition_key,
     conditions_in,
     strict_json_equal,
 )
@@ -35,58 +42,147 @@ class GuardContext:
     now: float
     deadline: float
     policy: LifetimePolicy
-    fixed_delta: float = 2.0
+    fixed_delta: float = 120.0
     fresh_reading_available: bool = True
+    ablation: str = ""
+    rate_overrides: dict[str, float] = field(default_factory=dict)
     trace: list[dict[str, Any]] = field(default_factory=list)
+    dep_conditions: tuple[Condition, ...] = field(init=False)
+    conditions_by_fact: dict[str, tuple[Condition, ...]] = field(init=False)
+
+    def __post_init__(self) -> None:
+        conditions = conditions_in(self.static_rules) + conditions_in(
+            self.proposal.requires
+        )
+        object.__setattr__(self, "dep_conditions", conditions)
+        grouped: dict[str, list[Condition]] = {}
+        for condition in conditions:
+            grouped.setdefault(condition.fact, []).append(condition)
+        object.__setattr__(
+            self,
+            "conditions_by_fact",
+            {fact: tuple(items) for fact, items in grouped.items()},
+        )
 
 
 def _dep_conditions(context: GuardContext) -> tuple[Condition, ...]:
-    return conditions_in(context.static_rules) + conditions_in(context.proposal.requires)
+    return context.dep_conditions
 
 
 def _dep_facts(context: GuardContext) -> list[str]:
-    seen: set[str] = set()
     ordered: list[str] = []
+    seen: set[str] = set()
     for condition in _dep_conditions(context):
         if condition.fact not in seen:
-            seen.add(condition.fact)
             ordered.append(condition.fact)
+            seen.add(condition.fact)
     return ordered
 
 
-def _combined(context: GuardContext):
-    from .model import AllOf
+def _conditions_by_fact(context: GuardContext) -> dict[str, tuple[Condition, ...]]:
+    return context.conditions_by_fact
 
+
+def _combined(context: GuardContext) -> AllOf:
     return AllOf((context.static_rules, context.proposal.requires))
 
 
-def _initial_assignment(context: GuardContext) -> tuple[dict[str, Truth], dict[str, str], str | None]:
+def _fact_for_mode(context: GuardContext, fact_name: str) -> Fact:
+    fact = context.facts[fact_name]
+    if context.ablation == "observed_rate_lifetime" and fact_name in context.rate_overrides:
+        return replace(fact, max_rate=context.rate_overrides[fact_name])
+    if context.ablation == "rate_x0.5" and fact.max_rate is not None:
+        return replace(fact, max_rate=fact.max_rate * 0.5)
+    if context.ablation == "rate_x2" and fact.max_rate is not None:
+        return replace(fact, max_rate=fact.max_rate * 2.0)
+    return fact
+
+
+def _fixed_assignment(
+    condition: Condition, observation: SignedObservation, *, now: float, delta: float
+) -> Truth:
+    age = now - observation.observed_at
+    if age < 0 or age > delta:
+        return Truth.UNKNOWN
+    if condition.holds(observation.value):
+        return Truth.TRUE
+    return Truth.FALSE if age <= 1e-9 else Truth.UNKNOWN
+
+
+def _assignment_from_observation(
+    context: GuardContext,
+    fact_name: str,
+    observation: SignedObservation,
+    *,
+    mode: str,
+) -> dict[str, Truth]:
+    result: dict[str, Truth] = {}
+    for condition in _conditions_by_fact(context)[fact_name]:
+        if mode == "fixed":
+            truth = _fixed_assignment(
+                condition,
+                observation,
+                now=context.now,
+                delta=context.fixed_delta,
+            )
+        else:
+            truth, detail = assign(
+                fact=_fact_for_mode(context, fact_name),
+                observation=observation,
+                condition=condition,
+                now=context.now,
+                policy=context.policy,
+            )
+            context.trace.append(
+                {
+                    "stage": "assign",
+                    "fact": fact_name,
+                    "condition": condition_key(condition),
+                    "truth": truth.value,
+                    **detail,
+                }
+            )
+        result[condition_key(condition)] = truth
+    return result
+
+
+def _assign_cited(
+    context: GuardContext, *, mode: str
+) -> tuple[dict[str, Truth], dict[str, str], str | None]:
     assignment: dict[str, Truth] = {}
     evidence: dict[str, str] = {}
-    for condition in _dep_conditions(context):
-        fact = context.facts[condition.fact]
-        record_id = context.proposal.cites.get(condition.fact)
+    for fact_name in _dep_facts(context):
+        record_id = context.proposal.cites.get(fact_name)
         if not record_id:
             return assignment, evidence, "missing_citation"
         record = context.store.get(record_id)
-        if record is None or record.fact != condition.fact:
+        if record is None or record.fact != fact_name:
             return assignment, evidence, "unknown_record"
-        truth, detail = assign(
-            fact=fact,
-            observation=record,
-            condition=condition,
-            now=context.now,
-            policy=context.policy,
-        )
-        assignment[condition.fact] = truth
-        evidence[condition.fact] = record.record_id
-        context.trace.append(
-            {"stage": "assign_cited", "fact": condition.fact, "truth": truth.value, **detail}
-        )
+        if mode == "fixed":
+            for condition in _conditions_by_fact(context)[fact_name]:
+                assignment[condition_key(condition)] = _fixed_assignment(
+                    condition,
+                    record,
+                    now=context.now,
+                    delta=context.fixed_delta,
+                )
+        else:
+            assignment.update(
+                _assignment_from_observation(
+                    context, fact_name, record, mode=mode
+                )
+            )
+        evidence[fact_name] = record.record_id
     return assignment, evidence, None
 
 
-def _terminal(status: DecisionStatus, reason: str, reads: int, evidence: dict[str, str], **details: Any) -> Decision:
+def _terminal(
+    status: DecisionStatus,
+    reason: str,
+    reads: int,
+    evidence: dict[str, str],
+    **details: Any,
+) -> Decision:
     return Decision(
         status=status,
         reason_code=reason,
@@ -110,83 +206,95 @@ def _truth_decision(
     if truth is Truth.TRUE:
         return _terminal(DecisionStatus.EXECUTE, accepted, reads, evidence)
     if truth is Truth.FALSE:
-        status = DecisionStatus.DEFER if now < deadline else DecisionStatus.REJECT
-        reason = false_reason if status is DecisionStatus.DEFER else "deadline_expired"
-        return _terminal(status, reason, reads, evidence)
+        if now < deadline:
+            return _terminal(DecisionStatus.DEFER, false_reason, reads, evidence)
+        return _terminal(DecisionStatus.REJECT, "deadline_expired", reads, evidence)
     return _terminal(DecisionStatus.REJECT, unknown_reason, reads, evidence)
 
 
+def _ingest_and_assign(
+    context: GuardContext,
+    fact_name: str,
+    *,
+    mode: str,
+    assignment: dict[str, Truth],
+    evidence: dict[str, str],
+) -> tuple[bool, str | None]:
+    try:
+        observation = context.trusted_source.read(fact_name, context.now)
+    except KeyError:
+        return False, "unavailable"
+    ingested = context.store.ingest(observation, now=context.now)
+    if not ingested.accepted:
+        return False, ingested.reason
+    assignment.update(
+        _assignment_from_observation(context, fact_name, observation, mode=mode)
+    )
+    evidence[fact_name] = observation.record_id
+    return True, None
+
+
 def decide_sl(context: GuardContext) -> Decision:
-    assignment, evidence, error = _initial_assignment(context)
+    assignment, evidence, error = _assign_cited(context, mode="physical")
     if error is not None:
         return _terminal(DecisionStatus.REJECT, error, 0, evidence)
     expression = _combined(context)
+    truth = evaluate(expression, assignment)
+    if truth is Truth.UNKNOWN and context.ablation == "no_reread":
+        return _terminal(DecisionStatus.REJECT, "evidence_expired", 0, evidence)
+
     attempted: set[str] = set()
-    reads = 0
     failures: dict[str, str] = {}
-    while True:
-        truth = evaluate(expression, assignment)
-        if truth is not Truth.UNKNOWN:
-            break
-        candidates = [
-            item
-            for item in read_priority(expression, assignment)
-            if item.fact not in attempted
-        ]
+    reads = 0
+    while truth is Truth.UNKNOWN:
+        if context.ablation == "no_short_circuit":
+            candidates: list[Condition] = []
+            seen_facts: set[str] = set()
+            for item in _dep_conditions(context):
+                if (
+                    assignment.get(condition_key(item), Truth.UNKNOWN) is Truth.UNKNOWN
+                    and item.fact not in seen_facts
+                    and item.fact not in attempted
+                ):
+                    candidates.append(item)
+                    seen_facts.add(item.fact)
+        else:
+            candidates = [
+                item
+                for item in read_priority(expression, assignment)
+                if item.fact not in attempted
+            ]
         if not candidates:
             break
-        progressed = False
+        made_progress = False
         for condition in candidates:
             fact_name = condition.fact
+            if fact_name in attempted:
+                continue
             attempted.add(fact_name)
-            try:
-                observation = context.trusted_source.read(fact_name, context.now)
-            except KeyError:
-                failures[fact_name] = "unavailable"
-                continue
             reads += 1
-            ingested = context.store.ingest(observation, now=context.now)
-            if not ingested.accepted:
-                failures[fact_name] = ingested.reason
-                context.trace.append(
-                    {
-                        "stage": "reread",
-                        "fact": fact_name,
-                        "accepted": False,
-                        "reason": ingested.reason,
-                    }
-                )
-                continue
-            truth_value, detail = assign(
-                fact=context.facts[fact_name],
-                observation=observation,
-                condition=condition,
-                now=context.now,
-                policy=context.policy,
+            accepted, failure = _ingest_and_assign(
+                context,
+                fact_name,
+                mode="physical",
+                assignment=assignment,
+                evidence=evidence,
             )
-            assignment[fact_name] = truth_value
-            evidence[fact_name] = observation.record_id
-            context.trace.append(
-                {
-                    "stage": "reread",
-                    "fact": fact_name,
-                    "accepted": True,
-                    "truth": truth_value.value,
-                    **detail,
-                }
-            )
-            progressed = progressed or truth_value is not Truth.UNKNOWN
-            break
-        if not progressed:
+            if not accepted:
+                failures[fact_name] = failure or "unavailable"
+            made_progress = made_progress or accepted
+            if context.ablation != "no_short_circuit":
+                break
+        truth = evaluate(expression, assignment)
+        if not made_progress and context.ablation != "no_short_circuit":
             continue
-    final_truth = evaluate(expression, assignment)
+
     decision = _truth_decision(
-        final_truth,
+        truth,
         now=context.now,
         deadline=context.deadline,
         reads=reads,
         evidence=evidence,
-        unknown_reason="stale_evidence",
     )
     return Decision(
         status=decision.status,
@@ -197,103 +305,43 @@ def decide_sl(context: GuardContext) -> Decision:
     )
 
 
-def _fixed_assign(
-    fact: Fact,
-    condition: Condition,
-    observation: SignedObservation,
-    *,
-    now: float,
-    delta: float,
-) -> Truth:
-    del fact
-    age = now - observation.observed_at
-    if age < 0 or age > delta:
-        return Truth.UNKNOWN
-    if condition.holds(observation.value):
-        return Truth.TRUE
-    return Truth.FALSE if age <= 1e-12 else Truth.UNKNOWN
-
-
-def _batch_guard(
-    context: GuardContext,
-    *,
-    mode: str,
-) -> Decision:
+def _batch_guard(context: GuardContext, *, mode: str) -> Decision:
+    read_mode = "fixed" if mode == "M" else "physical"
     assignment: dict[str, Truth] = {}
     evidence: dict[str, str] = {}
-    failures: dict[str, str] = {}
-    reads = 0
-
-    if mode in ("M", "MS"):
-        assignment, evidence, error = _initial_assignment(context)
+    if mode in {"M", "MS"}:
+        assignment, evidence, error = _assign_cited(context, mode=read_mode)
         if error is not None:
             return _terminal(DecisionStatus.REJECT, error, 0, evidence)
-        conditions_by_fact: dict[str, Condition] = {}
-        for condition in _dep_conditions(context):
-            conditions_by_fact.setdefault(condition.fact, condition)
-        reread = [
-            fact
-            for fact, truth in assignment.items()
-            if truth is Truth.UNKNOWN
-        ] if mode == "MS" else list(conditions_by_fact)
-        if mode == "M":
-            reread = [
-                fact
-                for fact in conditions_by_fact
-                if assignment.get(fact) is not Truth.TRUE
-            ]
-    else:
-        conditions_by_fact = {}
-        for condition in _dep_conditions(context):
-            conditions_by_fact.setdefault(condition.fact, condition)
-        reread = list(conditions_by_fact)
-
-    for fact_name in reread:
-        condition = conditions_by_fact[fact_name]
-        try:
-            observation = context.trusted_source.read(fact_name, context.now)
-        except KeyError:
-            failures[fact_name] = "unavailable"
-            continue
+    unknown = {
+        condition.fact
+        for condition in _dep_conditions(context)
+        if assignment.get(condition_key(condition), Truth.UNKNOWN) is Truth.UNKNOWN
+    }
+    reread_facts = (
+        _dep_facts(context) if mode == "AR" else [fact for fact in _dep_facts(context) if fact in unknown]
+    )
+    reads = 0
+    failures: dict[str, str] = {}
+    for fact_name in reread_facts:
         reads += 1
-        if mode in ("M", "MS"):
-            truth = _fixed_assign(
-                context.facts[fact_name],
-                condition,
-                observation,
-                now=context.now,
-                delta=context.fixed_delta,
-            )
-        else:
-            ingested = context.store.ingest(observation, now=context.now)
-            if not ingested.accepted:
-                failures[fact_name] = ingested.reason
-                truth = Truth.UNKNOWN
-            else:
-                truth, detail = assign(
-                    fact=context.facts[fact_name],
-                    observation=observation,
-                    condition=condition,
-                    now=context.now,
-                    policy=context.policy,
-                )
-                evidence[fact_name] = observation.record_id
-                context.trace.append(
-                    {
-                        "stage": "batch_reread",
-                        "fact": fact_name,
-                        "truth": truth.value,
-                        **detail,
-                    }
-                )
-        assignment[fact_name] = truth
-        if truth is Truth.TRUE:
-            evidence[fact_name] = observation.record_id
-
+        accepted, failure = _ingest_and_assign(
+            context,
+            fact_name,
+            mode=read_mode,
+            assignment=assignment,
+            evidence=evidence,
+        )
+        if not accepted:
+            failures[fact_name] = failure or "unavailable"
     truth = evaluate(_combined(context), assignment)
-    if failures and truth is Truth.UNKNOWN:
+    if truth is Truth.UNKNOWN and failures:
         return _terminal(
-            DecisionStatus.REJECT, "stale_evidence", reads, evidence, failures=failures
+            DecisionStatus.REJECT,
+            "stale_evidence",
+            reads,
+            evidence,
+            read_failures=failures,
         )
     return _truth_decision(
         truth,
@@ -301,7 +349,6 @@ def _batch_guard(
         deadline=context.deadline,
         reads=reads,
         evidence=evidence,
-        unknown_reason="stale_evidence",
     )
 
 
@@ -317,20 +364,27 @@ def decide_ms(context: GuardContext) -> Decision:
     return _batch_guard(context, mode="MS")
 
 
-def _untrusted_assignment(context: GuardContext) -> tuple[dict[str, Truth], int]:
+def _untrusted_assignment(
+    context: GuardContext,
+) -> tuple[dict[str, Truth], dict[str, SignedObservation], int]:
+    by_fact = _conditions_by_fact(context)
     assignment: dict[str, Truth] = {}
+    observations: dict[str, SignedObservation] = {}
     reads = 0
-    for condition in _dep_conditions(context):
+    for fact_name, conditions in by_fact.items():
         try:
-            observation = context.context_source.read(condition.fact, context.now)
+            observation = context.context_source.read(fact_name, context.now)
         except KeyError:
-            assignment[condition.fact] = Truth.UNKNOWN
+            for condition in conditions:
+                assignment[condition_key(condition)] = Truth.UNKNOWN
             continue
         reads += 1
-        assignment[condition.fact] = (
-            Truth.TRUE if condition.holds(observation.value) else Truth.FALSE
-        )
-    return assignment, reads
+        observations[fact_name] = observation
+        for condition in conditions:
+            assignment[condition_key(condition)] = (
+                Truth.TRUE if condition.holds(observation.value) else Truth.FALSE
+            )
+    return assignment, observations, reads
 
 
 def decide_b0(context: GuardContext) -> Decision:
@@ -338,7 +392,7 @@ def decide_b0(context: GuardContext) -> Decision:
 
 
 def decide_peek(context: GuardContext) -> Decision:
-    assignment, reads = _untrusted_assignment(context)
+    assignment, _, reads = _untrusted_assignment(context)
     return _truth_decision(
         evaluate(_combined(context), assignment),
         now=context.now,
@@ -350,23 +404,13 @@ def decide_peek(context: GuardContext) -> Decision:
 
 
 def decide_ver(context: GuardContext) -> Decision:
-    assignment: dict[str, Truth] = {}
-    reads = 0
-    for condition in _dep_conditions(context):
-        cited = context.store.get(context.proposal.cites.get(condition.fact, ""))
+    assignment, observations, reads = _untrusted_assignment(context)
+    for fact_name, observation in observations.items():
+        cited = context.store.get(context.proposal.cites.get(fact_name, ""))
         if cited is None:
             return _terminal(DecisionStatus.REJECT, "unknown_record", reads, {})
-        try:
-            observed = context.context_source.read(condition.fact, context.now)
-        except KeyError:
-            assignment[condition.fact] = Truth.UNKNOWN
-            continue
-        reads += 1
-        if not strict_json_equal(observed.value, cited.value):
+        if not strict_json_equal(observation.value, cited.value):
             return _terminal(DecisionStatus.REJECT, "evidence_changed", reads, {})
-        assignment[condition.fact] = (
-            Truth.TRUE if condition.holds(observed.value) else Truth.FALSE
-        )
     return _truth_decision(
         evaluate(_combined(context), assignment),
         now=context.now,
@@ -378,9 +422,25 @@ def decide_ver(context: GuardContext) -> Decision:
 
 
 def decide_fbs(context: GuardContext) -> Decision:
-    # The FBS baseline estimates freshness from arrival/variation. A frozen
-    # packet looks perfectly unchanged and is therefore treated as current.
-    assignment, reads = _untrusted_assignment(context)
+    """Arrival-time baseline with a conservative observed-variation estimate.
+
+    A changed value cannot be certified by the old sample's variation, so the
+    estimated lifetime for that fact is exhausted. A frozen packet has zero
+    observed change and is incorrectly treated as current.
+    """
+    assignment, observations, reads = _untrusted_assignment(context)
+    for fact_name, observation in observations.items():
+        cited = context.store.get(context.proposal.cites.get(fact_name, ""))
+        if cited is None:
+            return _terminal(DecisionStatus.REJECT, "unknown_record", reads, {})
+        if not strict_json_equal(observation.value, cited.value):
+            return _terminal(
+                DecisionStatus.REJECT,
+                "estimated_variation_exceeded",
+                reads,
+                {},
+                fact=fact_name,
+            )
     return _truth_decision(
         evaluate(_combined(context), assignment),
         now=context.now,
@@ -392,36 +452,29 @@ def decide_fbs(context: GuardContext) -> Decision:
 
 
 def decide_phys(context: GuardContext) -> Decision:
-    assignment: dict[str, Truth] = {}
-    reads = 0
-    for condition in _dep_conditions(context):
-        fact = context.facts[condition.fact]
-        cited = context.store.get(context.proposal.cites.get(condition.fact, ""))
+    assignment, observations, reads = _untrusted_assignment(context)
+    for fact_name, observation in observations.items():
+        cited = context.store.get(context.proposal.cites.get(fact_name, ""))
         if cited is None:
             return _terminal(DecisionStatus.REJECT, "unknown_record", reads, {})
-        try:
-            observed = context.context_source.read(condition.fact, context.now)
-        except KeyError:
-            assignment[condition.fact] = Truth.UNKNOWN
-            continue
-        reads += 1
+        fact = context.facts[fact_name]
         if (
             fact.kind is FactKind.CONTINUOUS
             and fact.max_rate is not None
-            and isinstance(observed.value, (int, float))
-            and not isinstance(observed.value, bool)
+            and isinstance(observation.value, (int, float))
+            and not isinstance(observation.value, bool)
             and isinstance(cited.value, (int, float))
             and not isinstance(cited.value, bool)
         ):
-            elapsed = max(0.0, observed.observed_at - cited.observed_at)
-            max_move = fact.max_rate * elapsed
-            if abs(float(observed.value) - float(cited.value)) > max_move + 1e-9:
+            elapsed = max(0.0, observation.observed_at - cited.observed_at)
+            if abs(float(observation.value) - float(cited.value)) > fact.max_rate * elapsed + 1e-9:
                 return _terminal(
-                    DecisionStatus.REJECT, "physically_implausible", reads, {}
+                    DecisionStatus.REJECT,
+                    "physically_implausible",
+                    reads,
+                    {},
+                    fact=fact_name,
                 )
-        assignment[condition.fact] = (
-            Truth.TRUE if condition.holds(observed.value) else Truth.FALSE
-        )
     return _truth_decision(
         evaluate(_combined(context), assignment),
         now=context.now,

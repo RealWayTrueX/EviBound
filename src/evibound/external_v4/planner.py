@@ -22,12 +22,12 @@ class PlannerSpec:
 CONFIRMATORY_PLANNERS = (
     PlannerSpec(
         name="qwen2.5-7b",
-        model="Qwen/Qwen2.5-7B-Instruct",
+        model="Qwen2.5-7B-Instruct",
         base_url="http://127.0.0.1:8001/v1",
     ),
     PlannerSpec(
         name="qwen3-8b",
-        model="Qwen/Qwen3-8B",
+        model="Qwen3-8B",
         base_url="http://127.0.0.1:8002/v1",
     ),
 )

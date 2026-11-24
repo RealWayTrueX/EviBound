@@ -5,76 +5,32 @@
   "limit": 10,
   "rows": [
     {
-      "after_time": "2025-08-23 11:37:04",
-      "attribute_before": {
-        "0.BasicInformation.ProductID": 3,
-        "0.BasicInformation.ProductName": "Dimmable Light",
-        "0.BasicInformation.VendorID": 1,
-        "0.BasicInformation.VendorName": "LG Electronics",
-        "1.LevelControl.CurrentFrequency": 0,
-        "1.LevelControl.CurrentLevel": null,
-        "1.LevelControl.DefaultMoveRate": null,
-        "1.LevelControl.MaxFrequency": 0,
-        "1.LevelControl.MaxLevel": 254,
-        "1.LevelControl.MinFrequency": 0,
-        "1.LevelControl.MinLevel": 1,
-        "1.LevelControl.OffTransitionTime": null,
-        "1.LevelControl.OnLevel": null,
-        "1.LevelControl.OnOffTransitionTime": 0,
-        "1.LevelControl.OnTransitionTime": null,
-        "1.LevelControl.Options": 0,
-        "1.LevelControl.RemainingTime": 0,
-        "1.LevelControl.StartUpCurrentLevel": null,
-        "1.OnOff.GlobalSceneControl": true,
-        "1.OnOff.OffWaitTime": 0,
-        "1.OnOff.OnOff": false,
-        "1.OnOff.OnTime": 0,
-        "1.OnOff.StartUpOnOff": null
-      },
+      "after_time": "2025-08-23 11:37:05",
+      "attribute_after_sha256": "41ddba9ac6641b81475d129784905cdfb8ef2af48f9cecb6a38a3819d8a109bd",
+      "attribute_before_sha256": "55decdeda700ef69a6edb26ad56985af56f3216aecebc793634471b06530487a",
       "before_time": "2025-08-23 11:36:54",
-      "command": "On",
+      "commands_executed": 5,
       "device_id": "living_room_dimmable_light_1",
       "episode": "qt4-1_feasible_seed_1.json",
       "num_rooms": 5,
       "query_type": "qt4-1",
       "status": "ok",
-      "workflow_id": "cc727167-09de-4aa0-b764-86562c25bfad",
-      "workflow_status": {
-        "current_step": 0,
-        "description": "EviBound smoke qt4-1_feasible_seed_1.json",
-        "error": null,
-        "start_time": "2025-08-23 11:36:59",
-        "status": "completed",
-        "total_steps": 1,
-        "workflow_id": "cc727167-09de-4aa0-b764-86562c25bfad"
-      }
+      "workflow_id": "10a65349-3195-429e-90e9-84fc7d0d4169",
+      "workflow_status": "completed"
     },
     {
       "after_time": "2025-08-23 11:37:04",
-      "attribute_before": {
-        "0.BasicInformation.ProductID": 4,
-        "0.BasicInformation.ProductName": "On/Off Light",
-        "0.BasicInformation.VendorID": 1,
-        "0.BasicInformation.VendorName": "LG Electronics",
-        "1.OnOff.OnOff": false
-      },
+      "attribute_after_sha256": "d6ebb21ef367a7bd1edb9ab592878dafc1e118e8c2f6b11e68e68b8d28732b69",
+      "attribute_before_sha256": "1253de458e0eed74c4b1c208927bd57966656f47ac7786187eb7071589d3918d",
       "before_time": "2025-08-23 11:36:54",
-      "command": "On",
+      "commands_executed": 2,
       "device_id": "dining_room_on_off_light_1",
       "episode": "qt4-2_feasible_seed_1.json",
       "num_rooms": 5,
       "query_type": "qt4-2",
       "status": "ok",
-      "workflow_id": "e19add34-1eaa-4cdf-9a77-a33513787d97",
-      "workflow_status": {
-        "current_step": 0,
-        "description": "EviBound smoke qt4-2_feasible_seed_1.json",
-        "error": null,
-        "start_time": "2025-08-23 11:36:59",
-        "status": "completed",
-        "total_steps": 1,
-        "workflow_id": "e19add34-1eaa-4cdf-9a77-a33513787d97"
-      }
+      "workflow_id": "0d0c787a-c682-42bd-97ab-8e4b699d8358",
+      "workflow_status": "completed"
     },
     {
       "episode": "qt4-3_feasible_seed_2.json",
@@ -82,135 +38,63 @@
     },
     {
       "after_time": "2025-08-23 09:05:15",
-      "attribute_before": {
-        "0.BasicInformation.ProductID": 2,
-        "0.BasicInformation.ProductName": "Fan",
-        "0.BasicInformation.VendorID": 1,
-        "0.BasicInformation.VendorName": "LG Electronics",
-        "1.FanControl.FanMode": 0,
-        "1.FanControl.FanModeSequence": 1,
-        "1.FanControl.PercentCurrent": 0,
-        "1.FanControl.PercentSetting": 0,
-        "1.OnOff.OnOff": false
-      },
+      "attribute_after_sha256": "0c37f8f08705b88f105b711839b1f0d91da7de00f92ebd31ded9411494f448d1",
+      "attribute_before_sha256": "6272e8170a32f585b43196a638cc2819aae427f039f824021c9205414eff4c04",
       "before_time": "2025-08-23 09:05:05",
-      "command": "On",
+      "commands_executed": 2,
       "device_id": "living_room_fan_1",
       "episode": "qt4-1_feasible_seed_2.json",
       "num_rooms": 5,
       "query_type": "qt4-1",
       "status": "ok",
-      "workflow_id": "a4050c17-f471-42ca-a309-a3ef75698c7d",
-      "workflow_status": {
-        "current_step": 0,
-        "description": "EviBound smoke qt4-1_feasible_seed_2.json",
-        "error": null,
-        "start_time": "2025-08-23 09:05:10",
-        "status": "completed",
-        "total_steps": 1,
-        "workflow_id": "a4050c17-f471-42ca-a309-a3ef75698c7d"
-      }
+      "workflow_id": "b7736f6d-f18b-4269-9165-eb98e08b8395",
+      "workflow_status": "completed"
     },
     {
       "after_time": "2025-08-23 09:05:15",
-      "attribute_before": {
-        "0.BasicInformation.ProductID": 6,
-        "0.BasicInformation.ProductName": "Humidifier",
-        "0.BasicInformation.VendorID": 1,
-        "0.BasicInformation.VendorName": "LG Electronics",
-        "1.FanControl.FanMode": 2,
-        "1.FanControl.FanModeSequence": 1,
-        "1.FanControl.PercentCurrent": 60,
-        "1.FanControl.PercentSetting": 60,
-        "1.OnOff.OnOff": true,
-        "2.RelativeHumidityMeasurement.MaxMeasuredValue": 9500,
-        "2.RelativeHumidityMeasurement.MeasuredValue": 3551,
-        "2.RelativeHumidityMeasurement.MinMeasuredValue": 1000,
-        "2.RelativeHumidityMeasurement.Tolerance": null
-      },
+      "attribute_after_sha256": "a1b38a969f51df29d8325351a9473e812c8139bee8d8f3e45e22d727f9941b4b",
+      "attribute_before_sha256": "c4c63f5e2c12a8de4efac0dbb65c68922f5275e74413c1282e1fda668b545a88",
       "before_time": "2025-08-23 09:05:05",
-      "command": "On",
+      "commands_executed": 2,
       "device_id": "bathroom_humidifier_1",
       "episode": "qt4-2_feasible_seed_2.json",
       "num_rooms": 5,
       "query_type": "qt4-2",
       "status": "ok",
-      "workflow_id": "f1c6f8af-e818-4b87-b8ae-611afcb9e430",
-      "workflow_status": {
-        "current_step": 0,
-        "description": "EviBound smoke qt4-2_feasible_seed_2.json",
-        "error": null,
-        "start_time": "2025-08-23 09:05:10",
-        "status": "completed",
-        "total_steps": 1,
-        "workflow_id": "f1c6f8af-e818-4b87-b8ae-611afcb9e430"
-      }
+      "workflow_id": "d7cf3d72-037c-4bd7-9380-82fc10609477",
+      "workflow_status": "completed"
     },
     {
       "episode": "qt4-3_feasible_seed_3.json",
       "status": "skipped_no_supported_command"
     },
     {
-      "after_time": "2025-08-23 12:37:44",
-      "attribute_before": {
-        "0.BasicInformation.ProductID": 4,
-        "0.BasicInformation.ProductName": "On/Off Light",
-        "0.BasicInformation.VendorID": 1,
-        "0.BasicInformation.VendorName": "LG Electronics",
-        "1.OnOff.OnOff": false
-      },
+      "after_time": "2025-08-23 12:37:45",
+      "attribute_after_sha256": "d6ebb21ef367a7bd1edb9ab592878dafc1e118e8c2f6b11e68e68b8d28732b69",
+      "attribute_before_sha256": "1253de458e0eed74c4b1c208927bd57966656f47ac7786187eb7071589d3918d",
       "before_time": "2025-08-23 12:37:34",
-      "command": "On",
+      "commands_executed": 5,
       "device_id": "bathroom_on_off_light_1",
       "episode": "qt4-1_feasible_seed_3.json",
       "num_rooms": 5,
       "query_type": "qt4-1",
       "status": "ok",
-      "workflow_id": "fc591237-71f6-4bf6-b350-d5e8a0100605",
-      "workflow_status": {
-        "current_step": 0,
-        "description": "EviBound smoke qt4-1_feasible_seed_3.json",
-        "error": null,
-        "start_time": "2025-08-23 12:37:39",
-        "status": "completed",
-        "total_steps": 1,
-        "workflow_id": "fc591237-71f6-4bf6-b350-d5e8a0100605"
-      }
+      "workflow_id": "8ea84ffa-7f8c-4a23-954a-6ba82ef240fd",
+      "workflow_status": "completed"
     },
     {
       "after_time": "2025-08-23 12:37:44",
-      "attribute_before": {
-        "0.BasicInformation.ProductID": 7,
-        "0.BasicInformation.ProductName": "Dehumidifier",
-        "0.BasicInformation.VendorID": 1,
-        "0.BasicInformation.VendorName": "LG Electronics",
-        "1.FanControl.FanMode": 3,
-        "1.FanControl.FanModeSequence": 1,
-        "1.FanControl.PercentCurrent": 71,
-        "1.FanControl.PercentSetting": 71,
-        "1.OnOff.OnOff": true,
-        "2.RelativeHumidityMeasurement.MaxMeasuredValue": 9500,
-        "2.RelativeHumidityMeasurement.MeasuredValue": 5215,
-        "2.RelativeHumidityMeasurement.MinMeasuredValue": 1000,
-        "2.RelativeHumidityMeasurement.Tolerance": null
-      },
+      "attribute_after_sha256": "3d2e20f128385de24ffd908f877c313ed678923ea14e2d38158b322be855e5a4",
+      "attribute_before_sha256": "36142ea1e008078d8251e44f0e6bd3e63372064e34e44aac3d7d3c2f5ef35f77",
       "before_time": "2025-08-23 12:37:34",
-      "command": "On",
+      "commands_executed": 2,
       "device_id": "kitchen_dehumidifier_1",
       "episode": "qt4-2_feasible_seed_3.json",
       "num_rooms": 5,
       "query_type": "qt4-2",
       "status": "ok",
-      "workflow_id": "2e7c3065-40c6-4db7-a70a-2c34f6095099",
-      "workflow_status": {
-        "current_step": 0,
-        "description": "EviBound smoke qt4-2_feasible_seed_3.json",
-        "error": null,
-        "start_time": "2025-08-23 12:37:39",
-        "status": "completed",
-        "total_steps": 1,
-        "workflow_id": "2e7c3065-40c6-4db7-a70a-2c34f6095099"
-      }
+      "workflow_id": "988715c3-f03a-47ea-b619-0fd2b2eab174",
+      "workflow_status": "completed"
     },
     {
       "episode": "qt4-3_feasible_seed_7.json",
@@ -218,75 +102,31 @@
     },
     {
       "after_time": "2025-08-23 12:19:16",
-      "attribute_before": {
-        "0.BasicInformation.ProductID": 3,
-        "0.BasicInformation.ProductName": "Dimmable Light",
-        "0.BasicInformation.VendorID": 1,
-        "0.BasicInformation.VendorName": "LG Electronics",
-        "1.LevelControl.CurrentFrequency": 0,
-        "1.LevelControl.CurrentLevel": null,
-        "1.LevelControl.DefaultMoveRate": null,
-        "1.LevelControl.MaxFrequency": 0,
-        "1.LevelControl.MaxLevel": 254,
-        "1.LevelControl.MinFrequency": 0,
-        "1.LevelControl.MinLevel": 1,
-        "1.LevelControl.OffTransitionTime": null,
-        "1.LevelControl.OnLevel": null,
-        "1.LevelControl.OnOffTransitionTime": 0,
-        "1.LevelControl.OnTransitionTime": null,
-        "1.LevelControl.Options": 0,
-        "1.LevelControl.RemainingTime": 0,
-        "1.LevelControl.StartUpCurrentLevel": null,
-        "1.OnOff.GlobalSceneControl": true,
-        "1.OnOff.OffWaitTime": 0,
-        "1.OnOff.OnOff": false,
-        "1.OnOff.OnTime": 0,
-        "1.OnOff.StartUpOnOff": null
-      },
+      "attribute_after_sha256": "245b3a999da7af8009071a00b1b27e51e84b7b0981f4c045f3a07d4e11e083c4",
+      "attribute_before_sha256": "55decdeda700ef69a6edb26ad56985af56f3216aecebc793634471b06530487a",
       "before_time": "2025-08-23 12:19:06",
-      "command": "On",
+      "commands_executed": 4,
       "device_id": "bathroom_dimmable_light_1",
       "episode": "qt4-1_feasible_seed_4.json",
       "num_rooms": 5,
       "query_type": "qt4-1",
       "status": "ok",
-      "workflow_id": "06f702ee-6382-43c3-8def-5188c42d8bbf",
-      "workflow_status": {
-        "current_step": 0,
-        "description": "EviBound smoke qt4-1_feasible_seed_4.json",
-        "error": null,
-        "start_time": "2025-08-23 12:19:11",
-        "status": "completed",
-        "total_steps": 1,
-        "workflow_id": "06f702ee-6382-43c3-8def-5188c42d8bbf"
-      }
+      "workflow_id": "903b7a17-773e-49c8-b9ed-759f7070abeb",
+      "workflow_status": "completed"
     },
     {
       "after_time": "2025-08-23 12:19:16",
-      "attribute_before": {
-        "0.BasicInformation.ProductID": 4,
-        "0.BasicInformation.ProductName": "On/Off Light",
-        "0.BasicInformation.VendorID": 1,
-        "0.BasicInformation.VendorName": "LG Electronics",
-        "1.OnOff.OnOff": false
-      },
+      "attribute_after_sha256": "d6ebb21ef367a7bd1edb9ab592878dafc1e118e8c2f6b11e68e68b8d28732b69",
+      "attribute_before_sha256": "1253de458e0eed74c4b1c208927bd57966656f47ac7786187eb7071589d3918d",
       "before_time": "2025-08-23 12:19:06",
-      "command": "On",
+      "commands_executed": 2,
       "device_id": "bathroom_on_off_light_1",
       "episode": "qt4-2_feasible_seed_4.json",
       "num_rooms": 5,
       "query_type": "qt4-2",
       "status": "ok",
-      "workflow_id": "7b891081-b4c4-4c33-9aa7-5d4bf33f8468",
-      "workflow_status": {
-        "current_step": 0,
-        "description": "EviBound smoke qt4-2_feasible_seed_4.json",
-        "error": null,
-        "start_time": "2025-08-23 12:19:11",
-        "status": "completed",
-        "total_steps": 1,
-        "workflow_id": "7b891081-b4c4-4c33-9aa7-5d4bf33f8468"
-      }
+      "workflow_id": "30435523-e363-47d6-8d90-5a96c38930e5",
+      "workflow_status": "completed"
     },
     {
       "episode": "qt4-3_feasible_seed_8.json",
@@ -294,57 +134,31 @@
     },
     {
       "after_time": "2025-08-23 18:16:57",
-      "attribute_before": {
-        "0.BasicInformation.ProductID": 4,
-        "0.BasicInformation.ProductName": "On/Off Light",
-        "0.BasicInformation.VendorID": 1,
-        "0.BasicInformation.VendorName": "LG Electronics",
-        "1.OnOff.OnOff": false
-      },
+      "attribute_after_sha256": "d6ebb21ef367a7bd1edb9ab592878dafc1e118e8c2f6b11e68e68b8d28732b69",
+      "attribute_before_sha256": "1253de458e0eed74c4b1c208927bd57966656f47ac7786187eb7071589d3918d",
       "before_time": "2025-08-23 18:16:47",
-      "command": "On",
+      "commands_executed": 3,
       "device_id": "kitchen_on_off_light_1",
       "episode": "qt4-1_feasible_seed_5.json",
       "num_rooms": 5,
       "query_type": "qt4-1",
       "status": "ok",
-      "workflow_id": "49e1b82b-d4ce-485f-8d2e-81826513ede6",
-      "workflow_status": {
-        "current_step": 0,
-        "description": "EviBound smoke qt4-1_feasible_seed_5.json",
-        "error": null,
-        "start_time": "2025-08-23 18:16:52",
-        "status": "completed",
-        "total_steps": 1,
-        "workflow_id": "49e1b82b-d4ce-485f-8d2e-81826513ede6"
-      }
+      "workflow_id": "78a40d09-1338-4cc0-bd6b-419135c9bb6d",
+      "workflow_status": "completed"
     },
     {
       "after_time": "2025-08-23 18:52:15",
-      "attribute_before": {
-        "0.BasicInformation.ProductID": 4,
-        "0.BasicInformation.ProductName": "On/Off Light",
-        "0.BasicInformation.VendorID": 1,
-        "0.BasicInformation.VendorName": "LG Electronics",
-        "1.OnOff.OnOff": false
-      },
+      "attribute_after_sha256": "d6ebb21ef367a7bd1edb9ab592878dafc1e118e8c2f6b11e68e68b8d28732b69",
+      "attribute_before_sha256": "1253de458e0eed74c4b1c208927bd57966656f47ac7786187eb7071589d3918d",
       "before_time": "2025-08-23 18:52:05",
-      "command": "On",
+      "commands_executed": 2,
       "device_id": "office_on_off_light_2",
       "episode": "qt4-2_feasible_seed_6.json",
       "num_rooms": 5,
       "query_type": "qt4-2",
       "status": "ok",
-      "workflow_id": "7cb19394-79f6-4789-ae06-dd2e48fc2ef4",
-      "workflow_status": {
-        "current_step": 0,
-        "description": "EviBound smoke qt4-2_feasible_seed_6.json",
-        "error": null,
-        "start_time": "2025-08-23 18:52:10",
-        "status": "completed",
-        "total_steps": 1,
-        "workflow_id": "7cb19394-79f6-4789-ae06-dd2e48fc2ef4"
-      }
+      "workflow_id": "283ac8d9-b141-4e81-a11c-9f9bd67696a1",
+      "workflow_status": "completed"
     }
   ],
   "schema": "evibound-v4-simuhome-smoke-v1",

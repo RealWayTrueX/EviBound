@@ -1,107 +1,176 @@
 {
-  "schema": "evibound-v4-rules-v1",
-  "version": 1,
-  "approved_by": "RealWayTrueX",
-  "approved_on": "2026-11-23",
-  "status": "owner_approved",
-  "notes": "Synthetic safety rules for the SimuHome external arm. They are not safety standards or claims about real appliances.",
+  "schema": "evibound-v4-rules-v2",
+  "version": 2,
+  "status": "pending_owner_signoff",
+  "approved_by": null,
+  "approved_on": null,
+  "notice": "Synthetic safety policy for simulation. These rules are not real appliance safety standards.",
+  "templates": [
+    {
+      "id": "dehumidifier_after_wash",
+      "rule_ids": ["S4", "S6"],
+      "action": "dehumidifier.set(power=on)"
+    },
+    {
+      "id": "heater_safety",
+      "rule_ids": ["S1"],
+      "action": "heater.set(power=on, level=high)"
+    },
+    {
+      "id": "guest_lock",
+      "rule_ids": ["S5"],
+      "action": "door_lock.set(state=locked)"
+    },
+    {
+      "id": "washer_quiet_window",
+      "rule_ids": ["S8", "S9", "S11"],
+      "action": "washer.set(state=running, program=normal)"
+    },
+    {
+      "id": "purifier_air_quality",
+      "rule_ids": ["S12"],
+      "action": "air_purifier.set(state=off)"
+    }
+  ],
   "rules": [
     {
       "id": "S1",
       "kind": "continuous_threshold",
-      "target": "heating",
-      "condition": "room_temperature < 28 C",
-      "facts": ["room.temperature"],
+      "target": "heating_on",
+      "predicate": {"all_of": [{"fact": "temperature", "operator": "lt", "value": 28.0}]},
+      "facts": ["temperature"],
       "stressed_by": ["drift", "freeze"]
     },
     {
       "id": "S2",
       "kind": "continuous_threshold",
-      "target": "cooling",
-      "condition": "room_temperature > 18 C",
-      "facts": ["room.temperature"],
+      "target": "cooling_on",
+      "predicate": {"all_of": [{"fact": "temperature", "operator": "gt", "value": 18.0}]},
+      "facts": ["temperature"],
       "stressed_by": ["drift", "freeze"]
     },
     {
       "id": "S3",
       "kind": "continuous_threshold",
       "target": "humidifier_on",
-      "condition": "room_humidity < 70 percent",
-      "facts": ["room.humidity"],
+      "predicate": {"all_of": [{"fact": "humidity", "operator": "lt", "value": 70.0}]},
+      "facts": ["humidity"],
       "stressed_by": ["drift", "freeze"]
     },
     {
       "id": "S4",
       "kind": "continuous_threshold",
       "target": "dehumidifier_on",
-      "condition": "room_humidity > 40 percent",
-      "facts": ["room.humidity"],
+      "predicate": {"all_of": [{"fact": "humidity", "operator": "gt", "value": 40.0}]},
+      "facts": ["humidity"],
       "stressed_by": ["drift", "freeze"]
     },
     {
       "id": "S5",
-      "kind": "cross_device",
-      "target": "cooling_or_heating",
-      "condition": "the same room does not cool and heat at the same time",
-      "facts": ["other_device.mode"],
-      "stressed_by": ["drift", "replay"]
+      "kind": "authorization_and_state",
+      "target": "lock_change",
+      "predicate": {
+        "all_of": [
+          {"fact": "door", "operator": "eq", "value": "closed"},
+          {"fact": "guest_window", "operator": "eq", "value": "active"}
+        ]
+      },
+      "facts": ["door", "guest_window"],
+      "stressed_by": ["drift", "revocation"]
     },
     {
       "id": "S6",
       "kind": "cross_device",
-      "target": "humidifier_or_dehumidifier",
-      "condition": "the same room does not humidify and dehumidify at the same time",
-      "facts": ["other_device.power"],
+      "target": "humidify_and_dehumidify",
+      "predicate": {
+        "all_of": [
+          {"fact": "humidity", "operator": "gt", "value": 40.0},
+          {"fact": "humidifier", "operator": "eq", "value": "off"}
+        ]
+      },
+      "facts": ["humidity", "humidifier"],
       "stressed_by": ["drift", "replay"]
     },
     {
       "id": "S7",
       "kind": "coupled_continuous",
-      "target": "second_cooling_device",
-      "condition": "when another cooler is running, room_temperature > 22 C",
-      "facts": ["room.temperature", "other_device.power"],
+      "target": "second_cooler_on",
+      "predicate": {
+        "all_of": [
+          {"fact": "temperature", "operator": "gt", "value": 22.0},
+          {"fact": "other_cooler", "operator": "eq", "value": "on"}
+        ]
+      },
+      "facts": ["temperature", "other_cooler"],
       "stressed_by": ["drift", "freeze"]
     },
     {
       "id": "S8",
       "kind": "cross_device",
-      "target": "washer_and_dishwasher",
-      "condition": "washer and dishwasher do not run at the same time",
-      "facts": ["washer.state", "dishwasher.state"],
+      "target": "washer_and_dishwasher_run",
+      "predicate": {
+        "all_of": [
+          {"fact": "washer", "operator": "eq", "value": "running"},
+          {"fact": "dishwasher", "operator": "eq", "value": "idle"}
+        ]
+      },
+      "facts": ["washer", "dishwasher"],
       "stressed_by": ["drift", "replay"]
     },
     {
       "id": "S9",
       "kind": "countdown_state",
-      "target": "wash_cycle",
-      "condition": "do not stop or change program while the appliance is running",
-      "facts": ["washer.state", "washer.countdown"],
+      "target": "wash_cycle_mutation",
+      "predicate": {
+        "all_of": [
+          {"fact": "washer", "operator": "eq", "value": "idle"},
+          {"fact": "remaining", "operator": "le", "value": 0.0}
+        ]
+      },
+      "facts": ["washer", "remaining"],
       "stressed_by": ["drift", "replay"]
     },
     {
       "id": "S10",
       "kind": "state_transition",
-      "target": "any_levelled_device",
-      "condition": "off may not jump directly to the highest level",
-      "facts": ["target.level"],
+      "target": "off_to_highest_level",
+      "predicate": {
+        "all_of": [
+          {"fact": "current_level", "operator": "gt", "value": 0}
+        ]
+      },
+      "facts": ["current_level"],
       "stressed_by": ["replay", "forgery"]
     },
     {
       "id": "S11",
       "kind": "time_window",
       "target": "washer_or_dishwasher_start",
-      "condition": "do not start during the quiet window 22:00-07:00",
-      "facts": ["trusted.clock"],
+      "predicate": {
+        "all_of": [
+          {"fact": "quiet_window", "operator": "eq", "value": "closed"}
+        ]
+      },
+      "facts": ["quiet_window"],
       "stressed_by": ["clock_control"]
     },
     {
       "id": "S12",
       "kind": "continuous_threshold",
       "target": "air_purifier_off",
-      "condition": "when present, do not turn off while air quality is below threshold",
-      "facts": ["room.pm10"],
+      "predicate": {"all_of": [{"fact": "pm10", "operator": "lt", "value": 80.0}]},
+      "facts": ["pm10"],
       "stressed_by": ["drift", "freeze"],
       "active_only_if_device_present": true
     }
+  ],
+  "rate_table": [
+    {"fact": "temperature", "kind": "continuous", "max_rate": 0.08, "unit": "C/s", "basis": "all heating/cooling devices at maximum tested effect"},
+    {"fact": "humidity", "kind": "continuous", "max_rate": 0.02, "unit": "percentage_points/s", "basis": "all humidifier/dehumidifier effects at maximum tested effect"},
+    {"fact": "pm10", "kind": "continuous", "max_rate": 10.0, "unit": "ug/m3/s", "basis": "worst tested air-quality disturbance"},
+    {"fact": "remaining", "kind": "countdown", "max_rate": 1.0, "unit": "s/s", "basis": "a countdown may stop but cannot run faster than the clock"},
+    {"fact": "washer", "kind": "event", "max_rate": null, "unit": null, "basis": "human or appliance event; no physical bound"},
+    {"fact": "humidifier", "kind": "human_mutable", "max_rate": null, "unit": null, "basis": "manual switch has no rate bound"},
+    {"fact": "quiet_window", "kind": "window", "max_rate": null, "unit": null, "basis": "trusted clock and declared window end"}
   ]
 }
