@@ -4,7 +4,7 @@ probe
 stop_v4
 smoke
 publish
-conditions B0 M M_recover M_full M_menu2 M_plan M_plan_open M_seq B2_plan
+conditions B0 M M_recover M_full M_menu2 M_plan M_plan_open M_plan_text M_seq B2_plan
 run dev_v3 0 d1
 run dev 1 d1
 wait dev d1 90

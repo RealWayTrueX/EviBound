@@ -279,6 +279,54 @@ class RunnerTests(unittest.TestCase):
         self.assertEqual(payloads[0], payloads[1])
 
 
+class WordingAlternativeTests(unittest.TestCase):
+    """Development-only wordings of the plan review carry the same review in another form."""
+
+    def turn(self, condition, **kw):
+        from evibound.recovery_v3_1 import recovery_turn
+        state = {"light": "low", "fan": "off", "presence": True}
+        args = dict(presence=True, authorized=["light"], proposal=[W("light", "low"), W("fan", "high")],
+                    executed=1, cited_presence=True)
+        args.update(kw)
+        reason = args.pop("reason", "unauthorized_device")
+        messages, review = recovery_turn(condition, [], "prev", state, OBS, "rejection", reason, 2, **args)
+        return last(messages), review
+
+    def test_same_review_three_wordings(self):
+        plain, review = self.turn("M_plan")
+        text, review_text = self.turn("M_plan_text")
+        self.assertEqual(review, review_text)
+        self.assertEqual(plain["plan_review"], review)
+        self.assertIsInstance(text["plan_review"], str)
+        for piece in ("light=low, fan=high", "Reachable from the current actuator levels: light=low",
+                      "fan=high (not authorized)", "return an empty actions list"):
+            self.assertIn(piece, text["plan_review"])
+        base = last(recovery_messages("M_recover", [], "prev", {"light": "low", "fan": "off", "presence": True}, OBS,
+                                      "rejection", "unauthorized_device", 2, presence=True, authorized=["light"]))
+        self.assertEqual(text["request"], base["request"])        # sentences replace the object and its instructions
+
+    def test_interrupted_wordings(self):
+        kw = dict(authorized=["light", "fan"], proposal=[W("light", "low"), W("fan", "low")], reason="evidence_not_fresh")
+        strict, review = self.turn("M_plan", **kw)
+        opened, _ = self.turn("M_plan_open", **kw)
+        text, _ = self.turn("M_plan_text", **kw)
+        self.assertEqual(review["status"], "interrupted")
+        self.assertIn(PLAN_TEXT["interrupted"], strict["request"])
+        self.assertIn(PLAN_TEXT["interrupted/open"], opened["request"])
+        self.assertIn("Still to do, and acceptable now: fan=low", text["plan_review"])
+        self.assertEqual(strict["plan_review"], opened["plan_review"])
+
+    def test_engine_stores_the_structured_review_whatever_the_wording(self):
+        task = scenario(goal_present={"light": "low", "fan": "low"})
+        planner = ScriptedPlanner(lambda obs: [W("light", "low"), W("fan", "low")], lambda payload: [W("fan", "low")])
+        episodes = run(task, ("M_plan", "M_plan_text", "M_full", "M_recover"), planner, variants=("boundary",))
+        self.assertEqual(episodes["M_plan"]["recovery_review"], episodes["M_plan_text"]["recovery_review"])
+        self.assertEqual(episodes["M_plan_text"]["recovery_review"]["status"], "interrupted")
+        self.assertIsInstance(episodes["M_plan_text"]["recovery_payload"]["plan_review"], str)
+        self.assertIsNone(episodes["M_full"]["recovery_review"])
+        self.assertIsNone(episodes["M_recover"]["recovery_review"])
+
+
 class PlannerRoleTests(unittest.TestCase):
     def test_base_role_is_the_frozen_prompt_and_other_roles_only_extend_the_system_text(self):
         from evibound.planner_v3 import PROMPT_V3, messages_for_v3

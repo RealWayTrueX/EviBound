@@ -38,7 +38,7 @@ class SpecV31(NamedTuple):
     guard: str
     base: str     # frozen v3 condition whose recovery message this level extends
     aid: str      # 'menu2', 'plan' or 'sequence'
-    style: str = "resume"   # wording of the plan review when a correct plan was only interrupted
+    style: str = "resume"   # 'resume', 'open' or 'text': how the plan review is worded (see NEW_SPECS)
 
 
 NEW_SPECS = {
@@ -46,8 +46,9 @@ NEW_SPECS = {
     "M_plan": SpecV31("M", "M_recover", "plan"),
     "M_seq": SpecV31("M", "M_recover", "sequence"),
     "B2_plan": SpecV31("B2", "B2_recover", "plan"),
-    # Development-only wording alternative; not part of the confirmatory matrix.
-    "M_plan_open": SpecV31("M", "M_recover", "plan", "open"),
+    # Development-only wording alternatives; not part of the confirmatory matrix.
+    "M_plan_open": SpecV31("M", "M_recover", "plan", "open"),     # an interrupted plan may also be changed
+    "M_plan_text": SpecV31("M", "M_recover", "plan", "text"),     # the review as sentences, not as an object
 }
 V31_CONDITIONS = ("B0", "M", "M_recover", "M_full", "M_menu2", "M_plan", "M_seq", "B2_plan")
 LADDER = {"M": "L0 verdict", "M_recover": "L1 reason", "M_full": "L2a legal next writes (v3 text)",
@@ -239,20 +240,56 @@ def plan_review(actuators: dict[str, str], presence: bool | None, authorized: li
     return review
 
 
-def recovery_messages_v31(condition: str, messages: list[dict[str, str]], previous_raw: str,
-                          state: dict[str, Any], observation: dict[str, Any], trigger: str,
-                          reason: str | None, writes_remaining: int, *,
-                          presence: bool | None, authorized: list[str] | tuple[str, ...],
-                          proposal: Any = None, executed: int = 0,
-                          cited_presence: bool | None = None) -> list[dict[str, str]]:
-    """The single recovery turn for any v3 or v3.1 condition."""
+def _writes_text(writes: list[dict[str, str]]) -> str:
+    return ", ".join(f'{w["device"]}={w["value"]}' for w in writes) or "none"
+
+
+def _levels_text(levels: dict[str, str]) -> str:
+    return ", ".join(f"{d}={levels[d]}" for d in ORDER if d in levels) or "none"
+
+
+def review_sentences(review: dict[str, Any]) -> str:
+    """The plan review as plain sentences (development wording alternative ``M_plan_text``)."""
+    reading = review["reading"]
+    status = review["status"]
+    if status == "interrupted":
+        return (f"Your plan was interrupted, not judged wrong: the observation you cited was no longer accepted, "
+                f"and fresh_observation gives the same reading ({reading}). Already executed: "
+                f"{_writes_text(review['executed'])}. Still to do, and acceptable now: "
+                f"{_writes_text(review['remaining'])}. Return exactly these remaining writes in this order and do "
+                f"not repeat executed writes.")
+    if status == "reselect":
+        return (f"The interface reads fresh_observation as: {reading}. That is not the reading your plan was "
+                f"chosen for. Select the branch for this reading and plan again from the current actuator levels; "
+                f"your previous writes no longer apply.")
+    if status == "empty":
+        return f"The interface reads fresh_observation as: {reading}. That is the reading your empty plan was chosen for."
+    blocked = "; ".join(f"{d}={review['requested_levels'][d]} ({why})" for d, why in review["not_attainable"].items())
+    text = (f"Your plan asked for these end levels: {_levels_text(review['requested_levels'])}. Reachable from the "
+            f"current actuator levels: {_levels_text(review['attainable_levels'])}. Not reachable: {blocked or 'none'}. "
+            f"Return only the writes still needed for the reachable levels, in a legal order. Leave every device "
+            f"that is not reachable as it is, and do not move any device to a level your plan did not ask for. If "
+            f"the reachable levels already hold, return an empty actions list.")
+    if "accepted_sequence" in review:
+        text += f" A complete list of writes that would be accepted now: {_writes_text(review['accepted_sequence'])}."
+    return text
+
+
+def recovery_turn(condition: str, messages: list[dict[str, str]], previous_raw: str,
+                  state: dict[str, Any], observation: dict[str, Any], trigger: str,
+                  reason: str | None, writes_remaining: int, *,
+                  presence: bool | None, authorized: list[str] | tuple[str, ...],
+                  proposal: Any = None, executed: int = 0,
+                  cited_presence: bool | None = None) -> tuple[list[dict[str, str]], dict[str, Any] | None]:
+    """The single recovery turn for any v3 or v3.1 condition, and the plan review it carries (or None)."""
     if condition not in NEW_SPECS:
         return recovery_messages(condition, messages, previous_raw, state, observation, trigger, reason,
-                                 writes_remaining, presence=presence, authorized=authorized)
+                                 writes_remaining, presence=presence, authorized=authorized), None
     spec = NEW_SPECS[condition]
     base = recovery_messages(spec.base, messages, previous_raw, state, observation, trigger, reason,
                              writes_remaining, presence=presence, authorized=authorized)
     payload = json.loads(base[-1]["content"])
+    review = None
     if spec.aid == "menu2":
         payload["legal_writes_now"] = legal_writes(payload["actuators"], presence, authorized)
         payload["request"] += " " + LEGAL_WRITES_SUFFIX_V2
@@ -260,21 +297,34 @@ def recovery_messages_v31(condition: str, messages: list[dict[str, str]], previo
         # An empty plan has no writes to review; the interface can still say how it reads the observation.
         if presence is not None and cited_presence is not None:
             changed = cited_presence != presence
-            payload["plan_review"] = {"reading": READINGS[presence], "reading_changed": changed,
-                                      "status": "reselect" if changed else "empty"}
-            payload["request"] += " " + PLAN_TEXT["empty/changed" if changed else "empty"]
+            review = {"reading": READINGS[presence], "reading_changed": changed,
+                      "status": "reselect" if changed else "empty"}
+            text = PLAN_TEXT["empty/changed" if changed else "empty"]
     elif trigger == "rejection":
         review = plan_review(payload["actuators"], presence, authorized, proposal, executed, reason,
                              writes_remaining, cited_presence, with_sequence=spec.aid == "sequence")
         if review is not None:
-            payload["plan_review"] = review
             key = review["status"]
-            if key == "interrupted" and spec.style != "resume":
-                key = f"interrupted/{spec.style}"
-            payload["request"] += " " + PLAN_TEXT[key]
+            if key == "interrupted" and spec.style == "open":
+                key = "interrupted/open"
+            text = PLAN_TEXT[key]
             if "accepted_sequence" in review:
-                payload["request"] += " " + SEQUENCE_TEXT
-    return base[:-1] + [{"role": "user", "content": json.dumps(payload, sort_keys=True)}]
+                text += " " + SEQUENCE_TEXT
+    if review is not None:
+        if spec.style == "text":
+            payload["plan_review"] = review_sentences(review)
+        else:
+            payload["plan_review"] = review
+            payload["request"] += " " + text
+    return base[:-1] + [{"role": "user", "content": json.dumps(payload, sort_keys=True)}], review
+
+
+def recovery_messages_v31(condition: str, messages: list[dict[str, str]], previous_raw: str,
+                          state: dict[str, Any], observation: dict[str, Any], trigger: str,
+                          reason: str | None, writes_remaining: int, **kwargs: Any) -> list[dict[str, str]]:
+    """The messages of ``recovery_turn`` alone."""
+    return recovery_turn(condition, messages, previous_raw, state, observation, trigger, reason,
+                         writes_remaining, **kwargs)[0]
 
 
 assert set(DEVICES) == set(ORDER) and set(LEVELS) == {"off", "low", "high"}

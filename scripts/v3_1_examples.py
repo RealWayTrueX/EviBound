@@ -34,7 +34,7 @@ def main():
                 payload = row.get('recovery_payload')
                 if not payload:
                     continue
-                review = payload.get('plan_review') or {}
+                review = row.get('recovery_review') or {}
                 done = bool(row['metrics']['goal_completion'])
                 key = (row['condition'], row['variant'], row['recovery_trigger'],
                        review.get('status') or ('menu' if 'legal_writes_now' in payload else 'text'),

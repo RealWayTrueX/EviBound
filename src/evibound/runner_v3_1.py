@@ -20,7 +20,7 @@ from evibound.backend_v3 import WorldV3 as World
 from evibound.oracle_v3 import score_episode_v3 as score_episode
 from evibound.planner import batch_seed
 from evibound.planner_v3_1 import messages_for_role
-from evibound.recovery_v3_1 import guard_for, recovery_messages_v31, trigger_v31
+from evibound.recovery_v3_1 import guard_for, recovery_turn, trigger_v31
 from evibound.runner_v3 import instrument
 
 Generate = Callable[[list[list[dict[str, str]]], int], list[dict[str, Any]]]
@@ -78,7 +78,8 @@ def run_seed(generate: Generate, scenarios: Iterable[dict[str, Any]], conditions
                     "physical_structure_id": scenario.get("physical_structure_id", scenario["task_id"]),
                     "seed": seed, "planner_role": role, "scenario": scenario,
                     "proposals": [copy.deepcopy(response)],
-                    "recovery_trigger": None, "recovery_payload": None, "guard_execution_s": 0.0,
+                    "recovery_trigger": None, "recovery_payload": None, "recovery_review": None,
+                    "guard_execution_s": 0.0,
                 }
                 data = response["parsed"] or {}
                 before = time.perf_counter()
@@ -90,7 +91,7 @@ def run_seed(generate: Generate, scenarios: Iterable[dict[str, Any]], conditions
                     observation = world.observe()
                     episode["recovery_trigger"] = trigger
                     reason = events[-1]["reason"] if trigger == "rejection" else None
-                    episode["_messages"] = recovery_messages_v31(
+                    episode["_messages"], episode["recovery_review"] = recovery_turn(
                         condition, job["messages"], response["raw"], world.state, observation,
                         trigger, reason, MAX_WRITES - world.successful_writes,
                         presence=world.decode(observation["value"]),
