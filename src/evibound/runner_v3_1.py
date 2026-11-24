@@ -4,7 +4,8 @@ Sequencing, budgets, seeding and scoring are those of ``runner_v3.run_seed``: on
 shared first proposal per task, variant and seed is executed under every condition,
 and at most one condition-specific recovery call follows. The only differences are
 that the recovery turn may come from a new ladder level, which is given the rejected
-proposal, and that the payload of the recovery turn is stored with the episode.
+proposal, and that the payload of the recovery turn is stored with the episode. A planner
+role other than ``base`` changes the system prompt for the exploratory robustness arm.
 """
 
 from __future__ import annotations
@@ -18,7 +19,7 @@ from evibound.backend import MAX_WRITES
 from evibound.backend_v3 import WorldV3 as World
 from evibound.oracle_v3 import score_episode_v3 as score_episode
 from evibound.planner import batch_seed
-from evibound.planner_v3 import messages_for_v3
+from evibound.planner_v3_1 import messages_for_role
 from evibound.recovery_v3_1 import guard_for, recovery_messages_v31, trigger_v31
 from evibound.runner_v3 import instrument
 
@@ -38,8 +39,11 @@ def _cited_presence(world: World, evidence: Any) -> bool | None:
 def run_seed(generate: Generate, scenarios: Iterable[dict[str, Any]], conditions: list[str],
              variants: list[str], seed: int, batch_size: int,
              completed: set[tuple[str, str, str, int]] | None = None,
-             on_progress: Callable[[dict[str, Any]], None] | None = None):
-    """Yield finished episodes for one seed; skips identities already completed."""
+             on_progress: Callable[[dict[str, Any]], None] | None = None, role: str = "base"):
+    """Yield finished episodes for one seed; skips identities already completed.
+
+    ``role`` selects the planner's system prompt (``planner_v3_1``); ``base`` is the frozen prompt.
+    """
     for condition in conditions:
         guard_for(condition)
     completed = completed if completed is not None else set()
@@ -49,7 +53,7 @@ def run_seed(generate: Generate, scenarios: Iterable[dict[str, Any]], conditions
             world = World(scenario, variant)
             observation = world.observe()
             jobs.append({"scenario": scenario, "variant": variant,
-                         "messages": messages_for_v3(scenario, world.state, observation),
+                         "messages": messages_for_role(role, scenario, world.state, observation),
                          "job_id": f'{scenario["task_id"]}/{variant}/base'})
     for offset in range(0, len(jobs), batch_size):
         chunk = jobs[offset:offset + batch_size]
@@ -72,7 +76,8 @@ def run_seed(generate: Generate, scenarios: Iterable[dict[str, Any]], conditions
                     "family": scenario["family"], "perturbation": scenario["perturbation"],
                     "variant": job["variant"], "condition": condition, "guard": guard,
                     "physical_structure_id": scenario.get("physical_structure_id", scenario["task_id"]),
-                    "seed": seed, "scenario": scenario, "proposals": [copy.deepcopy(response)],
+                    "seed": seed, "planner_role": role, "scenario": scenario,
+                    "proposals": [copy.deepcopy(response)],
                     "recovery_trigger": None, "recovery_payload": None, "guard_execution_s": 0.0,
                 }
                 data = response["parsed"] or {}

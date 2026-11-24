@@ -567,6 +567,8 @@ def task_item(task, required, v31=False):
     ]
     if v31:
         chips.append({'k': 'attainability', **task['labels_display']['attainability']})
+        if labels.get('group', 'core') != 'core':
+            chips.append({'k': 'group', **task['labels_display']['group']})
     summary = [
         {'k': bi('开始时', 'Start'), 'v': bi(f'{zh_state(init)}；实际{actual_zh}', f'{en_state(init)}; actually {true_branch}')},
         {'k': bi('可控设备', 'Authorized'),
@@ -1196,8 +1198,8 @@ CORPORA = {
     'v3': {'dir': 'data/scenarios_v3', 'splits': ('holdout', 'dev'), 'mode': 'practice',
            'required': lambda t: t['split'] == 'holdout' or set(t['authorized']) != set(DEVICES)},
     # v3.1: checked after the run (owner's decision of 2026-11-24). REQUIRED is a fixed sample:
-    # the first holdout task of every stratum (class, and scope within class `full`) in every
-    # modality x language cell, 48 cards; every other task is optional.
+    # the first holdout task of every stratum (four core strata, three attack-battery strata) in
+    # every modality x language cell, 84 cards; every other task is optional.
     'v3_1': {'dir': 'data/scenarios_v3_1', 'splits': ('holdout', 'dev'), 'mode': 'posthoc', 'required': None},
 }
 
@@ -1208,8 +1210,7 @@ def v31_required(tasks):
         if task['split'] != 'holdout':
             continue
         labels = task['labels']
-        key = (labels['attainability'], labels['task_type'] if labels['attainability'] == 'full' else '',
-               labels['modality'], labels['language'])
+        key = (labels['stratum'], labels['modality'], labels['language'])
         if key not in seen:
             seen.add(key)
             required.add(task['task_id'])
@@ -1251,12 +1252,13 @@ def build(corpus, chain=None):
     after_note = None
     if mode == 'posthoc':
         banner = bi('运行之后的人工核对：v3.1 语料由生成器产生、检查器校验，按负责人 2026-11-24 的决定在运行之后核对。'
-                    '被否决的任务不会被替换；结果文档会附上去掉这些任务后的敏感性分析。必审的 48 张任务卡是固定抽样'
-                    '（每个类别、每种读数形式和说法各一张），其余可选。',
+                    '被否决的任务不会被替换；结果文档会附上去掉这些任务后的敏感性分析。必审的 84 张任务卡是固定抽样'
+                    '（七个任务组、每种读数形式和说法各一张），其余可选。攻击专用任务的特点是：本来什么都不用做，只有信了攻击才会去写。',
                     'Human check after the run: the v3.1 corpus is machine-generated and machine-checked and, by the '
                     'owner\'s decision of 2026-11-24, reviewed after the run. A rejected task is not replaced; the results '
-                    'document reports a sensitivity analysis without the rejected tasks. The 48 required task cards are '
-                    'a fixed sample (one per class, modality and language); the rest are optional.')
+                    'document reports a sensitivity analysis without the rejected tasks. The 84 required task cards are '
+                    'a fixed sample (one per stratum, modality and language); the rest are optional. In an attack-battery '
+                    'task nothing has to be done unless the attack is believed.')
         after_note = bi('v3.1 没有签署脚本：把导出的 review.json 和 checklist.csv 交给 Claude，否决的任务会进入敏感性分析。',
                         'v3.1 has no sign-off script: hand the exported review.json and checklist.csv to Claude; '
                         'rejected tasks enter the sensitivity analysis.')

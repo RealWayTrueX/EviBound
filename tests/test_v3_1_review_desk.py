@@ -18,12 +18,12 @@ class V31ReviewDeskTest(unittest.TestCase):
         cls.tasks = [i for i in cls.data['items'] if i['kind'] == 'task']
 
     def test_inventory_and_fixed_required_sample(self):
-        self.assertEqual(self.data['meta']['counts']['task'], 312)
+        self.assertEqual(self.data['meta']['counts']['task'], 420)
         required = [t for t in self.tasks if t['required']]
-        self.assertEqual(len(required), 48)             # 4 strata x 12 modality-language cells
+        self.assertEqual(len(required), 84)             # 7 strata x 12 modality-language cells
         self.assertTrue(all(t['group'] == 'holdout' for t in required))
         cells = Counter((t['modality'], t['instruction']['style']) for t in required)
-        self.assertEqual(set(cells.values()), {4})
+        self.assertEqual(set(cells.values()), {7})
         self.assertEqual(len({i['id'] for i in self.data['items']}), len(self.data['items']))
 
     def test_the_desk_s_own_rule_engine_agrees_with_every_label(self):

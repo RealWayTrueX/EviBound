@@ -279,5 +279,42 @@ class RunnerTests(unittest.TestCase):
         self.assertEqual(payloads[0], payloads[1])
 
 
+class PlannerRoleTests(unittest.TestCase):
+    def test_base_role_is_the_frozen_prompt_and_other_roles_only_extend_the_system_text(self):
+        from evibound.planner_v3 import PROMPT_V3, messages_for_v3
+        from evibound.planner_v3_1 import ROLE_NOTES, ROLES, messages_for_role
+        task, state = scenario(), {"light": "off", "fan": "off", "presence": True}
+        frozen = messages_for_v3(task, state, OBS)
+        self.assertEqual(messages_for_role("base", task, state, OBS), frozen)
+        self.assertEqual(ROLES, ("base", "cautious", "faithful", "experienced"))
+        for role in ROLES[1:]:
+            messages = messages_for_role(role, task, state, OBS)
+            self.assertEqual(messages[0]["content"], PROMPT_V3 + ROLE_NOTES[role])
+            self.assertTrue(ROLE_NOTES[role].strip())
+            self.assertEqual(messages[1:], frozen[1:])
+        with self.assertRaises(ValueError):
+            messages_for_role("reckless", task, state, OBS)
+
+    def test_the_engine_hands_the_role_prompt_to_the_planner_and_records_it(self):
+        from evibound.planner_v3_1 import ROLE_NOTES
+        planner = ScriptedPlanner(lambda obs: [W("light", "low")], lambda payload: [])
+        episodes = list(run_seed(planner, [scenario(goal_present={"light": "low"})], ["B0", "M_plan"], ["clean"],
+                                 11, 8, role="faithful"))
+        self.assertTrue(all(e["planner_role"] == "faithful" for e in episodes))
+        self.assertTrue(planner.calls[0][0]["content"].endswith(ROLE_NOTES["faithful"]))
+        default = list(run_seed(ScriptedPlanner(lambda obs: [], lambda payload: []), [scenario()], ["B0"], ["clean"], 11, 8))
+        self.assertEqual(default[0]["planner_role"], "base")
+
+    def test_the_role_arm_refuses_to_run_before_the_confirmatory_holdout(self):
+        import subprocess
+        import tempfile
+        with tempfile.TemporaryDirectory() as tmp:
+            result = subprocess.run(["bash", str(ROOT / "scripts/run_v3_1.sh"), "role_cautious", "scripted", "t", "11"],
+                                    capture_output=True, text=True, env={**__import__("os").environ, "V31_RUN_ROOT": tmp,
+                                                                         "EVIBOUND_DATA": tmp})
+            self.assertEqual(result.returncode, 2, result.stdout + result.stderr)
+            self.assertIn("only after the confirmatory holdout run", result.stderr)
+
+
 if __name__ == "__main__":
     unittest.main()

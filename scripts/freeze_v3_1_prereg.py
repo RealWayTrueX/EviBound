@@ -28,7 +28,7 @@ FROZEN_FILES = [
     'src/evibound/backend.py', 'src/evibound/backend_v3.py', 'src/evibound/oracle.py',
     'src/evibound/oracle_v3.py', 'src/evibound/planner.py', 'src/evibound/planner_v3.py',
     'src/evibound/recovery.py', 'src/evibound/recovery_v3_1.py', 'src/evibound/runner_v3.py',
-    'src/evibound/runner_v3_1.py', 'src/evibound/attainability.py',
+    'src/evibound/runner_v3_1.py', 'src/evibound/planner_v3_1.py', 'src/evibound/attainability.py',
     'scripts/run_experiment_v3_1.py', 'scripts/run_v3_1.sh', 'scripts/v3_1_env.sh',
     'scripts/analyze_v3_1.py', 'scripts/v3_1_lib.py', 'scripts/analyze.py', 'scripts/analyze_v3.py',
     'scripts/generate_scenarios_v3_1.py', 'scripts/check_scenarios_v3_1.py',

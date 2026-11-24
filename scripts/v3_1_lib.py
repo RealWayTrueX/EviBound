@@ -138,6 +138,10 @@ def annotate(rows, tasks):
         row['shortest'] = att.shortest
         notes = task.get('annotations') or {}
         row['attack_relevant'] = bool(notes.get('attack_expects_unsafe') or notes.get('attack_expects_unauthorized'))
+        # v3.1 corpus: 'core' (something to do) or an attack-battery group (nothing to do unless the
+        # attack is believed). Tasks of earlier corpora carry no group and count as core.
+        row['group'] = (task.get('labels') or {}).get('group', 'core')
+        row['rule_guard_unsafe'] = bool((notes.get('attack_under_rule_guard') or {}).get('unsafe'))
     return cache, disagreements
 
 
@@ -148,10 +152,11 @@ def cells(rows):
     return out
 
 
-def class_table(tasks, attain):
+def class_table(tasks, attain, group='core'):
     table = {}
     for cls in CLASSES:
-        ids = [tid for tid in tasks if attain[tid].cls == cls]
+        ids = [tid for tid in tasks if attain[tid].cls == cls
+               and ((tasks[tid].get('labels') or {}).get('group', 'core') == 'core') == (group == 'core')]
         table[cls] = {
             'tasks': len(ids),
             'structures': len({tasks[tid]['physical_structure_id'] for tid in ids}),
@@ -162,7 +167,7 @@ def class_table(tasks, attain):
     return table
 
 
-def split_table(rows, reference='B0', classes=('full',)):
+def split_table(rows, reference='B0', classes=('full',), group='core'):
     """Paired split against the unguarded run of the same first proposal.
 
     A: the reference completed compliantly and this condition did not complete.
@@ -172,11 +177,11 @@ def split_table(rows, reference='B0', classes=('full',)):
     """
     by_cell = cells(rows)
     out = {}
-    for (variant, condition), group in sorted(by_cell.items()):
+    for (variant, condition), members in sorted(by_cell.items()):
         ref = by_cell.get((variant, reference), {})
         counts = Counter()
-        for key, row in group.items():
-            if row['cls'] not in classes or key not in ref:
+        for key, row in members.items():
+            if row['cls'] not in classes or key not in ref or (row.get('group', 'core') == 'core') != (group == 'core'):
                 continue
             base, done = ref[key]['metrics'], bool(row['metrics']['goal_completion'])
             kind = 'compliant' if base['safe_completion'] else ('violating' if base['goal_completion'] else 'none')
@@ -194,11 +199,15 @@ def split_table(rows, reference='B0', classes=('full',)):
     return out
 
 
-def outcome_table(rows):
+def outcome_table(rows, group='core'):
+    """Outcome labels by variant, condition and class for the core tasks, or by attack group for the battery."""
     out = {}
     for row in rows:
+        mine = row.get('group', 'core')
+        if (mine == 'core') != (group == 'core'):
+            continue
         cell = out.setdefault(row['variant'], {}).setdefault(row['condition'], {}).setdefault(
-            row['cls'], {label: 0 for label in OUTCOMES})
+            row['cls'] if group == 'core' else mine, {label: 0 for label in OUTCOMES})
         cell[row['outcome']] += 1
     return out
 
@@ -231,10 +240,19 @@ def contrast(rows, spec, seed=BOOTSTRAP_SEED, resamples=RESAMPLES):
     return {**spec, 'effect': effect, 'decision': decide(effect, spec['rule'])}
 
 
+def _core(row):
+    return row.get('group', 'core') == 'core'
+
+
 SUBSETS = {
     'all': lambda row: True,
-    'multi_write': lambda row: row.get('shortest', 0) >= 2,
-    'single_write': lambda row: row.get('shortest', 0) == 1,
+    'core': _core,
+    'core_multi_write': lambda row: _core(row) and row.get('shortest', 0) >= 2,
+    'core_single_write': lambda row: _core(row) and row.get('shortest', 0) == 1,
+    'battery': lambda row: not _core(row),
+    'battery_unsafe': lambda row: row.get('group') == 'attack_unsafe',
+    'battery_hijack': lambda row: row.get('group') == 'attack_hijack',
+    'rule_guard_unsafe': lambda row: bool(row.get('rule_guard_unsafe')),
     'attack_relevant': lambda row: bool(row.get('attack_relevant')),
 }
 

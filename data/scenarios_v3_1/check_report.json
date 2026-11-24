@@ -1,8 +1,11 @@
 {
   "dev": {
-    "tasks": 36,
-    "physical_structures": 36,
+    "tasks": 48,
+    "physical_structures": 48,
     "strata": {
+      "attack_hijack": 3,
+      "attack_unsafe_dual": 6,
+      "attack_unsafe_scoped": 3,
       "full_dual": 9,
       "full_scoped": 9,
       "none": 6,
@@ -10,8 +13,8 @@
     },
     "attacks": {
       "all": {
-        "tamper": 18,
-        "replay": 18
+        "tamper": 24,
+        "replay": 24
       }
     },
     "rule_coverage": [
@@ -23,40 +26,57 @@
       "R6"
     ],
     "cells": {
-      "presence_flag/explicit": 3,
-      "presence_flag/everyday": 3,
-      "presence_flag/scene": 3,
-      "motion_timer/explicit": 3,
-      "motion_timer/everyday": 3,
-      "motion_timer/scene": 3,
-      "camera_caption/explicit": 3,
-      "camera_caption/everyday": 3,
-      "camera_caption/scene": 3,
-      "multi_sensor/explicit": 3,
-      "multi_sensor/everyday": 3,
-      "multi_sensor/scene": 3
+      "presence_flag/explicit": 4,
+      "presence_flag/everyday": 4,
+      "presence_flag/scene": 4,
+      "motion_timer/explicit": 4,
+      "motion_timer/everyday": 4,
+      "motion_timer/scene": 4,
+      "camera_caption/explicit": 4,
+      "camera_caption/everyday": 4,
+      "camera_caption/scene": 4,
+      "multi_sensor/explicit": 4,
+      "multi_sensor/everyday": 4,
+      "multi_sensor/scene": 4
     },
-    "attack_can_cause_an_unsafe_write": 5,
-    "attack_can_cause_an_unauthorized_write": 4,
-    "plans_of_two_or_more_writes": 10,
+    "attack_can_cause_an_unsafe_write": 16,
+    "unsafe_under_a_rule_guard_if_the_attack_is_believed": 15,
+    "attack_can_cause_an_unauthorized_write": 5,
+    "plans_of_two_or_more_writes": 9,
     "simulator_checks_per_task": [
       "a shortest plan under the guard",
       "b boundary interruption and completion",
       "c attacked plan blocked, annotations match",
-      "d unguarded pursuit of the goal"
+      "d unguarded pursuit of the goal",
+      "e attacked plan under the rule-only guard"
     ],
     "errors": []
   },
   "holdout": {
-    "tasks": 276,
-    "physical_structures": 276,
+    "tasks": 372,
+    "physical_structures": 372,
     "strata": {
+      "attack_hijack": 24,
+      "attack_unsafe_dual": 36,
+      "attack_unsafe_scoped": 36,
       "full_dual": 72,
       "full_scoped": 84,
       "none": 36,
       "part": 84
     },
     "attacks": {
+      "attack_hijack": {
+        "tamper": 12,
+        "replay": 12
+      },
+      "attack_unsafe_dual": {
+        "tamper": 18,
+        "replay": 18
+      },
+      "attack_unsafe_scoped": {
+        "tamper": 18,
+        "replay": 18
+      },
       "full_dual": {
         "tamper": 36,
         "replay": 36
@@ -83,27 +103,29 @@
       "R6"
     ],
     "cells": {
-      "presence_flag/explicit": 23,
-      "presence_flag/everyday": 23,
-      "presence_flag/scene": 23,
-      "motion_timer/explicit": 23,
-      "motion_timer/everyday": 23,
-      "motion_timer/scene": 23,
-      "camera_caption/explicit": 23,
-      "camera_caption/everyday": 23,
-      "camera_caption/scene": 23,
-      "multi_sensor/explicit": 23,
-      "multi_sensor/everyday": 23,
-      "multi_sensor/scene": 23
+      "presence_flag/explicit": 31,
+      "presence_flag/everyday": 31,
+      "presence_flag/scene": 31,
+      "motion_timer/explicit": 31,
+      "motion_timer/everyday": 31,
+      "motion_timer/scene": 31,
+      "camera_caption/explicit": 31,
+      "camera_caption/everyday": 31,
+      "camera_caption/scene": 31,
+      "multi_sensor/explicit": 31,
+      "multi_sensor/everyday": 31,
+      "multi_sensor/scene": 31
     },
-    "attack_can_cause_an_unsafe_write": 29,
-    "attack_can_cause_an_unauthorized_write": 39,
+    "attack_can_cause_an_unsafe_write": 101,
+    "unsafe_under_a_rule_guard_if_the_attack_is_believed": 84,
+    "attack_can_cause_an_unauthorized_write": 54,
     "plans_of_two_or_more_writes": 60,
     "simulator_checks_per_task": [
       "a shortest plan under the guard",
       "b boundary interruption and completion",
       "c attacked plan blocked, annotations match",
-      "d unguarded pursuit of the goal"
+      "d unguarded pursuit of the goal",
+      "e attacked plan under the rule-only guard"
     ],
     "errors": []
   },

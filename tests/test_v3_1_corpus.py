@@ -53,9 +53,14 @@ class GeneratorTests(unittest.TestCase):
 
     def test_frame_is_fresh_and_both_rule_implementations_agree_on_every_structure(self):
         earlier = gen.earlier_structure_ids(ROOT)
-        self.assertEqual(len(self.pool), 327)
         self.assertEqual(Counter(c['_stratum'] for c in self.pool),
-                         {'full_dual': 82, 'full_scoped': 95, 'part': 101, 'none': 49})
+                         {'full_dual': 82, 'full_scoped': 95, 'part': 101, 'none': 49,
+                          'attack_unsafe_dual': 56, 'attack_unsafe_scoped': 56, 'attack_hijack': 64,
+                          'attack_blocked': 80})
+        for cand in self.pool:      # a battery structure needs no write unless the attack is believed
+            if cand['_stratum'].startswith('attack'):
+                self.assertEqual(cand['_att']['shortest_plan'], [])
+                self.assertEqual(cand['_att']['class'], 'full')
         for cand in self.pool:
             self.assertNotIn(cand['_pid'], earlier)
             att = attainability(cand)                      # oracle rule function
@@ -76,12 +81,21 @@ class GeneratorTests(unittest.TestCase):
 class CorpusTests(unittest.TestCase):
     def test_splits_are_disjoint_balanced_and_usable_by_the_engine(self):
         holdout, dev = load('holdout'), load('dev')
-        self.assertEqual((len(holdout), len(dev)), (276, 36))
+        self.assertEqual((len(holdout), len(dev)), (372, 48))
         ids = [t['physical_structure_id'] for t in holdout + dev]
-        self.assertEqual(len(set(ids)), 312)
-        self.assertEqual(Counter(t['labels']['attainability'] for t in holdout), {'full': 156, 'part': 84, 'none': 36})
-        self.assertEqual(Counter(t['perturbation'] for t in holdout), {'tamper': 138, 'replay': 138})
-        self.assertEqual(set(Counter((t['observation']['modality'], t['language']) for t in holdout).values()), {23})
+        self.assertEqual(len(set(ids)), 420)
+        self.assertEqual(Counter(t['labels']['group'] for t in holdout),
+                         {'core': 276, 'attack_unsafe': 72, 'attack_hijack': 24})
+        core = [t for t in holdout if t['labels']['group'] == 'core']
+        self.assertEqual(Counter(t['labels']['attainability'] for t in core), {'full': 156, 'part': 84, 'none': 36})
+        self.assertEqual(Counter(t['perturbation'] for t in holdout), {'tamper': 186, 'replay': 186})
+        self.assertEqual(set(Counter((t['observation']['modality'], t['language']) for t in holdout).values()), {31})
+        for task in holdout + dev:      # the battery: nothing to do, and the rule-only guard would let the attack act
+            if task['labels']['group'] != 'core':
+                self.assertEqual(task['labels']['writes_needed'], 0)
+                self.assertGreater(task['annotations']['attack_under_rule_guard']['writes'], 0)
+                self.assertEqual(task['annotations']['attack_under_rule_guard']['unsafe'],
+                                 task['labels']['group'] == 'attack_unsafe')
         for task in holdout + dev:
             for variant in ('clean', 'perturbed', 'boundary'):
                 world = WorldV3(task, variant)
@@ -97,7 +111,11 @@ class CorpusTests(unittest.TestCase):
         self.assertEqual(json.loads(before)['total_errors'], 0)
 
     def test_checker_catches_wrong_labels_text_and_semantics(self):
-        tasks = {t['task_id']: t for t in load('holdout')}
+        everything = load('holdout')
+        tasks = {t['task_id']: t for t in everything if t['labels']['group'] == 'core'}
+        battery = next(t for t in everything if t['labels']['group'] == 'attack_unsafe' and t['language'] == 'explicit')
+        self.assertEqual(check.semantic_errors(battery) + check.label_errors(battery) + check.text_errors(battery)
+                         + check.simulator_errors(battery), [])
         part = next(t for t in tasks.values() if t['labels']['attainability'] == 'part' and t['language'] == 'explicit')
         full = next(t for t in tasks.values() if t['labels']['attainability'] == 'full'
                     and t['labels']['writes_needed'] >= 2 and t['language'] == 'scene')
@@ -125,13 +143,20 @@ class CorpusTests(unittest.TestCase):
         self.assertTrue(check.semantic_errors(mutated(part, ['authorized_subgoal_present'], {'light': 'high', 'fan': 'low'})))
         self.assertTrue(check.simulator_errors(mutated(full, ['annotations', 'attack_expects_unsafe'],
                                                        not full['annotations']['attack_expects_unsafe'])))
+        self.assertTrue(check.label_errors(mutated(battery, ['labels', 'stratum'], 'attack_hijack')))
+        self.assertTrue(check.simulator_errors(mutated(battery, ['annotations', 'attack_under_rule_guard'],
+                                                       {'writes': 0, 'unsafe': False})))
+        # a battery task whose selected branch asks for a write is no battery task
+        self.assertTrue(check.semantic_errors(mutated(battery, ['goal_absent'], {'fan': 'low' if battery['initial']['fan'] == 'off' else 'off'})))
 
 
 class PipelineTests(unittest.TestCase):
     def test_scripted_run_analyses_identically_from_traces_and_from_fingerprints(self):
         with tempfile.TemporaryDirectory() as tmp:
             tmp = Path(tmp)
-            ids = [t['task_id'] for t in load('dev')][:9]
+            dev = load('dev')
+            ids = [t['task_id'] for t in dev if t['labels']['group'] == 'core'][:6] \
+                + [t['task_id'] for t in dev if t['labels']['group'] != 'core'][:3]
             subprocess.run([sys.executable, str(ROOT / 'scripts/run_experiment_v3_1.py'), '--corpus', 'v3_1',
                             '--split', 'dev', '--planner', 'scripted:hasty', '--seeds', '11', '--task-ids', *ids,
                             '--output', str(tmp / 'episodes.jsonl')], check=True, capture_output=True, cwd=ROOT)
@@ -145,19 +170,21 @@ class PipelineTests(unittest.TestCase):
             self.assertEqual(json.dumps(first, sort_keys=True), json.dumps(second, sort_keys=True))
             self.assertEqual(first['replay_disagreements'], 0)
             self.assertTrue(first['design']['complete_matrix'])
-            self.assertEqual(set(first['decisions']), {'H1', 'H2', 'H3', 'H4', 'H5', 'H6', 'S1'})
+            self.assertEqual(set(first['decisions']), {'H1', 'H2', 'H3', 'H4', 'H5', 'H6', 'S1', 'S2'})
+            self.assertEqual(set(first['joint']), {'J1', 'J2', 'J3'})
             # the guard never lets an unsafe or unauthorized write through, whatever the feedback level
             for item in first['summary']:
                 if item['condition'].startswith('M'):
                     self.assertEqual((item['unsafe_effect'], item['authorization_violation']), (0, 0), item)
 
     def test_contrast_plan_is_well_formed(self):
-        ids = [c['id'] for c in analyze_v3_1.PRIMARY + analyze_v3_1.KEEP + analyze_v3_1.SECONDARY]
+        ids = [c['id'] for c in analyze_v3_1.CONFIRMATORY + analyze_v3_1.SECONDARY]
         self.assertEqual(len(ids), len(set(ids)))
-        known = {i for c in (analyze_v3_1.PRIMARY, analyze_v3_1.KEEP) for i in (x['id'] for x in c)}
-        for members in analyze_v3_1.JOINT.values():
-            self.assertTrue(set(members) <= known)
-        for item in analyze_v3_1.PRIMARY + analyze_v3_1.KEEP + analyze_v3_1.SECONDARY:
+        known = [x['id'] for x in analyze_v3_1.CONFIRMATORY]
+        self.assertEqual(sorted(i for members in analyze_v3_1.JOINT.values() for i in members), sorted(known))
+        for item in analyze_v3_1.PRIMARY + analyze_v3_1.KEEP:     # the ladder claims are about core tasks
+            self.assertEqual(item['where'], 'core')
+        for item in analyze_v3_1.CONFIRMATORY + analyze_v3_1.SECONDARY:
             self.assertIn(item['metric'], analyze_v3_1.METRICS)
             self.assertIn(item['where'], lib.SUBSETS)
             self.assertTrue({item['left'], item['right']} <= set(V31_CONDITIONS))

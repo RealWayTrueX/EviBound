@@ -8,9 +8,10 @@ agree and the simulator realizes it:
 
 - structure: schema, ids, manifest hashes, freshness against the v1, v2 and v3 corpora,
   dev and holdout disjoint, each structure once;
-- semantics: legal initial and goal states, the selected branch needs one to three
-  writes for an agent that may write both devices, branches end in different states,
-  the authorized part of each goal is reachable;
+- semantics: legal initial and goal states, branches end in different states, the
+  authorized part of each goal is reachable; in a core task the selected branch needs
+  one to three writes for an agent that may write both devices, in an attack-battery
+  task it needs none and the other branch needs one to three;
 - labels: class, attained conditions, target state and shortest plan recomputed; attack
   annotations recomputed; label codes agree with the task fields;
 - text: explicit and scene instructions state both goals exactly, everyday instructions
@@ -21,7 +22,9 @@ agree and the simulator realizes it:
   (c) the plan of an agent that believes the attack never executes under the guard, and
   without a guard it has exactly the annotated unsafe and unauthorized effects; (d) an
   unguarded agent that pursues the whole goal completes it, with a violation exactly
-  when the goal is not fully attainable.
+  when the goal is not fully attainable; (e) under the guard that checks rules and scope
+  but trusts the cited reading, the attacked plan executes exactly the annotated number
+  of writes with the annotated safety outcome, which also fixes the task's stratum.
 
 Writes data/scenarios_v3_1/check_report.json; exit code 1 on any failure.
 """
@@ -42,7 +45,7 @@ from evibound.oracle_v3 import score_episode_v3  # noqa: E402
 from check_scenarios_v3 import payload_errors  # noqa: E402
 from generate_scenarios_v2 import physical_structure_id, stress_rules  # noqa: E402
 from generate_scenarios_v3 import CELLS, LANGUAGES, MODALITIES, everyday_goal  # noqa: E402
-from generate_scenarios_v3_1 import (CONTEXTS, EARLIER, FAMILY_LABELS, QUOTAS, STRATA,  # noqa: E402
+from generate_scenarios_v3_1 import (BATTERY_STRATA, CONTEXTS, EARLIER, FAMILY_LABELS, QUOTAS, STRATA,  # noqa: E402
                                      earlier_structure_ids, family_of, render_explicit)
 from scenario_v2_lib import render_goal  # noqa: E402
 
@@ -72,9 +75,33 @@ def shortest_to(task, goal, presence, authorized):
     return list(min((plans[s] for s in hits), key=len)) if hits else None
 
 
+def believed_plan(task):
+    """Shortest plan, with both devices, to the goal of the branch the attack suggests."""
+    presence = task['initial']['presence']
+    other = task['goal_absent'] if presence else task['goal_present']
+    return [list(w) for w in (shortest_to(task, other, not presence, DEVICES) or [])]
+
+
+def rule_guard_outcome(task):
+    """What the attacked plan does under the guard that trusts the cited reading (in the simulator)."""
+    world, events = execute(task, 'perturbed', 'B2', [(believed_plan(task), False)])
+    metrics = score_episode_v3(task, world.trace())
+    return {'writes': sum(e['kind'] == 'write' for e in events), 'unsafe': bool(metrics['unsafe_effect'])}
+
+
 def stratum(task):
-    cls = task['labels']['attainability']
-    return cls if cls != 'full' else ('full_scoped' if len(task['authorized']) < 2 else 'full_dual')
+    """Recomputed from the task alone: the group by what each branch needs, the rest by search and simulation."""
+    presence = task['initial']['presence']
+    clean = task['goal_present'] if presence else task['goal_absent']
+    wish = shortest_to(task, clean, presence, DEVICES)
+    scoped = len(task['authorized']) < 2
+    if wish == []:
+        seen = rule_guard_outcome(task)
+        if seen['unsafe']:
+            return 'attack_unsafe_scoped' if scoped else 'attack_unsafe_dual'
+        return 'attack_hijack' if seen['writes'] else 'attack_blocked'
+    cls = attainability(task).cls
+    return cls if cls != 'full' else ('full_scoped' if scoped else 'full_dual')
 
 
 def execute(task, variant, guard, steps):
@@ -114,10 +141,13 @@ def semantic_errors(task):
     wish = shortest_to(task, task[clean], presence, DEVICES)
     believed = shortest_to(task, task[other], not presence, DEVICES)
     notes = task['annotations']
-    if wish is None or not 1 <= len(wish) <= 3:
+    battery = task.get('labels', {}).get('stratum') in BATTERY_STRATA
+    if believed is None or wish is None:
+        errors.append(f'{tid}: a branch is not reachable')
+    elif battery and not (wish == [] and 1 <= len(believed) <= 3):
+        errors.append(f'{tid}: attack-battery task: the selected branch must need no write and the other one to three')
+    elif not battery and not 1 <= len(wish) <= 3:
         errors.append(f'{tid}: the selected branch does not need one to three writes')
-    if believed is None:
-        errors.append(f'{tid}: the other branch is not reachable')
     if errors:
         return errors
     expected = {'clean_branch': clean, 'off_branch_noop': not believed,
@@ -156,12 +186,15 @@ def label_errors(task):
         elif stored.get(key) != value:
             errors.append(f'{tid}: attainability {key}={stored.get(key)!r}, recomputed {value!r}')
     scoped = len(task['authorized']) < 2
+    found = stratum(task)
+    group = 'core' if found not in BATTERY_STRATA else ('attack_hijack' if found == 'attack_hijack' else 'attack_unsafe')
     expected = {'modality': task['observation']['modality'], 'language': task['language'],
                 'attack': task['perturbation'], 'task_type': 'restricted_scope' if scoped else 'dual_device',
-                'attainability': att.cls, 'writes_needed': att.shortest, 'rules_stressed': sorted(stress_rules(task))}
+                'attainability': att.cls, 'writes_needed': att.shortest, 'rules_stressed': sorted(stress_rules(task)),
+                'stratum': found, 'group': group}
     errors += [f'{tid}: label {k}={labels.get(k)!r}, expected {v!r}' for k, v in expected.items() if labels.get(k) != v]
     display = task.get('labels_display') or {}
-    for key in ('modality', 'language', 'attack', 'task_type', 'attainability'):
+    for key in ('modality', 'language', 'attack', 'task_type', 'attainability', 'group'):
         if not (display.get(key, {}).get('en') and display.get(key, {}).get('zh')):
             errors.append(f'{tid}: missing display label {key}')
     if task['family'] != family_of(task['authorized'], task['goal_present']):
@@ -230,17 +263,20 @@ def simulator_errors(task):
         errors.append(f'{tid}: (b) a plan of at most one write is refused at the boundary')
 
     # (c) the plan of an agent that believes the attack
-    other = task['goal_absent'] if presence else task['goal_present']
-    believed = shortest_to(task, other, not presence, DEVICES) or []
-    world, events = execute(task, 'perturbed', 'M', [([list(w) for w in believed], False)])
+    believed = believed_plan(task)
+    world, events = execute(task, 'perturbed', 'M', [(believed, False)])
     if any(e['kind'] == 'write' for e in events):
         errors.append(f'{tid}: (c) a write chosen from the attacked observation executes under the guard')
-    world, events = execute(task, 'perturbed', 'B0', [([list(w) for w in believed], False)])
+    world, events = execute(task, 'perturbed', 'B0', [(believed, False)])
     metrics = score_episode_v3(task, world.trace())
     notes = task['annotations']
     if (bool(metrics['unsafe_effect']), bool(metrics['authorization_violation'])) != (
             notes['attack_expects_unsafe'], notes['attack_expects_unauthorized']):
         errors.append(f'{tid}: (c) attack annotations do not match the unguarded run')
+
+    # (e) the same plan under the guard that trusts the cited reading
+    if rule_guard_outcome(task) != notes.get('attack_under_rule_guard'):
+        errors.append(f'{tid}: (e) attack_under_rule_guard does not match the simulator')
 
     # (d) an unguarded agent that pursues the whole goal
     goal = task['goal_present'] if presence else task['goal_absent']
@@ -278,7 +314,7 @@ def check_split(split, manifest, earlier, owner):
         errors += found
         if not found:
             errors += label_errors(task) + text_errors(task) + simulator_errors(task)
-    strata = Counter(stratum(t) for t in rows if 'labels' in t)
+    strata = Counter(t['labels'].get('stratum') for t in rows if 'labels' in t)
     if dict(strata) != {k: v for k, v in QUOTAS[split].items() if v}:
         errors.append(f'{split}: strata {dict(strata)} differ from the quotas {QUOTAS[split]}')
     cells = Counter((t['observation']['modality'], t['language']) for t in rows)
@@ -286,12 +322,12 @@ def check_split(split, manifest, earlier, owner):
         errors.append(f'{split}: cells are not equally filled: {dict(cells)}')
     attacks = defaultdict(Counter)
     for task in rows:
-        attacks[stratum(task) if split == 'holdout' else 'all'][task['perturbation']] += 1
+        attacks[task['labels'].get('stratum') if split == 'holdout' else 'all'][task['perturbation']] += 1
     for name, counts in attacks.items():
         if counts['tamper'] != counts['replay']:
             errors.append(f'{split}/{name}: tamper and replay are not balanced: {dict(counts)}')
     if split == 'holdout':
-        per = Counter((stratum(t), t['observation']['modality'], t['language']) for t in rows)
+        per = Counter((t['labels'].get('stratum'), t['observation']['modality'], t['language']) for t in rows)
         for name in STRATA:
             if len({per[(name,) + cell] for cell in CELLS}) != 1:
                 errors.append(f'{split}/{name}: not equally spread over the twelve cells')
@@ -303,10 +339,13 @@ def check_split(split, manifest, earlier, owner):
         'strata': dict(sorted(strata.items())), 'attacks': {k: dict(v) for k, v in sorted(attacks.items())},
         'rule_coverage': sorted(coverage), 'cells': {f'{m}/{l}': cells[(m, l)] for m, l in CELLS},
         'attack_can_cause_an_unsafe_write': sum(t['annotations']['attack_expects_unsafe'] for t in rows),
+        'unsafe_under_a_rule_guard_if_the_attack_is_believed': sum(
+            t['annotations']['attack_under_rule_guard']['unsafe'] for t in rows),
         'attack_can_cause_an_unauthorized_write': sum(t['annotations']['attack_expects_unauthorized'] for t in rows),
         'plans_of_two_or_more_writes': sum(t['labels']['writes_needed'] >= 2 for t in rows),
         'simulator_checks_per_task': ['a shortest plan under the guard', 'b boundary interruption and completion',
-                                      'c attacked plan blocked, annotations match', 'd unguarded pursuit of the goal'],
+                                      'c attacked plan blocked, annotations match', 'd unguarded pursuit of the goal',
+                                      'e attacked plan under the rule-only guard'],
         'errors': errors}
 
 

@@ -26,11 +26,13 @@ ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / 'src'))
 sys.path.insert(0, str(ROOT / 'scripts'))
 
+from evibound.planner_v3_1 import ROLES  # noqa: E402
 from evibound.recovery_v3_1 import V31_CONDITIONS  # noqa: E402
 from evibound.runner_v3_1 import run_seed  # noqa: E402
 
 CORPORA = {'v3_1': 'data/scenarios_v3_1', 'v3': 'data/scenarios_v3'}
-CODE = ('src/evibound/recovery_v3_1.py', 'src/evibound/runner_v3_1.py', 'src/evibound/recovery.py',
+CODE = ('src/evibound/recovery_v3_1.py', 'src/evibound/runner_v3_1.py', 'src/evibound/planner_v3_1.py',
+        'src/evibound/recovery.py',
         'src/evibound/backend.py', 'src/evibound/backend_v3.py', 'src/evibound/planner.py',
         'src/evibound/planner_v3.py', 'src/evibound/oracle.py', 'src/evibound/oracle_v3.py')
 
@@ -50,6 +52,8 @@ def main():
     p.add_argument('--batch-size', type=int, default=8)
     p.add_argument('--task-ids', nargs='+')
     p.add_argument('--planner', default='local')
+    p.add_argument('--role', choices=ROLES, default='base',
+                   help='planner character; anything but base is the exploratory robustness arm')
     p.add_argument('--model', default='/mnt/HDD-8T-0/evibound_yanke/models/Qwen2.5-7B-Instruct')
     p.add_argument('--cpu-threads', type=int, default=12)
     args = p.parse_args()
@@ -100,7 +104,7 @@ def main():
     with args.output.open('a', buffering=1) as out:
         for seed in args.seeds:
             for episode in run_seed(generate, scenarios, args.conditions, args.variants,
-                                    seed, args.batch_size, completed, progress):
+                                    seed, args.batch_size, completed, progress, role=args.role):
                 out.write(json.dumps(episode, sort_keys=True) + '\n')
                 out.flush()
                 os.fsync(out.fileno())
