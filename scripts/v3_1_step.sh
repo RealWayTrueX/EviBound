@@ -11,6 +11,7 @@
 #   probe                    GPUs, sessions, disk, Python environment, model folder
 #   stop_v4                  stop the two v4 planner servers (owner's decision of 2026-11-24)
 #   smoke                    tests and a scripted pipeline run, no GPU
+#   conditions <names...>    development runs started after this line use these conditions
 #   run <stage> <gpu> <tag> [seeds]   start a run in the background (dev_v3, dev, holdout)
 #   status                   progress of every v3.1 run
 #   wait <stage> <tag> [minutes]      block until that run is complete (default 20 minutes)
@@ -140,6 +141,7 @@ publish() {
       probe) step_probe ;;
       stop_v4) step_stop_v4 ;;
       smoke) step_smoke ;;
+      conditions) export V31_CONDITIONS="$a $b $c $d"; say "development conditions: $V31_CONDITIONS" ;;
       run) step_run "$a" "$b" "$c" "${d:-}" ;;
       status) step_status ;;
       wait) step_wait "$a" "$b" "${c:-}" ;;

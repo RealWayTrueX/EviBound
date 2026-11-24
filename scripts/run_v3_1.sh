@@ -26,6 +26,13 @@ mkdir -p "$run_dir"
 if [ -e "$run_dir/COMPLETE" ]; then echo "$run_dir is already complete"; exit 0; fi
 echo $$ > "$run_dir/RUNNING"
 trap 'rm -f "$run_dir/RUNNING"' EXIT
+conditions=()
+if [ -n "${V31_CONDITIONS:-}" ]; then
+  # development only: a subset of the matrix, or wording alternatives that are not part of it
+  if [ "$stage" = holdout ]; then echo "the holdout runs the frozen matrix only" >&2; exit 2; fi
+  # shellcheck disable=SC2206
+  conditions=(--conditions $V31_CONDITIONS)
+fi
 if [ "$gpu" = scripted ]; then planner_args=(--planner scripted:hasty)
 else export CUDA_VISIBLE_DEVICES="$gpu"; planner_args=(--planner local); fi
 [ "$stage" = holdout ] && cp artifacts/v3_1_prereg_freeze.json "$run_dir/prereg_freeze.json"
@@ -34,7 +41,7 @@ inputs=()
 for split in $splits; do
   # shellcheck disable=SC2086
   python scripts/run_experiment_v3_1.py --corpus "$corpus" --split "$split" --seeds $seeds \
-    --batch-size 8 "${planner_args[@]}" --output "$run_dir/episodes_$split.jsonl" >> "$run_dir/run.log" 2>&1
+    --batch-size 8 "${planner_args[@]}" "${conditions[@]}" --output "$run_dir/episodes_$split.jsonl" >> "$run_dir/run.log" 2>&1
   inputs+=("$run_dir/episodes_$split.jsonl")
 done
 python scripts/analyze_v3_1.py --stage "$stage" --input "${inputs[@]}" --output "$run_dir/analysis" \
