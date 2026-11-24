@@ -62,6 +62,11 @@ step_probe() {
     [ -n "$pid" ] && echo "  $pid ${mem}MiB $(ps -o user=,etime=,comm= -p "$pid" 2>/dev/null)"
   done
   echo "tmux sessions:"; tmux list-sessions -F '  #{session_name} (created #{t:session_created})' 2>/dev/null || echo "  none"
+  # this account's own experiment processes (so that a run that still uses the v4 servers is seen
+  # before they are stopped); anything that looks like a secret is masked
+  echo "experiment processes of $(whoami) (pid, elapsed, command):"
+  ps -u "$(whoami)" -o pid=,etime=,args= 2>/dev/null | grep -Ei 'evibound|run_|model_server|vllm|experiment' | grep -v -e grep -e v3_1_step \
+    | sed -E 's/((token|key|secret|password)[A-Za-z_]*[= ])[^ ]+/\1***/Ig' | cut -c1-170 | sed 's/^/  /' | head -12
   echo "data disk:"; df -h "$EVIBOUND_DATA" | tail -1 | sed 's/^/  /'
   echo "python: $(command -v python) $(python -c 'import sys, torch, transformers; print(sys.version.split()[0], "torch", torch.__version__, "transformers", transformers.__version__)' 2>&1)"
   echo "model folder: $(ls -d "$EVIBOUND_DATA"/models/Qwen2.5-7B-Instruct 2>&1) ($(ls "$EVIBOUND_DATA/models" 2>/dev/null | tr '\n' ' '))"
@@ -105,7 +110,8 @@ step_run() {
     if [ -z "$used" ] || [ "$used" -gt 2000 ]; then say "GPU $gpu is not idle (${used:-?} MiB used); not starting $stage"; return 1; fi
   fi
   mkdir -p "$run_dir"
-  setsid nohup bash scripts/run_v3_1.sh "$stage" "$gpu" "$tag" "$seeds" > "$LOG_DIR/run_${stage}_${tag}.log" 2>&1 < /dev/null &
+  # nice 10: other work on this machine keeps its share of the processors
+  setsid nohup nice -n 10 bash scripts/run_v3_1.sh "$stage" "$gpu" "$tag" "$seeds" > "$LOG_DIR/run_${stage}_${tag}.log" 2>&1 < /dev/null &
   say "started $stage on GPU $gpu as $run_dir (pid $!)"
 }
 
