@@ -1,11 +1,10 @@
 # Steps for the next call of scripts/v3_1_step.sh on the experiment machine (see that file).
-# Second development round: the reading level, run as its own condition next to the levels it is composed of.
+# Confirmatory run under the freeze of 2026-11-24 (GPU 0), and next to it the exploratory
+# planner-character arm (GPU 1, then GPU 0). Each run is restarted if it stops without completing.
 detach
-conditions B0 M_recover M_reading M_plan M_full
-run dev_v3 0 d2
-run dev 1 d2
+chain 0 holdout:h1 role_experienced:r1
+chain 1 role_cautious:r1 role_faithful:r1
 status
 publish
-wait dev d2 60
-publish
-wait dev_v3 d2 90
+waitchains
+status
