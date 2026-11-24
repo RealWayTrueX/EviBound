@@ -49,17 +49,17 @@ one), `M_plan` a review of the plan, `M_seq` a sequence of writes.
 <!-- generated:c2 -->
 <!-- /generated:c2 -->
 
-**C3. Saying the trusted reading helps when it is not the reading the plan was chosen for.**
+**C3. Telling the planner how to revise its plan, or which writes to return, repairs fewer plans than the reason alone.**
 
 <!-- generated:c3 -->
 <!-- /generated:c3 -->
 
-**C4. Reason and reading are not behind any level that prescribes writes.**
+**C4. Saying the trusted reading helps when it is not the reading the plan was chosen for.**
 
 <!-- generated:c4 -->
 <!-- /generated:c4 -->
 
-**C5. Reason and reading end at the attainable target more often than a list.**
+**C5. The reason alone is not behind any level that prescribes writes.**
 
 <!-- generated:c5 -->
 <!-- /generated:c5 -->
@@ -141,7 +141,16 @@ Reported with intervals and without confirmatory weight.
 
 ## 9. Exploratory: planner characters
 
-To be added when the three runs of the exploratory arm have completed.
+To be completed when the three runs of the exploratory arm have finished.
+
+<!-- generated:roles -->
+<!-- /generated:roles -->
+
+<!-- generated:roles_totals -->
+<!-- /generated:roles_totals -->
+
+<!-- generated:roles_turns -->
+<!-- /generated:roles_turns -->
 
 ## 10. Limits
 
