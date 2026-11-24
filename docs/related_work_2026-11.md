@@ -89,6 +89,59 @@ recovery, not the guard, limits utility.
 - A simplified PACE-style capability and effect check without evidence binding.
 - The cross-task replay mechanism from TRAP, as an attack family next to tamper and replay.
 
+## 4. Utility of a guard and feedback after a denial (added 2026-11-24, for v3.1)
+
+Sections 1 to 3 cover enforcement mechanisms. v3.1 asks a different question:
+how the utility cost of a guard is measured, and what the guard tells the
+planner after it refuses a write. The works below were read on 2026-11-24
+through summaries of their arXiv full text. Every 2026 item is a preprint, and
+any detail that goes into the report or a paper needs a check against the
+paper itself.
+
+**How the utility cost of a guard is measured**
+
+| Approach | Examples | What it leaves open |
+|---|---|---|
+| Task success with and without the defence | AgentDojo-style utility in FIDES (2505.23643), StepGuard (2608.24777), FORGE (2602.16708), PRUDENTIA (2602.11416), Symbolic Guardrails (2604.15579) | Whether a lost task was attainable under the policy; whether the baseline's successes were compliant |
+| Completion under policy | ST-WebAgentBench, CuP (2410.06703) | Equals our rule-compliant completion (U2), which credits the guard with the baseline's violations |
+| Task categories assigned by hand | FIDES (data independent / with query / data dependent, by manual inspection); AgentGuard (2609.16287, three reviewers judge feasibility) | No automatic label, no numeric ceiling, no attribution per episode |
+| Cohorts by whether a gate fired | FORGE's denial cohort; deterministic gates on tau2-bench (2607.07405) | No run of the same plan without the gate to compare with |
+| Per-action error rates | PolicyGym (2610.28989); GuardianAgentBench (2607.20982) | What the agent does after a correct block |
+| Outcome taxonomies | BLINDSPOT (2609.16305): safe completion, correct refusal, unsafe completion, over-refusal | No label for a permitted action nobody asked for; no automatic achievability label |
+| Theory | "What Can Be Enforced?" (2607.22868): gate transparency and a per-action utility loss; per-action error rates do not determine closed-loop utility because the agent adapts | No task-level attainable set and no measurement |
+
+**What the agent is told after a block**
+
+| Work | After a block | Is the content of the feedback studied? |
+|---|---|---|
+| FIDES (2505.23643) | the planning loop aborts | no |
+| Least-privilege auditing (2611.11305) | call withheld in a replay | no; named as a limitation |
+| StepGuard (2608.24777) | replaced by a self-reflect message | no |
+| Safety Chip (2309.09919) | explanation of the violated constraint, then re-planning | argued, not measured |
+| FORGE (2602.16708), GuardianAgentBench (2607.20982), deterministic gates (2607.07405) | structured denial, the agent re-plans | no; the gates paper lists informative against generic rejection as future work |
+| TRIAD (2606.05805), RAIL Guard (2607.16215) | proceed, update or refuse; plan remediation | strategies are compared, contents are not |
+| PolicyGuide (2608.19861) | workflow-level remediation after a refusal | process-valid rate only |
+| MENTOR (2610.17039) | the violated manual excerpt and a suggested compliant call | no ablation, no measurement of what following the suggestion does |
+| Environment Steering (2609.35807) | stop, generic retry, or constraint-aware retry | three variants compared, on task success and attack success only |
+
+**Error messages for tool failures, and actions nobody asked for**
+
+- Error-message design: "MCP Error Messages Written for Developers Hurt the Most Capable Agents Most" (2609.35381) and "Same Error, Different Recovery" (2611.11581) vary the content and the delivery of tool errors. Neither concerns a policy denial after which part of the request cannot be had, and neither has a reference for what was still achievable.
+- Side effects: "Recovery Gone Too Far" (2611.19886) measures over- and under-modification after tool errors against hand-fixed sets of expected changes. OverAct (2610.01508), Overeager Coding Agents (2605.18583) and Authorization Drift (2611.09113) measure out-of-scope actions on benign tasks against annotated references. OverAct reports that a permission list with slack is used up in proportion to the slack. None of them studies a guard's feedback as the trigger.
+
+**Where v3.1 stands.** Its instrument is an exact search for what the rules
+and the scope allow in each task, which gives a ceiling, an attainable target
+and a label for where each episode ended, with no annotation. Its question is
+what a guard should say after a block, with the guard's decisions held fixed.
+It does not claim that a completion measure should exclude violations (CuP),
+that explanation after a block recovers utility (Safety Chip, Environment
+Steering, MENTOR), or that the wording of an error changes recovery
+(2609.35381, 2611.11581); those are established. Background on the classical
+side: transparency of enforcement mechanisms (Schneider 2000; Ligatti, Bauer
+and Walker 2005), shields with minimal interference (Bloem et al. 2015;
+Alshiekh et al. 2018), and partial-satisfaction planning (Smith 2004; van den
+Briel et al. 2004) are cited from memory here and are still to be checked.
+
 ## 中文摘要
 
 **新增工作。** 复核指出的五篇 2026 年 10 月预印本都已在 arXiv 上核实。
@@ -112,3 +165,5 @@ recovery, not the guard, limits utility.
 **不能再说的话。** "没有系统做来源/时效/状态检查""首个重放防御""时效检查就够了"。
 
 **v4 必须对比的对象。** Always_refresh、`M_scoped`、简化的 PACE 式能力核验，以及 TRAP 的跨任务重放攻击。
+
+**2026-11-24 补充（第 4 节，为 v3.1）。** 同行衡量守卫效用代价的办法主要是带守卫和不带守卫的完成率、合规完成率（CuP）、人工划分任务类别；拦截之后的反馈大多只是"给出原因让智能体重试"，只有 Environment Steering 比过三种反馈，而且只看完成率和攻击成功率。v3.1 的工具是对每个任务精确搜索"规则之内最多能做到什么"，问题是守卫拦截之后该说什么。
