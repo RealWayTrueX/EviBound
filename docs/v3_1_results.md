@@ -21,6 +21,23 @@ holdout output existed.
 
 To be written when the run has completed.
 
+Rules for the summary, written and pushed while the confirmatory run was
+still running and before any of its output had been seen:
+
+1. The outcome of each claim is the one the frozen rule gives. A claim is
+   supported only if every one of its parts is.
+2. The claims are stated in the order C1 to C6, with their counts, before any
+   interpretation.
+3. For a part that is not supported, the summary says which of the two cases
+   holds: the estimate points the predicted way and the interval includes
+   zero (inconclusive), or the estimate is at or below zero (unsupported).
+4. Nothing from the secondary contrasts, the first draft's claims or the
+   exploratory arm is used to qualify the outcome of a claim. Where they are
+   mentioned, they are labelled.
+5. One run of the exploratory arm (the character `cautious`) finished and was
+   read before the confirmatory run did. It uses another system prompt. The
+   confirmatory analysis was frozen before either run started.
+
 ## 1. Design as run
 
 <!-- generated:design -->
