@@ -16,6 +16,11 @@
 #   status                   progress of every v3.1 run
 #   wait <stage> <tag> [minutes]      block until that run is complete (default 20 minutes)
 #   publish                  push the small outputs now (always done once more at the end)
+#   ensure <stage> <gpu> <tag>        run and wait; a run that stops without completing is started again
+#                            (it resumes by episode identity), at most twice, and every restart is logged
+#   chain <gpu> <stage:tag>...        in the background: these runs one after another on one GPU, each with
+#                            "ensure" and a publish after it
+#   waitchains               block until every chain has finished
 #   detach                   as the first step: carry out the remaining steps in the background, so
 #                            that they survive the terminal session; pipeline.lock in the steps
 #                            folder holds the process id
@@ -139,7 +144,46 @@ step_wait() {
   [ -s "$LOG_DIR/run_${1}_${2}.log" ] && { echo "launcher output:"; tail -5 "$LOG_DIR/run_${1}_${2}.log" | cut -c1-200 | sed 's/^/  /'; }
 }
 
-publish() {
+ensure_run() {
+  local stage="$1" gpu="$2" tag="$3" seeds="${4:-}" attempt=0
+  local dir="$RUNS/v3_1_${stage}_${tag}"
+  while [ ! -e "$dir/COMPLETE" ] && [ "$attempt" -le 2 ]; do
+    [ "$attempt" -gt 0 ] && say "RESTART $attempt of $stage/$tag: it stopped without completing; it resumes by episode identity"
+    if step_run "$stage" "$gpu" "$tag" "$seeds"; then
+      sleep "${V31_POLL:-30}"
+      while [ -e "$dir/RUNNING" ] && kill -0 "$(cat "$dir/RUNNING" 2>/dev/null)" 2>/dev/null; do sleep "${V31_POLL:-30}"; done
+    else
+      sleep "${V31_POLL:-30}"
+    fi
+    attempt=$((attempt + 1))
+  done
+  run_state "$dir"
+  [ -e "$dir/COMPLETE" ] || { say "GAVE UP on $stage/$tag"; tail -5 "$LOG_DIR/run_${stage}_${tag}.log" 2>/dev/null | cut -c1-200 | sed 's/^/  /'; }
+}
+
+CHAIN_PIDS=()
+step_chain() {
+  local gpu="$1"; shift
+  (
+    for item in "$@"; do
+      ensure_run "${item%%:*}" "$gpu" "${item##*:}"
+      publish
+    done
+    say "chain on GPU $gpu finished"
+  ) &
+  CHAIN_PIDS+=($!)
+  say "chain on GPU $gpu started (pid $!): $*"
+}
+
+step_waitchains() {
+  local pid
+  for pid in "${CHAIN_PIDS[@]}"; do wait "$pid"; done
+  say "all chains finished"
+}
+
+publish() { ( flock 9; publish_now ) 9> "$LOG_DIR/publish.lock"; }
+
+publish_now() {
   mkdir -p "$OUT/server_out"
   if [ ! -d "$OUT/.git" ]; then
     git init -q "$OUT" && git -C "$OUT" checkout -q -b claude/v3-1-results
@@ -191,6 +235,10 @@ publish() {
       run) step_run "$a" "$b" "$c" "${d:-}" ;;
       status) step_status ;;
       wait) step_wait "$a" "$b" "${c:-}" ;;
+      ensure) ensure_run "$a" "$b" "$c" "${d:-}" ;;
+      chain) # shellcheck disable=SC2086
+             step_chain "$a" $b $c $d ;;
+      waitchains) step_waitchains ;;
       publish) publish ;;
       detach) ;;
       *) say "unknown step: $name" ;;

@@ -241,16 +241,18 @@ attack, does the home stay as it was under the plan review, the list and the
 reason alone; the same without an attack, when nothing needs doing; S1 and S2
 on each kind of battery task and on core tasks alone.
 
-**Exploratory arm after the confirmatory run: one model, several planner
-characters.** The owner asked whether one model in different roles could
-stand in for several planners. It cannot show that a result holds for another
-model, because the weights are the same. It can show whether a result depends
-on how the planner is told to behave. After the confirmatory analysis the
-holdout tasks are run again with three other system prompts
+**Exploratory arm: one model, several planner characters.** The owner asked
+whether one model in different roles could stand in for several planners. It
+cannot show that a result holds for another model, because the weights are
+the same. It can show whether a result depends on how the planner is told to
+behave. The holdout tasks are run again with three other system prompts
 (`src/evibound/planner_v3_1.py`): `cautious` (the v2 safety prompt),
 `faithful` (do what was asked and nothing else) and `experienced` (a memory
 of the recovery protocol), under `B0`, `M_recover`, `M_full` and `M_plan`.
-These runs carry no confirmatory weight and are reported as such.
+These runs carry no confirmatory weight and are reported as such. They need
+the freeze, like the confirmatory run, and may run next to it on the second
+GPU: wording, conditions, measures and contrasts are fixed before either
+starts, so nothing in them can shape a confirmatory choice.
 
 **Always reported:** the summary of every cell, the paired split and the
 outcome labels for every condition and variant, the number of recovery turns
@@ -297,7 +299,8 @@ showed, which wording was chosen and what was changed.
   refuses to start unless every frozen hash matches.
 - The whole matrix is run once. Rejections, empty plans and malformed outputs
   stay in every denominator. A rerun is allowed only for a crash, resumes by
-  episode identity, and is reported.
+  episode identity, and is reported. The server pipeline restarts a run that
+  stopped without completing, at most twice, and logs each restart.
 - Holdout results are not used to change wording, conditions, measures or
   contrasts. Anything computed beyond this plan is labelled exploratory.
 - Raw traces stay on the data disk. The repository receives the episode

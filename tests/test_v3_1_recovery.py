@@ -353,15 +353,38 @@ class PlannerRoleTests(unittest.TestCase):
         default = list(run_seed(ScriptedPlanner(lambda obs: [], lambda payload: []), [scenario()], ["B0"], ["clean"], 11, 8))
         self.assertEqual(default[0]["planner_role"], "base")
 
-    def test_the_role_arm_refuses_to_run_before_the_confirmatory_holdout(self):
+    def test_runs_on_holdout_tasks_need_the_freeze(self):
+        """The confirmatory run and the role arm both verify the freeze before anything else."""
+        import re
+        script = (ROOT / "scripts/run_v3_1.sh").read_text()
+        for stage in (r"holdout\)", r"role_\*\)"):
+            branch = re.search(stage + r".*?;;", script, re.S).group(0)
+            self.assertIn("freeze_v3_1_prereg.py --verify", branch)
+        self.assertIn("set -euo pipefail", script)   # a failed verification stops the script
+
+    def test_the_freeze_verifies_only_while_every_frozen_file_is_unchanged(self):
+        import json as _json
         import subprocess
+        import sys as _sys
         import tempfile
+        freeze_script = str(ROOT / "scripts/freeze_v3_1_prereg.py")
         with tempfile.TemporaryDirectory() as tmp:
-            result = subprocess.run(["bash", str(ROOT / "scripts/run_v3_1.sh"), "role_cautious", "scripted", "t", "11"],
-                                    capture_output=True, text=True, env={**__import__("os").environ, "V31_RUN_ROOT": tmp,
-                                                                         "EVIBOUND_DATA": tmp})
-            self.assertEqual(result.returncode, 2, result.stdout + result.stderr)
-            self.assertIn("only after the confirmatory holdout run", result.stderr)
+            run = lambda: subprocess.run([_sys.executable, freeze_script, "--verify"], cwd=tmp,
+                                         capture_output=True, text=True)
+            missing = run()
+            self.assertEqual(missing.returncode, 1)
+            self.assertIn("NOT FROZEN", missing.stdout)
+            import hashlib
+            Path(tmp, "artifacts").mkdir()
+            Path(tmp, "a.txt").write_text("frozen\n")
+            digest = hashlib.sha256(Path(tmp, "a.txt").read_bytes()).hexdigest()
+            Path(tmp, "artifacts/v3_1_prereg_freeze.json").write_text(_json.dumps(
+                {"approved_by": "x", "frozen_utc": "t", "sha256": {"a.txt": digest}}))
+            self.assertEqual(run().returncode, 0)
+            Path(tmp, "a.txt").write_text("changed\n")
+            changed = run()
+            self.assertEqual(changed.returncode, 1)
+            self.assertIn("FREEZE MISMATCH: a.txt", changed.stdout)
 
 
 if __name__ == "__main__":

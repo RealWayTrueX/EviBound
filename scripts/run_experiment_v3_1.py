@@ -41,6 +41,33 @@ def digest(path):
     return hashlib.sha256((ROOT / path).read_bytes()).hexdigest()
 
 
+def resume_identities(path):
+    """Identities of the episodes already in an output file.
+
+    A crash in the middle of a write can leave a partial last line. It is cut off, so that
+    its episode is run again; a damaged line anywhere else is an error.
+    """
+    data = path.read_bytes()
+    lines = data.splitlines(keepends=True)
+    completed, keep = set(), 0
+    for index, line in enumerate(lines):
+        try:
+            if not line.endswith(b'\n'):
+                raise ValueError('no line end')
+            row = json.loads(line)
+            identity = (row['task_id'], row['variant'], row['condition'], row['seed'])
+        except (ValueError, KeyError, TypeError):
+            if index != len(lines) - 1:
+                raise ValueError(f'{path}: line {index + 1} is damaged') from None
+            with path.open('r+b') as stream:
+                stream.truncate(keep)
+            print(json.dumps({'partial_last_line_removed_bytes': len(data) - keep}), flush=True)
+            break
+        completed.add(identity)
+        keep += len(line)
+    return completed
+
+
 def main():
     p = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     p.add_argument('--corpus', choices=sorted(CORPORA), default='v3_1')
@@ -80,9 +107,7 @@ def main():
             raise ValueError('Unknown or split-mismatched task ID')
     completed = set()
     if args.output.exists():
-        for line in args.output.read_text().splitlines():
-            r = json.loads(line)
-            completed.add((r['task_id'], r['variant'], r['condition'], r['seed']))
+        completed = resume_identities(args.output)
     if args.planner == 'local':
         from evibound.planner import LocalPlanner
         generate = LocalPlanner(args.model).generate

@@ -8,7 +8,7 @@
 # holdout  the confirmatory run; refuses to start unless the v3.1 preregistration freeze
 #          exists and every frozen hash still matches
 # role_NAME  exploratory: the holdout tasks with another planner character (cautious,
-#          faithful, experienced) and four conditions; only after the confirmatory run
+#          faithful, experienced) and four conditions; only after the freeze
 # "scripted" in place of a GPU index runs a deterministic persona without a model, to
 # exercise the whole pipeline. Raw traces stay in $EVIBOUND_DATA/runs/v3_1_<stage>[_tag]/.
 set -euo pipefail
@@ -22,9 +22,9 @@ case "$stage" in
   dev)     corpus=v3_1; splits="dev" ;;
   holdout) corpus=v3_1; splits="holdout"; python scripts/freeze_v3_1_prereg.py --verify ;;
   role_*)  corpus=v3_1; splits="holdout"; role="${stage#role_}"
-           if ! ls "${V31_RUN_ROOT:-$EVIBOUND_DATA/runs}"/v3_1_holdout*/COMPLETE >/dev/null 2>&1; then
-             echo "the role arm is exploratory and runs only after the confirmatory holdout run" >&2; exit 2
-           fi
+           # exploratory, and it uses the holdout tasks: like the confirmatory run it needs the freeze, so
+           # nothing in it can shape a confirmatory choice. It may run next to that run on another GPU.
+           python scripts/freeze_v3_1_prereg.py --verify
            : "${V31_CONDITIONS:=B0 M_recover M_full M_plan}" ;;
   *) echo "unknown stage $stage" >&2; exit 2 ;;
 esac
