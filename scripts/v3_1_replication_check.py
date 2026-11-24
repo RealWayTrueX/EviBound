@@ -34,14 +34,10 @@ def frozen_rows(path):
     return rows
 
 
-def main():
-    parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
-    parser.add_argument('--v3', type=Path, default=ROOT / 'artifacts/episode_fingerprints_v3_holdout.json.gz')
-    parser.add_argument('--dev-v3', type=Path, required=True)
-    parser.add_argument('--output', type=Path)
-    args = parser.parse_args()
-    old = frozen_rows(args.v3)
-    new = {lib.identity(r): r for r in lib.read_fingerprints(args.dev_v3)}
+def compare(v3_path, dev_v3_path):
+    """Counts for the comparison of the frozen v3 holdout run with a development run on the v3 corpus."""
+    old = frozen_rows(v3_path)
+    new = {lib.identity(r): r for r in lib.read_fingerprints(dev_v3_path)}
     cells = sorted({(k[0], k[1], k[3]) for k in old} & {(k[0], k[1], k[3]) for k in new})
     same_first = sum(old[(t, v, 'B0', s)]['first'] == new[(t, v, 'B0', s)]['first'] for t, v, s in cells)
     result = {'cells_compared': len(cells), 'first_response_identical': same_first, 'conditions': {}}
@@ -64,7 +60,18 @@ def main():
             stats['unsafe_effect_v3'] += a['metrics']['unsafe_effect']
             stats['unsafe_effect_now'] += b['metrics']['unsafe_effect']
         result['conditions'][condition] = dict(stats)
-    print(f"first responses identical: {same_first} of {len(cells)} (task, variant, seed) cells")
+    return result
+
+
+def main():
+    parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
+    parser.add_argument('--v3', type=Path, default=ROOT / 'artifacts/episode_fingerprints_v3_holdout.json.gz')
+    parser.add_argument('--dev-v3', type=Path, required=True)
+    parser.add_argument('--output', type=Path)
+    args = parser.parse_args()
+    result = compare(args.v3, args.dev_v3)
+    print(f"first responses identical: {result['first_response_identical']} of {result['cells_compared']} "
+          f"(task, variant, seed) cells")
     for condition, s in result['conditions'].items():
         print(f"{condition:<10} episodes {s.get('episodes', 0):>4}; without recovery {s.get('no_recovery', 0):>4}, "
               f"identical {s.get('no_recovery_identical', 0):>4}; with recovery {s.get('with_recovery', 0):>4}, "

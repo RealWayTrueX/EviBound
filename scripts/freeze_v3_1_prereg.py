@@ -1,9 +1,10 @@
 #!/usr/bin/env python3
 """Freeze (or verify) the v3.1 preregistration before any holdout output.
 
---approve NAME   requires passing corpus checks, a current layer-1 record and no holdout
-                 output, then writes artifacts/v3_1_prereg_freeze.json with the hash of every
-                 file the confirmatory run and its analysis depend on.
+--approve NAME   requires passing corpus checks, a current layer-1 record, a current
+                 development record and no holdout output, then writes
+                 artifacts/v3_1_prereg_freeze.json with the hash of every file the
+                 confirmatory run and its analysis depend on.
 --verify         exits 0 only if the freeze exists and every hash still matches.
 
 Unlike the v3 freeze, this one does not require a human sign-off of the corpus before the
@@ -33,6 +34,12 @@ FROZEN_FILES = [
     'scripts/analyze_v3_1.py', 'scripts/v3_1_lib.py', 'scripts/analyze.py', 'scripts/analyze_v3.py',
     'scripts/generate_scenarios_v3_1.py', 'scripts/check_scenarios_v3_1.py',
     'scripts/scenario_v2_lib.py', 'scripts/generate_scenarios_v2.py', 'scripts/generate_scenarios_v3.py',
+    # the development record quoted in the preregistration, its inputs and the scripts that compute it
+    'artifacts/v3_1_dev_record.json', 'artifacts/v3_1_dev_d1_v3_fingerprints.json.gz',
+    'artifacts/v3_1_dev_d1_fingerprints.json.gz', 'artifacts/v3_1_dev_d2_v3_fingerprints.json.gz',
+    'artifacts/v3_1_dev_d2_fingerprints.json.gz', 'scripts/v3_1_dev_record.py', 'scripts/v3_1_choose_wording.py',
+    'scripts/v3_1_replication_check.py', 'artifacts/episode_fingerprints_v3_holdout.json.gz',
+    'data/scenarios_v3/holdout.jsonl', 'data/scenarios_v3/dev.jsonl',
 ]
 MODEL_REVISION = 'a09a35458c702b33eeacc393d103063234e8bc28'
 LABEL_REVIEW = {
@@ -68,6 +75,7 @@ def approve(name, executed_by):
         sys.exit(f'holdout output already exists ({existing[0]}); a freeze must precede holdout output')
     subprocess.run([sys.executable, 'scripts/check_scenarios_v3_1.py'], check=True)
     subprocess.run([sys.executable, 'scripts/analyze_v3_1_layer1.py', '--check'], check=True)
+    subprocess.run([sys.executable, 'scripts/v3_1_dev_record.py', '--check'], check=True)
     missing = [p for p in FROZEN_FILES if not Path(p).exists()]
     if missing:
         sys.exit('missing files: ' + ', '.join(missing))

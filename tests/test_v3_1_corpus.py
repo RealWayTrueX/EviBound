@@ -170,8 +170,16 @@ class PipelineTests(unittest.TestCase):
             self.assertEqual(json.dumps(first, sort_keys=True), json.dumps(second, sort_keys=True))
             self.assertEqual(first['replay_disagreements'], 0)
             self.assertTrue(first['design']['complete_matrix'])
-            self.assertEqual(set(first['decisions']), {'U1', 'W1', 'I1', 'I2', 'R1', 'N1', 'N2', 'N3', 'N4', 'E1', 'E2',
+            self.assertEqual(set(first['decisions']), {'U1', 'W1', 'I1', 'I2', 'P1', 'P2', 'R1', 'N1', 'N2', 'N3', 'N4',
                                                        'S1', 'S2'})
+            # runs made before the engine recorded the kind of turn get it from the plan review of the cell
+            stripped = [{k: v for k, v in row.items() if k != 'form'} for row in again]
+            self.assertGreater(lib.backfill_kinds(stripped), 0)
+            recorded = {lib.identity(row): row.get('form') for row in again}
+            for row in stripped:
+                if row['condition'].startswith('M') and row['condition'] != 'M' and row.get('trigger'):
+                    self.assertEqual(row['form'], recorded[lib.identity(row)], lib.identity(row))
+            self.assertEqual(lib.backfill_kinds(again), 0)      # recorded kinds are left alone
             self.assertEqual(set(first['joint']), {'C1', 'C2', 'C3', 'C4', 'C5', 'C6'})
             self.assertEqual({i['id'] for i in first['secondary']} & set(analyze_v3_1.DRAFT_IDS),
                              set(analyze_v3_1.DRAFT_IDS))        # the draft claims are still computed
@@ -195,6 +203,12 @@ class PipelineTests(unittest.TestCase):
             self.assertEqual(len(blocks['claims'].splitlines()), 2 + 6)
             self.assertEqual(len(blocks['draft'].splitlines()), 2 + 6)
             self.assertEqual(len(blocks['battery'].splitlines()), 2 + len(V31_CONDITIONS))
+
+    def test_development_record_in_the_preregistration_is_current(self):
+        """The numbers the preregistration quotes from the development runs follow from the committed fingerprints."""
+        result = subprocess.run([sys.executable, str(ROOT / 'scripts/v3_1_dev_record.py'), '--check'],
+                                capture_output=True, text=True, cwd=ROOT)
+        self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
 
     def test_contrast_plan_is_well_formed(self):
         ids = [c['id'] for c in analyze_v3_1.CONFIRMATORY + analyze_v3_1.SECONDARY]

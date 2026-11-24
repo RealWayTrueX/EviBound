@@ -147,6 +147,32 @@ def annotate(rows, tasks):
     return cache, disagreements
 
 
+def backfill_kinds(rows):
+    """Give rows without a recorded kind of recovery turn the kind of their cell.
+
+    The engine records the kind (``form``) with every episode. The first development run was made before
+    it did. There the kind is taken from the plan review of the same cell: the review status that ``M_plan``
+    (or another plan-review condition) stored is the kind, and every condition with the evidence-bound
+    guard shares it, because these conditions share the guard and the first proposal. Rows that carry a
+    recorded kind are left alone. Returns the number of rows filled in.
+    """
+    if any('form' in row for row in rows):
+        return 0
+    source = {}
+    for row in rows:
+        if row['condition'] in ('M_plan', 'M_seq', 'M_plan_open', 'M_plan_text') and row.get('trigger'):
+            source.setdefault((row['task_id'], row['variant'], row['seed']), row.get('review'))
+    filled = 0
+    for row in rows:
+        row['form'] = None
+        guarded = row['condition'] == 'M' or row['condition'].startswith('M_')
+        cell = (row['task_id'], row['variant'], row['seed'])
+        if guarded and row.get('trigger') and cell in source:
+            row['form'] = source[cell]
+            filled += 1
+    return filled
+
+
 def cells(rows):
     out = defaultdict(dict)
     for row in rows:
