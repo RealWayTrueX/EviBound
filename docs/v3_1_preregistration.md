@@ -260,8 +260,36 @@ ceiling.
 
 ## Development record
 
-To be completed before the freeze: which runs were made on the v3 corpus and
-on the development split, which wordings were tried, and what was changed.
+**Rule for choosing the wording of the plan review.** Written on 2026-11-24
+after the two development runs had been started and before any of their
+results had been read (the commit history shows the order).
+
+Three wordings of the plan review run on development data only: `M_plan`
+(structured fields; an interrupted plan is to be resumed), `M_plan_open` (the
+same, and the planner is told it may return other writes if it now sees that
+the task needs them) and `M_plan_text` (the review as sentences instead of
+fields). One of them becomes the confirmatory `M_plan`:
+
+1. Data: both development runs pooled, that is the v3 corpus (84 tasks) and
+   the development split of the v3.1 corpus (48 tasks), three seeds each.
+2. Score of a wording: goal completion on boundary episodes of class `full`
+   (the measure of H3) minus the rate of unrequested change on clean episodes
+   of class `part` (the measure of H4), in percentage points.
+3. A wording is eligible if its goal completion on clean episodes of class
+   `full` is at most 5 points below that of `M_recover` (the margin of H5).
+4. The eligible wording with the highest score is chosen, except that the
+   structured wording `M_plan` is kept unless another scores at least 5
+   points higher. With about 240 and 60 development episodes behind the two
+   parts of the score, smaller differences are noise.
+5. If no wording is eligible, or the episodes show a wording being misread in
+   a way the score does not capture, the text is revised and both development
+   runs are repeated under a new tag before the freeze. That is recorded here.
+
+`M_menu2`, `M_seq` and `B2_plan` are not chosen on development data. They are
+in the matrix whatever they show there.
+
+**Runs.** To be completed before the freeze: the development runs, what they
+showed, which wording was chosen and what was changed.
 
 ## Integrity rules
 
