@@ -1149,7 +1149,7 @@ textarea#expText { width: 100%; min-height: 180px; border: 1px solid var(--line)
       + '<li>没提到的设备保持不变；场景的档位写在请求里，场景名只是名字</li><li>运动计时 ≤ 5 分钟算有人；多传感器的两个读数总是一致</li></ul></div>';
     h += '<div><h3>两种攻击</h3><div class="dgm">' + attackFigure() + '</div></div>';
     h += '<div><h3>审完之后</h3><ul><li>点“导出”，下载 checklist.csv（与 v3 签署脚本的格式相同）和 review.json（全部条目，包括规则和描述）。</li>'
-      + (META.mode === 'practice' ? '<li><b>v3 已冻结</b>：这是练习，导出文件不要覆盖 reviews/v3/checklist.csv，也不要运行 --signoff。</li>' : '<li>把 checklist.csv 放到 reviews/ 下对应目录，再运行签署脚本。</li>')
+      + (META.after_note ? '<li>' + esc(META.after_note.zh) + '</li>' : META.mode === 'practice' ? '<li><b>v3 已冻结</b>：这是练习，导出文件不要覆盖 reviews/v3/checklist.csv，也不要运行 --signoff。</li>' : '<li>把 checklist.csv 放到 reviews/ 下对应目录，再运行签署脚本。</li>')
       + '<li>连上共享存储时，Claude 可以直接读取结论，不导出也行。</li></ul></div>';
     $('helpBody').innerHTML = h;
     $('helpOv').hidden = false;
