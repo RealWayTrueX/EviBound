@@ -29,7 +29,7 @@ ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / 'src'))
 sys.path.insert(0, str(ROOT / 'scripts'))
 import v3_1_lib as lib  # noqa: E402
-from evibound.recovery_v3_1 import LADDER  # noqa: E402
+from evibound.recovery_v3_1 import LADDER, V31_CONDITIONS  # noqa: E402
 
 NI, SUP = 'non_inferiority', 'superiority'
 STAGES = {
@@ -315,7 +315,7 @@ def doc_blocks(result):
     blocks['outcomes'] = T(['Variant', 'Condition', 'Class'] + list(lib.OUTCOMES), rows)
     cell = {(i['variant'], i['condition'], i['class']): i for i in result['summary']}
     rows = []
-    ladder_order = ['B0', 'M', 'M_recover', 'M_full', 'M_menu2', 'M_plan', 'M_seq', 'B2_plan']
+    ladder_order = list(V31_CONDITIONS)
     for condition in sorted(design['conditions'], key=lambda c: (ladder_order.index(c) if c in ladder_order else 99, c)):
         row = [f'`{condition}`', result['ladder'].get(condition) or OTHER_LEVELS.get(condition, 'development only')]
         for variant in ('clean', 'boundary', 'perturbed'):

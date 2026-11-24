@@ -4,8 +4,9 @@ Sequencing, budgets, seeding and scoring are those of ``runner_v3.run_seed``: on
 shared first proposal per task, variant and seed is executed under every condition,
 and at most one condition-specific recovery call follows. The only differences are
 that the recovery turn may come from a new ladder level, which is given the rejected
-proposal, and that the payload of the recovery turn is stored with the episode. A planner
-role other than ``base`` changes the system prompt for the exploratory robustness arm.
+proposal, and that the payload of the recovery turn and the kind of turn (``recovery_form``)
+are stored with the episode. A planner role other than ``base`` changes the system prompt for
+the exploratory robustness arm.
 """
 
 from __future__ import annotations
@@ -20,7 +21,7 @@ from evibound.backend_v3 import WorldV3 as World
 from evibound.oracle_v3 import score_episode_v3 as score_episode
 from evibound.planner import batch_seed
 from evibound.planner_v3_1 import messages_for_role
-from evibound.recovery_v3_1 import guard_for, recovery_turn, trigger_v31
+from evibound.recovery_v3_1 import guard_for, recovery_turn, situation, trigger_v31
 from evibound.runner_v3 import instrument
 
 Generate = Callable[[list[list[dict[str, str]]], int], list[dict[str, Any]]]
@@ -79,6 +80,7 @@ def run_seed(generate: Generate, scenarios: Iterable[dict[str, Any]], conditions
                     "seed": seed, "planner_role": role, "scenario": scenario,
                     "proposals": [copy.deepcopy(response)],
                     "recovery_trigger": None, "recovery_payload": None, "recovery_review": None,
+                    "recovery_form": None,
                     "guard_execution_s": 0.0,
                 }
                 data = response["parsed"] or {}
@@ -100,6 +102,12 @@ def run_seed(generate: Generate, scenarios: Iterable[dict[str, Any]], conditions
                         executed=sum(e["kind"] == "write" for e in events),
                         cited_presence=cited)
                     episode["recovery_payload"] = json.loads(episode["_messages"][-1]["content"])
+                    # the kind of recovery turn, recorded for every condition whatever its message says
+                    episode["recovery_form"] = situation(
+                        trigger, episode["recovery_payload"].get("actuators"),
+                        world.decode(observation["value"]), scenario["authorized"], data.get("actions"),
+                        sum(e["kind"] == "write" for e in events), reason,
+                        MAX_WRITES - world.successful_writes, cited)
                     pending.append(episode)
                 episode["_world"] = world
                 episodes.append(episode)

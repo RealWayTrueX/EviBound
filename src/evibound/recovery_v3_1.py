@@ -1,13 +1,20 @@
 """v3.1 feedback ladder: what the interface tells the planner after it refuses a write.
 
 The guards are the frozen ones and their decisions are untouched. Only the single
-recovery turn changes. The ladder has five levels of content:
+recovery turn changes. The ladder has six levels of content:
 
   L0  verdict      reason code and a fresh observation              (v3 condition ``M``)
   L1  reason       + one sentence on the rule that was broken       (``M_recover``)
+  L1r reading      + how the interface reads the fresh observation, said only when
+                   that is not the reading the plan was chosen for  (``M_reading``, new)
   L2a actions      + every single write that is legal now           (``M_full``, the v3 menu)
   L2b plan         + a review of the planner's own plan             (``M_plan``, new)
   L3  sequence     + a complete list of writes that would be accepted (``M_seq``, new)
+
+L0 to L1r describe: they say what happened and what is the case. L2a to L3 prescribe:
+they say which writes to consider or to return. ``M_reading`` was added after the
+development runs. It is the ``reselect`` form of the plan review and nothing else: when
+the reading did not change, its message is the ``M_recover`` message, byte for byte.
 
 ``M_menu2`` is a control for L2a: the same list of legal writes with a corrected
 explanation (the v3 text says that any write not listed will be refused, which is
@@ -37,11 +44,12 @@ from evibound.recovery import CONDITION_SPECS, legal_writes, recovery_messages, 
 class SpecV31(NamedTuple):
     guard: str
     base: str     # frozen v3 condition whose recovery message this level extends
-    aid: str      # 'menu2', 'plan' or 'sequence'
+    aid: str      # 'reading', 'menu2', 'plan' or 'sequence'
     style: str = "resume"   # 'resume', 'open' or 'text': how the plan review is worded (see NEW_SPECS)
 
 
 NEW_SPECS = {
+    "M_reading": SpecV31("M", "M_recover", "reading"),
     "M_menu2": SpecV31("M", "M_recover", "menu2"),
     "M_plan": SpecV31("M", "M_recover", "plan"),
     "M_seq": SpecV31("M", "M_recover", "sequence"),
@@ -50,8 +58,9 @@ NEW_SPECS = {
     "M_plan_open": SpecV31("M", "M_recover", "plan", "open"),     # an interrupted plan may also be changed
     "M_plan_text": SpecV31("M", "M_recover", "plan", "text"),     # the review as sentences, not as an object
 }
-V31_CONDITIONS = ("B0", "M", "M_recover", "M_full", "M_menu2", "M_plan", "M_seq", "B2_plan")
-LADDER = {"M": "L0 verdict", "M_recover": "L1 reason", "M_full": "L2a legal next writes (v3 text)",
+V31_CONDITIONS = ("B0", "M", "M_recover", "M_reading", "M_full", "M_menu2", "M_plan", "M_seq", "B2_plan")
+LADDER = {"M": "L0 verdict", "M_recover": "L1 reason", "M_reading": "L1r reason and trusted reading",
+          "M_full": "L2a legal next writes (v3 text)",
           "M_menu2": "L2a legal next writes (corrected text)", "M_plan": "L2b review of the planner's plan",
           "M_seq": "L3 accepted sequence"}
 
@@ -275,6 +284,43 @@ def review_sentences(review: dict[str, Any]) -> str:
     return text
 
 
+def _turn_review(trigger: str, actuators: dict[str, str], presence: bool | None,
+                 authorized: list[str] | tuple[str, ...], proposal: Any, executed: int, reason: str | None,
+                 writes_remaining: int, cited_presence: bool | None,
+                 with_sequence: bool = False) -> tuple[dict[str, Any] | None, str | None]:
+    """The plan review of one recovery turn and the key of its text, or (None, None)."""
+    if trigger == "empty_plan":
+        # An empty plan has no writes to review; the interface can still say how it reads the observation.
+        if presence is not None and cited_presence is not None:
+            changed = cited_presence != presence
+            return ({"reading": READINGS[presence], "reading_changed": changed,
+                     "status": "reselect" if changed else "empty"}, "empty/changed" if changed else "empty")
+    elif trigger == "rejection":
+        review = plan_review(actuators, presence, authorized, proposal, executed, reason,
+                             writes_remaining, cited_presence, with_sequence=with_sequence)
+        if review is not None:
+            return review, review["status"]
+    return None, None
+
+
+def situation(trigger: str | None, actuators: dict[str, str] | None, presence: bool | None,
+              authorized: list[str] | tuple[str, ...], proposal: Any, executed: int, reason: str | None,
+              writes_remaining: int, cited_presence: bool | None) -> str | None:
+    """Which kind of recovery turn this is, whatever the condition goes on to say.
+
+    ``interrupted``, ``reselect``, ``revise`` or ``empty``: the form the plan review takes
+    here; None when it has none (no recovery turn, malformed output, unreadable observation).
+    It is fixed before the recovery message is written, from what the guard has, so it is the
+    same for every condition that shares the guard and the first proposal. The runner stores
+    it with each episode; the analysis uses it to compare levels within one kind of turn.
+    """
+    if not trigger or not isinstance(actuators, dict) or not {"light", "fan"} <= set(actuators):
+        return None
+    review, _ = _turn_review(trigger, actuators, presence, authorized, proposal, executed, reason,
+                             writes_remaining, cited_presence)
+    return None if review is None else review["status"]
+
+
 def recovery_turn(condition: str, messages: list[dict[str, str]], previous_raw: str,
                   state: dict[str, Any], observation: dict[str, Any], trigger: str,
                   reason: str | None, writes_remaining: int, *,
@@ -293,18 +339,12 @@ def recovery_turn(condition: str, messages: list[dict[str, str]], previous_raw: 
     if spec.aid == "menu2":
         payload["legal_writes_now"] = legal_writes(payload["actuators"], presence, authorized)
         payload["request"] += " " + LEGAL_WRITES_SUFFIX_V2
-    elif trigger == "empty_plan":
-        # An empty plan has no writes to review; the interface can still say how it reads the observation.
-        if presence is not None and cited_presence is not None:
-            changed = cited_presence != presence
-            review = {"reading": READINGS[presence], "reading_changed": changed,
-                      "status": "reselect" if changed else "empty"}
-            text = PLAN_TEXT["empty/changed" if changed else "empty"]
-    elif trigger == "rejection":
-        review = plan_review(payload["actuators"], presence, authorized, proposal, executed, reason,
-                             writes_remaining, cited_presence, with_sequence=spec.aid == "sequence")
+    else:
+        review, key = _turn_review(trigger, payload["actuators"], presence, authorized, proposal, executed, reason,
+                                   writes_remaining, cited_presence, with_sequence=spec.aid == "sequence")
+        if spec.aid == "reading" and review is not None and review["status"] != "reselect":
+            review = None       # the reading is said only when it is not the one the plan was chosen for
         if review is not None:
-            key = review["status"]
             if key == "interrupted" and spec.style == "open":
                 key = "interrupted/open"
             text = PLAN_TEXT[key]

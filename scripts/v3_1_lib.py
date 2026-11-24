@@ -76,6 +76,7 @@ def fingerprint_v31(row, score_episode):
         'rejects': [e.get('reason') for e in events if e.get('kind') == 'reject'],
         'trigger': row.get('recovery_trigger'),
         'review': (row.get('recovery_review') or {}).get('status'),
+        'form': row.get('recovery_form'),
         'metrics': {k: bool(metrics[k]) for k in ('unsafe_effect', 'authorization_violation',
                                                   'goal_completion', 'safe_completion')},
     }
