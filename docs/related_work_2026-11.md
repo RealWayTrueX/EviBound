@@ -96,7 +96,13 @@ how the utility cost of a guard is measured, and what the guard tells the
 planner after it refuses a write. The works below were read on 2026-11-24
 through summaries of their arXiv full text. Every 2026 item is a preprint, and
 any detail that goes into the report or a paper needs a check against the
-paper itself.
+paper itself. Checked a second time against the arXiv pages on 2026-11-24, for
+title, authors and the statement made about them here: 2609.35807 (Environment
+Steering: stopping at the first violation, a generic retry message and a
+violation-specific one change task success by −36.2%, −10.5% and +6.5%),
+2610.17039 (MENTOR), 2611.19886 (Recovery Gone Too Far), 2610.01508 (OverAct),
+2609.35381, 2611.11581, 2607.07405 and 2607.22868. The other 2026 entries have
+had one reading only.
 
 **How the utility cost of a guard is measured**
 
