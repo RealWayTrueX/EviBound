@@ -148,6 +148,7 @@ publish() {
        "$dir"/episodes.sha256 "$dir"/code_commit.txt "$dir"/COMPLETE "$dir"/*.config.json "$dir"/analysis.log "$dest/" 2>/dev/null
     [ -e "$dir/prereg_freeze.json" ] && cp "$dir/prereg_freeze.json" "$dest/"
   done
+  tar -czf "$LOG_DIR/v3_1_server_out.tar.gz" -C "$OUT" server_out 2>/dev/null   # one file, in case it has to be fetched by hand
   git -C "$OUT" add -A >/dev/null 2>&1
   if ! git -C "$OUT" diff --cached --quiet 2>/dev/null; then
     git -C "$OUT" -c user.name=Claude -c user.email=noreply@anthropic.com commit -q -m "v3.1 server output $(stamp)" \

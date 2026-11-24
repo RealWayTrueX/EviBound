@@ -7,7 +7,9 @@ rows, so the analysis of a run can be repeated from the committed fingerprints a
 
     python3 scripts/analyze_v3_1.py --stage holdout --input RUN/episodes.jsonl --output RUN/analysis
     python3 scripts/analyze_v3_1.py --stage holdout --input artifacts/v3_1_holdout_fingerprints.json.gz \
-        --output /tmp/recheck
+        --record artifacts/v3_1_holdout_results.json --doc docs/v3_1_results.md          # write
+    python3 scripts/analyze_v3_1.py --stage holdout --input artifacts/v3_1_holdout_fingerprints.json.gz \
+        --record artifacts/v3_1_holdout_results.json --doc docs/v3_1_results.md --check  # verify
 
 Stages: ``dev_v3`` (the v3 corpus as development data), ``dev`` (v3.1 development split),
 ``holdout`` (confirmatory). The contrasts and decision rules are those of
@@ -94,7 +96,7 @@ def load_rows(paths):
     """Light rows from raw episodes or from fingerprint files, plus the hashes of the inputs."""
     rows, inputs, disagreements = [], [], []
     for path in paths:
-        inputs.append({'path': str(path), 'sha256': lib.sha256_file(path)})
+        inputs.append({'file': path.name, 'sha256': lib.sha256_file(path)})
         if path.suffix == '.jsonl':
             from evibound.oracle_v3 import score_episode_v3
             for line in path.read_text().splitlines():
@@ -221,10 +223,81 @@ def markdown(result, meta):
     return '\n'.join(lines) + '\n'
 
 
+def contrast_rows(items):
+    rows = []
+    for item in items:
+        e = item['effect']
+        rows.append([item['id'], item['label'], '+'.join(item['variants']),
+                     '+'.join(item['classes']) if len(item['classes']) < 3 else 'all',
+                     'missing' if not e else f"{e['left_count']} vs {e['right_count']} of {e['episodes_per_arm']}",
+                     lib.fmt_effect(item), '' if not e else e['n_tasks'], item['rule'].replace('_', '-'),
+                     f"**{item['decision']}**"])
+    return rows
+
+
+def doc_blocks(result):
+    """Markdown tables for the generated blocks of a results document."""
+    T = lib.table
+    head = ['Id', 'Contrast', 'Variant', 'Class', 'Counts (left vs right)', 'Estimate [95% CI]', 'Structures', 'Rule', 'Decision']
+    decisions = result['decisions']
+    design = result['design']
+    classes = result['classes']
+    blocks = {
+        'design': T(['Item', 'Value'], [
+            ['Episodes', f"{design['episodes']:,}"], ['Tasks (one per physical structure)', design['tasks']],
+            ['Classes', ', '.join(f"{c}: {v['tasks']}" for c, v in classes.items())],
+            ['Conditions', ', '.join(f'`{c}`' for c in design['conditions'])],
+            ['Variants', ', '.join(design['variants'])], ['Seeds', ', '.join(map(str, design['seeds']))],
+            ['Complete matrix', 'yes' if design['complete_matrix'] else 'NO'],
+            ['Replay disagreements', result['replay_disagreements']]]),
+        'j1': T(head, contrast_rows([decisions[i] for i in JOINT['J1']])) + f"\n\nJoint claim J1: **{result['joint']['J1']}**.",
+        'j2': T(head, contrast_rows([decisions[i] for i in JOINT['J2']])) + f"\n\nJoint claim J2: **{result['joint']['J2']}**.",
+        'secondary': T(head, contrast_rows(result['secondary'])),
+    }
+    rows = []
+    for variant in ('clean', 'boundary', 'perturbed'):
+        for condition, v in result['split'].get(variant, {}).items():
+            rows.append([variant if variant != 'perturbed' else 'attacked', f'`{condition}`', f"{v['done']} of {v['n']}",
+                         f"{v['A']} of {v['reference_compliant']}", f"{v['B']} of {v['reference_violating']}",
+                         v['C'], v['D'], v['retried']])
+    blocks['split'] = T(['Variant', 'Condition', 'Completed', 'A: correct plan lost', 'B: blocked, not recovered',
+                         'C: gained', 'D: neither', 'Episodes with a recovery turn'], rows)
+    rows = []
+    for variant in ('clean', 'boundary', 'perturbed'):
+        for condition, by_class in result['outcomes'].get(variant, {}).items():
+            for cls in lib.CLASSES:
+                if cls in by_class:
+                    v = by_class[cls]
+                    rows.append([variant if variant != 'perturbed' else 'attacked', f'`{condition}`', f'`{cls}`']
+                                + [v[k] for k in lib.OUTCOMES])
+    blocks['outcomes'] = T(['Variant', 'Condition', 'Class'] + list(lib.OUTCOMES), rows)
+    cell = {(i['variant'], i['condition'], i['class']): i for i in result['summary']}
+    rows = []
+    ladder_order = ['B0', 'M', 'M_recover', 'M_full', 'M_menu2', 'M_plan', 'M_seq', 'B2_plan']
+    for condition in sorted(design['conditions'], key=lambda c: (ladder_order.index(c) if c in ladder_order else 99, c)):
+        row = [f'`{condition}`', result['ladder'].get(condition, 'reference' if condition == 'B0' else 'L2b, guard without evidence binding')]
+        for variant in ('clean', 'boundary', 'perturbed'):
+            full, part, everything = (cell.get((variant, condition, c)) for c in ('full', 'part', 'all'))
+            row += [f"{full['goal_completion']}/{full['n']}" if full else '',
+                    f"{part['unrequested_change']}/{part['n']}" if part else '',
+                    f"{everything['unsafe_effect']}/{everything['n']}" if everything else '']
+        rows.append(row)
+    blocks['cells'] = T(['Condition', 'Level', 'clean: completed, `full`', 'clean: unrequested change, `part`', 'clean: unsafe, all',
+                         'boundary: completed', 'boundary: unrequested', 'boundary: unsafe',
+                         'attacked: completed', 'attacked: unrequested', 'attacked: unsafe'], rows)
+    rows = [[v if v != 'perturbed' else 'attacked', f'`{c}`', ', '.join(f'{k}: {n}' for k, n in turns.items())]
+            for v, cs in result['reviews'].items() for c, turns in cs.items()]
+    blocks['reviews'] = T(['Variant', 'Condition', 'Recovery turns by trigger and form of the plan review'], rows)
+    return blocks
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     parser.add_argument('--input', type=Path, nargs='+', required=True)
-    parser.add_argument('--output', type=Path, required=True)
+    parser.add_argument('--output', type=Path, help='folder for results.json and summary.md')
+    parser.add_argument('--record', type=Path, help='write (or with --check, verify) this analysis record')
+    parser.add_argument('--doc', type=Path, help='refresh (or with --check, verify) the generated tables of this document')
+    parser.add_argument('--check', action='store_true')
     parser.add_argument('--stage', choices=sorted(STAGES), required=True)
     parser.add_argument('--fingerprints', type=Path, help='also write the light rows to this file (.json or .json.gz)')
     parser.add_argument('--bootstrap-seed', type=int, default=lib.BOOTSTRAP_SEED)
@@ -245,11 +318,24 @@ def main():
             'analysis_source_sha256': {name: hashlib.sha256((ROOT / name).read_bytes()).hexdigest()
                                        for name in ('scripts/analyze_v3_1.py', 'scripts/v3_1_lib.py',
                                                     'src/evibound/attainability.py')}}
-    args.output.mkdir(parents=True, exist_ok=True)
-    (args.output / 'results.json').write_text(
-        json.dumps({'metadata': meta, **result}, indent=1, sort_keys=True) + '\n')
-    (args.output / 'summary.md').write_text(markdown(result, meta))
-    print(json.dumps({'output': str(args.output), 'episodes': len(rows), 'joint': result['joint'],
+    text = json.dumps({'metadata': meta, **result}, indent=1, sort_keys=True) + '\n'
+    if args.check:
+        problems = []
+        if args.record and (not args.record.exists() or args.record.read_text() != text):
+            problems.append(f'{args.record} is stale')
+        if args.doc and lib.refresh_blocks(args.doc.read_text(), doc_blocks(result)) != args.doc.read_text():
+            problems.append(f'{args.doc} has stale generated tables')
+        print('\n'.join(problems) or f'{args.stage}: record and document are current')
+        return 1 if problems else 0
+    if args.record:
+        args.record.write_text(text)
+    if args.doc:
+        args.doc.write_text(lib.refresh_blocks(args.doc.read_text(), doc_blocks(result)))
+    if args.output:
+        args.output.mkdir(parents=True, exist_ok=True)
+        (args.output / 'results.json').write_text(text)
+        (args.output / 'summary.md').write_text(markdown(result, meta))
+    print(json.dumps({'output': str(args.output or args.record), 'episodes': len(rows), 'joint': result['joint'],
                       'decisions': {k: v['decision'] for k, v in result['decisions'].items()},
                       'oracle_disagreements': len(disagreements),
                       'generated_utc': time.strftime('%Y-%m-%dT%H:%M:%SZ', time.gmtime())}))
