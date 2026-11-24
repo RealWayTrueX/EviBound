@@ -79,6 +79,16 @@ class ResultsDocumentTests(unittest.TestCase):
             self.assertEqual((cell['turns'], cell['exact_reason'], cell['exact_reading']),
                              (planned['M_recover']['n'], planned['M_recover']['exact_target'],
                               planned['M_reading']['exact_target']), kind)
+        # the sentence under the table of single seeds: one decision differs, R1 in one seed
+        # (the table itself is kept current by the --check above)
+        table = re.search(r'<!-- generated:seeds -->(.*?)<!-- /generated:seeds -->', DOC.read_text(), flags=re.S).group(1)
+        differing = []
+        for line in table.strip().splitlines()[2:]:
+            cells = [c.strip() for c in line.strip('|').split('|')]
+            decisions = [c.rsplit(';', 1)[1].strip() for c in cells[2:]]
+            self.assertEqual(decisions[-1], record['decisions'][cells[1]]['decision'])
+            differing += [cells[1] for decision in decisions[:-1] if decision != decisions[-1]]
+        self.assertEqual(differing, ['R1'])
         totals = v3_1_results_tables.totals(record)
         self.assertEqual(sorted(totals), sorted(V31_CONDITIONS))
         for condition, total in totals.items():

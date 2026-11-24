@@ -11,6 +11,9 @@ levels `M_recover` and `M_reading` send the same message, byte for byte, and the
 sampled separately. How often the two then end differently shows how much of a difference
 between two levels is sampling alone. It is counted from the committed episode fingerprints.
 
+A fourth table is a robustness view, also not planned: the thirteen confirmatory contrasts
+computed for each of the three seeds alone, with the frozen estimator.
+
 The summary of the document states the six claims with their counts, in English and in Chinese.
 Those sentences are written here from the record, so the summary holds no hand-typed number. The
 wording of each sentence fits the outcome that was observed; if the record ever said otherwise,
@@ -72,6 +75,16 @@ def twice(rows):
         cell['same_writes'] += a['writes'] == b['writes']
         cell['exact_reason'] += bool(a['metrics']['exact_target'])
         cell['exact_reading'] += bool(b['metrics']['exact_target'])
+    return out
+
+
+def by_seed(episodes, tasks):
+    """The confirmatory contrasts for each seed alone: {seed: {contrast id: (estimate, low, high, decision)}}."""
+    out = {}
+    for seed in sorted({row['seed'] for row in episodes}):
+        result = plan.analyze([row for row in episodes if row['seed'] == seed], tasks)
+        out[seed] = {i: (item['effect']['estimate'], item['effect']['ci95_low'], item['effect']['ci95_high'], item['decision'])
+                     for i, item in result['decisions'].items() if item['effect']}
     return out
 
 
@@ -180,7 +193,7 @@ def summary_blocks(record):
     return {'summary_claims': '\n'.join(english), 'summary_claims_zh': '\n'.join(chinese), 'summary_levels': levels}
 
 
-def blocks(record, episodes=None):
+def blocks(record, episodes=None, tasks=None):
     T = lib.table
     order = [c for c in V31_CONDITIONS if c in record['design']['conditions']]
     total = totals(record)
@@ -222,6 +235,17 @@ def blocks(record, episodes=None):
                           v['turns'] - v['same_writes'], v['exact_reason'], v['exact_reading']])
         out['twice'] = T(['Kind of recovery turn', 'Message of `M_recover` and `M_reading`', 'Turns',
                           'Same executed writes', 'Different', 'Exact target, `M_recover`', 'Exact target, `M_reading`'], table)
+    if episodes is not None and tasks is not None:
+        seeds = by_seed(episodes, tasks)
+        fmt = lambda v: f"{100 * v[0]:+.1f} [{100 * v[1]:+.1f}, {100 * v[2]:+.1f}]; {v[3]}"  # noqa: E731
+        rows = []
+        for claim, ids in plan.JOINT.items():
+            for i in ids:
+                item = record['decisions'][i]
+                e = item['effect']
+                rows.append([claim, i] + [fmt(seeds[seed][i]) for seed in sorted(seeds)]
+                            + [fmt((e['estimate'], e['ci95_low'], e['ci95_high'], item['decision']))])
+        out['seeds'] = T(['Claim', 'Id'] + [f'seed {seed} alone' for seed in sorted(seeds)] + ['all three seeds (confirmatory)'], rows)
     out.update(summary_blocks(record))
     return out
 
@@ -232,15 +256,16 @@ def main():
     args = parser.parse_args()
     record = json.loads(RECORD.read_text())
     episodes = lib.read_fingerprints(FINGERPRINTS)
-    lib.annotate(episodes, lib.load_tasks(ROOT / 'data/scenarios_v3_1/holdout.jsonl'))    # adds the outcome measures
+    tasks = lib.load_tasks(ROOT / 'data/scenarios_v3_1/holdout.jsonl')
+    lib.annotate(episodes, tasks)    # adds the outcome measures
     doc = DOC.read_text()
-    fresh = lib.refresh_blocks(doc, blocks(record, episodes))
+    fresh = lib.refresh_blocks(doc, blocks(record, episodes, tasks))
     if args.check:
         print('the extra blocks are current' if fresh == doc else f'{DOC.relative_to(ROOT)} has stale extra blocks')
         return 0 if fresh == doc else 1
     DOC.write_text(fresh)
     print(json.dumps({'document': str(DOC.relative_to(ROOT)),
-                      'blocks': ['totals', 'ceiling', 'twice', 'summary_claims', 'summary_claims_zh', 'summary_levels']}))
+                      'blocks': ['totals', 'ceiling', 'twice', 'seeds', 'summary_claims', 'summary_claims_zh', 'summary_levels']}))
     return 0
 
 

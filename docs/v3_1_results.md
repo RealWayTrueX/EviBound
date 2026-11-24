@@ -307,6 +307,34 @@ reading a difference between two levels.
 | reselect | different | 1062 | 863 (81.3%) | 199 | 679 | 719 |
 <!-- /generated:twice -->
 
+### Each seed alone
+
+A robustness view, not planned. The thirteen confirmatory contrasts are
+computed with the frozen estimator for each of the three seeds alone (one
+third of the episodes each, the same 372 structures). The decisions of the
+plan are those of the last column.
+
+<!-- generated:seeds -->
+| Claim | Id | seed 11 alone | seed 22 alone | seed 33 alone | all three seeds (confirmatory) |
+|---|---|---|---|---|---|
+| C1 | U1 | +11.8 [+9.1, +14.6]; supported | +12.3 [+9.7, +15.1]; supported | +12.2 [+9.5, +15.0]; supported | +12.1 [+9.5, +14.8]; supported |
+| C1 | W1 | +11.6 [+9.1, +14.3]; supported | +11.3 [+8.8, +13.9]; supported | +11.6 [+9.1, +14.3]; supported | +11.5 [+9.0, +14.2]; supported |
+| C2 | I1 | +29.5 [+14.8, +44.3]; supported | +31.1 [+16.4, +45.9]; supported | +26.7 [+11.7, +41.7]; supported | +29.5 [+14.8, +44.3]; supported |
+| C2 | I2 | +32.8 [+16.4, +47.5]; supported | +31.1 [+16.4, +45.9]; supported | +26.7 [+10.0, +43.3]; supported | +30.6 [+15.3, +45.9]; supported |
+| C3 | P1 | -4.5 [-10.1, +1.0]; unsupported | -2.4 [-7.7, +2.8]; unsupported | -5.0 [-10.7, +0.4]; unsupported | -3.9 [-9.3, +1.3]; unsupported |
+| C3 | P2 | -4.5 [-9.8, +0.7]; unsupported | -2.4 [-7.7, +2.8]; unsupported | -4.3 [-9.6, +1.1]; unsupported | -4.2 [-9.5, +1.0]; unsupported |
+| C4 | R1 | +4.5 [+1.1, +7.9]; supported | +4.8 [+1.4, +8.2]; supported | +2.0 [-1.4, +5.4]; inconclusive | +3.8 [+0.8, +6.9]; supported |
+| C5 | N1 | +8.2 [+4.9, +11.6]; supported | +8.6 [+5.3, +12.0]; supported | +8.9 [+5.6, +12.3]; supported | +8.6 [+5.3, +11.9]; supported |
+| C5 | N2 | +8.6 [+5.4, +11.8]; supported | +8.3 [+5.0, +11.6]; supported | +9.1 [+5.8, +12.4]; supported | +8.7 [+5.5, +11.9]; supported |
+| C5 | N3 | -2.5 [-4.3, -0.7]; supported | -2.2 [-3.9, -0.4]; supported | -2.4 [-4.2, -0.6]; supported | -2.4 [-4.1, -0.6]; supported |
+| C5 | N4 | -2.5 [-4.3, -0.7]; supported | -2.2 [-3.9, -0.4]; supported | -1.8 [-3.6, +0.1]; supported | -2.2 [-3.8, -0.4]; supported |
+| C6 | S1 | +12.1 [+8.9, +15.6]; supported | +12.4 [+9.1, +15.9]; supported | +11.6 [+8.3, +14.8]; supported | +12.0 [+8.8, +15.4]; supported |
+| C6 | S2 | +44.8 [+33.3, +56.2]; supported | +44.8 [+34.4, +55.2]; supported | +41.7 [+30.2, +52.1]; supported | +43.8 [+33.0, +54.2]; supported |
+<!-- /generated:seeds -->
+
+Every decision repeats in each seed alone, with one exception: for R1 the
+interval of one seed includes zero.
+
 ### The claims of the first draft
 
 Written before any v3.1 run and replaced after the development runs (see the
