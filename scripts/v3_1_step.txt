@@ -1,2 +1,11 @@
 # Steps for the next call of scripts/v3_1_step.sh on the experiment machine (see that file).
+detach
 probe
+stop_v4
+smoke
+publish
+conditions B0 M M_recover M_full M_menu2 M_plan M_plan_open M_seq B2_plan
+run dev_v3 0 d1
+run dev 1 d1
+wait dev d1 90
+wait dev_v3 d1 120

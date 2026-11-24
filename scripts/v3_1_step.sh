@@ -15,6 +15,17 @@
 #   run <stage> <gpu> <tag> [seeds]   start a run in the background (dev_v3, dev, holdout)
 #   status                   progress of every v3.1 run
 #   wait <stage> <tag> [minutes]      block until that run is complete (default 20 minutes)
+#   publish                  push the small outputs now (always done once more at the end)
+#   detach                   as the first step: carry out the remaining steps in the background, so
+#                            that they survive the terminal session; pipeline.lock in the steps
+#                            folder holds the process id
+#
+# The stored terminal command, for reference (it does not update the checkout while a
+# detached pipeline is running):
+#   L=$D/runs/v3_1_steps; cd $D/repro_clone/EviBound && if [ -e $L/pipeline.lock ] &&
+#     kill -0 "$(cat $L/pipeline.lock)" 2>/dev/null; then echo BUSY; tail -5 $L/steps.log; else
+#     git fetch -q origin claude/v3-1-feedback-ladder && git checkout -q --detach FETCH_HEAD &&
+#     bash scripts/v3_1_step.sh; fi
 #
 # It never touches /home/yanke/EviBound, reads no credential file, and starts a GPU job
 # only on a GPU that is idle.
@@ -25,6 +36,18 @@ OUT="$EVIBOUND_DATA/repro_clone/v3_1_results"
 LOG_DIR="$RUNS/v3_1_steps"
 mkdir -p "$LOG_DIR"
 STEP_FILE="$EVIBOUND_ROOT/scripts/v3_1_step.txt"
+LOCK="$LOG_DIR/pipeline.lock"
+if [ "${1:-}" != --attached ] && grep -v '^ *#' "$STEP_FILE" | grep -v '^ *$' | head -1 | grep -qx 'detach'; then
+  if [ -e "$LOCK" ] && kill -0 "$(cat "$LOCK")" 2>/dev/null; then
+    echo "a detached pipeline is already running (pid $(cat "$LOCK")); not starting another"; exit 1
+  fi
+  setsid nohup bash "${BASH_SOURCE[0]}" --attached > "$LOG_DIR/detached_$(date -u +%Y%m%dT%H%M%SZ).log" 2>&1 < /dev/null &
+  echo $! > "$LOCK"
+  echo "detached pipeline started (pid $!) at $(git rev-parse --short HEAD); steps: $(grep -v '^ *#' "$STEP_FILE" | grep -v '^ *$' | tr '\n' ';')"
+  echo "progress: $LOG_DIR/steps.log, and the branch claude/v3-1-results"
+  exit 0
+fi
+if [ "${1:-}" = --attached ]; then echo $$ > "$LOCK"; trap 'rm -f "$LOCK"' EXIT; fi
 stamp() { date -u +'%Y-%m-%dT%H:%M:%SZ'; }
 say() { echo "[$(stamp)] $*"; }
 
@@ -76,8 +99,11 @@ step_run() {
   local run_dir="$RUNS/v3_1_${stage}_${tag}"
   if [ -e "$run_dir/COMPLETE" ]; then say "$run_dir already complete"; return 0; fi
   if [ -e "$run_dir/RUNNING" ] && kill -0 "$(cat "$run_dir/RUNNING")" 2>/dev/null; then say "$run_dir is running"; return 0; fi
-  local used; used="$(gpu_used "$gpu")"
-  if [ -z "$used" ] || [ "$used" -gt 2000 ]; then say "GPU $gpu is not idle (${used:-?} MiB used); not starting $stage"; return 1; fi
+  if [ "$gpu" != scripted ]; then   # "scripted" runs a persona without a model, for a dry run of the pipeline
+    local used tries=0; used="$(gpu_used "$gpu")"
+    while { [ -z "$used" ] || [ "$used" -gt 2000 ]; } && [ "$tries" -lt 12 ]; do sleep 5; tries=$((tries + 1)); used="$(gpu_used "$gpu")"; done
+    if [ -z "$used" ] || [ "$used" -gt 2000 ]; then say "GPU $gpu is not idle (${used:-?} MiB used); not starting $stage"; return 1; fi
+  fi
   mkdir -p "$run_dir"
   setsid nohup bash scripts/run_v3_1.sh "$stage" "$gpu" "$tag" "$seeds" > "$LOG_DIR/run_${stage}_${tag}.log" 2>&1 < /dev/null &
   say "started $stage on GPU $gpu as $run_dir (pid $!)"
@@ -123,7 +149,11 @@ publish() {
     [ -e "$dir/prereg_freeze.json" ] && cp "$dir/prereg_freeze.json" "$dest/"
   done
   git -C "$OUT" add -A >/dev/null 2>&1
-  git -C "$OUT" -c user.name=Claude -c user.email=noreply@anthropic.com commit -q -m "v3.1 server output $(stamp)" >/dev/null 2>&1
+  if ! git -C "$OUT" diff --cached --quiet 2>/dev/null; then
+    git -C "$OUT" -c user.name=Claude -c user.email=noreply@anthropic.com commit -q -m "v3.1 server output $(stamp)" \
+      >/dev/null 2>"$LOG_DIR/commit_error.txt" || say "COMMIT FAILED: $(head -2 "$LOG_DIR/commit_error.txt" | tr '\n' ' ' | cut -c1-160)"
+  fi
+  if [ -n "${V31_NO_PUSH:-}" ]; then say "push skipped (V31_NO_PUSH)"; return 0; fi
   if timeout 60 git -C "$OUT" push -q -f origin claude/v3-1-results >/dev/null 2>"$LOG_DIR/push_error.txt"; then
     say "published $(git -C "$OUT" rev-parse --short HEAD) to claude/v3-1-results"
   else
@@ -145,6 +175,8 @@ publish() {
       run) step_run "$a" "$b" "$c" "${d:-}" ;;
       status) step_status ;;
       wait) step_wait "$a" "$b" "${c:-}" ;;
+      publish) publish ;;
+      detach) ;;
       *) say "unknown step: $name" ;;
     esac
   done
