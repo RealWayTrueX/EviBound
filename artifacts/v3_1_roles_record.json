@@ -1,0 +1,1484 @@
+{
+ "conditions": [
+  "B0",
+  "M_recover",
+  "M_reading",
+  "M_full"
+ ],
+ "roles": {
+  "base": {
+   "complete_matrix": true,
+   "conditions": [
+    "B0",
+    "M_full",
+    "M_reading",
+    "M_recover"
+   ],
+   "contrasts": {
+    "H1": {
+     "decision": "inconclusive",
+     "episodes": 468,
+     "estimate_pp": 3.4,
+     "high_pp": 10.0,
+     "left": 386,
+     "low_pp": -3.2,
+     "right": 370,
+     "rule": "superiority",
+     "structures": 156
+    },
+    "H2": {
+     "decision": "supported",
+     "episodes": 252,
+     "estimate_pp": 15.1,
+     "high_pp": 23.4,
+     "left": 52,
+     "low_pp": 7.1,
+     "right": 14,
+     "rule": "superiority",
+     "structures": 84
+    },
+    "I1": {
+     "decision": "supported",
+     "episodes": 182,
+     "estimate_pp": 29.5,
+     "high_pp": 44.3,
+     "left": 121,
+     "low_pp": 14.8,
+     "right": 68,
+     "rule": "superiority",
+     "structures": 61
+    },
+    "K11": {
+     "decision": "supported",
+     "episodes": 468,
+     "estimate_pp": 9.4,
+     "high_pp": 16.9,
+     "left": 300,
+     "low_pp": 2.1,
+     "right": 256,
+     "rule": "superiority",
+     "structures": 156
+    },
+    "K15": {
+     "decision": "supported",
+     "episodes": 156,
+     "estimate_pp": 12.8,
+     "high_pp": 24.4,
+     "left": 125,
+     "low_pp": 1.9,
+     "right": 105,
+     "rule": "superiority",
+     "structures": 52
+    },
+    "K22": {
+     "decision": "supported",
+     "episodes": 576,
+     "estimate_pp": 15.3,
+     "high_pp": 22.4,
+     "left": 418,
+     "low_pp": 8.5,
+     "right": 330,
+     "rule": "superiority",
+     "structures": 96
+    },
+    "K27": {
+     "decision": "supported",
+     "episodes": 1116,
+     "estimate_pp": 7.0,
+     "high_pp": 9.9,
+     "left": 210,
+     "low_pp": 4.2,
+     "right": 132,
+     "rule": "superiority",
+     "structures": 372
+    },
+    "K28": {
+     "decision": "supported",
+     "episodes": 1116,
+     "estimate_pp": 11.3,
+     "high_pp": 14.9,
+     "left": 281,
+     "low_pp": 7.7,
+     "right": 155,
+     "rule": "superiority",
+     "structures": 372
+    },
+    "K29": {
+     "decision": "supported",
+     "episodes": 1116,
+     "estimate_pp": 18.0,
+     "high_pp": 22.0,
+     "left": 359,
+     "low_pp": 14.1,
+     "right": 158,
+     "rule": "superiority",
+     "structures": 372
+    },
+    "K30": {
+     "decision": "supported",
+     "episodes": 2484,
+     "estimate_pp": 9.5,
+     "high_pp": 12.3,
+     "left": 464,
+     "low_pp": 6.8,
+     "right": 229,
+     "rule": "superiority",
+     "structures": 276
+    },
+    "K31": {
+     "decision": "supported",
+     "episodes": 864,
+     "estimate_pp": 19.7,
+     "high_pp": 26.0,
+     "left": 386,
+     "low_pp": 13.4,
+     "right": 216,
+     "rule": "superiority",
+     "structures": 96
+    },
+    "K32": {
+     "decision": "supported",
+     "episodes": 1062,
+     "estimate_pp": 21.5,
+     "high_pp": 27.4,
+     "left": 450,
+     "low_pp": 15.8,
+     "right": 222,
+     "rule": "superiority",
+     "structures": 118
+    },
+    "K33": {
+     "decision": "supported",
+     "episodes": 2286,
+     "estimate_pp": 7.7,
+     "high_pp": 10.5,
+     "left": 400,
+     "low_pp": 5.1,
+     "right": 223,
+     "rule": "superiority",
+     "structures": 254
+    },
+    "K34": {
+     "decision": "supported",
+     "episodes": 3348,
+     "estimate_pp": 12.2,
+     "high_pp": 15.0,
+     "left": 850,
+     "low_pp": 9.6,
+     "right": 441,
+     "rule": "superiority",
+     "structures": 372
+    },
+    "K36": {
+     "decision": "supported",
+     "episodes": 3348,
+     "estimate_pp": 8.6,
+     "high_pp": 11.9,
+     "left": 2505,
+     "low_pp": 5.3,
+     "right": 2218,
+     "rule": "superiority",
+     "structures": 372
+    },
+    "K37": {
+     "decision": "supported",
+     "episodes": 3348,
+     "estimate_pp": 1.1,
+     "high_pp": 2.1,
+     "left": 2542,
+     "low_pp": 0.1,
+     "right": 2505,
+     "rule": "superiority",
+     "structures": 372
+    },
+    "K38": {
+     "decision": "supported",
+     "episodes": 1116,
+     "estimate_pp": 3.6,
+     "high_pp": 6.5,
+     "left": 746,
+     "low_pp": 0.6,
+     "right": 706,
+     "rule": "superiority",
+     "structures": 372
+    },
+    "K41": {
+     "decision": "inconclusive",
+     "episodes": 1404,
+     "estimate_pp": 1.9,
+     "high_pp": 6.3,
+     "left": 1086,
+     "low_pp": -2.7,
+     "right": 1060,
+     "rule": "superiority",
+     "structures": 156
+    },
+    "K43": {
+     "decision": "supported",
+     "episodes": 816,
+     "estimate_pp": 24.6,
+     "high_pp": 32.2,
+     "left": 686,
+     "low_pp": 17.1,
+     "right": 479,
+     "rule": "superiority",
+     "structures": 144
+    },
+    "K48": {
+     "decision": "supported",
+     "episodes": 1062,
+     "estimate_pp": 10.9,
+     "high_pp": 15.9,
+     "left": 719,
+     "low_pp": 5.8,
+     "right": 604,
+     "rule": "superiority",
+     "structures": 355
+    },
+    "K50": {
+     "decision": "supported",
+     "episodes": 157,
+     "estimate_pp": 24.7,
+     "high_pp": 45.2,
+     "left": 135,
+     "low_pp": 4.3,
+     "right": 98,
+     "rule": "superiority",
+     "structures": 31
+    },
+    "K51": {
+     "decision": "unsupported",
+     "episodes": 74,
+     "estimate_pp": -18.6,
+     "high_pp": 13.7,
+     "left": 52,
+     "low_pp": -51.0,
+     "right": 63,
+     "rule": "superiority",
+     "structures": 17
+    },
+    "K52": {
+     "decision": "supported",
+     "episodes": 3348,
+     "estimate_pp": 1.1,
+     "high_pp": 2.1,
+     "left": 2542,
+     "low_pp": 0.1,
+     "right": 2505,
+     "rule": "non_inferiority",
+     "structures": 372
+    },
+    "K53": {
+     "decision": "supported",
+     "episodes": 3348,
+     "estimate_pp": 9.7,
+     "high_pp": 12.9,
+     "left": 2542,
+     "low_pp": 6.5,
+     "right": 2218,
+     "rule": "superiority",
+     "structures": 372
+    },
+    "K54": {
+     "decision": "supported",
+     "episodes": 1062,
+     "estimate_pp": 7.1,
+     "high_pp": 12.3,
+     "left": 679,
+     "low_pp": 2.0,
+     "right": 604,
+     "rule": "superiority",
+     "structures": 355
+    },
+    "N1": {
+     "decision": "supported",
+     "episodes": 3348,
+     "estimate_pp": 8.6,
+     "high_pp": 11.9,
+     "left": 2505,
+     "low_pp": 5.3,
+     "right": 2218,
+     "rule": "non_inferiority",
+     "structures": 372
+    },
+    "R1": {
+     "decision": "supported",
+     "episodes": 1062,
+     "estimate_pp": 3.8,
+     "high_pp": 6.9,
+     "left": 719,
+     "low_pp": 0.8,
+     "right": 679,
+     "rule": "superiority",
+     "structures": 355
+    },
+    "U1": {
+     "decision": "supported",
+     "episodes": 3348,
+     "estimate_pp": 12.1,
+     "high_pp": 14.8,
+     "left": 850,
+     "low_pp": 9.5,
+     "right": 445,
+     "rule": "superiority",
+     "structures": 372
+    }
+   },
+   "episodes": 13392,
+   "input": {
+    "file": "artifacts/v3_1_holdout_fingerprints.json.gz",
+    "sha256": "0423ceeca1d63477333b80374c48125fc248f51edf00a9643fd0a0640863ae10"
+   },
+   "kinds": {
+    "empty": {
+     "by_condition": {
+      "M_full": {
+       "exact_target": 63,
+       "n": 74,
+       "unrequested_change": 11
+      },
+      "M_reading": {
+       "exact_target": 52,
+       "n": 74,
+       "unrequested_change": 0
+      },
+      "M_recover": {
+       "exact_target": 52,
+       "n": 74,
+       "unrequested_change": 0
+      }
+     },
+     "n": 74
+    },
+    "interrupted": {
+     "by_condition": {
+      "M_full": {
+       "exact_target": 68,
+       "n": 182,
+       "unrequested_change": 99
+      },
+      "M_reading": {
+       "exact_target": 121,
+       "n": 182,
+       "unrequested_change": 53
+      },
+      "M_recover": {
+       "exact_target": 121,
+       "n": 182,
+       "unrequested_change": 53
+      }
+     },
+     "n": 182
+    },
+    "no recovery turn": {
+     "by_condition": {
+      "M_full": {
+       "exact_target": 869,
+       "n": 1057,
+       "unrequested_change": 172
+      },
+      "M_reading": {
+       "exact_target": 869,
+       "n": 1057,
+       "unrequested_change": 172
+      },
+      "M_recover": {
+       "exact_target": 869,
+       "n": 1057,
+       "unrequested_change": 172
+      }
+     },
+     "n": 1057
+    },
+    "no review (malformed output and the like)": {
+     "by_condition": {
+      "M_full": {
+       "exact_target": 135,
+       "n": 157,
+       "unrequested_change": 14
+      },
+      "M_reading": {
+       "exact_target": 98,
+       "n": 157,
+       "unrequested_change": 0
+      },
+      "M_recover": {
+       "exact_target": 98,
+       "n": 157,
+       "unrequested_change": 0
+      }
+     },
+     "n": 157
+    },
+    "reselect": {
+     "by_condition": {
+      "M_full": {
+       "exact_target": 604,
+       "n": 1062,
+       "unrequested_change": 356
+      },
+      "M_reading": {
+       "exact_target": 719,
+       "n": 1062,
+       "unrequested_change": 152
+      },
+      "M_recover": {
+       "exact_target": 679,
+       "n": 1062,
+       "unrequested_change": 158
+      }
+     },
+     "n": 1062
+    },
+    "revise": {
+     "by_condition": {
+      "M_full": {
+       "exact_target": 479,
+       "n": 816,
+       "unrequested_change": 198
+      },
+      "M_reading": {
+       "exact_target": 683,
+       "n": 816,
+       "unrequested_change": 64
+      },
+      "M_recover": {
+       "exact_target": 686,
+       "n": 816,
+       "unrequested_change": 62
+      }
+     },
+     "n": 816
+    }
+   },
+   "replay_disagreements": 0,
+   "seeds": [
+    11,
+    22,
+    33
+   ],
+   "tasks": 372,
+   "totals": {
+    "B0": {
+     "episodes": 3348,
+     "exact_target": 1431,
+     "goal_completion": 1903,
+     "unrequested_change": 349,
+     "unsafe_effect": 888
+    },
+    "M_full": {
+     "episodes": 3348,
+     "exact_target": 2218,
+     "goal_completion": 1750,
+     "unrequested_change": 850,
+     "unsafe_effect": 0
+    },
+    "M_reading": {
+     "episodes": 3348,
+     "exact_target": 2542,
+     "goal_completion": 1837,
+     "unrequested_change": 441,
+     "unsafe_effect": 0
+    },
+    "M_recover": {
+     "episodes": 3348,
+     "exact_target": 2505,
+     "goal_completion": 1825,
+     "unrequested_change": 445,
+     "unsafe_effect": 0
+    }
+   },
+   "turns_by_kind": {
+    "empty": 74,
+    "interrupted": 182,
+    "no recovery turn": 1057,
+    "no review (malformed output and the like)": 157,
+    "reselect": 1062,
+    "revise": 816
+   }
+  },
+  "cautious": {
+   "complete_matrix": true,
+   "conditions": [
+    "B0",
+    "M_full",
+    "M_reading",
+    "M_recover"
+   ],
+   "contrasts": {
+    "H1": {
+     "decision": "inconclusive",
+     "episodes": 468,
+     "estimate_pp": 3.8,
+     "high_pp": 10.0,
+     "left": 395,
+     "low_pp": -2.4,
+     "right": 377,
+     "rule": "superiority",
+     "structures": 156
+    },
+    "H2": {
+     "decision": "supported",
+     "episodes": 252,
+     "estimate_pp": 9.9,
+     "high_pp": 17.5,
+     "left": 40,
+     "low_pp": 3.2,
+     "right": 15,
+     "rule": "superiority",
+     "structures": 84
+    },
+    "I1": {
+     "decision": "supported",
+     "episodes": 174,
+     "estimate_pp": 28.3,
+     "high_pp": 43.9,
+     "left": 120,
+     "low_pp": 12.8,
+     "right": 73,
+     "rule": "superiority",
+     "structures": 60
+    },
+    "K11": {
+     "decision": "inconclusive",
+     "episodes": 468,
+     "estimate_pp": 6.4,
+     "high_pp": 13.9,
+     "left": 295,
+     "low_pp": -1.1,
+     "right": 265,
+     "rule": "superiority",
+     "structures": 156
+    },
+    "K15": {
+     "decision": "supported",
+     "episodes": 156,
+     "estimate_pp": 12.8,
+     "high_pp": 23.1,
+     "left": 127,
+     "low_pp": 3.2,
+     "right": 107,
+     "rule": "superiority",
+     "structures": 52
+    },
+    "K22": {
+     "decision": "supported",
+     "episodes": 576,
+     "estimate_pp": 13.9,
+     "high_pp": 21.2,
+     "left": 404,
+     "low_pp": 6.9,
+     "right": 324,
+     "rule": "superiority",
+     "structures": 96
+    },
+    "K27": {
+     "decision": "supported",
+     "episodes": 1116,
+     "estimate_pp": 7.7,
+     "high_pp": 10.6,
+     "left": 222,
+     "low_pp": 4.9,
+     "right": 136,
+     "rule": "superiority",
+     "structures": 372
+    },
+    "K28": {
+     "decision": "supported",
+     "episodes": 1116,
+     "estimate_pp": 9.9,
+     "high_pp": 13.5,
+     "left": 259,
+     "low_pp": 6.5,
+     "right": 148,
+     "rule": "superiority",
+     "structures": 372
+    },
+    "K29": {
+     "decision": "supported",
+     "episodes": 1116,
+     "estimate_pp": 14.6,
+     "high_pp": 18.5,
+     "left": 318,
+     "low_pp": 10.8,
+     "right": 155,
+     "rule": "superiority",
+     "structures": 372
+    },
+    "K30": {
+     "decision": "supported",
+     "episodes": 2484,
+     "estimate_pp": 8.3,
+     "high_pp": 11.0,
+     "left": 421,
+     "low_pp": 5.8,
+     "right": 214,
+     "rule": "superiority",
+     "structures": 276
+    },
+    "K31": {
+     "decision": "supported",
+     "episodes": 864,
+     "estimate_pp": 17.7,
+     "high_pp": 24.0,
+     "left": 378,
+     "low_pp": 11.5,
+     "right": 225,
+     "rule": "superiority",
+     "structures": 96
+    },
+    "K32": {
+     "decision": "supported",
+     "episodes": 1062,
+     "estimate_pp": 20.9,
+     "high_pp": 26.9,
+     "left": 430,
+     "low_pp": 15.2,
+     "right": 208,
+     "rule": "superiority",
+     "structures": 118
+    },
+    "K33": {
+     "decision": "supported",
+     "episodes": 2286,
+     "estimate_pp": 6.0,
+     "high_pp": 8.5,
+     "left": 369,
+     "low_pp": 3.7,
+     "right": 231,
+     "rule": "superiority",
+     "structures": 254
+    },
+    "K34": {
+     "decision": "supported",
+     "episodes": 3348,
+     "estimate_pp": 10.3,
+     "high_pp": 12.9,
+     "left": 799,
+     "low_pp": 7.9,
+     "right": 453,
+     "rule": "superiority",
+     "structures": 372
+    },
+    "K36": {
+     "decision": "supported",
+     "episodes": 3348,
+     "estimate_pp": 7.3,
+     "high_pp": 10.4,
+     "left": 2538,
+     "low_pp": 4.3,
+     "right": 2293,
+     "rule": "superiority",
+     "structures": 372
+    },
+    "K37": {
+     "decision": "inconclusive",
+     "episodes": 3348,
+     "estimate_pp": 0.5,
+     "high_pp": 1.6,
+     "left": 2555,
+     "low_pp": -0.5,
+     "right": 2538,
+     "rule": "superiority",
+     "structures": 372
+    },
+    "K38": {
+     "decision": "inconclusive",
+     "episodes": 1116,
+     "estimate_pp": 1.3,
+     "high_pp": 4.5,
+     "left": 736,
+     "low_pp": -1.7,
+     "right": 721,
+     "rule": "superiority",
+     "structures": 372
+    },
+    "K41": {
+     "decision": "inconclusive",
+     "episodes": 1404,
+     "estimate_pp": 1.0,
+     "high_pp": 5.4,
+     "left": 1091,
+     "low_pp": -3.5,
+     "right": 1077,
+     "rule": "superiority",
+     "structures": 156
+    },
+    "K43": {
+     "decision": "supported",
+     "episodes": 758,
+     "estimate_pp": 26.0,
+     "high_pp": 33.8,
+     "left": 652,
+     "low_pp": 18.4,
+     "right": 466,
+     "rule": "superiority",
+     "structures": 138
+    },
+    "K48": {
+     "decision": "supported",
+     "episodes": 1070,
+     "estimate_pp": 6.8,
+     "high_pp": 11.8,
+     "left": 714,
+     "low_pp": 1.9,
+     "right": 641,
+     "rule": "superiority",
+     "structures": 357
+    },
+    "K50": {
+     "decision": "supported",
+     "episodes": 148,
+     "estimate_pp": 23.4,
+     "high_pp": 43.8,
+     "left": 129,
+     "low_pp": 2.6,
+     "right": 90,
+     "rule": "superiority",
+     "structures": 32
+    },
+    "K51": {
+     "decision": "unsupported",
+     "episodes": 117,
+     "estimate_pp": -0.3,
+     "high_pp": 23.3,
+     "left": 78,
+     "low_pp": -25.0,
+     "right": 85,
+     "rule": "superiority",
+     "structures": 25
+    },
+    "K52": {
+     "decision": "supported",
+     "episodes": 3348,
+     "estimate_pp": 0.5,
+     "high_pp": 1.6,
+     "left": 2555,
+     "low_pp": -0.5,
+     "right": 2538,
+     "rule": "non_inferiority",
+     "structures": 372
+    },
+    "K53": {
+     "decision": "supported",
+     "episodes": 3348,
+     "estimate_pp": 7.8,
+     "high_pp": 10.9,
+     "left": 2555,
+     "low_pp": 4.9,
+     "right": 2293,
+     "rule": "superiority",
+     "structures": 372
+    },
+    "K54": {
+     "decision": "supported",
+     "episodes": 1070,
+     "estimate_pp": 5.4,
+     "high_pp": 10.5,
+     "left": 699,
+     "low_pp": 0.3,
+     "right": 641,
+     "rule": "superiority",
+     "structures": 357
+    },
+    "N1": {
+     "decision": "supported",
+     "episodes": 3348,
+     "estimate_pp": 7.3,
+     "high_pp": 10.4,
+     "left": 2538,
+     "low_pp": 4.3,
+     "right": 2293,
+     "rule": "non_inferiority",
+     "structures": 372
+    },
+    "R1": {
+     "decision": "inconclusive",
+     "episodes": 1070,
+     "estimate_pp": 1.4,
+     "high_pp": 4.6,
+     "left": 714,
+     "low_pp": -1.8,
+     "right": 699,
+     "rule": "superiority",
+     "structures": 357
+    },
+    "U1": {
+     "decision": "supported",
+     "episodes": 3348,
+     "estimate_pp": 10.8,
+     "high_pp": 13.3,
+     "left": 799,
+     "low_pp": 8.2,
+     "right": 439,
+     "rule": "superiority",
+     "structures": 372
+    }
+   },
+   "episodes": 13392,
+   "input": {
+    "file": "artifacts/v3_1_role_cautious_fingerprints.json.gz",
+    "sha256": "17b362f58403062c2ea5f9b2359fd2f6109cd2f2a0dbfc77ed16463c2f7ab45d"
+   },
+   "kinds": {
+    "empty": {
+     "by_condition": {
+      "M_full": {
+       "exact_target": 85,
+       "n": 117,
+       "unrequested_change": 23
+      },
+      "M_reading": {
+       "exact_target": 78,
+       "n": 117,
+       "unrequested_change": 2
+      },
+      "M_recover": {
+       "exact_target": 78,
+       "n": 117,
+       "unrequested_change": 2
+      }
+     },
+     "n": 117
+    },
+    "interrupted": {
+     "by_condition": {
+      "M_full": {
+       "exact_target": 73,
+       "n": 174,
+       "unrequested_change": 87
+      },
+      "M_reading": {
+       "exact_target": 120,
+       "n": 174,
+       "unrequested_change": 48
+      },
+      "M_recover": {
+       "exact_target": 120,
+       "n": 174,
+       "unrequested_change": 48
+      }
+     },
+     "n": 174
+    },
+    "no recovery turn": {
+     "by_condition": {
+      "M_full": {
+       "exact_target": 899,
+       "n": 1081,
+       "unrequested_change": 170
+      },
+      "M_reading": {
+       "exact_target": 899,
+       "n": 1081,
+       "unrequested_change": 170
+      },
+      "M_recover": {
+       "exact_target": 899,
+       "n": 1081,
+       "unrequested_change": 170
+      }
+     },
+     "n": 1081
+    },
+    "no review (malformed output and the like)": {
+     "by_condition": {
+      "M_full": {
+       "exact_target": 129,
+       "n": 148,
+       "unrequested_change": 7
+      },
+      "M_reading": {
+       "exact_target": 90,
+       "n": 148,
+       "unrequested_change": 0
+      },
+      "M_recover": {
+       "exact_target": 90,
+       "n": 148,
+       "unrequested_change": 0
+      }
+     },
+     "n": 148
+    },
+    "reselect": {
+     "by_condition": {
+      "M_full": {
+       "exact_target": 641,
+       "n": 1070,
+       "unrequested_change": 315
+      },
+      "M_reading": {
+       "exact_target": 714,
+       "n": 1070,
+       "unrequested_change": 169
+      },
+      "M_recover": {
+       "exact_target": 699,
+       "n": 1070,
+       "unrequested_change": 155
+      }
+     },
+     "n": 1070
+    },
+    "revise": {
+     "by_condition": {
+      "M_full": {
+       "exact_target": 466,
+       "n": 758,
+       "unrequested_change": 197
+      },
+      "M_reading": {
+       "exact_target": 654,
+       "n": 758,
+       "unrequested_change": 64
+      },
+      "M_recover": {
+       "exact_target": 652,
+       "n": 758,
+       "unrequested_change": 64
+      }
+     },
+     "n": 758
+    }
+   },
+   "replay_disagreements": 0,
+   "seeds": [
+    11,
+    22,
+    33
+   ],
+   "tasks": 372,
+   "totals": {
+    "B0": {
+     "episodes": 3348,
+     "exact_target": 1512,
+     "goal_completion": 1836,
+     "unrequested_change": 348,
+     "unsafe_effect": 910
+    },
+    "M_full": {
+     "episodes": 3348,
+     "exact_target": 2293,
+     "goal_completion": 1755,
+     "unrequested_change": 799,
+     "unsafe_effect": 0
+    },
+    "M_reading": {
+     "episodes": 3348,
+     "exact_target": 2555,
+     "goal_completion": 1835,
+     "unrequested_change": 453,
+     "unsafe_effect": 0
+    },
+    "M_recover": {
+     "episodes": 3348,
+     "exact_target": 2538,
+     "goal_completion": 1834,
+     "unrequested_change": 439,
+     "unsafe_effect": 0
+    }
+   },
+   "turns_by_kind": {
+    "empty": 117,
+    "interrupted": 174,
+    "no recovery turn": 1081,
+    "no review (malformed output and the like)": 148,
+    "reselect": 1070,
+    "revise": 758
+   }
+  },
+  "faithful": {
+   "complete_matrix": true,
+   "conditions": [
+    "B0",
+    "M_full",
+    "M_reading",
+    "M_recover"
+   ],
+   "contrasts": {
+    "H1": {
+     "decision": "supported",
+     "episodes": 468,
+     "estimate_pp": 8.5,
+     "high_pp": 13.7,
+     "left": 397,
+     "low_pp": 3.4,
+     "right": 357,
+     "rule": "superiority",
+     "structures": 156
+    },
+    "H2": {
+     "decision": "supported",
+     "episodes": 252,
+     "estimate_pp": 17.1,
+     "high_pp": 25.8,
+     "left": 52,
+     "low_pp": 8.7,
+     "right": 9,
+     "rule": "superiority",
+     "structures": 84
+    },
+    "I1": {
+     "decision": "supported",
+     "episodes": 165,
+     "estimate_pp": 36.2,
+     "high_pp": 51.1,
+     "left": 110,
+     "low_pp": 20.7,
+     "right": 51,
+     "rule": "superiority",
+     "structures": 58
+    },
+    "K11": {
+     "decision": "inconclusive",
+     "episodes": 468,
+     "estimate_pp": 6.8,
+     "high_pp": 14.1,
+     "left": 262,
+     "low_pp": -0.4,
+     "right": 230,
+     "rule": "superiority",
+     "structures": 156
+    },
+    "K15": {
+     "decision": "supported",
+     "episodes": 156,
+     "estimate_pp": 16.7,
+     "high_pp": 25.6,
+     "left": 118,
+     "low_pp": 8.3,
+     "right": 92,
+     "rule": "superiority",
+     "structures": 52
+    },
+    "K22": {
+     "decision": "supported",
+     "episodes": 576,
+     "estimate_pp": 14.8,
+     "high_pp": 22.0,
+     "left": 407,
+     "low_pp": 8.0,
+     "right": 322,
+     "rule": "superiority",
+     "structures": 96
+    },
+    "K27": {
+     "decision": "supported",
+     "episodes": 1116,
+     "estimate_pp": 8.9,
+     "high_pp": 12.0,
+     "left": 230,
+     "low_pp": 5.8,
+     "right": 131,
+     "rule": "superiority",
+     "structures": 372
+    },
+    "K28": {
+     "decision": "supported",
+     "episodes": 1116,
+     "estimate_pp": 11.6,
+     "high_pp": 15.2,
+     "left": 284,
+     "low_pp": 8.0,
+     "right": 155,
+     "rule": "superiority",
+     "structures": 372
+    },
+    "K29": {
+     "decision": "supported",
+     "episodes": 1116,
+     "estimate_pp": 18.6,
+     "high_pp": 22.7,
+     "left": 349,
+     "low_pp": 14.7,
+     "right": 141,
+     "rule": "superiority",
+     "structures": 372
+    },
+    "K30": {
+     "decision": "supported",
+     "episodes": 2484,
+     "estimate_pp": 10.9,
+     "high_pp": 13.7,
+     "left": 478,
+     "low_pp": 8.3,
+     "right": 207,
+     "rule": "superiority",
+     "structures": 276
+    },
+    "K31": {
+     "decision": "supported",
+     "episodes": 864,
+     "estimate_pp": 19.1,
+     "high_pp": 25.6,
+     "left": 385,
+     "low_pp": 12.7,
+     "right": 220,
+     "rule": "superiority",
+     "structures": 96
+    },
+    "K32": {
+     "decision": "supported",
+     "episodes": 1062,
+     "estimate_pp": 24.6,
+     "high_pp": 30.1,
+     "left": 446,
+     "low_pp": 19.1,
+     "right": 185,
+     "rule": "superiority",
+     "structures": 118
+    },
+    "K33": {
+     "decision": "supported",
+     "episodes": 2286,
+     "estimate_pp": 7.7,
+     "high_pp": 10.3,
+     "left": 417,
+     "low_pp": 5.1,
+     "right": 242,
+     "rule": "superiority",
+     "structures": 254
+    },
+    "K34": {
+     "decision": "supported",
+     "episodes": 3348,
+     "estimate_pp": 13.2,
+     "high_pp": 15.9,
+     "left": 863,
+     "low_pp": 10.8,
+     "right": 420,
+     "rule": "superiority",
+     "structures": 372
+    },
+    "K36": {
+     "decision": "supported",
+     "episodes": 3348,
+     "estimate_pp": 11.5,
+     "high_pp": 14.5,
+     "left": 2526,
+     "low_pp": 8.5,
+     "right": 2142,
+     "rule": "superiority",
+     "structures": 372
+    },
+    "K37": {
+     "decision": "inconclusive",
+     "episodes": 3348,
+     "estimate_pp": 0.7,
+     "high_pp": 1.6,
+     "left": 2549,
+     "low_pp": -0.3,
+     "right": 2526,
+     "rule": "superiority",
+     "structures": 372
+    },
+    "K38": {
+     "decision": "inconclusive",
+     "episodes": 1116,
+     "estimate_pp": 2.1,
+     "high_pp": 4.8,
+     "left": 725,
+     "low_pp": -0.7,
+     "right": 702,
+     "rule": "superiority",
+     "structures": 372
+    },
+    "K41": {
+     "decision": "unsupported",
+     "episodes": 1404,
+     "estimate_pp": -2.4,
+     "high_pp": 1.2,
+     "left": 1013,
+     "low_pp": -6.1,
+     "right": 1047,
+     "rule": "superiority",
+     "structures": 156
+    },
+    "K43": {
+     "decision": "supported",
+     "episodes": 693,
+     "estimate_pp": 36.9,
+     "high_pp": 44.9,
+     "left": 625,
+     "low_pp": 28.9,
+     "right": 391,
+     "rule": "superiority",
+     "structures": 128
+    },
+    "K48": {
+     "decision": "supported",
+     "episodes": 1019,
+     "estimate_pp": 9.3,
+     "high_pp": 15.0,
+     "left": 663,
+     "low_pp": 3.8,
+     "right": 569,
+     "rule": "superiority",
+     "structures": 343
+    },
+    "K50": {
+     "decision": "unsupported",
+     "episodes": 324,
+     "estimate_pp": -10.5,
+     "high_pp": 0.8,
+     "left": 169,
+     "low_pp": -21.8,
+     "right": 192,
+     "rule": "superiority",
+     "structures": 72
+    },
+    "K51": {
+     "decision": "unsupported",
+     "episodes": 28,
+     "estimate_pp": 0.0,
+     "high_pp": 50.0,
+     "left": 19,
+     "low_pp": -50.0,
+     "right": 23,
+     "rule": "superiority",
+     "structures": 6
+    },
+    "K52": {
+     "decision": "supported",
+     "episodes": 3348,
+     "estimate_pp": 0.7,
+     "high_pp": 1.6,
+     "left": 2549,
+     "low_pp": -0.3,
+     "right": 2526,
+     "rule": "non_inferiority",
+     "structures": 372
+    },
+    "K53": {
+     "decision": "supported",
+     "episodes": 3348,
+     "estimate_pp": 12.2,
+     "high_pp": 15.1,
+     "left": 2549,
+     "low_pp": 9.3,
+     "right": 2142,
+     "rule": "superiority",
+     "structures": 372
+    },
+    "K54": {
+     "decision": "supported",
+     "episodes": 1019,
+     "estimate_pp": 7.0,
+     "high_pp": 12.5,
+     "left": 641,
+     "low_pp": 1.5,
+     "right": 569,
+     "rule": "superiority",
+     "structures": 343
+    },
+    "N1": {
+     "decision": "supported",
+     "episodes": 3348,
+     "estimate_pp": 11.5,
+     "high_pp": 14.5,
+     "left": 2526,
+     "low_pp": 8.5,
+     "right": 2142,
+     "rule": "non_inferiority",
+     "structures": 372
+    },
+    "R1": {
+     "decision": "inconclusive",
+     "episodes": 1019,
+     "estimate_pp": 2.3,
+     "high_pp": 5.4,
+     "left": 663,
+     "low_pp": -0.7,
+     "right": 641,
+     "rule": "superiority",
+     "structures": 343
+    },
+    "U1": {
+     "decision": "supported",
+     "episodes": 3348,
+     "estimate_pp": 13.0,
+     "high_pp": 15.7,
+     "left": 863,
+     "low_pp": 10.4,
+     "right": 427,
+     "rule": "superiority",
+     "structures": 372
+    }
+   },
+   "episodes": 13392,
+   "input": {
+    "file": "artifacts/v3_1_role_faithful_fingerprints.json.gz",
+    "sha256": "0d3aebd89b6c5f125bf0ba5768f3b3415dae7171fcddc108d6627bc1f6d57f15"
+   },
+   "kinds": {
+    "empty": {
+     "by_condition": {
+      "M_full": {
+       "exact_target": 23,
+       "n": 28,
+       "unrequested_change": 2
+      },
+      "M_reading": {
+       "exact_target": 19,
+       "n": 28,
+       "unrequested_change": 0
+      },
+      "M_recover": {
+       "exact_target": 19,
+       "n": 28,
+       "unrequested_change": 0
+      }
+     },
+     "n": 28
+    },
+    "interrupted": {
+     "by_condition": {
+      "M_full": {
+       "exact_target": 51,
+       "n": 165,
+       "unrequested_change": 95
+      },
+      "M_reading": {
+       "exact_target": 108,
+       "n": 165,
+       "unrequested_change": 51
+      },
+      "M_recover": {
+       "exact_target": 110,
+       "n": 165,
+       "unrequested_change": 50
+      }
+     },
+     "n": 165
+    },
+    "no recovery turn": {
+     "by_condition": {
+      "M_full": {
+       "exact_target": 939,
+       "n": 1119,
+       "unrequested_change": 174
+      },
+      "M_reading": {
+       "exact_target": 939,
+       "n": 1119,
+       "unrequested_change": 174
+      },
+      "M_recover": {
+       "exact_target": 939,
+       "n": 1119,
+       "unrequested_change": 174
+      }
+     },
+     "n": 1119
+    },
+    "no review (malformed output and the like)": {
+     "by_condition": {
+      "M_full": {
+       "exact_target": 169,
+       "n": 324,
+       "unrequested_change": 41
+      },
+      "M_reading": {
+       "exact_target": 194,
+       "n": 324,
+       "unrequested_change": 13
+      },
+      "M_recover": {
+       "exact_target": 192,
+       "n": 324,
+       "unrequested_change": 13
+      }
+     },
+     "n": 324
+    },
+    "reselect": {
+     "by_condition": {
+      "M_full": {
+       "exact_target": 569,
+       "n": 1019,
+       "unrequested_change": 339
+      },
+      "M_reading": {
+       "exact_target": 663,
+       "n": 1019,
+       "unrequested_change": 129
+      },
+      "M_recover": {
+       "exact_target": 641,
+       "n": 1019,
+       "unrequested_change": 137
+      }
+     },
+     "n": 1019
+    },
+    "revise": {
+     "by_condition": {
+      "M_full": {
+       "exact_target": 391,
+       "n": 693,
+       "unrequested_change": 212
+      },
+      "M_reading": {
+       "exact_target": 626,
+       "n": 693,
+       "unrequested_change": 53
+      },
+      "M_recover": {
+       "exact_target": 625,
+       "n": 693,
+       "unrequested_change": 53
+      }
+     },
+     "n": 693
+    }
+   },
+   "replay_disagreements": 0,
+   "seeds": [
+    11,
+    22,
+    33
+   ],
+   "tasks": 372,
+   "totals": {
+    "B0": {
+     "episodes": 3348,
+     "exact_target": 1524,
+     "goal_completion": 1839,
+     "unrequested_change": 348,
+     "unsafe_effect": 863
+    },
+    "M_full": {
+     "episodes": 3348,
+     "exact_target": 2142,
+     "goal_completion": 1678,
+     "unrequested_change": 863,
+     "unsafe_effect": 0
+    },
+    "M_reading": {
+     "episodes": 3348,
+     "exact_target": 2549,
+     "goal_completion": 1812,
+     "unrequested_change": 420,
+     "unsafe_effect": 0
+    },
+    "M_recover": {
+     "episodes": 3348,
+     "exact_target": 2526,
+     "goal_completion": 1813,
+     "unrequested_change": 427,
+     "unsafe_effect": 0
+    }
+   },
+   "turns_by_kind": {
+    "empty": 28,
+    "interrupted": 165,
+    "no recovery turn": 1119,
+    "no review (malformed output and the like)": 324,
+    "reselect": 1019,
+    "revise": 693
+   }
+  }
+ },
+ "study": "EviBound v3.1, exploratory arm: one model, several planner characters (no confirmatory weight)"
+}

@@ -1,5 +1,6 @@
 """The v3.1 results document and its records follow from the committed fingerprints."""
 import json
+import re
 import subprocess
 import sys
 import unittest
@@ -24,6 +25,19 @@ class ResultsDocumentTests(unittest.TestCase):
         text = DOC.read_text()
         for name, claim in analyze_v3_1.CLAIMS.items():
             self.assertIn(f'**{name}. {claim}**', text)
+
+    def test_numbers_in_the_prose_are_in_the_generated_tables(self):
+        """A number quoted in a checked paragraph has to occur in a generated block of the document."""
+        text = DOC.read_text()
+        generated = ' '.join(re.findall(r'<!-- generated:\w+ -->(.*?)<!-- /generated:\w+ -->', text, flags=re.S))
+        prose = re.findall(r'<!-- prose:checked -->(.*?)<!-- /prose:checked -->', text, flags=re.S)
+        number = re.compile(r'(?<![A-Za-z`_])\d[\d,]*(?:\.\d+)?')
+        known = {token.replace(',', '') for token in number.findall(generated)}
+        for block in prose:
+            for token in number.findall(block):
+                value = token.replace(',', '')
+                if '.' in value or int(value) >= 10:
+                    self.assertIn(value, known, f'{token} is quoted in the prose and is in no generated table')
 
     def test_frozen_files_are_unchanged(self):
         result = subprocess.run([sys.executable, str(ROOT / 'scripts/freeze_v3_1_prereg.py'), '--verify'],
