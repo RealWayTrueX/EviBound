@@ -1,0 +1,125 @@
+{
+  "dev": {
+    "tasks": 36,
+    "physical_structures": 36,
+    "strata": {
+      "full_dual": 9,
+      "full_scoped": 9,
+      "none": 6,
+      "part": 12
+    },
+    "attacks": {
+      "all": {
+        "tamper": 18,
+        "replay": 18
+      }
+    },
+    "rule_coverage": [
+      "R1",
+      "R2",
+      "R3",
+      "R4",
+      "R5",
+      "R6"
+    ],
+    "cells": {
+      "presence_flag/explicit": 3,
+      "presence_flag/everyday": 3,
+      "presence_flag/scene": 3,
+      "motion_timer/explicit": 3,
+      "motion_timer/everyday": 3,
+      "motion_timer/scene": 3,
+      "camera_caption/explicit": 3,
+      "camera_caption/everyday": 3,
+      "camera_caption/scene": 3,
+      "multi_sensor/explicit": 3,
+      "multi_sensor/everyday": 3,
+      "multi_sensor/scene": 3
+    },
+    "attack_can_cause_an_unsafe_write": 5,
+    "attack_can_cause_an_unauthorized_write": 4,
+    "plans_of_two_or_more_writes": 10,
+    "simulator_checks_per_task": [
+      "a shortest plan under the guard",
+      "b boundary interruption and completion",
+      "c attacked plan blocked, annotations match",
+      "d unguarded pursuit of the goal"
+    ],
+    "errors": []
+  },
+  "holdout": {
+    "tasks": 276,
+    "physical_structures": 276,
+    "strata": {
+      "full_dual": 72,
+      "full_scoped": 84,
+      "none": 36,
+      "part": 84
+    },
+    "attacks": {
+      "full_dual": {
+        "tamper": 36,
+        "replay": 36
+      },
+      "full_scoped": {
+        "tamper": 42,
+        "replay": 42
+      },
+      "none": {
+        "tamper": 18,
+        "replay": 18
+      },
+      "part": {
+        "tamper": 42,
+        "replay": 42
+      }
+    },
+    "rule_coverage": [
+      "R1",
+      "R2",
+      "R3",
+      "R4",
+      "R5",
+      "R6"
+    ],
+    "cells": {
+      "presence_flag/explicit": 23,
+      "presence_flag/everyday": 23,
+      "presence_flag/scene": 23,
+      "motion_timer/explicit": 23,
+      "motion_timer/everyday": 23,
+      "motion_timer/scene": 23,
+      "camera_caption/explicit": 23,
+      "camera_caption/everyday": 23,
+      "camera_caption/scene": 23,
+      "multi_sensor/explicit": 23,
+      "multi_sensor/everyday": 23,
+      "multi_sensor/scene": 23
+    },
+    "attack_can_cause_an_unsafe_write": 29,
+    "attack_can_cause_an_unauthorized_write": 39,
+    "plans_of_two_or_more_writes": 60,
+    "simulator_checks_per_task": [
+      "a shortest plan under the guard",
+      "b boundary interruption and completion",
+      "c attacked plan blocked, annotations match",
+      "d unguarded pursuit of the goal"
+    ],
+    "errors": []
+  },
+  "total_errors": 0,
+  "earlier_corpora": {
+    "folders": [
+      "data/scenarios",
+      "data/scenarios_v2",
+      "data/scenarios_v3"
+    ],
+    "structures": 93
+  },
+  "modalities": [
+    "presence_flag",
+    "motion_timer",
+    "camera_caption",
+    "multi_sensor"
+  ]
+}
