@@ -1,6 +1,6 @@
 {
   "approval_status": "pending_owner_signoff",
-  "approved_at": "2026-11-24T07:26:41.339123+00:00",
+  "approved_at": "2026-11-24T07:29:02.715568+00:00",
   "approved_by": "Codex automated validation; owner sign-off pending",
   "owner_signoff_required": true,
   "schema": "evibound-v4-prereg-freeze-v2",
@@ -23,10 +23,10 @@
     "src/evibound/external_v4/scheduler.py": "41b7b67a2708457e6b7c09de7158ca82401c2c2fcda4335b64e99abb6b2ce201",
     "src/evibound/external_v4/signing.py": "deb62e75e708e6c44b3cceb7322b0b10dd30f585a5d8d64c7f892be157ae6fba",
     "src/evibound/external_v4/simuhome_adapter.py": "1ed423ffeb6193362503e1a9bf8895ba537de1e0b34a81bade82878631f36c2d",
-    "src/evibound/external_v4/simuhome_experiment.py": "2b295bcd5bffcfef74e687f35910c7fcb6b01636b30ca8274bb0317ddba0293f",
+    "src/evibound/external_v4/simuhome_experiment.py": "9fe58a27579462a91016706ab31646755409ce8545ee638e1779d9fd972d09aa",
     "src/evibound/external_v4/sources.py": "08e26882783bf17a2aea13cfc03592b885175436fa89679cae7576ceefc83b18",
     "src/evibound/external_v4/store.py": "28bf961390a970a5be00f5cdefca06d8d1b8ed02eb1d4f47c783b16da4ac3134",
     "src/evibound/external_v4/synthetic.py": "359eade9654fbdff7e23abffe914d03d797303b4d7ac8682ac77287466096e9d"
   },
-  "supersedes_sha256": "2a06e23a4c2e4031439b0425d1d6116c85a9c2f608f7c40edbe2067fd8418bb1"
+  "supersedes_sha256": "15f5e8f0b6f6ab60e6edd8e3962d8e745038ca6f911f8cadec8658ae0f1bed32"
 }

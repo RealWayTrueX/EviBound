@@ -245,15 +245,24 @@ def run_simuhome_a(
     client.health()
     rows: list[dict[str, Any]] = []
     eligible: list[tuple[Path, dict[str, Any], LivePlan]] = []
+    allowed_query_types = {"qt2", "qt3", "qt4-1", "qt4-2", "qt4-3"}
     for path in sorted(episode_dir.glob("*.json")):
         episode = json.loads(path.read_text(encoding="utf-8"))
         if episode.get("meta", {}).get("case") != "feasible":
             continue
+        if episode.get("meta", {}).get("query_type") not in allowed_query_types:
+            continue
         plan = _candidate(episode)
         if plan is not None:
             eligible.append((path, episode, plan))
-        if len(eligible) >= limit:
-            break
+    priority = {"qt4-1": 0, "qt4-2": 1, "qt4-3": 2, "qt2": 3, "qt3": 4}
+    eligible.sort(
+        key=lambda item: (
+            priority.get(item[2].episode, 99),
+            int(item[1].get("meta", {}).get("seed", 0)),
+        )
+    )
+    eligible = eligible[:limit]
 
     for path, episode, plan in eligible:
         client.reset(episode["initial_home_config"])
