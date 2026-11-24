@@ -9,6 +9,7 @@ ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / 'src'))
 sys.path.insert(0, str(ROOT / 'scripts'))
 import analyze_v3_1  # noqa: E402
+import v3_1_results_tables  # noqa: E402
 import v3_1_roles  # noqa: E402
 from evibound.recovery_v3_1 import V31_CONDITIONS  # noqa: E402
 
@@ -35,6 +36,24 @@ class ResultsDocumentTests(unittest.TestCase):
                                  '--input', str(HOLDOUT), '--record', str(RECORD), '--doc', str(DOC), '--check'],
                                 capture_output=True, text=True, cwd=ROOT)
         self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+
+    @unittest.skipUnless(RECORD.exists(), 'the confirmatory run has not been committed yet')
+    def test_extra_tables_are_current_and_add_up(self):
+        result = subprocess.run([sys.executable, str(ROOT / 'scripts/v3_1_results_tables.py'), '--check'],
+                                capture_output=True, text=True, cwd=ROOT)
+        self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+        record = json.loads(RECORD.read_text())
+        totals = v3_1_results_tables.totals(record)
+        self.assertEqual(sorted(totals), sorted(V31_CONDITIONS))
+        for condition, total in totals.items():
+            self.assertEqual(total['all']['n'], 372 * 3 * 3, condition)
+        # the contrast U1 counts the same episodes as the table of totals
+        effect = record['decisions']['U1']['effect']
+        self.assertEqual((effect['left_count'], effect['right_count']),
+                         (totals['M_full']['all']['unrequested_change'], totals['M_recover']['all']['unrequested_change']))
+        effect = record['decisions']['N1']['effect']
+        self.assertEqual((effect['left_count'], effect['right_count']),
+                         (totals['M_recover']['all']['exact_target'], totals['M_full']['all']['exact_target']))
 
     @unittest.skipUnless(RECORD.exists(), 'the confirmatory run has not been committed yet')
     def test_confirmatory_run_is_the_planned_matrix(self):
@@ -76,8 +95,12 @@ class PlannerCharacterTests(unittest.TestCase):
         roles = json.loads(ROLES.read_text())['roles']
         record = json.loads(RECORD.read_text())
         items = {**record['decisions'], **{i['id']: i for i in record['secondary']}}
+        self.assertTrue({i for i, _ in v3_1_roles.SHOWN} <= set(roles['base']['contrasts']))
         for contrast_id, shown in roles['base']['contrasts'].items():
             effect = items[contrast_id]['effect']
+            if not effect:                       # no episode of that kind in this run
+                self.assertEqual(shown, {'decision': 'missing'}, contrast_id)
+                continue
             self.assertEqual((shown['left'], shown['right'], shown['episodes'], shown['decision']),
                              (effect['left_count'], effect['right_count'], effect['episodes_per_arm'],
                               items[contrast_id]['decision']), contrast_id)
