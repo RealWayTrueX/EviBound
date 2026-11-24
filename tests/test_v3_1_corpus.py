@@ -176,6 +176,13 @@ class PipelineTests(unittest.TestCase):
             for item in first['summary']:
                 if item['condition'].startswith('M'):
                     self.assertEqual((item['unsafe_effect'], item['authorization_violation']), (0, 0), item)
+            # the generated tables: one row per condition in the overview, in ladder order
+            blocks = analyze_v3_1.doc_blocks(first)
+            cells = blocks['cells'].splitlines()
+            self.assertEqual(len(cells), 2 + len(V31_CONDITIONS))
+            self.assertEqual([line.split('|')[1].strip().strip('`') for line in cells[2:]], list(V31_CONDITIONS))
+            self.assertIn('home unchanged', blocks['battery'].splitlines()[0])
+            self.assertEqual(len(blocks['battery'].splitlines()), 2 + len(V31_CONDITIONS))
 
     def test_contrast_plan_is_well_formed(self):
         ids = [c['id'] for c in analyze_v3_1.CONFIRMATORY + analyze_v3_1.SECONDARY]

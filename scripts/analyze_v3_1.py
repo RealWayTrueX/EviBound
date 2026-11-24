@@ -107,6 +107,8 @@ SECONDARY = [
     spec('K25', 'S2 on tasks where believing the attack changes the home without breaking a rule', ['perturbed'], 'M_plan', 'B2_plan', 'exact_target', SUP, ALL, 'battery_hijack'),
     spec('K26', 'S1 on core tasks only', ['perturbed'], 'B2_plan', 'M_plan', 'unsafe_effect', SUP),
 ]
+OTHER_LEVELS = {'B0': 'reference', 'B2_plan': 'L2b, guard without evidence binding',
+                'M_plan_open': 'L2b, development wording', 'M_plan_text': 'L2b, development wording'}
 METRICS = ('goal_completion', 'safe_completion', 'unsafe_effect', 'authorization_violation', 'target_reached',
            'exact_target', 'unrequested_change', 'off_target', 'retried')
 
@@ -315,13 +317,16 @@ def doc_blocks(result):
     rows = []
     ladder_order = ['B0', 'M', 'M_recover', 'M_full', 'M_menu2', 'M_plan', 'M_seq', 'B2_plan']
     for condition in sorted(design['conditions'], key=lambda c: (ladder_order.index(c) if c in ladder_order else 99, c)):
-        row = [f'`{condition}`', result['ladder'].get(condition, 'reference' if condition == 'B0' else 'L2b, guard without evidence binding')]
+        row = [f'`{condition}`', result['ladder'].get(condition) or OTHER_LEVELS.get(condition, 'development only')]
         for variant in ('clean', 'boundary', 'perturbed'):
             full, part, everything = (cell.get((variant, condition, c)) for c in ('full', 'part', 'core'))
             row += [f"{full['goal_completion']}/{full['n']}" if full else '',
                     f"{part['unrequested_change']}/{part['n']}" if part else '',
                     f"{everything['unsafe_effect']}/{everything['n']}" if everything else '']
         rows.append(row)
+    blocks['cells'] = T(['Condition', 'Level', 'clean: completed, `full`', 'clean: unrequested change, `part`', 'clean: unsafe, core',
+                         'boundary: completed', 'boundary: unrequested', 'boundary: unsafe',
+                         'attacked: completed', 'attacked: unrequested', 'attacked: unsafe'], rows)
     battery_rows = []
     for condition in sorted(design['conditions'], key=lambda c: (ladder_order.index(c) if c in ladder_order else 99, c)):
         row = [f'`{condition}`']
@@ -345,9 +350,6 @@ def doc_blocks(result):
                 rows.append([variant if variant != 'perturbed' else 'attacked', f'`{condition}`', group]
                             + [v[k] for k in lib.OUTCOMES])
     blocks['battery_outcomes'] = T(['Variant', 'Condition', 'Group'] + list(lib.OUTCOMES), rows)
-    blocks['cells'] = T(['Condition', 'Level', 'clean: completed, `full`', 'clean: unrequested change, `part`', 'clean: unsafe, core',
-                         'boundary: completed', 'boundary: unrequested', 'boundary: unsafe',
-                         'attacked: completed', 'attacked: unrequested', 'attacked: unsafe'], rows)
     rows = [[v if v != 'perturbed' else 'attacked', f'`{c}`', ', '.join(f'{k}: {n}' for k, n in turns.items())]
             for v, cs in result['reviews'].items() for c, turns in cs.items()]
     blocks['reviews'] = T(['Variant', 'Condition', 'Recovery turns by trigger and form of the plan review'], rows)
