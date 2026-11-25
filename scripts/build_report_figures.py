@@ -153,18 +153,16 @@ SCALE_SERIES = {     # panel -> (key, label, colour, record condition, metric, v
 SCALE_PLANNERS = (('qwen25', 'Qwen2.5-7B'), ('qwen3', 'Qwen3-8B'))
 
 
-def data_scale(record=None):
-    """Exploratory scale study: rates per home and planner, and Study 3's as the reference point."""
+def data_scale(record=None, study3=None):
+    """Exploratory scale study: rates per home and planner, and each planner's Study 3 as the reference point."""
     record = record or report.load('homes_record.json')
-    study3 = report.v31_record()
-    totals = report.v31_totals(study3)
-    attacked = {item['condition']: item for item in study3['summary']
-                if item['class'] == 'all' and item['variant'] == 'perturbed'}
+    study3 = study3 or report.load('v3_1_models_record.json')['models']
 
-    def reference(condition, metric, variant):
-        if variant == 'perturbed':
-            return 100 * attacked[condition][metric] / attacked[condition]['n']
-        return 100 * totals[condition][metric] / totals[condition]['episodes']
+    def reference(planner, condition, metric, variant):
+        if planner not in study3:
+            return None
+        cell = study3[planner]['attacked'][condition] if variant == 'perturbed' else study3[planner]['totals'][condition]
+        return 100 * cell[metric] / cell['episodes']
 
     def rate(home, condition, metric, variant):
         cell = home['by_variant'][variant][condition] if variant else home['totals'][condition]
@@ -178,7 +176,7 @@ def data_scale(record=None):
     for panel, series in SCALE_SERIES.items():
         out['panels'][panel] = [
             {'key': key, 'label': label, 'colour': colour,
-             'study3': reference(condition, metric, variant),
+             'study3': {plabel: reference(pname, condition, metric, variant) for pname, plabel in planners},
              'values': {plabel: [rate(record['planners'][pname]['homes'][h], condition, metric, variant)
                                  for h in ('S', 'M', 'L')] for pname, plabel in planners}}
             for key, label, colour, condition, metric, variant in series]
@@ -328,7 +326,7 @@ def draw_claims(plt, data):
         lines.append(('title', group))
         lines.extend(('row', row) for row in group['rows'])
     n = len(lines)
-    fig = plt.figure(figsize=(mm(S.COLUMN_MM), mm(3.3 * n + 13)))
+    fig = plt.figure(figsize=(mm(S.COLUMN_MM), mm(3.1 * n + 13)))
     ax = fig.add_axes([0.40, 0.158, 0.32, 0.838])
     x_range = (-15, 60)
     forest_axis(ax, x_range, [0, 20, 40, 60], lines)
@@ -360,7 +358,7 @@ def draw_ladder(plt, data):
     ladder_n = len(LADDER)
     # y positions: the seven messages, a gap, the two reference conditions
     ys = [n - index + (0.55 if index < ladder_n else 0) for index in range(n)]
-    fig = plt.figure(figsize=(mm(S.PAGE_MM), mm(57)))
+    fig = plt.figure(figsize=(mm(S.PAGE_MM), mm(53)))
     panel_y, panel_h = 0.235, 0.575
     title_y = panel_y + panel_h + 0.105
     panels = {'exact': fig.add_axes([0.150, panel_y, 0.195, panel_h]),
@@ -417,10 +415,10 @@ def draw_scale(plt, data):
     """Three small panels over the size of the home; one line per message or guard and planner."""
     from matplotlib.lines import Line2D
     colours = {'red': S.RED, 'blue': S.BLUE, 'orange': S.ORANGE, 'aqua': S.AQUA}
-    panels = (('unsafe', '(a) Unsafe effect under attack', (0, 50)),
-              ('unrequested', '(b) Unrequested change', (0, 50)),
-              ('exact', '(c) Attainable target reached', (40, 100)))
-    fig = plt.figure(figsize=(mm(S.PAGE_MM), mm(47)))
+    panels = (('unsafe', '(a) Unsafe effect under attack', (0, 40)),
+              ('unrequested', '(b) Unrequested change', (0, 40)),
+              ('exact', '(c) Attainable target reached', (50, 90)))
+    fig = plt.figure(figsize=(mm(S.PAGE_MM), mm(40)))
     lefts = (0.052, 0.385, 0.718)
     xs = (1, 2, 3)
     styles = {label: ('-', True) if i == 0 else ((0, (3.2, 1.6)), False) for i, label in enumerate(data['planners'])}
@@ -431,7 +429,7 @@ def draw_scale(plt, data):
         ax.yaxis.grid(True)
         ax.set_axisbelow(True)
         values = [v for series in data['panels'][panel] for row in series['values'].values() for v in row]
-        values += [series['study3'] for series in data['panels'][panel]]
+        values += [v for series in data['panels'][panel] for v in series['study3'].values() if v is not None]
         low = min(y_range[0], 10 * int(min(values) // 10))
         top = min(100, max(y_range[1], 10 * (int(max(values) // 10) + 1)))
         ax.set_ylim(low, top)
@@ -439,10 +437,11 @@ def draw_scale(plt, data):
         ax.axvline(0.5, color=S.AXIS, linewidth=0.6)
         for series in data['panels'][panel]:
             colour = colours[series['colour']]
-            ax.plot(0, series['study3'], 'D', markersize=3.6, markerfacecolor=colour, markeredgecolor=S.SURFACE,
-                    markeredgewidth=0.6, zorder=4, clip_on=False)
             for planner, values in series['values'].items():
                 line, filled = styles[planner]
+                if series['study3'][planner] is not None:
+                    ax.plot(0, series['study3'][planner], 'D', markersize=3.8, markerfacecolor=colour if filled else S.SURFACE,
+                            markeredgecolor=colour, markeredgewidth=1.0, zorder=4, clip_on=False)
                 ax.plot(xs, values, linestyle=line, color=colour, linewidth=1.5, zorder=3, clip_on=False)
                 ax.plot(xs, values, 'o', markersize=4.0, markerfacecolor=colour if filled else S.SURFACE,
                         markeredgecolor=colour, markeredgewidth=1.0, zorder=4, clip_on=False)
@@ -480,8 +479,8 @@ def draw_scale(plt, data):
             key.plot(px + 0.011, py, 'o', markersize=3.6, markerfacecolor=S.INK_2 if filled else S.SURFACE,
                      markeredgecolor=S.INK_2, markeredgewidth=0.9)
         x = entry(x, 0.03, planner, planner_mark)
-    entry(x, 0.03, 'Study 3: the confirmatory run in the frozen small home, other tasks',
-          lambda px, py: key.plot(px + 0.011, py, 'D', markersize=3.6, markerfacecolor=S.INK_2, markeredgecolor=S.SURFACE))
+    entry(x, 0.03, 'Study 3: the same planner in the frozen small home, on its own tasks',
+          lambda px, py: key.plot(px + 0.011, py, 'D', markersize=3.8, markerfacecolor=S.INK_2, markeredgecolor=S.INK_2))
     return fig
 
 

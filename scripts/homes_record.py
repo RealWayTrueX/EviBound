@@ -3,7 +3,9 @@
 
 Reads the published fingerprints of each run (artifacts/homes_<planner>_fingerprints.json.gz),
 recomputes everything with scripts/analyze_homes.py, writes artifacts/homes_record.json and
-refreshes the generated tables in docs/scale_study.md. Nothing here has confirmatory weight.
+refreshes the generated tables in docs/scale_study.md (and the side-by-side table in
+docs/v3_1_results.md, which puts Study 3 next to the three homes). Nothing here has
+confirmatory weight.
 
   python scripts/homes_record.py            # write the record and the tables
   python scripts/homes_record.py --check    # fail if either is stale
@@ -20,7 +22,9 @@ import analyze_homes as study  # noqa: E402
 import v3_1_lib as lib  # noqa: E402
 
 RECORD = ROOT / 'artifacts/homes_record.json'
+STUDY3 = ROOT / 'artifacts/v3_1_models_record.json'     # Study 3 in the frozen small home, per planner
 DOC = ROOT / 'docs/scale_study.md'
+SUMMARY_DOC = ROOT / 'docs/v3_1_results.md'         # carries the side-by-side table as well
 RUNS = {'qwen25': ('artifacts/homes_qwen25_fingerprints.json.gz', 'Qwen2.5-7B'),
         'qwen3': ('artifacts/homes_qwen3_fingerprints.json.gz', 'Qwen3-8B')}
 HOME_NAMES = {'S': 'small', 'M': 'medium', 'L': 'large'}
@@ -112,7 +116,49 @@ def blocks(record):
             rows.append([cid, labels[cid], RUNS[planner][1]] + [cell(data['homes'][name]['contrasts'].get(cid))
                                                                 for name in HOME_NAMES if name in data['homes']])
     out['homes_contrasts'] = T(['Id', 'Contrast', 'Planner'] + [HOME_NAMES[n] for n in HOME_NAMES], rows)
+    out['homes_vs_study3'] = T(['Planner', 'Quantity', 'Study 3 (frozen small home)'] + [HOME_NAMES[n] for n in HOME_NAMES],
+                               side_by_side(planners))
     return out
+
+
+def side_by_side(planners):
+    """The same quantities in Study 3 (frozen small home, its own 372 tasks) and in the three homes of this study."""
+    study3 = json.loads(STUDY3.read_text())['models']
+    rates = (('Unsafe effect under attack, guard that trusts the cited reading', 'B2_plan', 'unsafe_effect', True),
+             ('Unsafe effect under attack, evidence-bound guard (reason)', 'M_recover', 'unsafe_effect', True),
+             ('Unrequested change, reason alone', 'M_recover', 'unrequested_change', False),
+             ('Unrequested change, reason + list', 'M_full', 'unrequested_change', False),
+             ('Exact target, reason alone', 'M_recover', 'exact_target', False),
+             ('Exact target, reason + list', 'M_full', 'exact_target', False),
+             ('Exact target, reason + plan review', 'M_plan', 'exact_target', False))
+    differences = (('List minus reason, unrequested change (pp)', 'U1', 'U1', 1),
+                   ('Reason minus list, exact target (pp)', 'N1', 'K36', 1),
+                   ('Plan review minus reason, exact target (pp)', 'P1', 'N3', -1))
+
+    def interval(item, sign=1):
+        low, high = sorted((sign * item['low_pp'], sign * item['high_pp']))
+        return f"{sign * item['estimate_pp']:+.1f} [{low:+.1f}, {high:+.1f}]"
+
+    rows = []
+    for planner, data in planners.items():
+        reference = study3.get(planner)
+        for label, condition, metric, attacked in rates:
+            row = [RUNS[planner][1], label]
+            if reference:
+                cell = reference['attacked'][condition] if attacked else reference['totals'][condition]
+                row.append(f"{cell[metric]} of {cell['episodes']} ({100 * cell[metric] / cell['episodes']:.1f}%)")
+            else:
+                row.append('not run')
+            for name in HOME_NAMES:
+                home = data['homes'][name]
+                cell = home['by_variant']['perturbed'][condition] if attacked else home['totals'][condition]
+                row.append(f"{cell[metric]} of {cell['episodes']} ({100 * cell[metric] / cell['episodes']:.1f}%)")
+            rows.append(row)
+        for label, here, there, sign in differences:
+            row = [RUNS[planner][1], label, interval(reference['contrasts'][there], sign) if reference else 'not run']
+            row += [interval(data['homes'][name]['contrasts'][here]) for name in HOME_NAMES]
+            rows.append(row)
+    return rows
 
 
 def main():
@@ -121,21 +167,29 @@ def main():
     args = parser.parse_args()
     record = build()
     text = json.dumps(record, indent=1, sort_keys=True) + '\n'
-    doc = DOC.read_text()
-    fresh = lib.refresh_blocks(doc, blocks(record)) if '<!-- generated:homes_runs -->' in doc and record['planners'] else doc
     if not record['planners'] and not RECORD.exists():
         print('no run of the scale study is recorded yet')
         return 0
+    built = blocks(record) if record['planners'] else {}
+    docs = {}
+    for path, names in ((DOC, list(built)), (SUMMARY_DOC, ['homes_vs_study3'])):
+        doc = path.read_text()
+        present = {name: built[name] for name in names if name in built and f'<!-- generated:{name} -->' in doc}
+        docs[path] = (doc, lib.refresh_blocks(doc, present))
     if args.check:
         problems = []
         if not RECORD.exists() or RECORD.read_text() != text:
             problems.append(f'{RECORD.relative_to(ROOT)} is stale')
-        if fresh != doc:
-            problems.append(f'{DOC.relative_to(ROOT)} has stale tables')
+        for path, (doc, fresh) in docs.items():
+            if fresh != doc:
+                problems.append(f'{path.relative_to(ROOT)} has stale tables')
+        if record['planners'] and '<!-- generated:homes_runs -->' not in docs[DOC][0]:
+            problems.append(f'{DOC.relative_to(ROOT)} has no results section')
         print('\n'.join(problems) or 'record and tables of the scale study are current')
         return 1 if problems else 0
     RECORD.write_text(text)
-    DOC.write_text(fresh)
+    for path, (_, fresh) in docs.items():
+        path.write_text(fresh)
     print(json.dumps({'record': str(RECORD.relative_to(ROOT)), 'planners': {
         p: {h: {c: v['decision'] for c, v in home['contrasts'].items() if c in study.PRIMARY}
             for h, home in data['homes'].items()} for p, data in record['planners'].items()}}))

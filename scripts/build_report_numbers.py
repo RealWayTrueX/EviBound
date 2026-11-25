@@ -47,7 +47,7 @@ MINUS = r'$-$'
 
 # Dated facts about the repository that are not results. tests/test_report_numbers.py checks that the
 # test suite has not shrunk below the number printed in the report.
-SNAPSHOT = {'date': '25 November 2026', 'unit_tests': 245, 'component_tests': 27}
+SNAPSHOT = {'date': '25 November 2026', 'unit_tests': 251, 'component_tests': 27}
 
 
 def load(name):
@@ -720,11 +720,15 @@ def exploratory_numbers(n):
                     n.add(f'{key}.{contrast}.n', integer(item['episodes']))
                     n.effect(f'{key}.{contrast}', item['estimate_pp'] / 100, item['low_pp'] / 100, item['high_pp'] / 100)
                     n.add(f'{key}.{contrast}.decision', item['decision'])
-                n.add(f'{key}.list_length', f"{home['form']['mean_list_length']:.1f}")
+                n.add(f'{key}.list_length', f"{home['form']['mean_list_length']:.2f}")
+                n.add(f'{key}.recovery.not_parsed', integer(home['form']['recovery_not_parsed']))
                 n.add(f'{key}.first.not_parsed_pct', pct(home['form']['first_not_parsed'], home['form']['first_proposals']))
             for name, flags in data['carried_over_from_small'].items():
                 n.count(f'hm.{planner}.{name}.same', sum(flags.values()))
         n.add('hm.episodes', integer(episodes))
+        first = next(iter(record['planners'].values()))['homes']
+        n.add('hm.tasks', integer(sum(home['tasks'] for home in first.values())))
+        n.add('hm.conditions', len(first['S']['totals']))
         n.add('hm.guarded.episodes', integer(guarded))
         n.add('hm.planners', len(record['planners']))
 
