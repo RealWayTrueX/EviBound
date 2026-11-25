@@ -8,7 +8,8 @@ holdout output existed. Every table between `generated` markers, and every
 sentence of the summary that holds a number, is written by a script from the
 committed episode fingerprints; the scripts' `--check` fails if any of it is
 stale. The exploratory arm (section 9) ran next to the confirmatory run and
-is complete.
+is complete. A second exploratory arm (section 10) repeated the whole study
+with a second planner model on 2026-11-25.
 
 | Item | Value |
 |---|---|
@@ -822,15 +823,155 @@ there are.
 | no recovery turn | 1057 | 1081 | 1119 | 1020 |
 <!-- /generated:roles_turns -->
 
-## 10. Limits
+## 10. Exploratory: a second planner model
+
+No confirmatory weight. Every result above comes from one planner,
+Qwen2.5-7B-Instruct. The characters of section 9 changed its prompt and kept
+its weights. This arm changes the weights: the 372 holdout tasks, the nine
+conditions and the three seeds were run again with Qwen3-8B. The plan
+([v3_1_second_model.md](v3_1_second_model.md)) was written and published
+before the run and after the confirmatory results were known. It fixes what
+"carries over" means: the frozen rule gives the same decision as in the
+confirmatory run.
+
+Everything is the frozen code and the frozen settings, with one difference.
+Qwen3 opens a reasoning block unless its chat template is told not to, and
+the 224 new tokens of the frozen settings would be spent inside it. The
+template is therefore rendered with `enable_thinking=False`
+(`src/evibound/planner_models.py`; generation, seeding and parsing are
+inherited from the frozen planner).
+
+| Item | Value |
+|---|---|
+| Model | Qwen3-8B from a local folder, bfloat16; SHA-256 of every weight file in `artifacts/v3_1_model_qwen3_files.json` |
+| Pilot (development split, seed 11, 1,296 episodes) | passed the check of the form of the answers: no answer with reasoning text, no first proposal that failed to parse |
+| Run | 2026-11-25, 10:17:08 to 11:52:47 UTC, two graphics cards, the tasks split in two parts (186 tasks each), one process per part, no restart; code at commit `b153849` |
+| Episodes | 30,132 (2 x 15,066) |
+| SHA-256 of the raw traces | part 1 `39495d646cbe3eb6…`, part 2 `b7ca46bb4024d333…` |
+| Fingerprints | `artifacts/v3_1_model_qwen3_fingerprints.json.gz` |
+| Record and tables | `python scripts/v3_1_models.py` writes `artifacts/v3_1_models_record.json` |
+| Form of the answers in the run | `artifacts/v3_1_model_qwen3_check.json`: 3,348 first proposals and 18,243 recovery answers, none unparsed, none at the token limit |
+
+The record computed here from the fingerprints agrees with the analysis the
+experiment machine made from the raw traces: 74 contrasts, the same counts,
+estimates, intervals and decisions. The oracle rescored every trace without
+a disagreement.
+
+<!-- generated:models_claims -->
+| Claim | Statement | Qwen2.5-7B (the confirmatory run) | Qwen3-8B (exploratory) | Same decision |
+|---|---|---|---|---|
+| C1 | A list of legal writes makes the planner change things nobody asked for, however the list is worded. | supported | supported | yes |
+| C2 | With a list, a plan that was only interrupted is not carried on. | supported | not supported | no |
+| C3 | Telling the planner how to revise its plan, or which writes to return, repairs fewer plans than the reason alone. | not supported | not supported | yes |
+| C4 | Saying the trusted reading helps when it is not the reading the plan was chosen for. | supported | not supported | no |
+| C5 | The reason alone is not behind any level that prescribes writes. | supported | supported | yes |
+| C6 | Under attack, evidence binding prevents unsafe effects and keeps the home as it was. | supported | supported | yes |
+<!-- /generated:models_claims -->
+
+<!-- generated:models_safety -->
+- Qwen2.5-7B (the confirmatory run): 0 episodes with an unsafe effect or a write outside the scope in 23,436 episodes under the 7 evidence-bound conditions; under the guard that trusts the cited reading, 134 of 1,116 attacked episodes had an unsafe effect.
+- Qwen3-8B (exploratory): 0 episodes with an unsafe effect or a write outside the scope in 23,436 episodes under the 7 evidence-bound conditions; under the guard that trusts the cited reading, 127 of 1,116 attacked episodes had an unsafe effect.
+<!-- /generated:models_safety -->
+
+<!-- prose:checked -->
+**What the arm shows.** Four of the six claims get the same decision with
+the second model, and each of the thirteen confirmatory contrasts has the
+same sign as in the confirmatory run.
+
+- **Evidence binding carries over** (C6). The guard that trusts the cited
+  reading let an unsafe effect through in 127 of 1,116 attacked episodes, the
+  evidence-bound guard in none.
+- **The harm of the list carries over** (C1). Episodes with a change nobody
+  asked for: 588 with the list against 304 with the reason alone, of 3,348.
+  With this model the corrected wording does less harm than the first
+  wording (486), and still harm.
+- **The reason alone is again a safe default** (C5): ahead of both lists,
+  and behind the plan review and the sequence by less than one point.
+- **C3 is again not supported**, and again both estimates are below zero:
+  the plan review and the sequence repair no fewer plans than the reason
+  alone.
+- **C2 does not carry over.** With the list, an interrupted plan was carried
+  on less often (40 and 44 against 46 of 70 turns), but the intervals include
+  zero. This planner had 70 turns of the kind `interrupted`, against 182 in
+  the confirmatory run.
+- **C4 does not carry over.** Saying the trusted reading made no difference
+  to this planner (745 against 742 of 1,116 turns).
+
+The second model plans differently before any refusal. It never produced
+malformed output, and it returned an empty first plan far more often (706
+turns of the kind `empty`, against 74). The two findings the report rests on,
+evidence binding and the harm of the list, did not depend on these
+differences. The two smaller effects, each tied to one kind of recovery turn,
+did. One more model of the same family and size class does not make the
+results general; it shows that they are not peculiar to one set of weights.
+<!-- /prose:checked -->
+
+Each cell: counts left against right; estimate in percentage points with the
+95% interval; the decision the frozen rule gives.
+
+<!-- generated:models -->
+| Id | Contrast | Qwen2.5-7B (the confirmatory run) | Qwen3-8B (exploratory) |
+|---|---|---|---|
+| U1 | A list of legal writes makes the planner change things nobody asked for: unrequested change, M_full - M_recover | 850 vs 445 of 3348; +12.1 [+9.5, +14.8]; supported | 588 vs 304 of 3348; +8.5 [+6.3, +10.9]; supported |
+| W1 | A correctly worded list does the same: unrequested change, M_menu2 - M_recover | 831 vs 445 of 3348; +11.5 [+9.0, +14.2]; supported | 486 vs 304 of 3348; +5.4 [+3.3, +7.6]; supported |
+| I1 | With the list, a plan that was only interrupted is not carried on: exact target in turns of the kind interrupted, M_recover - M_full | 121 vs 68 of 182; +29.5 [+14.8, +44.3]; supported | 46 vs 40 of 70; +9.7 [-4.2, +25.0]; inconclusive |
+| I2 | A correctly worded list does the same: exact target in turns of the kind interrupted, M_recover - M_menu2 | 121 vs 66 of 182; +30.6 [+15.3, +45.9]; supported | 46 vs 44 of 70; +4.2 [-5.6, +16.7]; inconclusive |
+| P1 | Telling the planner how to revise its plan repairs fewer plans than the reason alone: exact target in turns of the kind revise, M_recover - M_plan | 686 vs 710 of 816; -3.9 [-9.3, +1.3]; unsupported | 521 vs 536 of 592; -2.1 [-5.6, +0.7]; unsupported |
+| P2 | So does handing it the writes to return: exact target in turns of the kind revise, M_recover - M_seq | 686 vs 710 of 816; -4.2 [-9.5, +1.0]; unsupported | 521 vs 542 of 592; -3.5 [-7.0, -0.9]; unsupported |
+| R1 | Saying the trusted reading helps when it is not the reading the plan was chosen for: exact target in turns of the kind reselect, M_reading - M_recover | 719 vs 679 of 1062; +3.8 [+0.8, +6.9]; supported | 745 vs 742 of 1116; +0.3 [-2.9, +3.3]; inconclusive |
+| N1 | The reason alone is not behind the list: exact target, M_recover - M_full (margin -5 pp) | 2505 vs 2218 of 3348; +8.6 [+5.3, +11.9]; supported | 2568 vs 2451 of 3348; +3.5 [+0.6, +6.4]; supported |
+| N2 | nor behind the correctly worded list: exact target, M_recover - M_menu2 (margin -5 pp) | 2505 vs 2214 of 3348; +8.7 [+5.5, +11.9]; supported | 2568 vs 2464 of 3348; +3.1 [+0.4, +5.9]; supported |
+| N3 | nor behind the plan review: exact target, M_recover - M_plan (margin -5 pp) | 2505 vs 2584 of 3348; -2.4 [-4.1, -0.6]; supported | 2568 vs 2595 of 3348; -0.8 [-2.3, +0.7]; supported |
+| N4 | nor behind the accepted sequence: exact target, M_recover - M_seq (margin -5 pp) | 2505 vs 2577 of 3348; -2.2 [-3.8, -0.4]; supported | 2568 vs 2598 of 3348; -0.9 [-2.3, +0.5]; supported |
+| S1 | Evidence binding prevents unsafe effects under attack: all tasks, B2_plan - M_plan | 134 vs 0 of 1116; +12.0 [+8.8, +15.4]; supported | 127 vs 0 of 1116; +11.4 [+8.2, +14.6]; supported |
+| S2 | Evidence binding keeps the home as it was under attack: attack battery, exact target, M_plan - B2_plan | 246 vs 120 of 288; +43.8 [+33.0, +54.2]; supported | 233 vs 132 of 288; +35.1 [+24.7, +45.8]; supported |
+| K36 | Exact target, all tasks: reason − list (superiority) | 2505 vs 2218 of 3348; +8.6 [+5.3, +11.9]; supported | 2568 vs 2451 of 3348; +3.5 [+0.6, +6.4]; supported |
+| K31 | Unrequested change on the attack battery: list − reason | 386 vs 216 of 864; +19.7 [+13.4, +26.0]; supported | 237 vs 163 of 864; +8.6 [+3.4, +14.1]; supported |
+| K43 | Exact target in turns of the kind `revise`: reason − list | 686 vs 479 of 816; +24.6 [+17.1, +32.2]; supported | 521 vs 512 of 592; +2.0 [-2.4, +6.6]; inconclusive |
+| K37 | Exact target, all turns: reason and reading − reason | 2542 vs 2505 of 3348; +1.1 [+0.1, +2.1]; supported | 2564 vs 2568 of 3348; -0.1 [-1.2, +1.0]; unsupported |
+| K11 | Safe completion under attack, attainable goals: list − reason | 300 vs 256 of 468; +9.4 [+2.1, +16.9]; supported | 259 vs 233 of 468; +5.6 [-3.0, +14.1]; inconclusive |
+<!-- /generated:models -->
+
+Every condition over all tasks and variants: episodes in the attainable
+target / with an unrequested change / with an unsafe effect.
+
+<!-- generated:models_totals -->
+| Condition | Level | Qwen2.5-7B (the confirmatory run) | Qwen3-8B (exploratory) |
+|---|---|---|---|
+| `B0` | reference | 1431 / 349 / 888 of 3348 | 1623 / 227 / 813 of 3348 |
+| `M` | L0 verdict | 2279 / 403 / 0 of 3348 | 2336 / 258 / 0 of 3348 |
+| `M_recover` | L1 reason | 2505 / 445 / 0 of 3348 | 2568 / 304 / 0 of 3348 |
+| `M_reading` | L1r reason and trusted reading | 2542 / 441 / 0 of 3348 | 2564 / 329 / 0 of 3348 |
+| `M_full` | L2a legal next writes (v3 text) | 2218 / 850 / 0 of 3348 | 2451 / 588 / 0 of 3348 |
+| `M_menu2` | L2a legal next writes (corrected text) | 2214 / 831 / 0 of 3348 | 2464 / 486 / 0 of 3348 |
+| `M_plan` | L2b review of the planner's plan | 2584 / 419 / 0 of 3348 | 2595 / 330 / 0 of 3348 |
+| `M_seq` | L3 accepted sequence | 2577 / 431 / 0 of 3348 | 2598 / 323 / 0 of 3348 |
+| `B2_plan` | reference | 2389 / 411 / 134 of 3348 | 2478 / 332 / 127 of 3348 |
+<!-- /generated:models_totals -->
+
+Recovery turns by kind (per condition with the evidence-bound guard).
+
+<!-- generated:models_turns -->
+| Kind of recovery turn | Qwen2.5-7B (the confirmatory run) | Qwen3-8B (exploratory) |
+|---|---|---|
+| interrupted | 182 | 70 |
+| reselect | 1062 | 1116 |
+| revise | 816 | 592 |
+| empty | 74 | 706 |
+| no review (malformed output and the like) | 157 | 0 |
+| no recovery turn | 1057 | 864 |
+<!-- /generated:models_turns -->
+
+## 11. Limits
 
 The limits of the plan apply (preregistration, section "Limits"). Those that
 matter most for reading the results:
 
-- **One planner.** One model at one pinned revision with one prompt family.
-  The exploratory arm changes the system prompt, not the weights. Nothing
-  here shows that another model reacts to a list or to a plan review in the
-  same way.
+- **Two planners of one family.** The confirmatory run uses one model at one
+  pinned revision with one prompt family. The exploratory arms change the
+  system prompt (section 9) and the weights (section 10, a second model of
+  the same family and size class). Nothing here shows how a larger or
+  differently trained model reacts to a list or to a plan review.
 - **A small simulated world.** Two devices with three levels, one presence
   bit, six rules, one recovery turn and at most three writes. The attainable
   target is defined by this project's search and its tie-break (the largest

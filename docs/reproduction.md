@@ -252,6 +252,14 @@ What was checked when the run was recorded:
   identical, and every episode without a recovery turn identical
   (`python3 scripts/v3_1_replication_check.py --dev-v3 artifacts/v3_1_dev_d1_v3_fingerprints.json.gz`).
 
+- **The second planner model (exploratory).** The record of the run with
+  Qwen3-8B (`python3 scripts/v3_1_models.py --check`) is computed from its
+  fingerprints. It agrees with the analysis the experiment machine made from
+  the raw traces in all 74 contrasts. The files of the model are identified
+  by size and SHA-256 in `artifacts/v3_1_model_qwen3_files.json`; the run is
+  started with `bash scripts/run_v3_1_model.sh model_qwen3 <gpu[,gpu]> <tag>`
+  after a pilot (`modelpilot_qwen3`) has passed its check.
+
 Not done: a re-run of v3.1 on a second machine. On the original machine the
 confirmatory run is `bash scripts/run_v3_1.sh holdout <gpu> <tag>` (about two
 and a half hours on one RTX 4090); the script refuses to start without the
@@ -281,7 +289,7 @@ The figures are generated too, into `report/figures/`:
 
 | Script | Figures | Source of what is shown |
 |---|---|---|
-| `scripts/build_report_figures.py` | four charts (formal test, paired contrasts of v2 and v3, the feedback ladder, the thirteen confirmatory contrasts of v3.1) | the same records as the numbers; `--data` prints every plotted value |
+| `scripts/build_report_figures.py` | three charts (formal test, the feedback ladder, the thirteen confirmatory contrasts of v3.1), and a fourth for the exploratory scale study once its record exists | the same records as the numbers; `--data` prints every plotted value |
 | `scripts/build_report_diagrams.py` | two schematics as editable SVG (overview of the evidence chain; one refused plan and the seven refusal messages) | the worked example is an episode of the v3.1 confirmatory run, read from the corpus and the episode fingerprints; the script asserts each stated fact against them |
 | `scripts/report_style.py` | colours and sizes shared by both | blue, orange and aqua are the first three slots of the charting guide's reference palette; they pass its colour-vision checks for every pair, and blue against red was checked the same way on 2026-11-25 |
 
@@ -306,6 +314,6 @@ numbered in the order they are cited. The build uses a fixed timestamp.
 
 课程报告由 `report/evibound_report.tex` 排版，采用 IEEE 会议格式（`IEEEtran.cls` 放在报告目录里）。
 源文件里没有手写的结果数字：`scripts/build_report_numbers.py` 从已提交的记录生成全部数字和数据表，
-报告按键名取值；四张数据图由 `scripts/build_report_figures.py` 生成，两张示意图（可编辑的 SVG）由
+报告按键名取值；数据图由 `scripts/build_report_figures.py` 生成，两张示意图（可编辑的 SVG）由
 `scripts/build_report_diagrams.py` 生成，其中的例子是 v3.1 正式实验里的一个真实回合，脚本会逐项对照记录。
 测试会在每次运行时检查生成文件、图里的数字和判定是否与记录一致。

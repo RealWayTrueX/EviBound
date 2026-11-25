@@ -587,5 +587,17 @@ Frozen-boundary rules (non-negotiable):
     Steering does compare three kinds of feedback after a violation
     (`docs/related_work_2026-11.md`, section 5, where every reference of the
     report is listed as re-checked). 217 tests pass (872 report values).
+  - Exploratory, second planner model (2026-11-25, at the owner's request):
+    the whole v3.1 study again with Qwen3-8B, 30,132 episodes, plan published
+    before the run (`docs/v3_1_second_model.md`). Four of the six claims get
+    the same decision; evidence binding and the harm of the list carry over,
+    C2 and C4 do not reach support (`docs/v3_1_results.md`, section 10;
+    `scripts/v3_1_models.py`).
+  - Exploratory scale study prepared (2026-11-25, at the owner's request):
+    homes with 2, 4 and 6 devices on one engine (`src/evibound/homes*.py`,
+    `docs/scale_study.md`). The small home is tested to be the frozen world
+    again. Not run yet.
+  - Course report rewritten again in plainer language (local only), with the
+    second planner as an exploratory subsection; 245 tests pass.
   - Open, owner: M8; whether to restore the two v4 planner servers; reading
     and approving the updated course report.
