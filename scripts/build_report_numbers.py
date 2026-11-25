@@ -47,7 +47,7 @@ MINUS = r'$-$'
 
 # Dated facts about the repository that are not results. tests/test_report_numbers.py checks that the
 # test suite has not shrunk below the number printed in the report.
-SNAPSHOT = {'date': '25 November 2026', 'unit_tests': 217, 'component_tests': 27}
+SNAPSHOT = {'date': '25 November 2026', 'unit_tests': 245, 'component_tests': 27}
 
 
 def load(name):
@@ -75,7 +75,7 @@ def pct(count, total):
 
 
 WORDS = ('zero', 'one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine', 'ten', 'eleven',
-         'twelve')
+         'twelve', 'thirteen', 'fourteen', 'fifteen')
 
 
 def dec(value, digits=2):
@@ -639,6 +639,96 @@ def v31_numbers(n):
     n.add('v31.role.episodes', integer(sum(roles[role]['episodes'] for role in V31_ROLES)))
 
 
+def exploratory_numbers(n):
+    """The two exploratory follow-ups: Study 3 with a second planner, and homes of three sizes.
+
+    Both records are written by scripts of their own (v3_1_models.py, homes_record.py) from the
+    published fingerprints. Keys are added only for records that exist.
+    """
+    if (ART / 'v3_1_models_record.json').exists():
+        record = load('v3_1_models_record.json')
+        if 'qwen3' in record['models']:
+            second = record['models']['qwen3']
+            assert second['complete_matrix'] and second['replay_disagreements'] == 0
+            n.add('q3.episodes', integer(second['episodes']))
+            n.add('q3.tasks', second['tasks'])
+            n.add('q3.conditions', len(second['conditions']))
+            cell = second['totals']['M_recover']['episodes']
+            n.add('q3.cell', integer(cell))
+            for condition, key, _, _ in V31_LADDER + tuple((c, k, '', '') for c, k in V31_OTHER):
+                total = second['totals'][condition]
+                n.add(f'q3.tot.{key}.exact_pct', pct(total['exact_target'], cell))
+                n.add(f'q3.tot.{key}.unrequested_pct', pct(total['unrequested_change'], cell))
+                n.add(f'q3.tot.{key}.unsafe', integer(total['unsafe_effect']))
+            guarded = [c for c, _, _, _ in V31_LADDER]
+            assert all(second['totals'][c]['unsafe_effect'] == 0 and second['totals'][c]['authorization_violation'] == 0
+                       for c in guarded)
+            n.add('q3.guarded.episodes', integer(sum(second['totals'][c]['episodes'] for c in guarded)))
+            for contrast in V31_CONFIRMATORY + ('K36', 'K37', 'K31', 'K11'):
+                item = second['contrasts'][contrast]
+                n.add(f'q3.{contrast}.left', integer(item['left']))
+                n.add(f'q3.{contrast}.right', integer(item['right']))
+                n.add(f'q3.{contrast}.n', integer(item['episodes']))
+                n.effect(f'q3.{contrast}', item['estimate_pp'] / 100, item['low_pp'] / 100, item['high_pp'] / 100)
+                n.add(f'q3.{contrast}.decision', item['decision'].replace('_', ' '))
+            n.add('q3.S1.left_pct', pct(second['contrasts']['S1']['left'], second['contrasts']['S1']['episodes']))
+            for claim, outcome in second['claims'].items():
+                n.add(f'q3.{claim}', outcome.replace('_', ' '))
+            same = record['carried_over']['claims']
+            n.count('q3.claims.same', sum(same.values()))
+            n.add('q3.claims.differ', ', '.join(c for c, ok in sorted(same.items()) if not ok) or 'none')
+            n.add('q3.claims.supported', sum(v == 'supported' for v in second['claims'].values()))
+            n.count('q3.contrasts.same', sum(record['carried_over']['contrasts'].values()))
+            n.count('q3.contrasts.same_sign', sum(record['carried_over']['same_sign'].values()))
+            answers = second.get('answers')
+            if answers:
+                n.add('q3.first.not_parsed', integer(answers['first_proposals']['not_parsed']))
+                n.add('q3.first.answers', integer(answers['first_proposals']['answers']))
+    if (ART / 'homes_record.json').exists():
+        record = load('homes_record.json')
+        episodes = guarded = 0
+        for planner, data in record['planners'].items():
+            assert data['recomputed_differently'] == 0
+            n.add(f'hm.{planner}.episodes', integer(data['episodes']))
+            episodes += data['episodes']
+            for name, home in data['homes'].items():
+                key = f'hm.{planner}.{name}'
+                size = home['size']
+                if planner == 'qwen25':
+                    for field in ('devices', 'rules', 'states', 'legal_states', 'max_writes'):
+                        n.add(f'hm.{name}.{field}', size[field])
+                    n.add(f'hm.{name}.tasks', home['tasks'])
+                attacked, clean, totals = home['by_variant']['perturbed'], home['by_variant']['clean'], home['totals']
+                n.add(f'{key}.att.n', integer(attacked['B2_plan']['episodes']))
+                n.add(f'{key}.att.rule.unsafe', integer(attacked['B2_plan']['unsafe_effect']))
+                n.add(f'{key}.att.rule.unsafe_pct', pct(attacked['B2_plan']['unsafe_effect'], attacked['B2_plan']['episodes']))
+                n.add(f'{key}.att.none.unsafe_pct', pct(attacked['B0']['unsafe_effect'], attacked['B0']['episodes']))
+                n.add(f'{key}.clean.none.exact_pct', pct(clean['B0']['exact_target'], clean['B0']['episodes']))
+                n.add(f'{key}.clean.reason.exact_pct', pct(clean['M_recover']['exact_target'], clean['M_recover']['episodes']))
+                for condition, short in (('M_recover', 'reason'), ('M_full', 'list'), ('M_plan', 'plan'),
+                                         ('B0', 'none'), ('B2_plan', 'rule')):
+                    total = totals[condition]
+                    n.add(f'{key}.tot.{short}.exact_pct', pct(total['exact_target'], total['episodes']))
+                    n.add(f'{key}.tot.{short}.unrequested_pct', pct(total['unrequested_change'], total['episodes']))
+                    if condition.startswith('M_'):
+                        assert total['unsafe_effect'] == 0 and total['authorization_violation'] == 0, (planner, name, condition)
+                        guarded += total['episodes']
+                for contrast in record['primary_contrasts'] + ['K1', 'K2', 'K6']:
+                    item = home['contrasts'][contrast]
+                    n.add(f'{key}.{contrast}.left', integer(item['left']))
+                    n.add(f'{key}.{contrast}.right', integer(item['right']))
+                    n.add(f'{key}.{contrast}.n', integer(item['episodes']))
+                    n.effect(f'{key}.{contrast}', item['estimate_pp'] / 100, item['low_pp'] / 100, item['high_pp'] / 100)
+                    n.add(f'{key}.{contrast}.decision', item['decision'])
+                n.add(f'{key}.list_length', f"{home['form']['mean_list_length']:.1f}")
+                n.add(f'{key}.first.not_parsed_pct', pct(home['form']['first_not_parsed'], home['form']['first_proposals']))
+            for name, flags in data['carried_over_from_small'].items():
+                n.count(f'hm.{planner}.{name}.same', sum(flags.values()))
+        n.add('hm.episodes', integer(episodes))
+        n.add('hm.guarded.episodes', integer(guarded))
+        n.add('hm.planners', len(record['planners']))
+
+
 def summary_numbers(n):
     """Totals over the three studies, for the abstract, the introduction and the conclusion."""
     v = n.values
@@ -979,6 +1069,7 @@ def table_artifacts():
 def outputs():
     numbers = build_numbers()
     summary_numbers(numbers)
+    exploratory_numbers(numbers)
     name, size, _digest = trace_archive()
     numbers.add('traces.bytes', size)
     for key, value in SNAPSHOT.items():

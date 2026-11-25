@@ -84,9 +84,16 @@ if [ -f artifacts/v3_1_holdout_fingerprints.json.gz ]; then
       --record artifacts/v3_1_holdout_results.json --doc docs/v3_1_results.md --check || status=1
   run "$PY" scripts/v3_1_results_tables.py --check || status=1
   run "$PY" scripts/v3_1_roles.py --check || status=1
+  if [ -f artifacts/v3_1_model_qwen3_fingerprints.json.gz ]; then
+    run "$PY" scripts/v3_1_models.py --check || status=1        # exploratory: the second planner model
+  fi
 else
   echo "no v3.1 confirmatory fingerprints in this checkout; skipped" | tee -a "$LOG"
 fi
+
+step "4c Exploratory scale study: task files as generated; record recomputed from the fingerprints where a run is recorded"
+run "$PY" scripts/generate_scenarios_homes.py --check || status=1
+run "$PY" scripts/homes_record.py --check || status=1
 
 if [ -n "$TRACES" ]; then
   step "5/6 Recompute published results from raw traces in $TRACES"

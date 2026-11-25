@@ -3,10 +3,10 @@
 
   fig_formal_test    v2: unsafe effects under attack, and clean completions split by whether
                      a device rule was broken (one column wide)
-  fig_effects        v2 and v3: paired contrasts with 95% intervals and decisions (one column)
   fig_ladder_results v3.1: where episodes ended under each refusal message, over all
                      episodes and within three kinds of recovery turn (full width)
   fig_claims         v3.1: the thirteen confirmatory contrasts behind claims C1 to C6 (one column)
+  fig_scale          exploratory: the same rates in homes of three sizes, for each planner (full width)
 
 Every plotted value is read from the same artifacts as ``build_report_numbers.py``; nothing
 is typed in. Figures are drawn at their printed size (88.9 mm or 182 mm wide), so the type
@@ -90,24 +90,6 @@ EFFECT_ROWS = (
 )
 
 
-def data_effects():
-    effects = report.source_effects()
-    values = report.build_numbers().values
-    decisions = {key: decision for key, _, _, _, _, decision in report.EFFECT_ROWS}
-    counts = {key: pair for key, _, _, pair, _, _ in report.EFFECT_ROWS}
-    rows = []
-    for key, study, label, rule, standing in EFFECT_ROWS:
-        row = interval(effects[key])
-        row.update({'key': key, 'study': study, 'label': label, 'rule': rule, 'standing': standing,
-                    'decision': decisions[key],
-                    'counts': f"{values[counts[key][0]]} vs {values[counts[key][1]]}"})
-        rows.append(row)
-    margin = 100 * float(report.load('week8_main_results.json')['primary_results']['utility']['non_inferiority_margin'])
-    return {'rows': rows, 'margin': margin,
-            'titles': {'v2': f"Formal test (v2): {values['v2.cell']} paired episodes, {values['v2.clusters']} structures",
-                       'v3': f"Holdout (v3): {values['v3.cell']} paired episodes, {values['v3.clusters']} structures"}}
-
-
 def data_ladder():
     record = report.v31_record()
     totals = report.v31_totals(record)
@@ -159,8 +141,52 @@ def data_claims():
     return {'groups': groups, 'margin': -5.0}
 
 
-DATA = {'fig_formal_test': data_formal_test, 'fig_effects': data_effects, 'fig_ladder_results': data_ladder,
-        'fig_claims': data_claims}
+SCALE_SERIES = {     # panel -> (key, label, colour, record condition, metric, variant or None for all three)
+    'unsafe': (('rule', 'guard that trusts the cited reading', 'red', 'B2_plan', 'unsafe_effect', 'perturbed'),
+               ('reason', 'EviBound, reason alone', 'blue', 'M_recover', 'unsafe_effect', 'perturbed')),
+    'unrequested': (('list', 'EviBound, reason + list', 'orange', 'M_full', 'unrequested_change', None),
+                    ('reason', 'EviBound, reason alone', 'blue', 'M_recover', 'unrequested_change', None)),
+    'exact': (('plan', 'EviBound, reason + plan review', 'aqua', 'M_plan', 'exact_target', None),
+              ('reason', 'EviBound, reason alone', 'blue', 'M_recover', 'exact_target', None),
+              ('list', 'EviBound, reason + list', 'orange', 'M_full', 'exact_target', None)),
+}
+SCALE_PLANNERS = (('qwen25', 'Qwen2.5-7B'), ('qwen3', 'Qwen3-8B'))
+
+
+def data_scale(record=None):
+    """Exploratory scale study: rates per home and planner, and Study 3's as the reference point."""
+    record = record or report.load('homes_record.json')
+    study3 = report.v31_record()
+    totals = report.v31_totals(study3)
+    attacked = {item['condition']: item for item in study3['summary']
+                if item['class'] == 'all' and item['variant'] == 'perturbed'}
+
+    def reference(condition, metric, variant):
+        if variant == 'perturbed':
+            return 100 * attacked[condition][metric] / attacked[condition]['n']
+        return 100 * totals[condition][metric] / totals[condition]['episodes']
+
+    def rate(home, condition, metric, variant):
+        cell = home['by_variant'][variant][condition] if variant else home['totals'][condition]
+        return 100 * cell[metric] / cell['episodes']
+
+    planners = [(name, label) for name, label in SCALE_PLANNERS if name in record['planners']]
+    first = record['planners'][planners[0][0]]['homes']
+    out = {'homes': [{'home': h, 'devices': first[h]['size']['devices'], 'states': first[h]['size']['states']}
+                     for h in ('S', 'M', 'L')],
+           'planners': [label for _, label in planners], 'panels': {}}
+    for panel, series in SCALE_SERIES.items():
+        out['panels'][panel] = [
+            {'key': key, 'label': label, 'colour': colour,
+             'study3': reference(condition, metric, variant),
+             'values': {plabel: [rate(record['planners'][pname]['homes'][h], condition, metric, variant)
+                                 for h in ('S', 'M', 'L')] for pname, plabel in planners}}
+            for key, label, colour, condition, metric, variant in series]
+    return out
+
+
+DATA = {'fig_formal_test': data_formal_test, 'fig_ladder_results': data_ladder, 'fig_claims': data_claims,
+        'fig_scale': data_scale}
 
 
 # ------------------------------------------------------------------ drawing
@@ -277,37 +303,6 @@ def forest_axis(ax, x_range, ticks, lines):
                     linewidth=0.8 if tick == 0 else 0.6, zorder=1, solid_capstyle='butt')
 
 
-def draw_effects(plt, data):
-    rows = data['rows']
-    lines = []                    # ('title', text) or ('row', row)
-    previous = None
-    for row in rows:
-        if row['study'] != previous:
-            lines.append(('title', data['titles'][row['study']]))
-            previous = row['study']
-        lines.append(('row', row))
-    n = len(lines)
-    fig = plt.figure(figsize=(mm(S.COLUMN_MM), mm(3.75 * n + 16)))
-    ax = fig.add_axes([0.44, 0.285, 0.285, 0.70])
-    x_range = (-30, 65)
-    forest_axis(ax, x_range, [-20, 0, 20, 40, 60], lines)
-    span = x_range[1] - x_range[0]
-    x_label = x_range[0] - span * (0.44 / 0.285) + span * 0.012
-    x_text = x_range[1] + span * 0.04
-    for index, (kind, item) in enumerate(lines):
-        y = n - 1 - index
-        if kind == 'title':
-            ax.text(x_label, y - 0.12, item, va='center', ha='left', fontsize=6.8, fontweight='bold', clip_on=False)
-            continue
-        ax.text(x_label + span * 0.03, y, item['label'], va='center', ha='left', fontsize=6.6, clip_on=False)
-        forest_row(ax, y, item, data['margin'], x_text, filled=item['standing'] == 'primary')
-    draw_key(fig, [('o', S.BLUE, True, 'supported'), ('o', S.RED, True, 'not supported'),
-                   ('o', S.GREY, True, 'inconclusive or descriptive')], 0.02, 0.085)
-    draw_key(fig, [('o', S.INK_2, False, 'secondary, amended or post hoc'),
-                   ('|', S.INK, True, 'non-inferiority margin (' + MINUS + '5)')], 0.02, 0.028)
-    return fig
-
-
 def draw_key(fig, handles, x, y, step=None):
     """A one-line key in figure coordinates: marker, then its label in ink."""
     from matplotlib.lines import Line2D
@@ -418,8 +413,85 @@ def draw_ladder(plt, data):
     return fig
 
 
-DRAW = {'fig_formal_test': draw_formal_test, 'fig_effects': draw_effects, 'fig_ladder_results': draw_ladder,
-        'fig_claims': draw_claims}
+def draw_scale(plt, data):
+    """Three small panels over the size of the home; one line per message or guard and planner."""
+    from matplotlib.lines import Line2D
+    colours = {'red': S.RED, 'blue': S.BLUE, 'orange': S.ORANGE, 'aqua': S.AQUA}
+    panels = (('unsafe', '(a) Unsafe effect under attack', (0, 50)),
+              ('unrequested', '(b) Unrequested change', (0, 50)),
+              ('exact', '(c) Attainable target reached', (40, 100)))
+    fig = plt.figure(figsize=(mm(S.PAGE_MM), mm(47)))
+    lefts = (0.052, 0.385, 0.718)
+    xs = (1, 2, 3)
+    styles = {label: ('-', True) if i == 0 else ((0, (3.2, 1.6)), False) for i, label in enumerate(data['planners'])}
+    for (panel, title, y_range), left in zip(panels, lefts):
+        ax = fig.add_axes([left, 0.36, 0.262, 0.50])
+        for side in ('top', 'right', 'left'):
+            ax.spines[side].set_visible(False)
+        ax.yaxis.grid(True)
+        ax.set_axisbelow(True)
+        values = [v for series in data['panels'][panel] for row in series['values'].values() for v in row]
+        values += [series['study3'] for series in data['panels'][panel]]
+        low = min(y_range[0], 10 * int(min(values) // 10))
+        top = min(100, max(y_range[1], 10 * (int(max(values) // 10) + 1)))
+        ax.set_ylim(low, top)
+        ax.set_xlim(-0.45, 3.35)
+        ax.axvline(0.5, color=S.AXIS, linewidth=0.6)
+        for series in data['panels'][panel]:
+            colour = colours[series['colour']]
+            ax.plot(0, series['study3'], 'D', markersize=3.6, markerfacecolor=colour, markeredgecolor=S.SURFACE,
+                    markeredgewidth=0.6, zorder=4, clip_on=False)
+            for planner, values in series['values'].items():
+                line, filled = styles[planner]
+                ax.plot(xs, values, linestyle=line, color=colour, linewidth=1.5, zorder=3, clip_on=False)
+                ax.plot(xs, values, 'o', markersize=4.0, markerfacecolor=colour if filled else S.SURFACE,
+                        markeredgecolor=colour, markeredgewidth=1.0, zorder=4, clip_on=False)
+        ax.set_xticks([0, 1, 2, 3])
+        ax.set_xticklabels(['Study 3'] + [f"{h['devices']} devices\n{h['states']} states" for h in data['homes']])
+        ax.tick_params(axis='y', labelcolor=S.INK_2, labelsize=6.5)
+        ax.set_ylabel('% of attacked episodes' if panel == 'unsafe' else '% of episodes', labelpad=2)
+        ax.set_title(title, loc='left', pad=4)
+    key = fig.add_axes([0, 0, 1, 1], frameon=False)
+    key.set_xlim(0, 1)
+    key.set_ylim(0, 1)
+    key.axis('off')
+    renderer = fig.canvas.get_renderer()
+    width = fig.get_size_inches()[0] * fig.dpi
+
+    def entry(x, y, label, draw):
+        draw(x, y)
+        text = key.text(x + 0.03, y, label, va='center', ha='left', fontsize=6.5, color=S.INK_2)
+        return x + 0.03 + text.get_window_extent(renderer).width / width + 0.022
+
+    x = 0.052
+    seen = []
+    for panel, _, _ in panels:
+        for series in data['panels'][panel]:
+            if series['label'] in seen:
+                continue
+            seen.append(series['label'])
+            colour = colours[series['colour']]
+            x = entry(x, 0.10, series['label'],
+                      lambda px, py, c=colour: key.add_line(Line2D([px, px + 0.022], [py, py], color=c, linewidth=2.2)))
+    x = 0.052
+    for planner, (line, filled) in styles.items():
+        def planner_mark(px, py, line=line, filled=filled):
+            key.add_line(Line2D([px, px + 0.022], [py, py], color=S.INK_2, linewidth=1.3, linestyle=line))
+            key.plot(px + 0.011, py, 'o', markersize=3.6, markerfacecolor=S.INK_2 if filled else S.SURFACE,
+                     markeredgecolor=S.INK_2, markeredgewidth=0.9)
+        x = entry(x, 0.03, planner, planner_mark)
+    entry(x, 0.03, 'Study 3: the confirmatory run in the frozen small home, other tasks',
+          lambda px, py: key.plot(px + 0.011, py, 'D', markersize=3.6, markerfacecolor=S.INK_2, markeredgecolor=S.SURFACE))
+    return fig
+
+
+DRAW = {'fig_formal_test': draw_formal_test, 'fig_ladder_results': draw_ladder, 'fig_claims': draw_claims,
+        'fig_scale': draw_scale}
+
+
+if not (report.ART / 'homes_record.json').exists():      # the exploratory record is added after its run
+    DATA.pop('fig_scale')
+    DRAW.pop('fig_scale')
 
 
 def main(argv=None):
