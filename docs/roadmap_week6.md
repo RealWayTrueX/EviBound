@@ -568,5 +568,12 @@ Frozen-boundary rules (non-negotiable):
     finished run pushes its small outputs to the branch `claude/v3-1-results`.
     The two planner servers of the v4 work were stopped before the runs; the
     commands to start them again are recorded in the local handoff.
+  - Exploratory arm (three planner characters, 40,176 episodes), finished
+    2026-11-25 00:04 UTC: the effect of the list repeats under every system
+    prompt; the gain from the trusted reading keeps its sign and its
+    intervals include zero.
+  - Course report updated (local only): eight pages with references and
+    appendix, section 6 on v3.1; `scripts/build_report_numbers.py` now also
+    reads the v3.1 records (806 values); 203 tests pass.
   - Open, owner: M8; whether to restore the two v4 planner servers; reading
     and approving the updated course report.

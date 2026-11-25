@@ -15,6 +15,9 @@ Sources (all committed, none of them frozen files that this script changes):
 - ``artifacts/episode_fingerprints_v2_formal_test.json.gz`` and ``data/scenarios_v2/test.jsonl``
   for facts about single episodes (which episodes make up the utility gap)
 - ``artifacts/chain_attack_matrix_exploratory.json`` exploratory whole-chain matrix
+- ``artifacts/v3_1_holdout_results.json``           v3.1 feedback ladder, preregistered decisions
+- ``artifacts/v3_1_roles_record.json``              v3.1 exploratory arm (planner characters)
+- ``artifacts/v3_1_dev_record.json``                v3.1 development runs before the freeze
 
 Usage::
 
@@ -44,7 +47,7 @@ MINUS = r'$-$'
 
 # Dated facts about the repository that are not results. tests/test_report_numbers.py checks that the
 # test suite has not shrunk below the number printed in the report.
-SNAPSHOT = {'date': '18 November 2026', 'unit_tests': 128, 'component_tests': 27}
+SNAPSHOT = {'date': '25 November 2026', 'unit_tests': 203, 'component_tests': 27}
 
 
 def load(name):
@@ -539,7 +542,122 @@ def build_numbers():
     n.add('chain.persistent.episodes', persistent[0]['episodes'])
     swap = [r for r in chain['rows'] if r['attack'].startswith('H6-') and r['condition'] == 'M_full']
     assert swap and all(r['harmed'] == 0 for r in swap)
+    v31_numbers(n)
     return n
+
+
+# ------------------------------------------------------------------ v3.1: the feedback ladder
+# (condition, key in the report, what the message contains, describes or prescribes)
+V31_LADDER = (
+    ('M', 'm', 'verdict only', 'describes'),
+    ('M_recover', 'reason', 'reason', 'describes'),
+    ('M_reading', 'reading', 'reason and reading', 'describes'),
+    ('M_full', 'list', 'list, first wording', 'prescribes'),
+    ('M_menu2', 'list2', 'list, corrected', 'prescribes'),
+    ('M_plan', 'plan', 'plan review', 'prescribes'),
+    ('M_seq', 'seq', 'sequence of writes', 'prescribes'),
+)
+V31_OTHER = (('B0', 'b0'), ('B2_plan', 'b2plan'))
+V31_CONFIRMATORY = ('U1', 'W1', 'I1', 'I2', 'P1', 'P2', 'R1', 'N1', 'N2', 'N3', 'N4', 'S1', 'S2')
+V31_SECONDARY = ('K36', 'K42', 'K31', 'K32', 'K33', 'K37', 'K43', 'K54', 'K41', 'H1', 'H2')
+V31_KINDS = ('interrupted', 'revise', 'reselect')
+V31_ROLES = ('cautious', 'faithful', 'experienced')
+V31_ROLE_CONTRASTS = ('U1', 'N1', 'I1', 'R1', 'K43')
+
+
+def v31_record():
+    return load('v3_1_holdout_results.json')
+
+
+def v31_totals(record):
+    """Episodes of each condition over all tasks and variants, by outcome."""
+    totals = {}
+    for item in record['summary']:
+        if item['class'] == 'all':
+            cell = totals.setdefault(item['condition'], Counter())
+            cell['episodes'] += item['n']
+            for key in ('exact_target', 'unrequested_change', 'unsafe_effect', 'authorization_violation'):
+                cell[key] += item[key]
+    return totals
+
+
+def v31_numbers(n):
+    record = v31_record()
+    design, groups = record['design'], record['groups']
+    assert design['complete_matrix'] and record['replay_disagreements'] == 0
+    assert record['metadata']['oracle_disagreements'] == 0
+    n.add('v31.tasks', design['tasks'])
+    n.add('v31.core', groups['core'])
+    n.add('v31.battery', groups['attack_unsafe'] + groups['attack_hijack'])
+    n.add('v31.battery.unsafe', groups['attack_unsafe'])
+    n.add('v31.battery.hijack', groups['attack_hijack'])
+    n.add('v31.conditions', len(design['conditions']))
+    n.add('v31.messages', len(V31_LADDER))
+    n.add('v31.episodes', integer(design['episodes']))
+    totals = v31_totals(record)
+    cell = totals['M_recover']['episodes']
+    assert all(v['episodes'] == cell for v in totals.values())
+    n.add('v31.cell', integer(cell))
+    n.add('v31.frozen', load('v3_1_prereg_freeze.json')['frozen_utc'][:10])
+    for condition, key, _, _ in V31_LADDER + tuple((c, k, '', '') for c, k in V31_OTHER):
+        n.add(f'v31.tot.{key}.exact', integer(totals[condition]['exact_target']))
+        n.add(f'v31.tot.{key}.exact_pct', pct(totals[condition]['exact_target'], cell))
+        n.add(f'v31.tot.{key}.unrequested', integer(totals[condition]['unrequested_change']))
+        n.add(f'v31.tot.{key}.unrequested_pct', pct(totals[condition]['unrequested_change'], cell))
+        n.add(f'v31.tot.{key}.unsafe', integer(totals[condition]['unsafe_effect']))
+    guarded = [c for c, _, _, _ in V31_LADDER]
+    assert all(totals[c]['unsafe_effect'] == 0 and totals[c]['authorization_violation'] == 0 for c in guarded)
+    n.add('v31.guarded.episodes', integer(sum(totals[c]['episodes'] for c in guarded)))
+    items = {**record['decisions'], **{item['id']: item for item in record['secondary']}}
+    for contrast in V31_CONFIRMATORY + V31_SECONDARY:
+        item = items[contrast]
+        effect = item['effect']
+        n.add(f'v31.{contrast}.left', integer(effect['left_count']))
+        n.add(f'v31.{contrast}.right', integer(effect['right_count']))
+        n.add(f'v31.{contrast}.n', integer(effect['episodes_per_arm']))
+        n.add(f'v31.{contrast}.structures', effect['n_tasks'])
+        n.effect(f'v31.{contrast}', effect['estimate'], effect['ci95_low'], effect['ci95_high'])
+        n.add(f'v31.{contrast}.decision', item['decision'])
+    for claim, outcome in record['joint'].items():
+        n.add(f'v31.{claim}', outcome.replace('_', ' '))
+    n.add('v31.claims.supported', sum(v == 'supported' for v in record['joint'].values()))
+    kinds = record['kinds']['rows']
+    for kind in V31_KINDS:
+        n.add(f'v31.kind.{kind}.n', integer(kinds[kind]['n']))
+    n.add('v31.kind.none.n', integer(kinds['no recovery turn']['n']))
+    # development runs before the freeze, and the planner characters after it
+    dev = load('v3_1_dev_record.json')['runs']
+    n.add('v31.dev.tasks', dev['d1_v3']['tasks'] + dev['d1_dev']['tasks'])
+    n.add('v31.dev.episodes', integer(sum(run['episodes'] for run in dev.values())))
+    roles = load('v3_1_roles_record.json')['roles']
+    for role in V31_ROLES:
+        for contrast in V31_ROLE_CONTRASTS:
+            item = roles[role]['contrasts'][contrast]
+            n.effect(f'v31.role.{role}.{contrast}', item['estimate_pp'] / 100, item['low_pp'] / 100, item['high_pp'] / 100)
+            n.add(f'v31.role.{role}.{contrast}.decision', item['decision'])
+    n.add('v31.role.episodes', integer(sum(roles[role]['episodes'] for role in V31_ROLES)))
+
+
+def table_ladder():
+    """The feedback ladder: one row per message, over all tasks and variants and within three kinds of turn."""
+    record = v31_record()
+    totals, kinds = v31_totals(record), record['kinds']['rows']
+    rows, shown = [], None
+    for condition, _, text, group in V31_LADDER:
+        if group != shown:
+            if shown:
+                rows.append(r'\addlinespace[2pt]')
+            rows.append(r'\emph{' + group.capitalize() + r'} \\')
+            shown = group
+        total = totals[condition]
+        row = [r'\quad ' + text, integer(total['exact_target']), integer(total['unrequested_change'])]
+        for kind in V31_KINDS:
+            entry = kinds[kind]['by_condition'][condition]
+            # the verdict-only level does not ask again after an empty plan, so it has fewer turns of some kinds
+            row.append(integer(entry['exact_target']) if entry['n'] == kinds[kind]['n']
+                       else f"{entry['exact_target']}\\,/\\,{entry['n']}")
+        rows.append(' & '.join(row) + r' \\')
+    return '\n'.join(rows) + '\n'
 
 
 # ------------------------------------------------------------------ tables
@@ -783,6 +901,10 @@ ARTIFACT_ROWS = (
     ('Holdout extension (v3)', 'data/scenarios_v3/holdout.jsonl'),
     ('Holdout extension (v3)', 'artifacts/week11_v3_prereg_freeze.json'),
     ('Holdout extension (v3)', 'artifacts/week11_v3_holdout_results.json'),
+    ('Second extension (v3.1)', 'data/scenarios_v3_1/holdout.jsonl'),
+    ('Second extension (v3.1)', 'artifacts/v3_1_prereg_freeze.json'),
+    ('Second extension (v3.1)', 'artifacts/v3_1_holdout_fingerprints.json.gz'),
+    ('Second extension (v3.1)', 'artifacts/v3_1_holdout_results.json'),
     ('Post hoc analyses and reproduction', 'artifacts/week11_v3_review_reanalysis.json'),
     ('Post hoc analyses and reproduction', 'artifacts/contract_outcomes_v2_v3.json'),
     ('Post hoc analyses and reproduction', 'artifacts/reproduction_published_results_check.json'),
@@ -835,6 +957,7 @@ def outputs():
         'figure_effects.tex': figure_effects(numbers),
         'figure_bars.tex': figure_bars(numbers),
         'table_chain.tex': '% Generated by scripts/build_report_numbers.py. Do not edit.\n' + table_chain(),
+        'table_ladder.tex': '% Generated by scripts/build_report_numbers.py. Do not edit.\n' + table_ladder(),
     }
 
 

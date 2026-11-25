@@ -1,10 +1,4 @@
 # Steps for the next call of scripts/v3_1_step.sh on the experiment machine (see that file).
-# Confirmatory run under the freeze of 2026-11-24 (GPU 0), and next to it the exploratory
-# planner-character arm (GPU 1, then GPU 0). Each run is restarted if it stops without completing.
-detach
-chain 0 holdout:h1 role_experienced:r1
-chain 1 role_cautious:r1 role_faithful:r1
-status
-publish
-waitchains
+# All v3.1 runs are complete (confirmatory run and three planner characters, 2026-11-24 and 25).
+# Nothing is started from here any more: a call only reports the state of the runs.
 status

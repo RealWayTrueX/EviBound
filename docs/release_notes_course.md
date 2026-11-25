@@ -1,4 +1,4 @@
-# Course release notes (draft, 2026-11-18) / 课程版本发布说明（草稿）
+# Course release notes (draft, 2026-11-18; updated 2026-11-25 for v3.1) / 课程版本发布说明（草稿）
 
 Status: draft for the corpus owner. Tagging, merging and publishing the trace
 archive are release decisions and stay with the owner (`AGENTS.md`). Nothing
@@ -10,7 +10,7 @@ here changes a frozen file.
 
 | Deliverable of the research contract | Where |
 |---|---|
-| Report, six pages and a one-page appendix | kept locally, not in the public repository |
+| Report, eight pages with references and appendix (updated 2026-11-25 with a section on v3.1) | kept locally, not in the public repository |
 | Five-minute demo and its script | [demo/](../demo/README.md), [demo_walkthrough.md](demo_walkthrough.md) |
 | Versioned scenarios and prompts | `data/scenarios*/`, the frozen planner and recovery modules under `src/evibound/` |
 | Raw traces | one archive with a hash manifest on the data disk ([reproduction.md](reproduction.md), section 5); the episode fingerprints of both confirmatory runs are in `artifacts/` |
@@ -34,16 +34,25 @@ here changes a frozen file.
 
 Every number above is in `artifacts/week8_main_results.json`.
 
+Added on 2026-11-25: a second extension (v3.1), outside the contract's
+hypothesis, varies only the message the guard sends after a refusal. Five of
+its six preregistered claims are supported; a list of legal writes makes the
+planner change things nobody asked for, and naming the broken rule or
+reviewing the rejected plan does not ([v3_1_results.md](v3_1_results.md)).
+Its corpus is machine-generated, and its human review follows the run.
+
 ## How to check the release
 
 ```bash
-bash scripts/reproduce.sh                          # tests, corpus checkers, four freezes, scripted pipeline
+bash scripts/reproduce.sh                          # tests, corpus checkers, five freezes, scripted pipeline, v3.1 records
 python3 scripts/build_report_numbers.py --check    # with a local copy of report/: the report's numbers match the records
 bash scripts/reproduce.sh --traces DIR             # recompute the published numbers from the raw traces
 ```
 
 On 2026-11-18: 128 tests pass, both corpus checkers pass,
-`python3 scripts/verify_freezes.py` reports 4 of 4 `[ok]`.
+`python3 scripts/verify_freezes.py` reports 4 of 4 `[ok]`. On 2026-11-25, with
+v3.1: 203 tests pass, the three corpus checkers pass, the same four freezes
+and the v3.1 freeze verify.
 
 ## Known issues
 
