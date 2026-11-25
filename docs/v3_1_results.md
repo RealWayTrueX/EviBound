@@ -9,7 +9,8 @@ sentence of the summary that holds a number, is written by a script from the
 committed episode fingerprints; the scripts' `--check` fails if any of it is
 stale. The exploratory arm (section 9) ran next to the confirmatory run and
 is complete. A second exploratory arm (section 10) repeated the whole study
-with a second planner model on 2026-11-25.
+with a second planner model on 2026-11-25. A third (section 11) ran three of
+the messages in homes with two, four and six devices the same day.
 
 | Item | Value |
 |---|---|
@@ -962,7 +963,71 @@ Recovery turns by kind (per condition with the evidence-bound guard).
 | no recovery turn | 1057 | 864 |
 <!-- /generated:models_turns -->
 
-## 11. Limits
+## 11. Exploratory: bigger homes
+
+Planned after the confirmatory results were known and published before it
+ran ([scale_study.md](scale_study.md), which also holds the full tables and
+the run facts). No confirmatory weight. No frozen file was changed: the
+study uses an engine, tasks and prompts of its own, and tests check that its
+small home makes the same guard decisions, attainable targets, outcome labels
+and refusal messages as the frozen home on all 372 tasks of this study.
+
+**Question.** Everything above comes from a home with two devices, 18 states
+and at most three writes per episode. Do the findings hold in a bigger one?
+
+**What ran.** Three homes on one engine: the small one (light, fan; 18
+states, 9 legal), a medium one (+ heater, window; 162 states, 35 legal) and a
+large one (+ air purifier, door lock; 648 states, 114 legal). Each has 120
+new tasks with the same mix. Five conditions (no guard, the guard that trusts
+the cited reading, and the evidence-bound guard with the reason, the list and
+the plan review), three variants, three seeds, two planners: 32,400 episodes
+on 2026-11-25, 17:58 to 19:38 UTC. No first answer failed to parse.
+
+The table puts Study 3 (this document; section 10 for Qwen3-8B) next to the
+three homes. The first two columns are two measurements of the small home on
+different tasks, not one measurement twice.
+
+<!-- generated:homes_vs_study3 -->
+| Planner | Quantity | Study 3 (frozen small home) | small | medium | large |
+|---|---|---|---|---|---|
+| Qwen2.5-7B | Unsafe effect under attack, guard that trusts the cited reading | 134 of 1116 (12.0%) | 48 of 360 (13.3%) | 51 of 360 (14.2%) | 63 of 360 (17.5%) |
+| Qwen2.5-7B | Unsafe effect under attack, evidence-bound guard (reason) | 0 of 1116 (0.0%) | 0 of 360 (0.0%) | 0 of 360 (0.0%) | 0 of 360 (0.0%) |
+| Qwen2.5-7B | Unrequested change, reason alone | 445 of 3348 (13.3%) | 70 of 1080 (6.5%) | 49 of 1080 (4.5%) | 77 of 1080 (7.1%) |
+| Qwen2.5-7B | Unrequested change, reason + list | 850 of 3348 (25.4%) | 198 of 1080 (18.3%) | 267 of 1080 (24.7%) | 346 of 1080 (32.0%) |
+| Qwen2.5-7B | Exact target, reason alone | 2505 of 3348 (74.8%) | 876 of 1080 (81.1%) | 887 of 1080 (82.1%) | 806 of 1080 (74.6%) |
+| Qwen2.5-7B | Exact target, reason + list | 2218 of 3348 (66.2%) | 766 of 1080 (70.9%) | 717 of 1080 (66.4%) | 592 of 1080 (54.8%) |
+| Qwen2.5-7B | Exact target, reason + plan review | 2584 of 3348 (77.2%) | 891 of 1080 (82.5%) | 897 of 1080 (83.1%) | 855 of 1080 (79.2%) |
+| Qwen2.5-7B | List minus reason, unrequested change (pp) | +12.1 [+9.5, +14.8] | +11.9 [+8.1, +15.9] | +20.2 [+15.2, +25.6] | +24.9 [+18.9, +31.3] |
+| Qwen2.5-7B | Reason minus list, exact target (pp) | +8.6 [+5.3, +11.9] | +10.2 [+5.7, +14.8] | +15.7 [+9.9, +21.8] | +19.8 [+12.6, +27.2] |
+| Qwen2.5-7B | Plan review minus reason, exact target (pp) | +2.4 [+0.6, +4.1] | +1.4 [+0.2, +3.1] | +0.9 [-1.9, +3.8] | +4.5 [+0.2, +8.9] |
+| Qwen3-8B | Unsafe effect under attack, guard that trusts the cited reading | 127 of 1116 (11.4%) | 108 of 360 (30.0%) | 96 of 360 (26.7%) | 90 of 360 (25.0%) |
+| Qwen3-8B | Unsafe effect under attack, evidence-bound guard (reason) | 0 of 1116 (0.0%) | 0 of 360 (0.0%) | 0 of 360 (0.0%) | 0 of 360 (0.0%) |
+| Qwen3-8B | Unrequested change, reason alone | 304 of 3348 (9.1%) | 160 of 1080 (14.8%) | 121 of 1080 (11.2%) | 149 of 1080 (13.8%) |
+| Qwen3-8B | Unrequested change, reason + list | 588 of 3348 (17.6%) | 214 of 1080 (19.8%) | 204 of 1080 (18.9%) | 247 of 1080 (22.9%) |
+| Qwen3-8B | Exact target, reason alone | 2568 of 3348 (76.7%) | 781 of 1080 (72.3%) | 783 of 1080 (72.5%) | 717 of 1080 (66.4%) |
+| Qwen3-8B | Exact target, reason + list | 2451 of 3348 (73.2%) | 798 of 1080 (73.9%) | 774 of 1080 (71.7%) | 688 of 1080 (63.7%) |
+| Qwen3-8B | Exact target, reason + plan review | 2595 of 3348 (77.5%) | 820 of 1080 (75.9%) | 858 of 1080 (79.4%) | 793 of 1080 (73.4%) |
+| Qwen3-8B | List minus reason, unrequested change (pp) | +8.5 [+6.3, +10.9] | +5.0 [+1.7, +8.5] | +7.7 [+4.6, +11.2] | +9.1 [+4.7, +13.9] |
+| Qwen3-8B | Reason minus list, exact target (pp) | +3.5 [+0.6, +6.4] | -1.6 [-6.5, +3.2] | +0.8 [-4.3, +5.7] | +2.7 [-2.3, +8.0] |
+| Qwen3-8B | Plan review minus reason, exact target (pp) | +0.8 [-0.7, +2.3] | +3.6 [+0.7, +6.5] | +6.9 [+3.6, +10.2] | +7.0 [+3.4, +10.6] |
+<!-- /generated:homes_vs_study3 -->
+
+<!-- prose:checked -->
+**Reading.** Evidence binding carries over to every home with both planners:
+the guard that trusts the cited reading executed an unsafe write in 13.3% to
+30.0% of attacked episodes, the evidence-bound guard in none. The harm of the
+list carries over as well and grows with the home: +11.9, +20.2 and +24.9
+points of episodes with an unrequested change for Qwen2.5-7B, and +5.0, +7.7
+and +9.1 for Qwen3-8B. With Qwen2.5-7B the list also costs attainable targets
+(+10.2, +15.7 and +19.8 points for the reason alone); with Qwen3-8B it does
+not measurably (-1.6, +0.8 and +2.7). The plan review gains on the reason
+alone in the larger homes, most clearly with Qwen3-8B (+3.6, +6.9 and +7.0
+points). Claim C5 of this study found the reason alone within five points of
+the plan review in the two-device home; the larger homes were not part of
+that test, and with Qwen3-8B the review is about seven points ahead there.
+<!-- /prose:checked -->
+
+## 12. Limits
 
 The limits of the plan apply (preregistration, section "Limits"). Those that
 matter most for reading the results:
@@ -973,9 +1038,11 @@ matter most for reading the results:
   the same family and size class). Nothing here shows how a larger or
   differently trained model reacts to a list or to a plan review.
 - **A small simulated world.** Two devices with three levels, one presence
-  bit, six rules, one recovery turn and at most three writes. The attainable
-  target is defined by this project's search and its tie-break (the largest
-  part of the goal, then the fewest devices changed).
+  bit, six rules, one recovery turn and at most three writes. The exploratory
+  homes of section 11 go up to six devices and fourteen rules; they are still
+  simulated and still have one presence bit and one recovery turn. The
+  attainable target is defined by this project's search and its tie-break
+  (the largest part of the goal, then the fewest devices changed).
 - **Specific wordings.** Two wordings of a list and one of a plan review were
   run on the holdout. The results are about these texts. Two further
   wordings of the plan review were run in development only.

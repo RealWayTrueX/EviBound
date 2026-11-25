@@ -55,7 +55,7 @@ v3.1: 203 tests pass, the three corpus checkers pass, the same four freezes
 and the v3.1 freeze verify. Later the same day, with the tests for the
 report's figures: 217 tests (15 of them need the local report and are skipped
 without it). With the two exploratory follow-ups of 2026-11-25 (a second
-planner model, and the code of the scale study): 245 tests.
+planner model, and the scale study in homes of three sizes): 251 tests.
 
 ## Known issues
 

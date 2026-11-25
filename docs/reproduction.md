@@ -260,6 +260,18 @@ What was checked when the run was recorded:
   started with `bash scripts/run_v3_1_model.sh model_qwen3 <gpu[,gpu]> <tag>`
   after a pilot (`modelpilot_qwen3`) has passed its check.
 
+- **The scale study (exploratory).** The record of the runs in homes of
+  three sizes (`python3 scripts/homes_record.py --check`) is computed from
+  the fingerprints of both planners
+  (`artifacts/homes_qwen25_fingerprints.json.gz`,
+  `artifacts/homes_qwen3_fingerprints.json.gz`). It agrees with the analysis
+  the experiment machine made from the raw traces in all 66 contrasts and in
+  every count. The task files are what the generator writes
+  (`python3 scripts/generate_scenarios_homes.py --check`). A run is started
+  with `bash scripts/run_homes.sh homes_qwen25 <gpu[,gpu]> <tag>` (or
+  `homes_qwen3`) after its pilot (`homespilot_...`) has passed the check of
+  the answers; both planners together took about 100 minutes on two RTX 4090.
+
 Not done: a re-run of v3.1 on a second machine. On the original machine the
 confirmatory run is `bash scripts/run_v3_1.sh holdout <gpu> <tag>` (about two
 and a half hours on one RTX 4090); the script refuses to start without the
@@ -289,7 +301,7 @@ The figures are generated too, into `report/figures/`:
 
 | Script | Figures | Source of what is shown |
 |---|---|---|
-| `scripts/build_report_figures.py` | three charts (formal test, the feedback ladder, the thirteen confirmatory contrasts of v3.1), and a fourth for the exploratory scale study once its record exists | the same records as the numbers; `--data` prints every plotted value |
+| `scripts/build_report_figures.py` | four charts (formal test, the feedback ladder, the thirteen confirmatory contrasts of v3.1, and the exploratory scale study next to Study 3) | the same records as the numbers; `--data` prints every plotted value |
 | `scripts/build_report_diagrams.py` | two schematics as editable SVG (overview of the evidence chain; one refused plan and the seven refusal messages) | the worked example is an episode of the v3.1 confirmatory run, read from the corpus and the episode fingerprints; the script asserts each stated fact against them |
 | `scripts/report_style.py` | colours and sizes shared by both | blue, orange and aqua are the first three slots of the charting guide's reference palette; they pass its colour-vision checks for every pair, and blue against red was checked the same way on 2026-11-25 |
 

@@ -593,11 +593,18 @@ Frozen-boundary rules (non-negotiable):
     the same decision; evidence binding and the harm of the list carry over,
     C2 and C4 do not reach support (`docs/v3_1_results.md`, section 10;
     `scripts/v3_1_models.py`).
-  - Exploratory scale study prepared (2026-11-25, at the owner's request):
-    homes with 2, 4 and 6 devices on one engine (`src/evibound/homes*.py`,
-    `docs/scale_study.md`). The small home is tested to be the frozen world
-    again. Not run yet.
+  - Exploratory scale study (2026-11-25, at the owner's request): homes with
+    2, 4 and 6 devices on one engine (`src/evibound/homes*.py`), plan
+    published before the run (`docs/scale_study.md`). The small home is
+    tested to be the frozen world again. Run the same day with both planners,
+    32,400 episodes. Evidence binding and the harm of the list show in every
+    home with both planners; the harm of the list grows with the home; with
+    Qwen3-8B the list does not measurably cost attainable targets, and the
+    plan review pulls ahead of the reason alone in the larger homes
+    (`docs/scale_study.md`, Results; `docs/v3_1_results.md`, section 11;
+    `scripts/homes_record.py`).
   - Course report rewritten again in plainer language (local only), with the
-    second planner as an exploratory subsection; 245 tests pass.
+    second planner and the scale study as an exploratory subsection; 251 tests
+    pass.
   - Open, owner: M8; whether to restore the two v4 planner servers; reading
     and approving the updated course report.
