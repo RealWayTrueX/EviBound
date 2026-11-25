@@ -7,8 +7,8 @@ UTC). It followed the preregistration
 holdout output existed. Every table between `generated` markers, and every
 sentence of the summary that holds a number, is written by a script from the
 committed episode fingerprints; the scripts' `--check` fails if any of it is
-stale. The exploratory arm (section 9) is not complete yet: two of its three
-runs have finished.
+stale. The exploratory arm (section 9) ran next to the confirmatory run and
+is complete.
 
 | Item | Value |
 |---|---|
@@ -172,9 +172,10 @@ was still running and before any of its output had been seen:
   until 21:41 UTC (commit `6e3ac46`); the frozen plan and the analysis script
   never did. The summary's sentences, the tables "every condition over all
   tasks" and "raw completion against the ceiling" (section 3), "the same
-  message, sampled twice" (section 2) and the tables of section 9 come from
-  scripts written after the freeze. They rearrange the record or count
-  episodes descriptively, and are labelled where they go beyond the plan.
+  message, sampled twice" and "each seed alone" (section 2) and the tables
+  of section 9 come from scripts written after the freeze. They rearrange
+  the record, count episodes descriptively or repeat a planned contrast on a
+  part of the episodes, and are labelled where they go beyond the plan.
 
 ## 2. Confirmatory claims
 
@@ -751,38 +752,59 @@ asked and nothing else) and `experienced` (a memory of the recovery
 protocol). The column of the v3 prompt repeats the confirmatory run for the
 same four conditions.
 
-**Status: two of the three runs have finished** (`cautious`, `faithful`); the
-third (`experienced`) started when the confirmatory run ended and is added
-when it has finished.
+| Character | Start (UTC) | Last episode (UTC) | GPU | Episodes | SHA-256 of the raw trace |
+|---|---|---|---|---:|---|
+| `cautious` | 2026-11-24 20:21:45 | 2026-11-24 21:34:39 | 1 | 13,392 | `5c4f165d532d948b…` |
+| `faithful` | 2026-11-24 21:34:48 | 2026-11-24 22:52:27 | 1 | 13,392 | `e216d885c0a1aa22…` |
+| `experienced` | 2026-11-24 22:51:19 | 2026-11-25 00:04:28 | 0 | 13,392 | `846ffc63b3e34eb0…` |
+
+All three ran under the freeze, at the frozen commit, in one process each and
+without a restart. Their records agree with the analysis the experiment
+machine made from the raw traces (28 contrasts each), and the oracle rescored
+every trace without a disagreement.
+
+<!-- prose:checked -->
+**What the arm shows.** With each of the three other system prompts the list
+raised unrequested changes (U1; on the attack battery, K31), ended in the
+attainable target less often than the reason alone (N1, K36), and was behind
+it within each kind of turn in which the two can be compared (I1, K43, K54).
+Saying the trusted reading pointed the same way as in the confirmatory run in
+every character, by a smaller amount, and each of the three intervals
+includes zero (R1, K37). The characters did change the planner's first plans:
+`faithful` produced malformed output about twice as often as the v3 prompt,
+`cautious` more empty first plans, `experienced` more turns of the kind
+`revise` (last table). The effect of the list did not depend on these
+differences. None of this says anything about another model.
+<!-- /prose:checked -->
 
 Each cell: counts left against right; estimate in percentage points with the
 95% interval; the decision the frozen rule would give.
 
 <!-- generated:roles -->
-| Id | Contrast | v3 prompt (the confirmatory run) | cautious | faithful |
-|---|---|---|---|---|
-| U1 | Unrequested change, all tasks: list − reason | 850 vs 445 of 3348; +12.1 [+9.5, +14.8]; supported | 799 vs 439 of 3348; +10.8 [+8.2, +13.3]; supported | 863 vs 427 of 3348; +13.0 [+10.4, +15.7]; supported |
-| K31 | the same on the attack battery | 386 vs 216 of 864; +19.7 [+13.4, +26.0]; supported | 378 vs 225 of 864; +17.7 [+11.5, +24.0]; supported | 385 vs 220 of 864; +19.1 [+12.7, +25.6]; supported |
-| N1 | Exact target, all tasks: reason − list (not behind by 5 pp) | 2505 vs 2218 of 3348; +8.6 [+5.3, +11.9]; supported | 2538 vs 2293 of 3348; +7.3 [+4.3, +10.4]; supported | 2526 vs 2142 of 3348; +11.5 [+8.5, +14.5]; supported |
-| K36 | the same as a test of superiority | 2505 vs 2218 of 3348; +8.6 [+5.3, +11.9]; supported | 2538 vs 2293 of 3348; +7.3 [+4.3, +10.4]; supported | 2526 vs 2142 of 3348; +11.5 [+8.5, +14.5]; supported |
-| I1 | Exact target in turns of the kind `interrupted`: reason − list | 121 vs 68 of 182; +29.5 [+14.8, +44.3]; supported | 120 vs 73 of 174; +28.3 [+12.8, +43.9]; supported | 110 vs 51 of 165; +36.2 [+20.7, +51.1]; supported |
-| K43 | Exact target in turns of the kind `revise`: reason − list | 686 vs 479 of 816; +24.6 [+17.1, +32.2]; supported | 652 vs 466 of 758; +26.0 [+18.4, +33.8]; supported | 625 vs 391 of 693; +36.9 [+28.9, +44.9]; supported |
-| K54 | Exact target in turns of the kind `reselect`: reason − list | 679 vs 604 of 1062; +7.1 [+2.0, +12.3]; supported | 699 vs 641 of 1070; +5.4 [+0.3, +10.5]; supported | 641 vs 569 of 1019; +7.0 [+1.5, +12.5]; supported |
-| R1 | Exact target in turns of the kind `reselect`: reason and reading − reason | 719 vs 679 of 1062; +3.8 [+0.8, +6.9]; supported | 714 vs 699 of 1070; +1.4 [-1.8, +4.6]; inconclusive | 663 vs 641 of 1019; +2.3 [-0.7, +5.4]; inconclusive |
-| K37 | Exact target, all turns: reason and reading − reason | 2542 vs 2505 of 3348; +1.1 [+0.1, +2.1]; supported | 2555 vs 2538 of 3348; +0.5 [-0.5, +1.6]; inconclusive | 2549 vs 2526 of 3348; +0.7 [-0.3, +1.6]; inconclusive |
-| K41 | Goal completion on attainable goals: list − reason | 1086 vs 1060 of 1404; +1.9 [-2.7, +6.3]; inconclusive | 1091 vs 1077 of 1404; +1.0 [-3.5, +5.4]; inconclusive | 1013 vs 1047 of 1404; -2.4 [-6.1, +1.2]; unsupported |
+| Id | Contrast | v3 prompt (the confirmatory run) | cautious | faithful | experienced |
+|---|---|---|---|---|---|
+| U1 | Unrequested change, all tasks: list − reason | 850 vs 445 of 3348; +12.1 [+9.5, +14.8]; supported | 799 vs 439 of 3348; +10.8 [+8.2, +13.3]; supported | 863 vs 427 of 3348; +13.0 [+10.4, +15.7]; supported | 878 vs 442 of 3348; +13.0 [+10.2, +15.9]; supported |
+| K31 | the same on the attack battery | 386 vs 216 of 864; +19.7 [+13.4, +26.0]; supported | 378 vs 225 of 864; +17.7 [+11.5, +24.0]; supported | 385 vs 220 of 864; +19.1 [+12.7, +25.6]; supported | 366 vs 231 of 864; +15.6 [+9.0, +22.3]; supported |
+| N1 | Exact target, all tasks: reason − list (not behind by 5 pp) | 2505 vs 2218 of 3348; +8.6 [+5.3, +11.9]; supported | 2538 vs 2293 of 3348; +7.3 [+4.3, +10.4]; supported | 2526 vs 2142 of 3348; +11.5 [+8.5, +14.5]; supported | 2538 vs 2180 of 3348; +10.7 [+7.4, +14.1]; supported |
+| K36 | the same as a test of superiority | 2505 vs 2218 of 3348; +8.6 [+5.3, +11.9]; supported | 2538 vs 2293 of 3348; +7.3 [+4.3, +10.4]; supported | 2526 vs 2142 of 3348; +11.5 [+8.5, +14.5]; supported | 2538 vs 2180 of 3348; +10.7 [+7.4, +14.1]; supported |
+| I1 | Exact target in turns of the kind `interrupted`: reason − list | 121 vs 68 of 182; +29.5 [+14.8, +44.3]; supported | 120 vs 73 of 174; +28.3 [+12.8, +43.9]; supported | 110 vs 51 of 165; +36.2 [+20.7, +51.1]; supported | 135 vs 66 of 182; +37.0 [+21.9, +51.6]; supported |
+| K43 | Exact target in turns of the kind `revise`: reason − list | 686 vs 479 of 816; +24.6 [+17.1, +32.2]; supported | 652 vs 466 of 758; +26.0 [+18.4, +33.8]; supported | 625 vs 391 of 693; +36.9 [+28.9, +44.9]; supported | 746 vs 533 of 905; +24.7 [+17.3, +32.2]; supported |
+| K54 | Exact target in turns of the kind `reselect`: reason − list | 679 vs 604 of 1062; +7.1 [+2.0, +12.3]; supported | 699 vs 641 of 1070; +5.4 [+0.3, +10.5]; supported | 641 vs 569 of 1019; +7.0 [+1.5, +12.5]; supported | 703 vs 602 of 1065; +9.4 [+4.5, +14.3]; supported |
+| R1 | Exact target in turns of the kind `reselect`: reason and reading − reason | 719 vs 679 of 1062; +3.8 [+0.8, +6.9]; supported | 714 vs 699 of 1070; +1.4 [-1.8, +4.6]; inconclusive | 663 vs 641 of 1019; +2.3 [-0.7, +5.4]; inconclusive | 729 vs 703 of 1065; +2.5 [-0.6, +5.7]; inconclusive |
+| K37 | Exact target, all turns: reason and reading − reason | 2542 vs 2505 of 3348; +1.1 [+0.1, +2.1]; supported | 2555 vs 2538 of 3348; +0.5 [-0.5, +1.6]; inconclusive | 2549 vs 2526 of 3348; +0.7 [-0.3, +1.6]; inconclusive | 2565 vs 2538 of 3348; +0.8 [-0.2, +1.8]; inconclusive |
+| K41 | Goal completion on attainable goals: list − reason | 1086 vs 1060 of 1404; +1.9 [-2.7, +6.3]; inconclusive | 1091 vs 1077 of 1404; +1.0 [-3.5, +5.4]; inconclusive | 1013 vs 1047 of 1404; -2.4 [-6.1, +1.2]; unsupported | 1055 vs 1113 of 1404; -4.1 [-7.9, -0.2]; unsupported |
 <!-- /generated:roles -->
 
 Every condition over all tasks and variants: episodes in the attainable
 target / with an unrequested change / with an unsafe effect.
 
 <!-- generated:roles_totals -->
-| Condition | v3 prompt (the confirmatory run) | cautious | faithful |
-|---|---|---|---|
-| `B0` | 1431 / 349 / 888 of 3348 | 1512 / 348 / 910 of 3348 | 1524 / 348 / 863 of 3348 |
-| `M_recover` | 2505 / 445 / 0 of 3348 | 2538 / 439 / 0 of 3348 | 2526 / 427 / 0 of 3348 |
-| `M_reading` | 2542 / 441 / 0 of 3348 | 2555 / 453 / 0 of 3348 | 2549 / 420 / 0 of 3348 |
-| `M_full` | 2218 / 850 / 0 of 3348 | 2293 / 799 / 0 of 3348 | 2142 / 863 / 0 of 3348 |
+| Condition | v3 prompt (the confirmatory run) | cautious | faithful | experienced |
+|---|---|---|---|---|
+| `B0` | 1431 / 349 / 888 of 3348 | 1512 / 348 / 910 of 3348 | 1524 / 348 / 863 of 3348 | 1331 / 341 / 961 of 3348 |
+| `M_recover` | 2505 / 445 / 0 of 3348 | 2538 / 439 / 0 of 3348 | 2526 / 427 / 0 of 3348 | 2538 / 442 / 0 of 3348 |
+| `M_reading` | 2542 / 441 / 0 of 3348 | 2555 / 453 / 0 of 3348 | 2549 / 420 / 0 of 3348 | 2565 / 438 / 0 of 3348 |
+| `M_full` | 2218 / 850 / 0 of 3348 | 2293 / 799 / 0 of 3348 | 2142 / 863 / 0 of 3348 | 2180 / 878 / 0 of 3348 |
 <!-- /generated:roles_totals -->
 
 Recovery turns by kind (per condition with the evidence-bound guard). The
@@ -790,14 +812,14 @@ character changes the first plan, and with it how many turns of each kind
 there are.
 
 <!-- generated:roles_turns -->
-| Kind of recovery turn | v3 prompt (the confirmatory run) | cautious | faithful |
-|---|---|---|---|
-| interrupted | 182 | 174 | 165 |
-| reselect | 1062 | 1070 | 1019 |
-| revise | 816 | 758 | 693 |
-| empty | 74 | 117 | 28 |
-| no review (malformed output and the like) | 157 | 148 | 324 |
-| no recovery turn | 1057 | 1081 | 1119 |
+| Kind of recovery turn | v3 prompt (the confirmatory run) | cautious | faithful | experienced |
+|---|---|---|---|---|
+| interrupted | 182 | 174 | 165 | 182 |
+| reselect | 1062 | 1070 | 1019 | 1065 |
+| revise | 816 | 758 | 693 | 905 |
+| empty | 74 | 117 | 28 | 27 |
+| no review (malformed output and the like) | 157 | 148 | 324 | 149 |
+| no recovery turn | 1057 | 1081 | 1119 | 1020 |
 <!-- /generated:roles_turns -->
 
 ## 10. Limits

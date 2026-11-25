@@ -988,6 +988,497 @@
     "revise": 758
    }
   },
+  "experienced": {
+   "complete_matrix": true,
+   "conditions": [
+    "B0",
+    "M_full",
+    "M_reading",
+    "M_recover"
+   ],
+   "contrasts": {
+    "H1": {
+     "decision": "supported",
+     "episodes": 468,
+     "estimate_pp": 10.7,
+     "high_pp": 16.5,
+     "left": 425,
+     "low_pp": 4.9,
+     "right": 375,
+     "rule": "superiority",
+     "structures": 156
+    },
+    "H2": {
+     "decision": "supported",
+     "episodes": 252,
+     "estimate_pp": 23.0,
+     "high_pp": 32.5,
+     "left": 67,
+     "low_pp": 13.9,
+     "right": 9,
+     "rule": "superiority",
+     "structures": 84
+    },
+    "I1": {
+     "decision": "supported",
+     "episodes": 182,
+     "estimate_pp": 37.0,
+     "high_pp": 51.6,
+     "left": 135,
+     "low_pp": 21.9,
+     "right": 66,
+     "rule": "superiority",
+     "structures": 64
+    },
+    "K11": {
+     "decision": "inconclusive",
+     "episodes": 468,
+     "estimate_pp": 2.1,
+     "high_pp": 9.2,
+     "left": 271,
+     "low_pp": -4.7,
+     "right": 261,
+     "rule": "superiority",
+     "structures": 156
+    },
+    "K15": {
+     "decision": "supported",
+     "episodes": 156,
+     "estimate_pp": 15.4,
+     "high_pp": 25.0,
+     "left": 131,
+     "low_pp": 7.1,
+     "right": 107,
+     "rule": "superiority",
+     "structures": 52
+    },
+    "K22": {
+     "decision": "supported",
+     "episodes": 576,
+     "estimate_pp": 13.7,
+     "high_pp": 20.7,
+     "left": 401,
+     "low_pp": 6.9,
+     "right": 322,
+     "rule": "superiority",
+     "structures": 96
+    },
+    "K27": {
+     "decision": "supported",
+     "episodes": 1116,
+     "estimate_pp": 9.8,
+     "high_pp": 13.1,
+     "left": 247,
+     "low_pp": 6.5,
+     "right": 138,
+     "rule": "superiority",
+     "structures": 372
+    },
+    "K28": {
+     "decision": "supported",
+     "episodes": 1116,
+     "estimate_pp": 12.2,
+     "high_pp": 16.0,
+     "left": 280,
+     "low_pp": 8.4,
+     "right": 144,
+     "rule": "superiority",
+     "structures": 372
+    },
+    "K29": {
+     "decision": "supported",
+     "episodes": 1116,
+     "estimate_pp": 17.1,
+     "high_pp": 21.4,
+     "left": 351,
+     "low_pp": 12.9,
+     "right": 160,
+     "rule": "superiority",
+     "structures": 372
+    },
+    "K30": {
+     "decision": "supported",
+     "episodes": 2484,
+     "estimate_pp": 12.1,
+     "high_pp": 15.1,
+     "left": 512,
+     "low_pp": 9.2,
+     "right": 211,
+     "rule": "superiority",
+     "structures": 276
+    },
+    "K31": {
+     "decision": "supported",
+     "episodes": 864,
+     "estimate_pp": 15.6,
+     "high_pp": 22.3,
+     "left": 366,
+     "low_pp": 9.0,
+     "right": 231,
+     "rule": "superiority",
+     "structures": 96
+    },
+    "K32": {
+     "decision": "supported",
+     "episodes": 1062,
+     "estimate_pp": 19.4,
+     "high_pp": 25.1,
+     "left": 424,
+     "low_pp": 13.8,
+     "right": 218,
+     "rule": "superiority",
+     "structures": 118
+    },
+    "K33": {
+     "decision": "supported",
+     "episodes": 2286,
+     "estimate_pp": 10.1,
+     "high_pp": 13.3,
+     "left": 454,
+     "low_pp": 7.0,
+     "right": 224,
+     "rule": "superiority",
+     "structures": 254
+    },
+    "K34": {
+     "decision": "supported",
+     "episodes": 3348,
+     "estimate_pp": 13.1,
+     "high_pp": 15.9,
+     "left": 878,
+     "low_pp": 10.5,
+     "right": 438,
+     "rule": "superiority",
+     "structures": 372
+    },
+    "K36": {
+     "decision": "supported",
+     "episodes": 3348,
+     "estimate_pp": 10.7,
+     "high_pp": 14.1,
+     "left": 2538,
+     "low_pp": 7.4,
+     "right": 2180,
+     "rule": "superiority",
+     "structures": 372
+    },
+    "K37": {
+     "decision": "inconclusive",
+     "episodes": 3348,
+     "estimate_pp": 0.8,
+     "high_pp": 1.8,
+     "left": 2565,
+     "low_pp": -0.2,
+     "right": 2538,
+     "rule": "superiority",
+     "structures": 372
+    },
+    "K38": {
+     "decision": "inconclusive",
+     "episodes": 1116,
+     "estimate_pp": 2.3,
+     "high_pp": 5.3,
+     "left": 752,
+     "low_pp": -0.7,
+     "right": 726,
+     "rule": "superiority",
+     "structures": 372
+    },
+    "K41": {
+     "decision": "unsupported",
+     "episodes": 1404,
+     "estimate_pp": -4.1,
+     "high_pp": -0.2,
+     "left": 1055,
+     "low_pp": -7.9,
+     "right": 1113,
+     "rule": "superiority",
+     "structures": 156
+    },
+    "K43": {
+     "decision": "supported",
+     "episodes": 905,
+     "estimate_pp": 24.7,
+     "high_pp": 32.2,
+     "left": 746,
+     "low_pp": 17.3,
+     "right": 533,
+     "rule": "superiority",
+     "structures": 163
+    },
+    "K48": {
+     "decision": "supported",
+     "episodes": 1065,
+     "estimate_pp": 11.9,
+     "high_pp": 16.9,
+     "left": 729,
+     "low_pp": 7.1,
+     "right": 602,
+     "rule": "superiority",
+     "structures": 356
+    },
+    "K50": {
+     "decision": "inconclusive",
+     "episodes": 149,
+     "estimate_pp": 13.5,
+     "high_pp": 32.4,
+     "left": 109,
+     "low_pp": -5.5,
+     "right": 89,
+     "rule": "superiority",
+     "structures": 37
+    },
+    "K51": {
+     "decision": "unsupported",
+     "episodes": 27,
+     "estimate_pp": -10.0,
+     "high_pp": 46.7,
+     "left": 18,
+     "low_pp": -66.7,
+     "right": 23,
+     "rule": "superiority",
+     "structures": 6
+    },
+    "K52": {
+     "decision": "supported",
+     "episodes": 3348,
+     "estimate_pp": 0.8,
+     "high_pp": 1.8,
+     "left": 2565,
+     "low_pp": -0.2,
+     "right": 2538,
+     "rule": "non_inferiority",
+     "structures": 372
+    },
+    "K53": {
+     "decision": "supported",
+     "episodes": 3348,
+     "estimate_pp": 11.5,
+     "high_pp": 14.8,
+     "left": 2565,
+     "low_pp": 8.3,
+     "right": 2180,
+     "rule": "superiority",
+     "structures": 372
+    },
+    "K54": {
+     "decision": "supported",
+     "episodes": 1065,
+     "estimate_pp": 9.4,
+     "high_pp": 14.3,
+     "left": 703,
+     "low_pp": 4.5,
+     "right": 602,
+     "rule": "superiority",
+     "structures": 356
+    },
+    "N1": {
+     "decision": "supported",
+     "episodes": 3348,
+     "estimate_pp": 10.7,
+     "high_pp": 14.1,
+     "left": 2538,
+     "low_pp": 7.4,
+     "right": 2180,
+     "rule": "non_inferiority",
+     "structures": 372
+    },
+    "R1": {
+     "decision": "inconclusive",
+     "episodes": 1065,
+     "estimate_pp": 2.5,
+     "high_pp": 5.7,
+     "left": 729,
+     "low_pp": -0.6,
+     "right": 703,
+     "rule": "superiority",
+     "structures": 356
+    },
+    "U1": {
+     "decision": "supported",
+     "episodes": 3348,
+     "estimate_pp": 13.0,
+     "high_pp": 15.9,
+     "left": 878,
+     "low_pp": 10.2,
+     "right": 442,
+     "rule": "superiority",
+     "structures": 372
+    }
+   },
+   "episodes": 13392,
+   "input": {
+    "file": "artifacts/v3_1_role_experienced_fingerprints.json.gz",
+    "sha256": "c430848647f0391ea1ac5e0fcd71e15c50ac87bff2d67c0a4ad4ee29017d0f76"
+   },
+   "kinds": {
+    "empty": {
+     "by_condition": {
+      "M_full": {
+       "exact_target": 23,
+       "n": 27,
+       "unrequested_change": 4
+      },
+      "M_reading": {
+       "exact_target": 18,
+       "n": 27,
+       "unrequested_change": 0
+      },
+      "M_recover": {
+       "exact_target": 18,
+       "n": 27,
+       "unrequested_change": 0
+      }
+     },
+     "n": 27
+    },
+    "interrupted": {
+     "by_condition": {
+      "M_full": {
+       "exact_target": 66,
+       "n": 182,
+       "unrequested_change": 92
+      },
+      "M_reading": {
+       "exact_target": 134,
+       "n": 182,
+       "unrequested_change": 48
+      },
+      "M_recover": {
+       "exact_target": 135,
+       "n": 182,
+       "unrequested_change": 47
+      }
+     },
+     "n": 182
+    },
+    "no recovery turn": {
+     "by_condition": {
+      "M_full": {
+       "exact_target": 847,
+       "n": 1020,
+       "unrequested_change": 159
+      },
+      "M_reading": {
+       "exact_target": 847,
+       "n": 1020,
+       "unrequested_change": 159
+      },
+      "M_recover": {
+       "exact_target": 847,
+       "n": 1020,
+       "unrequested_change": 159
+      }
+     },
+     "n": 1020
+    },
+    "no review (malformed output and the like)": {
+     "by_condition": {
+      "M_full": {
+       "exact_target": 109,
+       "n": 149,
+       "unrequested_change": 21
+      },
+      "M_reading": {
+       "exact_target": 90,
+       "n": 149,
+       "unrequested_change": 0
+      },
+      "M_recover": {
+       "exact_target": 89,
+       "n": 149,
+       "unrequested_change": 0
+      }
+     },
+     "n": 149
+    },
+    "reselect": {
+     "by_condition": {
+      "M_full": {
+       "exact_target": 602,
+       "n": 1065,
+       "unrequested_change": 349
+      },
+      "M_reading": {
+       "exact_target": 729,
+       "n": 1065,
+       "unrequested_change": 156
+      },
+      "M_recover": {
+       "exact_target": 703,
+       "n": 1065,
+       "unrequested_change": 160
+      }
+     },
+     "n": 1065
+    },
+    "revise": {
+     "by_condition": {
+      "M_full": {
+       "exact_target": 533,
+       "n": 905,
+       "unrequested_change": 253
+      },
+      "M_reading": {
+       "exact_target": 747,
+       "n": 905,
+       "unrequested_change": 75
+      },
+      "M_recover": {
+       "exact_target": 746,
+       "n": 905,
+       "unrequested_change": 76
+      }
+     },
+     "n": 905
+    }
+   },
+   "replay_disagreements": 0,
+   "seeds": [
+    11,
+    22,
+    33
+   ],
+   "tasks": 372,
+   "totals": {
+    "B0": {
+     "episodes": 3348,
+     "exact_target": 1331,
+     "goal_completion": 1944,
+     "unrequested_change": 341,
+     "unsafe_effect": 961
+    },
+    "M_full": {
+     "episodes": 3348,
+     "exact_target": 2180,
+     "goal_completion": 1733,
+     "unrequested_change": 878,
+     "unsafe_effect": 0
+    },
+    "M_reading": {
+     "episodes": 3348,
+     "exact_target": 2565,
+     "goal_completion": 1879,
+     "unrequested_change": 438,
+     "unsafe_effect": 0
+    },
+    "M_recover": {
+     "episodes": 3348,
+     "exact_target": 2538,
+     "goal_completion": 1862,
+     "unrequested_change": 442,
+     "unsafe_effect": 0
+    }
+   },
+   "turns_by_kind": {
+    "empty": 27,
+    "interrupted": 182,
+    "no recovery turn": 1020,
+    "no review (malformed output and the like)": 149,
+    "reselect": 1065,
+    "revise": 905
+   }
+  },
   "faithful": {
    "complete_matrix": true,
    "conditions": [

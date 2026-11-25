@@ -135,6 +135,26 @@ class PlannerCharacterTests(unittest.TestCase):
                                 capture_output=True, text=True, cwd=ROOT)
         self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
 
+    @unittest.skipUnless(ROLES.exists(), 'the exploratory arm has not been committed yet')
+    def test_what_the_document_says_about_the_characters(self):
+        """The paragraph "What the arm shows" in section 9, statement by statement."""
+        roles = json.loads(ROLES.read_text())['roles']
+        self.assertEqual(sorted(roles), ['base', 'cautious', 'experienced', 'faithful'])
+        base = roles['base']['turns_by_kind']
+        for name in ('cautious', 'faithful', 'experienced'):
+            contrasts = roles[name]['contrasts']
+            for contrast_id in ('U1', 'K31', 'N1', 'K36', 'I1', 'K43', 'K54'):
+                self.assertEqual(contrasts[contrast_id]['decision'], 'supported', (name, contrast_id))
+            for contrast_id in ('R1', 'K37'):       # the same direction, an interval that includes zero
+                self.assertEqual(contrasts[contrast_id]['decision'], 'inconclusive', (name, contrast_id))
+                self.assertGreater(contrasts[contrast_id]['estimate_pp'], 0, (name, contrast_id))
+                self.assertLess(contrasts[contrast_id]['estimate_pp'], roles['base']['contrasts'][contrast_id]['estimate_pp'])
+        malformed = 'no review (malformed output and the like)'
+        self.assertGreater(roles['faithful']['turns_by_kind'][malformed], 1.8 * base[malformed])
+        self.assertLess(roles['faithful']['turns_by_kind'][malformed], 2.2 * base[malformed])
+        self.assertGreater(roles['cautious']['turns_by_kind']['empty'], base['empty'])
+        self.assertGreater(roles['experienced']['turns_by_kind']['revise'], base['revise'])
+
     @unittest.skipUnless(ROLES.exists() and RECORD.exists(), 'the runs have not been committed yet')
     def test_base_column_is_the_confirmatory_run(self):
         """The column of the v3 prompt repeats the confirmatory record; the other characters ran the same matrix."""
