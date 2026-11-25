@@ -1,0 +1,1960 @@
+{
+ "planners": {
+  "qwen25": {
+   "carried_over_from_small": {
+    "L": {
+     "N1": true,
+     "P1": true,
+     "S1": true,
+     "S2": true,
+     "U1": true
+    },
+    "M": {
+     "N1": true,
+     "P1": false,
+     "S1": true,
+     "S2": true,
+     "U1": true
+    }
+   },
+   "episodes": 16200,
+   "homes": {
+    "L": {
+     "by_variant": {
+      "boundary": {
+       "B0": {
+        "episodes": 360,
+        "exact_target": 129,
+        "retried": 0,
+        "unrequested_change": 9,
+        "unsafe_effect": 186
+       },
+       "B2_plan": {
+        "episodes": 360,
+        "exact_target": 310,
+        "retried": 222,
+        "unrequested_change": 38,
+        "unsafe_effect": 0
+       },
+       "M_full": {
+        "episodes": 360,
+        "exact_target": 185,
+        "retried": 306,
+        "unrequested_change": 118,
+        "unsafe_effect": 0
+       },
+       "M_plan": {
+        "episodes": 360,
+        "exact_target": 309,
+        "retried": 306,
+        "unrequested_change": 33,
+        "unsafe_effect": 0
+       },
+       "M_recover": {
+        "episodes": 360,
+        "exact_target": 280,
+        "retried": 306,
+        "unrequested_change": 27,
+        "unsafe_effect": 0
+       }
+      },
+      "clean": {
+       "B0": {
+        "episodes": 360,
+        "exact_target": 129,
+        "retried": 0,
+        "unrequested_change": 9,
+        "unsafe_effect": 186
+       },
+       "B2_plan": {
+        "episodes": 360,
+        "exact_target": 314,
+        "retried": 222,
+        "unrequested_change": 36,
+        "unsafe_effect": 0
+       },
+       "M_full": {
+        "episodes": 360,
+        "exact_target": 242,
+        "retried": 222,
+        "unrequested_change": 87,
+        "unsafe_effect": 0
+       },
+       "M_plan": {
+        "episodes": 360,
+        "exact_target": 311,
+        "retried": 222,
+        "unrequested_change": 35,
+        "unsafe_effect": 0
+       },
+       "M_recover": {
+        "episodes": 360,
+        "exact_target": 289,
+        "retried": 222,
+        "unrequested_change": 30,
+        "unsafe_effect": 0
+       }
+      },
+      "perturbed": {
+       "B0": {
+        "episodes": 360,
+        "exact_target": 18,
+        "retried": 0,
+        "unrequested_change": 49,
+        "unsafe_effect": 232
+       },
+       "B2_plan": {
+        "episodes": 360,
+        "exact_target": 125,
+        "retried": 264,
+        "unrequested_change": 66,
+        "unsafe_effect": 63
+       },
+       "M_full": {
+        "episodes": 360,
+        "exact_target": 165,
+        "retried": 360,
+        "unrequested_change": 141,
+        "unsafe_effect": 0
+       },
+       "M_plan": {
+        "episodes": 360,
+        "exact_target": 235,
+        "retried": 360,
+        "unrequested_change": 26,
+        "unsafe_effect": 0
+       },
+       "M_recover": {
+        "episodes": 360,
+        "exact_target": 237,
+        "retried": 360,
+        "unrequested_change": 20,
+        "unsafe_effect": 0
+       }
+      }
+     },
+     "contrasts": {
+      "K1": {
+       "decision": "supported",
+       "episodes": 1080,
+       "estimate_pp": 19.8,
+       "high_pp": 26.9,
+       "left": 806,
+       "low_pp": 12.6,
+       "right": 592,
+       "rule": "superiority",
+       "tasks": 120
+      },
+      "K2": {
+       "decision": "supported",
+       "episodes": 396,
+       "estimate_pp": 28.3,
+       "high_pp": 39.6,
+       "left": 128,
+       "low_pp": 17.7,
+       "right": 16,
+       "rule": "superiority",
+       "tasks": 44
+      },
+      "K3": {
+       "decision": "supported",
+       "episodes": 684,
+       "estimate_pp": 23.0,
+       "high_pp": 30.6,
+       "left": 218,
+       "low_pp": 16.1,
+       "right": 61,
+       "rule": "superiority",
+       "tasks": 76
+      },
+      "K4": {
+       "decision": "unsupported",
+       "episodes": 360,
+       "estimate_pp": -44.4,
+       "high_pp": -35.8,
+       "left": 129,
+       "low_pp": -53.6,
+       "right": 289,
+       "rule": "superiority",
+       "tasks": 120
+      },
+      "K5": {
+       "decision": "supported",
+       "episodes": 126,
+       "estimate_pp": 47.6,
+       "high_pp": 61.9,
+       "left": 60,
+       "low_pp": 33.3,
+       "right": 0,
+       "rule": "superiority",
+       "tasks": 42
+      },
+      "K6": {
+       "decision": "supported",
+       "episodes": 1080,
+       "estimate_pp": 4.5,
+       "high_pp": 9.0,
+       "left": 855,
+       "low_pp": 0.1,
+       "right": 806,
+       "rule": "non_inferiority",
+       "tasks": 120
+      },
+      "N1": {
+       "decision": "supported",
+       "episodes": 1080,
+       "estimate_pp": 19.8,
+       "high_pp": 27.2,
+       "left": 806,
+       "low_pp": 12.6,
+       "right": 592,
+       "rule": "non_inferiority",
+       "tasks": 120
+      },
+      "P1": {
+       "decision": "supported",
+       "episodes": 1080,
+       "estimate_pp": 4.5,
+       "high_pp": 8.9,
+       "left": 855,
+       "low_pp": 0.2,
+       "right": 806,
+       "rule": "superiority",
+       "tasks": 120
+      },
+      "S1": {
+       "decision": "supported",
+       "episodes": 360,
+       "estimate_pp": 17.5,
+       "high_pp": 25.0,
+       "left": 63,
+       "low_pp": 10.8,
+       "right": 0,
+       "rule": "superiority",
+       "tasks": 120
+      },
+      "S2": {
+       "decision": "supported",
+       "episodes": 180,
+       "estimate_pp": 48.3,
+       "high_pp": 61.7,
+       "left": 156,
+       "low_pp": 35.0,
+       "right": 69,
+       "rule": "superiority",
+       "tasks": 60
+      },
+      "U1": {
+       "decision": "supported",
+       "episodes": 1080,
+       "estimate_pp": 24.9,
+       "high_pp": 31.3,
+       "left": 346,
+       "low_pp": 18.9,
+       "right": 77,
+       "rule": "superiority",
+       "tasks": 120
+      }
+     },
+     "episodes": 5400,
+     "form": {
+      "first_not_parsed": 0,
+      "first_proposals": 1080,
+      "max_list_length": 8,
+      "mean_list_length": 3.15,
+      "mean_tokens_per_episode": 1958.0,
+      "recovery_answers": 3372,
+      "recovery_not_parsed": 11
+     },
+     "seeds": [
+      11,
+      22,
+      33
+     ],
+     "size": {
+      "device_states": 324,
+      "devices": 6,
+      "legal_absent": 4,
+      "legal_present": 110,
+      "legal_states": 114,
+      "max_writes": 6,
+      "rules": 14,
+      "states": 648
+     },
+     "tasks": 120,
+     "totals": {
+      "B0": {
+       "authorization_violation": 320,
+       "episodes": 1080,
+       "exact_target": 276,
+       "goal_completion": 733,
+       "retried": 0,
+       "target_reached": 843,
+       "unrequested_change": 67,
+       "unsafe_effect": 604
+      },
+      "B2_plan": {
+       "authorization_violation": 0,
+       "episodes": 1080,
+       "exact_target": 749,
+       "goal_completion": 434,
+       "retried": 708,
+       "target_reached": 835,
+       "unrequested_change": 140,
+       "unsafe_effect": 63
+      },
+      "M_full": {
+       "authorization_violation": 0,
+       "episodes": 1080,
+       "exact_target": 592,
+       "goal_completion": 389,
+       "retried": 888,
+       "target_reached": 741,
+       "unrequested_change": 346,
+       "unsafe_effect": 0
+      },
+      "M_plan": {
+       "authorization_violation": 0,
+       "episodes": 1080,
+       "exact_target": 855,
+       "goal_completion": 488,
+       "retried": 888,
+       "target_reached": 888,
+       "unrequested_change": 94,
+       "unsafe_effect": 0
+      },
+      "M_recover": {
+       "authorization_violation": 0,
+       "episodes": 1080,
+       "exact_target": 806,
+       "goal_completion": 483,
+       "retried": 888,
+       "target_reached": 825,
+       "unrequested_change": 77,
+       "unsafe_effect": 0
+      }
+     }
+    },
+    "M": {
+     "by_variant": {
+      "boundary": {
+       "B0": {
+        "episodes": 360,
+        "exact_target": 137,
+        "retried": 3,
+        "unrequested_change": 3,
+        "unsafe_effect": 186
+       },
+       "B2_plan": {
+        "episodes": 360,
+        "exact_target": 326,
+        "retried": 228,
+        "unrequested_change": 15,
+        "unsafe_effect": 0
+       },
+       "M_full": {
+        "episodes": 360,
+        "exact_target": 247,
+        "retried": 270,
+        "unrequested_change": 71,
+        "unsafe_effect": 0
+       },
+       "M_plan": {
+        "episodes": 360,
+        "exact_target": 318,
+        "retried": 270,
+        "unrequested_change": 15,
+        "unsafe_effect": 0
+       },
+       "M_recover": {
+        "episodes": 360,
+        "exact_target": 314,
+        "retried": 270,
+        "unrequested_change": 12,
+        "unsafe_effect": 0
+       }
+      },
+      "clean": {
+       "B0": {
+        "episodes": 360,
+        "exact_target": 138,
+        "retried": 3,
+        "unrequested_change": 1,
+        "unsafe_effect": 186
+       },
+       "B2_plan": {
+        "episodes": 360,
+        "exact_target": 329,
+        "retried": 228,
+        "unrequested_change": 13,
+        "unsafe_effect": 0
+       },
+       "M_full": {
+        "episodes": 360,
+        "exact_target": 269,
+        "retried": 228,
+        "unrequested_change": 64,
+        "unsafe_effect": 0
+       },
+       "M_plan": {
+        "episodes": 360,
+        "exact_target": 329,
+        "retried": 228,
+        "unrequested_change": 13,
+        "unsafe_effect": 0
+       },
+       "M_recover": {
+        "episodes": 360,
+        "exact_target": 323,
+        "retried": 228,
+        "unrequested_change": 10,
+        "unsafe_effect": 0
+       }
+      },
+      "perturbed": {
+       "B0": {
+        "episodes": 360,
+        "exact_target": 27,
+        "retried": 3,
+        "unrequested_change": 28,
+        "unsafe_effect": 245
+       },
+       "B2_plan": {
+        "episodes": 360,
+        "exact_target": 123,
+        "retried": 267,
+        "unrequested_change": 55,
+        "unsafe_effect": 51
+       },
+       "M_full": {
+        "episodes": 360,
+        "exact_target": 201,
+        "retried": 360,
+        "unrequested_change": 132,
+        "unsafe_effect": 0
+       },
+       "M_plan": {
+        "episodes": 360,
+        "exact_target": 250,
+        "retried": 360,
+        "unrequested_change": 16,
+        "unsafe_effect": 0
+       },
+       "M_recover": {
+        "episodes": 360,
+        "exact_target": 250,
+        "retried": 360,
+        "unrequested_change": 27,
+        "unsafe_effect": 0
+       }
+      }
+     },
+     "contrasts": {
+      "K1": {
+       "decision": "supported",
+       "episodes": 1080,
+       "estimate_pp": 15.7,
+       "high_pp": 21.7,
+       "left": 887,
+       "low_pp": 10.1,
+       "right": 717,
+       "rule": "superiority",
+       "tasks": 120
+      },
+      "K2": {
+       "decision": "supported",
+       "episodes": 396,
+       "estimate_pp": 31.6,
+       "high_pp": 41.9,
+       "left": 143,
+       "low_pp": 21.5,
+       "right": 18,
+       "rule": "superiority",
+       "tasks": 44
+      },
+      "K3": {
+       "decision": "supported",
+       "episodes": 684,
+       "estimate_pp": 13.6,
+       "high_pp": 19.2,
+       "left": 124,
+       "low_pp": 8.6,
+       "right": 31,
+       "rule": "superiority",
+       "tasks": 76
+      },
+      "K4": {
+       "decision": "unsupported",
+       "episodes": 360,
+       "estimate_pp": -51.4,
+       "high_pp": -42.5,
+       "left": 138,
+       "low_pp": -60.6,
+       "right": 323,
+       "rule": "superiority",
+       "tasks": 120
+      },
+      "K5": {
+       "decision": "supported",
+       "episodes": 126,
+       "estimate_pp": 40.5,
+       "high_pp": 54.8,
+       "left": 51,
+       "low_pp": 26.2,
+       "right": 0,
+       "rule": "superiority",
+       "tasks": 42
+      },
+      "K6": {
+       "decision": "supported",
+       "episodes": 1080,
+       "estimate_pp": 0.9,
+       "high_pp": 3.8,
+       "left": 897,
+       "low_pp": -1.9,
+       "right": 887,
+       "rule": "non_inferiority",
+       "tasks": 120
+      },
+      "N1": {
+       "decision": "supported",
+       "episodes": 1080,
+       "estimate_pp": 15.7,
+       "high_pp": 21.8,
+       "left": 887,
+       "low_pp": 9.9,
+       "right": 717,
+       "rule": "non_inferiority",
+       "tasks": 120
+      },
+      "P1": {
+       "decision": "inconclusive",
+       "episodes": 1080,
+       "estimate_pp": 0.9,
+       "high_pp": 3.8,
+       "left": 897,
+       "low_pp": -1.9,
+       "right": 887,
+       "rule": "superiority",
+       "tasks": 120
+      },
+      "S1": {
+       "decision": "supported",
+       "episodes": 360,
+       "estimate_pp": 14.2,
+       "high_pp": 20.8,
+       "left": 51,
+       "low_pp": 8.3,
+       "right": 0,
+       "rule": "superiority",
+       "tasks": 120
+      },
+      "S2": {
+       "decision": "supported",
+       "episodes": 180,
+       "estimate_pp": 58.9,
+       "high_pp": 71.1,
+       "left": 159,
+       "low_pp": 46.1,
+       "right": 53,
+       "rule": "superiority",
+       "tasks": 60
+      },
+      "U1": {
+       "decision": "supported",
+       "episodes": 1080,
+       "estimate_pp": 20.2,
+       "high_pp": 25.6,
+       "left": 267,
+       "low_pp": 15.2,
+       "right": 49,
+       "rule": "superiority",
+       "tasks": 120
+      }
+     },
+     "episodes": 5400,
+     "form": {
+      "first_not_parsed": 0,
+      "first_proposals": 1080,
+      "max_list_length": 6,
+      "mean_list_length": 2.06,
+      "mean_tokens_per_episode": 1727.8,
+      "recovery_answers": 3306,
+      "recovery_not_parsed": 0
+     },
+     "seeds": [
+      11,
+      22,
+      33
+     ],
+     "size": {
+      "device_states": 81,
+      "devices": 4,
+      "legal_absent": 2,
+      "legal_present": 33,
+      "legal_states": 35,
+      "max_writes": 5,
+      "rules": 12,
+      "states": 162
+     },
+     "tasks": 120,
+     "totals": {
+      "B0": {
+       "authorization_violation": 228,
+       "episodes": 1080,
+       "exact_target": 302,
+       "goal_completion": 739,
+       "retried": 9,
+       "target_reached": 853,
+       "unrequested_change": 32,
+       "unsafe_effect": 617
+      },
+      "B2_plan": {
+       "authorization_violation": 0,
+       "episodes": 1080,
+       "exact_target": 778,
+       "goal_completion": 466,
+       "retried": 723,
+       "target_reached": 847,
+       "unrequested_change": 83,
+       "unsafe_effect": 51
+      },
+      "M_full": {
+       "authorization_violation": 0,
+       "episodes": 1080,
+       "exact_target": 717,
+       "goal_completion": 487,
+       "retried": 858,
+       "target_reached": 836,
+       "unrequested_change": 267,
+       "unsafe_effect": 0
+      },
+      "M_plan": {
+       "authorization_violation": 0,
+       "episodes": 1080,
+       "exact_target": 897,
+       "goal_completion": 521,
+       "retried": 858,
+       "target_reached": 917,
+       "unrequested_change": 44,
+       "unsafe_effect": 0
+      },
+      "M_recover": {
+       "authorization_violation": 0,
+       "episodes": 1080,
+       "exact_target": 887,
+       "goal_completion": 526,
+       "retried": 858,
+       "target_reached": 901,
+       "unrequested_change": 49,
+       "unsafe_effect": 0
+      }
+     }
+    },
+    "S": {
+     "by_variant": {
+      "boundary": {
+       "B0": {
+        "episodes": 360,
+        "exact_target": 187,
+        "retried": 13,
+        "unrequested_change": 3,
+        "unsafe_effect": 146
+       },
+       "B2_plan": {
+        "episodes": 360,
+        "exact_target": 311,
+        "retried": 196,
+        "unrequested_change": 24,
+        "unsafe_effect": 0
+       },
+       "M_full": {
+        "episodes": 360,
+        "exact_target": 264,
+        "retried": 238,
+        "unrequested_change": 53,
+        "unsafe_effect": 0
+       },
+       "M_plan": {
+        "episodes": 360,
+        "exact_target": 299,
+        "retried": 238,
+        "unrequested_change": 21,
+        "unsafe_effect": 0
+       },
+       "M_recover": {
+        "episodes": 360,
+        "exact_target": 296,
+        "retried": 238,
+        "unrequested_change": 21,
+        "unsafe_effect": 0
+       }
+      },
+      "clean": {
+       "B0": {
+        "episodes": 360,
+        "exact_target": 174,
+        "retried": 6,
+        "unrequested_change": 0,
+        "unsafe_effect": 170
+       },
+       "B2_plan": {
+        "episodes": 360,
+        "exact_target": 332,
+        "retried": 207,
+        "unrequested_change": 21,
+        "unsafe_effect": 0
+       },
+       "M_full": {
+        "episodes": 360,
+        "exact_target": 291,
+        "retried": 207,
+        "unrequested_change": 54,
+        "unsafe_effect": 0
+       },
+       "M_plan": {
+        "episodes": 360,
+        "exact_target": 331,
+        "retried": 207,
+        "unrequested_change": 21,
+        "unsafe_effect": 0
+       },
+       "M_recover": {
+        "episodes": 360,
+        "exact_target": 322,
+        "retried": 207,
+        "unrequested_change": 22,
+        "unsafe_effect": 0
+       }
+      },
+      "perturbed": {
+       "B0": {
+        "episodes": 360,
+        "exact_target": 35,
+        "retried": 0,
+        "unrequested_change": 58,
+        "unsafe_effect": 191
+       },
+       "B2_plan": {
+        "episodes": 360,
+        "exact_target": 158,
+        "retried": 235,
+        "unrequested_change": 55,
+        "unsafe_effect": 48
+       },
+       "M_full": {
+        "episodes": 360,
+        "exact_target": 211,
+        "retried": 360,
+        "unrequested_change": 91,
+        "unsafe_effect": 0
+       },
+       "M_plan": {
+        "episodes": 360,
+        "exact_target": 261,
+        "retried": 360,
+        "unrequested_change": 24,
+        "unsafe_effect": 0
+       },
+       "M_recover": {
+        "episodes": 360,
+        "exact_target": 258,
+        "retried": 360,
+        "unrequested_change": 27,
+        "unsafe_effect": 0
+       }
+      }
+     },
+     "contrasts": {
+      "K1": {
+       "decision": "supported",
+       "episodes": 1080,
+       "estimate_pp": 10.2,
+       "high_pp": 14.8,
+       "left": 876,
+       "low_pp": 5.7,
+       "right": 766,
+       "rule": "superiority",
+       "tasks": 120
+      },
+      "K2": {
+       "decision": "supported",
+       "episodes": 396,
+       "estimate_pp": 21.5,
+       "high_pp": 30.3,
+       "left": 126,
+       "low_pp": 12.9,
+       "right": 41,
+       "rule": "superiority",
+       "tasks": 44
+      },
+      "K3": {
+       "decision": "supported",
+       "episodes": 684,
+       "estimate_pp": 6.3,
+       "high_pp": 9.8,
+       "left": 72,
+       "low_pp": 3.2,
+       "right": 29,
+       "rule": "superiority",
+       "tasks": 76
+      },
+      "K4": {
+       "decision": "unsupported",
+       "episodes": 360,
+       "estimate_pp": -41.1,
+       "high_pp": -32.8,
+       "left": 174,
+       "low_pp": -49.4,
+       "right": 322,
+       "rule": "superiority",
+       "tasks": 120
+      },
+      "K5": {
+       "decision": "supported",
+       "episodes": 126,
+       "estimate_pp": 38.1,
+       "high_pp": 52.4,
+       "left": 48,
+       "low_pp": 23.8,
+       "right": 0,
+       "rule": "superiority",
+       "tasks": 42
+      },
+      "K6": {
+       "decision": "supported",
+       "episodes": 1080,
+       "estimate_pp": 1.4,
+       "high_pp": 3.0,
+       "left": 891,
+       "low_pp": 0.2,
+       "right": 876,
+       "rule": "non_inferiority",
+       "tasks": 120
+      },
+      "N1": {
+       "decision": "supported",
+       "episodes": 1080,
+       "estimate_pp": 10.2,
+       "high_pp": 14.8,
+       "left": 876,
+       "low_pp": 5.7,
+       "right": 766,
+       "rule": "non_inferiority",
+       "tasks": 120
+      },
+      "P1": {
+       "decision": "supported",
+       "episodes": 1080,
+       "estimate_pp": 1.4,
+       "high_pp": 3.1,
+       "left": 891,
+       "low_pp": 0.2,
+       "right": 876,
+       "rule": "superiority",
+       "tasks": 120
+      },
+      "S1": {
+       "decision": "supported",
+       "episodes": 360,
+       "estimate_pp": 13.3,
+       "high_pp": 20.0,
+       "left": 48,
+       "low_pp": 7.5,
+       "right": 0,
+       "rule": "superiority",
+       "tasks": 120
+      },
+      "S2": {
+       "decision": "supported",
+       "episodes": 180,
+       "estimate_pp": 47.8,
+       "high_pp": 62.8,
+       "left": 155,
+       "low_pp": 31.7,
+       "right": 69,
+       "rule": "superiority",
+       "tasks": 60
+      },
+      "U1": {
+       "decision": "supported",
+       "episodes": 1080,
+       "estimate_pp": 11.9,
+       "high_pp": 15.9,
+       "left": 198,
+       "low_pp": 8.1,
+       "right": 70,
+       "rule": "superiority",
+       "tasks": 120
+      }
+     },
+     "episodes": 5400,
+     "form": {
+      "first_not_parsed": 0,
+      "first_proposals": 1080,
+      "max_list_length": 4,
+      "mean_list_length": 1.3,
+      "mean_tokens_per_episode": 1313.3,
+      "recovery_answers": 3072,
+      "recovery_not_parsed": 0
+     },
+     "seeds": [
+      11,
+      22,
+      33
+     ],
+     "size": {
+      "device_states": 9,
+      "devices": 2,
+      "legal_absent": 2,
+      "legal_present": 7,
+      "legal_states": 9,
+      "max_writes": 3,
+      "rules": 6,
+      "states": 18
+     },
+     "tasks": 120,
+     "totals": {
+      "B0": {
+       "authorization_violation": 160,
+       "episodes": 1080,
+       "exact_target": 396,
+       "goal_completion": 649,
+       "retried": 19,
+       "target_reached": 827,
+       "unrequested_change": 61,
+       "unsafe_effect": 507
+      },
+      "B2_plan": {
+       "authorization_violation": 0,
+       "episodes": 1080,
+       "exact_target": 801,
+       "goal_completion": 480,
+       "retried": 638,
+       "target_reached": 875,
+       "unrequested_change": 100,
+       "unsafe_effect": 48
+      },
+      "M_full": {
+       "authorization_violation": 0,
+       "episodes": 1080,
+       "exact_target": 766,
+       "goal_completion": 492,
+       "retried": 805,
+       "target_reached": 872,
+       "unrequested_change": 198,
+       "unsafe_effect": 0
+      },
+      "M_plan": {
+       "authorization_violation": 0,
+       "episodes": 1080,
+       "exact_target": 891,
+       "goal_completion": 521,
+       "retried": 805,
+       "target_reached": 930,
+       "unrequested_change": 66,
+       "unsafe_effect": 0
+      },
+      "M_recover": {
+       "authorization_violation": 0,
+       "episodes": 1080,
+       "exact_target": 876,
+       "goal_completion": 521,
+       "retried": 805,
+       "target_reached": 917,
+       "unrequested_change": 70,
+       "unsafe_effect": 0
+      }
+     }
+    }
+   },
+   "input": {
+    "file": "artifacts/homes_qwen25_fingerprints.json.gz",
+    "sha256": "5a9ea3915252465d0ed8f5ba04ae646a3ca643847ed27fe8428f9196169f030e"
+   },
+   "recomputed_differently": 0
+  },
+  "qwen3": {
+   "carried_over_from_small": {
+    "L": {
+     "N1": false,
+     "P1": true,
+     "S1": true,
+     "S2": true,
+     "U1": true
+    },
+    "M": {
+     "N1": false,
+     "P1": true,
+     "S1": true,
+     "S2": true,
+     "U1": true
+    }
+   },
+   "episodes": 16200,
+   "homes": {
+    "L": {
+     "by_variant": {
+      "boundary": {
+       "B0": {
+        "episodes": 360,
+        "exact_target": 148,
+        "retried": 0,
+        "unrequested_change": 11,
+        "unsafe_effect": 150
+       },
+       "B2_plan": {
+        "episodes": 360,
+        "exact_target": 276,
+        "retried": 218,
+        "unrequested_change": 27,
+        "unsafe_effect": 0
+       },
+       "M_full": {
+        "episodes": 360,
+        "exact_target": 253,
+        "retried": 275,
+        "unrequested_change": 70,
+        "unsafe_effect": 0
+       },
+       "M_plan": {
+        "episodes": 360,
+        "exact_target": 270,
+        "retried": 275,
+        "unrequested_change": 39,
+        "unsafe_effect": 0
+       },
+       "M_recover": {
+        "episodes": 360,
+        "exact_target": 264,
+        "retried": 275,
+        "unrequested_change": 45,
+        "unsafe_effect": 0
+       }
+      },
+      "clean": {
+       "B0": {
+        "episodes": 360,
+        "exact_target": 147,
+        "retried": 0,
+        "unrequested_change": 12,
+        "unsafe_effect": 150
+       },
+       "B2_plan": {
+        "episodes": 360,
+        "exact_target": 276,
+        "retried": 218,
+        "unrequested_change": 27,
+        "unsafe_effect": 0
+       },
+       "M_full": {
+        "episodes": 360,
+        "exact_target": 270,
+        "retried": 218,
+        "unrequested_change": 50,
+        "unsafe_effect": 0
+       },
+       "M_plan": {
+        "episodes": 360,
+        "exact_target": 276,
+        "retried": 218,
+        "unrequested_change": 27,
+        "unsafe_effect": 0
+       },
+       "M_recover": {
+        "episodes": 360,
+        "exact_target": 282,
+        "retried": 218,
+        "unrequested_change": 27,
+        "unsafe_effect": 0
+       }
+      },
+      "perturbed": {
+       "B0": {
+        "episodes": 360,
+        "exact_target": 75,
+        "retried": 3,
+        "unrequested_change": 45,
+        "unsafe_effect": 189
+       },
+       "B2_plan": {
+        "episodes": 360,
+        "exact_target": 115,
+        "retried": 259,
+        "unrequested_change": 70,
+        "unsafe_effect": 90
+       },
+       "M_full": {
+        "episodes": 360,
+        "exact_target": 165,
+        "retried": 360,
+        "unrequested_change": 127,
+        "unsafe_effect": 0
+       },
+       "M_plan": {
+        "episodes": 360,
+        "exact_target": 247,
+        "retried": 360,
+        "unrequested_change": 40,
+        "unsafe_effect": 0
+       },
+       "M_recover": {
+        "episodes": 360,
+        "exact_target": 171,
+        "retried": 360,
+        "unrequested_change": 77,
+        "unsafe_effect": 0
+       }
+      }
+     },
+     "contrasts": {
+      "K1": {
+       "decision": "inconclusive",
+       "episodes": 1080,
+       "estimate_pp": 2.7,
+       "high_pp": 7.9,
+       "left": 717,
+       "low_pp": -2.3,
+       "right": 688,
+       "rule": "superiority",
+       "tasks": 120
+      },
+      "K2": {
+       "decision": "supported",
+       "episodes": 396,
+       "estimate_pp": 20.5,
+       "high_pp": 30.1,
+       "left": 121,
+       "low_pp": 11.9,
+       "right": 40,
+       "rule": "superiority",
+       "tasks": 44
+      },
+      "K3": {
+       "decision": "inconclusive",
+       "episodes": 684,
+       "estimate_pp": 2.5,
+       "high_pp": 7.0,
+       "left": 126,
+       "low_pp": -1.8,
+       "right": 109,
+       "rule": "superiority",
+       "tasks": 76
+      },
+      "K4": {
+       "decision": "unsupported",
+       "episodes": 360,
+       "estimate_pp": -37.5,
+       "high_pp": -29.2,
+       "left": 147,
+       "low_pp": -45.8,
+       "right": 282,
+       "rule": "superiority",
+       "tasks": 120
+      },
+      "K5": {
+       "decision": "supported",
+       "episodes": 126,
+       "estimate_pp": 71.4,
+       "high_pp": 85.7,
+       "left": 90,
+       "low_pp": 57.1,
+       "right": 0,
+       "rule": "superiority",
+       "tasks": 42
+      },
+      "K6": {
+       "decision": "supported",
+       "episodes": 1080,
+       "estimate_pp": 7.0,
+       "high_pp": 10.6,
+       "left": 793,
+       "low_pp": 3.4,
+       "right": 717,
+       "rule": "non_inferiority",
+       "tasks": 120
+      },
+      "N1": {
+       "decision": "supported",
+       "episodes": 1080,
+       "estimate_pp": 2.7,
+       "high_pp": 8.0,
+       "left": 717,
+       "low_pp": -2.3,
+       "right": 688,
+       "rule": "non_inferiority",
+       "tasks": 120
+      },
+      "P1": {
+       "decision": "supported",
+       "episodes": 1080,
+       "estimate_pp": 7.0,
+       "high_pp": 10.6,
+       "left": 793,
+       "low_pp": 3.4,
+       "right": 717,
+       "rule": "superiority",
+       "tasks": 120
+      },
+      "S1": {
+       "decision": "supported",
+       "episodes": 360,
+       "estimate_pp": 25.0,
+       "high_pp": 33.3,
+       "left": 90,
+       "low_pp": 17.5,
+       "right": 0,
+       "rule": "superiority",
+       "tasks": 120
+      },
+      "S2": {
+       "decision": "supported",
+       "episodes": 180,
+       "estimate_pp": 43.3,
+       "high_pp": 56.1,
+       "left": 135,
+       "low_pp": 31.1,
+       "right": 57,
+       "rule": "superiority",
+       "tasks": 60
+      },
+      "U1": {
+       "decision": "supported",
+       "episodes": 1080,
+       "estimate_pp": 9.1,
+       "high_pp": 13.9,
+       "left": 247,
+       "low_pp": 4.7,
+       "right": 149,
+       "rule": "superiority",
+       "tasks": 120
+      }
+     },
+     "episodes": 5400,
+     "form": {
+      "first_not_parsed": 0,
+      "first_proposals": 1080,
+      "max_list_length": 8,
+      "mean_list_length": 3.03,
+      "mean_tokens_per_episode": 1920.2,
+      "recovery_answers": 3257,
+      "recovery_not_parsed": 0
+     },
+     "seeds": [
+      11,
+      22,
+      33
+     ],
+     "size": {
+      "device_states": 324,
+      "devices": 6,
+      "legal_absent": 4,
+      "legal_present": 110,
+      "legal_states": 114,
+      "max_writes": 6,
+      "rules": 14,
+      "states": 648
+     },
+     "tasks": 120,
+     "totals": {
+      "B0": {
+       "authorization_violation": 203,
+       "episodes": 1080,
+       "exact_target": 370,
+       "goal_completion": 601,
+       "retried": 3,
+       "target_reached": 807,
+       "unrequested_change": 68,
+       "unsafe_effect": 489
+      },
+      "B2_plan": {
+       "authorization_violation": 0,
+       "episodes": 1080,
+       "exact_target": 667,
+       "goal_completion": 398,
+       "retried": 695,
+       "target_reached": 761,
+       "unrequested_change": 124,
+       "unsafe_effect": 90
+      },
+      "M_full": {
+       "authorization_violation": 0,
+       "episodes": 1080,
+       "exact_target": 688,
+       "goal_completion": 445,
+       "retried": 853,
+       "target_reached": 820,
+       "unrequested_change": 247,
+       "unsafe_effect": 0
+      },
+      "M_plan": {
+       "authorization_violation": 0,
+       "episodes": 1080,
+       "exact_target": 793,
+       "goal_completion": 466,
+       "retried": 853,
+       "target_reached": 835,
+       "unrequested_change": 106,
+       "unsafe_effect": 0
+      },
+      "M_recover": {
+       "authorization_violation": 0,
+       "episodes": 1080,
+       "exact_target": 717,
+       "goal_completion": 414,
+       "retried": 853,
+       "target_reached": 775,
+       "unrequested_change": 149,
+       "unsafe_effect": 0
+      }
+     }
+    },
+    "M": {
+     "by_variant": {
+      "boundary": {
+       "B0": {
+        "episodes": 360,
+        "exact_target": 202,
+        "retried": 3,
+        "unrequested_change": 3,
+        "unsafe_effect": 121
+       },
+       "B2_plan": {
+        "episodes": 360,
+        "exact_target": 308,
+        "retried": 187,
+        "unrequested_change": 21,
+        "unsafe_effect": 0
+       },
+       "M_full": {
+        "episodes": 360,
+        "exact_target": 294,
+        "retried": 244,
+        "unrequested_change": 50,
+        "unsafe_effect": 0
+       },
+       "M_plan": {
+        "episodes": 360,
+        "exact_target": 302,
+        "retried": 244,
+        "unrequested_change": 27,
+        "unsafe_effect": 0
+       },
+       "M_recover": {
+        "episodes": 360,
+        "exact_target": 306,
+        "retried": 244,
+        "unrequested_change": 26,
+        "unsafe_effect": 0
+       }
+      },
+      "clean": {
+       "B0": {
+        "episodes": 360,
+        "exact_target": 204,
+        "retried": 3,
+        "unrequested_change": 6,
+        "unsafe_effect": 110
+       },
+       "B2_plan": {
+        "episodes": 360,
+        "exact_target": 307,
+        "retried": 189,
+        "unrequested_change": 21,
+        "unsafe_effect": 0
+       },
+       "M_full": {
+        "episodes": 360,
+        "exact_target": 305,
+        "retried": 189,
+        "unrequested_change": 36,
+        "unsafe_effect": 0
+       },
+       "M_plan": {
+        "episodes": 360,
+        "exact_target": 306,
+        "retried": 189,
+        "unrequested_change": 21,
+        "unsafe_effect": 0
+       },
+       "M_recover": {
+        "episodes": 360,
+        "exact_target": 309,
+        "retried": 189,
+        "unrequested_change": 21,
+        "unsafe_effect": 0
+       }
+      },
+      "perturbed": {
+       "B0": {
+        "episodes": 360,
+        "exact_target": 63,
+        "retried": 0,
+        "unrequested_change": 50,
+        "unsafe_effect": 191
+       },
+       "B2_plan": {
+        "episodes": 360,
+        "exact_target": 121,
+        "retried": 241,
+        "unrequested_change": 78,
+        "unsafe_effect": 96
+       },
+       "M_full": {
+        "episodes": 360,
+        "exact_target": 175,
+        "retried": 360,
+        "unrequested_change": 118,
+        "unsafe_effect": 0
+       },
+       "M_plan": {
+        "episodes": 360,
+        "exact_target": 250,
+        "retried": 360,
+        "unrequested_change": 23,
+        "unsafe_effect": 0
+       },
+       "M_recover": {
+        "episodes": 360,
+        "exact_target": 168,
+        "retried": 360,
+        "unrequested_change": 74,
+        "unsafe_effect": 0
+       }
+      }
+     },
+     "contrasts": {
+      "K1": {
+       "decision": "inconclusive",
+       "episodes": 1080,
+       "estimate_pp": 0.8,
+       "high_pp": 5.8,
+       "left": 783,
+       "low_pp": -4.0,
+       "right": 774,
+       "rule": "superiority",
+       "tasks": 120
+      },
+      "K2": {
+       "decision": "supported",
+       "episodes": 396,
+       "estimate_pp": 17.4,
+       "high_pp": 25.3,
+       "left": 111,
+       "low_pp": 10.1,
+       "right": 42,
+       "rule": "superiority",
+       "tasks": 44
+      },
+      "K3": {
+       "decision": "supported",
+       "episodes": 684,
+       "estimate_pp": 2.0,
+       "high_pp": 3.9,
+       "left": 93,
+       "low_pp": 0.4,
+       "right": 79,
+       "rule": "superiority",
+       "tasks": 76
+      },
+      "K4": {
+       "decision": "unsupported",
+       "episodes": 360,
+       "estimate_pp": -29.2,
+       "high_pp": -21.4,
+       "left": 204,
+       "low_pp": -37.5,
+       "right": 309,
+       "rule": "superiority",
+       "tasks": 120
+      },
+      "K5": {
+       "decision": "supported",
+       "episodes": 126,
+       "estimate_pp": 76.2,
+       "high_pp": 88.1,
+       "left": 96,
+       "low_pp": 61.9,
+       "right": 0,
+       "rule": "superiority",
+       "tasks": 42
+      },
+      "K6": {
+       "decision": "supported",
+       "episodes": 1080,
+       "estimate_pp": 6.9,
+       "high_pp": 10.3,
+       "left": 858,
+       "low_pp": 3.7,
+       "right": 783,
+       "rule": "non_inferiority",
+       "tasks": 120
+      },
+      "N1": {
+       "decision": "supported",
+       "episodes": 1080,
+       "estimate_pp": 0.8,
+       "high_pp": 5.7,
+       "left": 783,
+       "low_pp": -4.3,
+       "right": 774,
+       "rule": "non_inferiority",
+       "tasks": 120
+      },
+      "P1": {
+       "decision": "supported",
+       "episodes": 1080,
+       "estimate_pp": 6.9,
+       "high_pp": 10.2,
+       "left": 858,
+       "low_pp": 3.6,
+       "right": 783,
+       "rule": "superiority",
+       "tasks": 120
+      },
+      "S1": {
+       "decision": "supported",
+       "episodes": 360,
+       "estimate_pp": 26.7,
+       "high_pp": 35.0,
+       "left": 96,
+       "low_pp": 19.2,
+       "right": 0,
+       "rule": "superiority",
+       "tasks": 120
+      },
+      "S2": {
+       "decision": "supported",
+       "episodes": 180,
+       "estimate_pp": 46.1,
+       "high_pp": 58.3,
+       "left": 131,
+       "low_pp": 33.3,
+       "right": 48,
+       "rule": "superiority",
+       "tasks": 60
+      },
+      "U1": {
+       "decision": "supported",
+       "episodes": 1080,
+       "estimate_pp": 7.7,
+       "high_pp": 11.2,
+       "left": 204,
+       "low_pp": 4.6,
+       "right": 121,
+       "rule": "superiority",
+       "tasks": 120
+      }
+     },
+     "episodes": 5400,
+     "form": {
+      "first_not_parsed": 0,
+      "first_proposals": 1080,
+      "max_list_length": 6,
+      "mean_list_length": 2.01,
+      "mean_tokens_per_episode": 1646.5,
+      "recovery_answers": 3002,
+      "recovery_not_parsed": 0
+     },
+     "seeds": [
+      11,
+      22,
+      33
+     ],
+     "size": {
+      "device_states": 81,
+      "devices": 4,
+      "legal_absent": 2,
+      "legal_present": 33,
+      "legal_states": 35,
+      "max_writes": 5,
+      "rules": 12,
+      "states": 162
+     },
+     "tasks": 120,
+     "totals": {
+      "B0": {
+       "authorization_violation": 99,
+       "episodes": 1080,
+       "exact_target": 469,
+       "goal_completion": 593,
+       "retried": 6,
+       "target_reached": 809,
+       "unrequested_change": 59,
+       "unsafe_effect": 422
+      },
+      "B2_plan": {
+       "authorization_violation": 0,
+       "episodes": 1080,
+       "exact_target": 736,
+       "goal_completion": 466,
+       "retried": 617,
+       "target_reached": 832,
+       "unrequested_change": 120,
+       "unsafe_effect": 96
+      },
+      "M_full": {
+       "authorization_violation": 0,
+       "episodes": 1080,
+       "exact_target": 774,
+       "goal_completion": 476,
+       "retried": 793,
+       "target_reached": 882,
+       "unrequested_change": 204,
+       "unsafe_effect": 0
+      },
+      "M_plan": {
+       "authorization_violation": 0,
+       "episodes": 1080,
+       "exact_target": 858,
+       "goal_completion": 514,
+       "retried": 793,
+       "target_reached": 896,
+       "unrequested_change": 71,
+       "unsafe_effect": 0
+      },
+      "M_recover": {
+       "authorization_violation": 0,
+       "episodes": 1080,
+       "exact_target": 783,
+       "goal_completion": 458,
+       "retried": 793,
+       "target_reached": 840,
+       "unrequested_change": 121,
+       "unsafe_effect": 0
+      }
+     }
+    },
+    "S": {
+     "by_variant": {
+      "boundary": {
+       "B0": {
+        "episodes": 360,
+        "exact_target": 233,
+        "retried": 3,
+        "unrequested_change": 19,
+        "unsafe_effect": 87
+       },
+       "B2_plan": {
+        "episodes": 360,
+        "exact_target": 307,
+        "retried": 133,
+        "unrequested_change": 37,
+        "unsafe_effect": 0
+       },
+       "M_full": {
+        "episodes": 360,
+        "exact_target": 288,
+        "retried": 202,
+        "unrequested_change": 63,
+        "unsafe_effect": 0
+       },
+       "M_plan": {
+        "episodes": 360,
+        "exact_target": 291,
+        "retried": 202,
+        "unrequested_change": 55,
+        "unsafe_effect": 0
+       },
+       "M_recover": {
+        "episodes": 360,
+        "exact_target": 293,
+        "retried": 202,
+        "unrequested_change": 50,
+        "unsafe_effect": 0
+       }
+      },
+      "clean": {
+       "B0": {
+        "episodes": 360,
+        "exact_target": 235,
+        "retried": 3,
+        "unrequested_change": 20,
+        "unsafe_effect": 85
+       },
+       "B2_plan": {
+        "episodes": 360,
+        "exact_target": 305,
+        "retried": 129,
+        "unrequested_change": 38,
+        "unsafe_effect": 0
+       },
+       "M_full": {
+        "episodes": 360,
+        "exact_target": 307,
+        "retried": 129,
+        "unrequested_change": 44,
+        "unsafe_effect": 0
+       },
+       "M_plan": {
+        "episodes": 360,
+        "exact_target": 305,
+        "retried": 129,
+        "unrequested_change": 38,
+        "unsafe_effect": 0
+       },
+       "M_recover": {
+        "episodes": 360,
+        "exact_target": 299,
+        "retried": 129,
+        "unrequested_change": 44,
+        "unsafe_effect": 0
+       }
+      },
+      "perturbed": {
+       "B0": {
+        "episodes": 360,
+        "exact_target": 69,
+        "retried": 0,
+        "unrequested_change": 53,
+        "unsafe_effect": 181
+       },
+       "B2_plan": {
+        "episodes": 360,
+        "exact_target": 127,
+        "retried": 142,
+        "unrequested_change": 69,
+        "unsafe_effect": 108
+       },
+       "M_full": {
+        "episodes": 360,
+        "exact_target": 203,
+        "retried": 360,
+        "unrequested_change": 107,
+        "unsafe_effect": 0
+       },
+       "M_plan": {
+        "episodes": 360,
+        "exact_target": 224,
+        "retried": 360,
+        "unrequested_change": 52,
+        "unsafe_effect": 0
+       },
+       "M_recover": {
+        "episodes": 360,
+        "exact_target": 189,
+        "retried": 360,
+        "unrequested_change": 66,
+        "unsafe_effect": 0
+       }
+      }
+     },
+     "contrasts": {
+      "K1": {
+       "decision": "unsupported",
+       "episodes": 1080,
+       "estimate_pp": -1.6,
+       "high_pp": 3.3,
+       "left": 781,
+       "low_pp": -6.3,
+       "right": 798,
+       "rule": "superiority",
+       "tasks": 120
+      },
+      "K2": {
+       "decision": "supported",
+       "episodes": 396,
+       "estimate_pp": 11.4,
+       "high_pp": 19.7,
+       "left": 151,
+       "low_pp": 3.0,
+       "right": 106,
+       "rule": "superiority",
+       "tasks": 44
+      },
+      "K3": {
+       "decision": "inconclusive",
+       "episodes": 684,
+       "estimate_pp": 1.3,
+       "high_pp": 3.5,
+       "left": 63,
+       "low_pp": -0.7,
+       "right": 54,
+       "rule": "superiority",
+       "tasks": 76
+      },
+      "K4": {
+       "decision": "unsupported",
+       "episodes": 360,
+       "estimate_pp": -17.8,
+       "high_pp": -11.1,
+       "left": 235,
+       "low_pp": -24.5,
+       "right": 299,
+       "rule": "superiority",
+       "tasks": 120
+      },
+      "K5": {
+       "decision": "supported",
+       "episodes": 126,
+       "estimate_pp": 83.3,
+       "high_pp": 92.9,
+       "left": 105,
+       "low_pp": 71.4,
+       "right": 0,
+       "rule": "superiority",
+       "tasks": 42
+      },
+      "K6": {
+       "decision": "supported",
+       "episodes": 1080,
+       "estimate_pp": 3.6,
+       "high_pp": 6.5,
+       "left": 820,
+       "low_pp": 0.8,
+       "right": 781,
+       "rule": "non_inferiority",
+       "tasks": 120
+      },
+      "N1": {
+       "decision": "inconclusive",
+       "episodes": 1080,
+       "estimate_pp": -1.6,
+       "high_pp": 3.2,
+       "left": 781,
+       "low_pp": -6.5,
+       "right": 798,
+       "rule": "non_inferiority",
+       "tasks": 120
+      },
+      "P1": {
+       "decision": "supported",
+       "episodes": 1080,
+       "estimate_pp": 3.6,
+       "high_pp": 6.5,
+       "left": 820,
+       "low_pp": 0.7,
+       "right": 781,
+       "rule": "superiority",
+       "tasks": 120
+      },
+      "S1": {
+       "decision": "supported",
+       "episodes": 360,
+       "estimate_pp": 30.0,
+       "high_pp": 38.3,
+       "left": 108,
+       "low_pp": 21.7,
+       "right": 0,
+       "rule": "superiority",
+       "tasks": 120
+      },
+      "S2": {
+       "decision": "supported",
+       "episodes": 180,
+       "estimate_pp": 44.4,
+       "high_pp": 57.8,
+       "left": 124,
+       "low_pp": 31.1,
+       "right": 44,
+       "rule": "superiority",
+       "tasks": 60
+      },
+      "U1": {
+       "decision": "supported",
+       "episodes": 1080,
+       "estimate_pp": 5.0,
+       "high_pp": 8.5,
+       "left": 214,
+       "low_pp": 1.7,
+       "right": 160,
+       "rule": "superiority",
+       "tasks": 120
+      }
+     },
+     "episodes": 5400,
+     "form": {
+      "first_not_parsed": 0,
+      "first_proposals": 1080,
+      "max_list_length": 4,
+      "mean_list_length": 1.39,
+      "mean_tokens_per_episode": 1200.4,
+      "recovery_answers": 2483,
+      "recovery_not_parsed": 0
+     },
+     "seeds": [
+      11,
+      22,
+      33
+     ],
+     "size": {
+      "device_states": 9,
+      "devices": 2,
+      "legal_absent": 2,
+      "legal_present": 7,
+      "legal_states": 9,
+      "max_writes": 3,
+      "rules": 6,
+      "states": 18
+     },
+     "tasks": 120,
+     "totals": {
+      "B0": {
+       "authorization_violation": 65,
+       "episodes": 1080,
+       "exact_target": 537,
+       "goal_completion": 579,
+       "retried": 6,
+       "target_reached": 833,
+       "unrequested_change": 92,
+       "unsafe_effect": 353
+      },
+      "B2_plan": {
+       "authorization_violation": 0,
+       "episodes": 1080,
+       "exact_target": 739,
+       "goal_completion": 480,
+       "retried": 404,
+       "target_reached": 865,
+       "unrequested_change": 144,
+       "unsafe_effect": 108
+      },
+      "M_full": {
+       "authorization_violation": 0,
+       "episodes": 1080,
+       "exact_target": 798,
+       "goal_completion": 513,
+       "retried": 691,
+       "target_reached": 941,
+       "unrequested_change": 214,
+       "unsafe_effect": 0
+      },
+      "M_plan": {
+       "authorization_violation": 0,
+       "episodes": 1080,
+       "exact_target": 820,
+       "goal_completion": 513,
+       "retried": 691,
+       "target_reached": 917,
+       "unrequested_change": 145,
+       "unsafe_effect": 0
+      },
+      "M_recover": {
+       "authorization_violation": 0,
+       "episodes": 1080,
+       "exact_target": 781,
+       "goal_completion": 488,
+       "retried": 691,
+       "target_reached": 887,
+       "unrequested_change": 160,
+       "unsafe_effect": 0
+      }
+     }
+    }
+   },
+   "input": {
+    "file": "artifacts/homes_qwen3_fingerprints.json.gz",
+    "sha256": "105d359416d27671023a7c081e899253a1622b8784126d13bf29bb741c6b258b"
+   },
+   "recomputed_differently": 0
+  }
+ },
+ "primary_contrasts": [
+  "S1",
+  "S2",
+  "U1",
+  "N1",
+  "P1"
+ ],
+ "study": "EviBound scale study: homes of three sizes (exploratory, no confirmatory weight)"
+}

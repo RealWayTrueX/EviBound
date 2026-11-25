@@ -1,0 +1,57 @@
+{
+  "first_proposals": {
+    "answers": 3240,
+    "at_token_limit": 0,
+    "mean_output_tokens": 46.9,
+    "not_parsed": 0,
+    "with_reasoning_text": 0
+  },
+  "first_proposals_not_parsed_share": 0.0,
+  "ok": true,
+  "recovery_answers": {
+    "answers": 9750,
+    "at_token_limit": 0,
+    "mean_output_tokens": 47.2,
+    "not_parsed": 11,
+    "with_reasoning_text": 0
+  },
+  "recovery_answers_by_condition": {
+    "B0": {
+      "answers": 28,
+      "at_token_limit": 0,
+      "mean_output_tokens": 54.9,
+      "not_parsed": 0,
+      "with_reasoning_text": 0
+    },
+    "B2_plan": {
+      "answers": 2069,
+      "at_token_limit": 0,
+      "mean_output_tokens": 47.1,
+      "not_parsed": 2,
+      "with_reasoning_text": 0
+    },
+    "M_full": {
+      "answers": 2551,
+      "at_token_limit": 0,
+      "mean_output_tokens": 46.8,
+      "not_parsed": 0,
+      "with_reasoning_text": 0
+    },
+    "M_plan": {
+      "answers": 2551,
+      "at_token_limit": 0,
+      "mean_output_tokens": 46.2,
+      "not_parsed": 0,
+      "with_reasoning_text": 0
+    },
+    "M_recover": {
+      "answers": 2551,
+      "at_token_limit": 0,
+      "mean_output_tokens": 48.8,
+      "not_parsed": 9,
+      "with_reasoning_text": 0
+    }
+  },
+  "rule": "no answer with reasoning text, and at most 20% of the first proposals not parsed",
+  "token_limit": 384
+}
