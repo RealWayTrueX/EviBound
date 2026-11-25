@@ -106,11 +106,30 @@ it ended in the attainable target slightly more often (2584 against 2505 of
 advice as such; this reading was made after the results.
 <!-- /v3.1:checked -->
 
-Standing of v3.1: one planner model; a corpus that was generated and checked
-by programs, with the owner's review following the run; a plan that was
-written, revised after development runs and frozen by an AI assistant on the
-owner's instruction ([SAFETY.md](SAFETY.md), section 5). It does not change
-any v2 or v3 result.
+Standing of v3.1: one planner model in the confirmatory run; a corpus that
+was generated and checked by programs, with the owner's review following the
+run; a plan that was written, revised after development runs and frozen by an
+AI assistant on the owner's instruction ([SAFETY.md](SAFETY.md), section 5).
+It does not change any v2 or v3 result.
+
+**After v3.1: two exploratory follow-ups (2026-11-25).** Neither has
+confirmatory weight. Both plans were published before the runs and after the
+confirmatory results were known.
+
+- **A second planner.** The whole v3.1 study was run again with Qwen3-8B
+  (30,132 episodes; [plan](docs/v3_1_second_model.md),
+  [results, section 10](docs/v3_1_results.md)). Four of the six claims get
+  the same decision as with Qwen2.5-7B. Evidence binding: an unsafe effect in
+  127 of 1,116 attacked episodes under the guard that trusts the cited
+  reading, in none under EviBound. The list: 588 against 304 of 3,348
+  episodes with a change nobody asked for. The reason alone is again a safe
+  default, and the claim that had failed (C3) fails again. Two smaller
+  effects (C2, C4) do not reach support with the second model.
+- **Bigger homes.** [docs/scale_study.md](docs/scale_study.md) plans the same
+  experiment in homes with 2, 4 and 6 devices (18, 162 and 648 states; 6, 12
+  and 14 rules). Tests check that the small home behaves exactly like the
+  frozen one. Code, tasks and plan are in the repository. **The runs have not
+  been made yet.**
 
 ## Where things are
 
@@ -251,8 +270,17 @@ holdout 已于 2026-10-12 按冻结协议跑完 7,128 回合：所有 M 守卫�
 这一解读是看到结果之后做出的。
 <!-- /v3.1:checked -->
 
-v3.1 的地位：只测了一个规划器模型；语料由程序生成并由程序检查，负责人的人工审核放在实验之后；计划由 AI 助手按负责人的指示撰写、
+v3.1 的地位：正式实验只测了一个规划器模型；语料由程序生成并由程序检查，负责人的人工审核放在实验之后；计划由 AI 助手按负责人的指示撰写、
 在开发实验后修订并冻结（见 [SAFETY.md](SAFETY.md) 第 5 节）。它不改变 v2、v3 的任何结果。
+
+**v3.1 之后的两个探索性补充（2026-11-25）。** 都没有确证效力；计划都写在正式结果已知之后、运行之前，并先行公开。
+
+- **换一个规划器模型。** 用 Qwen3-8B 把 v3.1 原样重跑了一遍（30,132 个回合；[计划](docs/v3_1_second_model.md)、
+  [结果第 10 节](docs/v3_1_results.md)）。六条主张里四条的结论与 Qwen2.5-7B 相同：证据绑定（相信被引用读数的守卫在 1,116 个受攻击回合里有
+  127 个出现不安全后果，EviBound 为 0）；清单的害处（出现没人要求的改动的回合 588 对 304，共 3,348）；只说原因仍是稳妥的默认做法；
+  当初不成立的 C3 这次仍不成立。两个较小的效应（C2、C4）在第二个模型上没有达到成立的标准。
+- **更大的家。** [docs/scale_study.md](docs/scale_study.md) 计划在 2、4、6 个设备的三个家里做同一个实验（18、162、648 个状态；6、12、14 条规则）。
+  测试确认小的那个家与冻结的环境行为完全一致。代码、任务和计划已在仓库里。**实验还没有运行。**
 
 研究合同要求单独报告的“攻击目标达成”已于 2026-11-10 事后补算：v2 正式测试里，回合结束时
 满足攻击读数所指错误分支目标的受攻击回合，B2 为 38/72，M 为 1/72（无攻击对照：两者在正常
