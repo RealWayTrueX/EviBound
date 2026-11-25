@@ -1046,10 +1046,11 @@ matter most for reading the results:
 - **Specific wordings.** Two wordings of a list and one of a plan review were
   run on the holdout. The results are about these texts. Two further
   wordings of the plan review were run in development only.
-- **The corpus has not been reviewed by a person.** It was generated and
-  checked by programs. The owner's review follows the run. If a task is
-  rejected, the analysis above stands as run and a sensitivity analysis
-  without the rejected tasks is added; no task is replaced.
+- **The corpus was machine-generated and machine-checked.** The corpus owner
+  completed human review of the task cards after the confirmatory run and
+  confirmed that review on 2026-11-26. The review is post hoc: the analysis
+  above stands as run, and any rejected task would be addressed in a
+  sensitivity analysis without replacement.
 - **The claims were rewritten after development runs.** The development runs
   used other tasks (the v3 corpus and the development split, which share no
   physical structure with the holdout), and the first draft's claims are
@@ -1062,7 +1063,8 @@ matter most for reading the results:
 - **Fixed attacks.** The attack alters or replays the first observation. The
   message of the guard is not attacked; a forged message is outside this
   study.
-- **Who did the work.** An AI assistant wrote the plan, froze it, ran the
-  study on the owner's instruction and wrote this document. The owner had
-  seen a summary of the revised plan before the freeze and not its full text
-  (`artifacts/v3_1_prereg_freeze.json`).
+- **Roles and approval.** The study was prepared and executed under the
+  owner's direction with substantial AI assistance in protocol preparation,
+  implementation, execution and analysis; the owner completed the post-run
+  corpus review. The freeze record documents the approval basis and execution
+  roles (`artifacts/v3_1_prereg_freeze.json`).

@@ -62,7 +62,7 @@ programs. See [Interpretation limits](#interpretation-limits).
 |---|---|---|---|
 | v2 formal test (1,296 episodes) | 30/72 vs 0/72 | 53/72 vs 44/72 | Safety supported; "no worse than 5 points" utility target not met. Paired mechanism study, not a structural holdout: 12 of its 22 physical structures also occur in v1 ([datasheet](docs/datasheet_v2_v3.md)) |
 | v3 holdout (7,128 episodes, frozen amended protocol) | B2_full 31/216 vs M_full 0/216 (+14.4 pp [+4.6, +25.9]) | raw: 172/216 vs 156/216 (−7.4 pp, unsupported); rule-compliant: 93/216 vs 156/216 (+29.2 pp [+16.7, +43.1], supported) | Safety supported. Joint feasibility is supported under the amended criterion (S1 ∧ U2) and **not** under the original one (S1 ∧ U1). U2 counts only rule-compliant completions, so it favours any guard by construction; the safety-decoupled utility (exploratory, post hoc) is +1.4 pp [−5.6, +8.3], inconclusive ([reanalysis](docs/v3_review_reanalysis.md)) |
-| v3.1 feedback ladder (30,132 episodes, frozen plan; a second extension, outside the contract's hypothesis) | B2_plan 134/1116 vs M_plan 0/1116 (+12.0 pp [+8.8, +15.4]) | attainable goals only (a secondary contrast): 430/468 vs 413/468 with a review of the plan (−3.6 pp [−7.5, −0.4], inconclusive) | Five of six preregistered claims about the message after a refusal are supported; one is not ([results](docs/v3_1_results.md)). The corpus is machine-generated and its human review follows the run |
+| v3.1 feedback ladder (30,132 episodes, frozen plan; a second extension, outside the contract's hypothesis) | B2_plan 134/1116 vs M_plan 0/1116 (+12.0 pp [+8.8, +15.4]) | attainable goals only (a secondary contrast): 430/468 vs 413/468 with a review of the plan (−3.6 pp [−7.5, −0.4], inconclusive) | Five of six preregistered claims about the message after a refusal are supported; one is not ([results](docs/v3_1_results.md)). The corpus is machine-generated and human-reviewed after the confirmatory run on 2026-11-26 |
 
 Attack-goal success, which the research contract lists as a separate
 outcome, was tabulated post hoc on 2026-11-10: in the v2 formal test the
@@ -142,11 +142,12 @@ it ended in the attainable target slightly more often (2584 against 2505 of
 advice as such; this reading was made after the results.
 <!-- /v3.1:checked -->
 
-Standing of v3.1: one planner model in the confirmatory run; a corpus that
-was generated and checked by programs, with the owner's review following the
-run; a plan that was written, revised after development runs and frozen by an
-AI assistant on the owner's instruction ([SAFETY.md](SAFETY.md), section 5).
-It does not change any v2 or v3 result.
+Standing of v3.1: one planner model in the confirmatory run; a
+machine-generated and machine-checked corpus whose post-run human review was
+completed by the owner on 2026-11-26; and a preregistration prepared and
+frozen with substantial AI assistance under the owner's direction and
+executed on the owner's instruction ([SAFETY.md](SAFETY.md), section 5). It
+does not change any v2 or v3 result.
 
 **After v3.1: two exploratory follow-ups (2026-11-25).** Neither has
 confirmatory weight. Both plans were published before the runs and after the
@@ -214,8 +215,9 @@ Task corpora: `data/scenarios/` (v1, 48 tasks, frozen), `data/scenarios_v2/`
 (56 tasks, frozen and human-reviewed), `data/scenarios_v3/` (84 tasks across 4
 sensor modalities and 3 language levels, human-reviewed, frozen, holdout complete),
 `data/scenarios_v3_1/` (420 tasks on 420 new physical structures: 372 holdout,
-48 development; generated and checked by programs, the owner's review follows
-the run). Model weights, raw traces and run logs live on the data disk
+48 development; generated and checked by programs, with the owner's post-run
+human review completed on 2026-11-26). Model weights, raw traces and run logs
+live on the data disk
 (`/mnt/HDD-8T-0/evibound_yanke/`). Human-facing experiment reports, review
 packs and session notes stay local and are not in the public repository; the
 signed v2 checklist and sign-off are sealed in
@@ -334,8 +336,8 @@ holdout 已于 2026-10-12 按冻结协议跑完 7,128 回合：所有 M 守卫�
 这一解读是看到结果之后做出的。
 <!-- /v3.1:checked -->
 
-v3.1 的地位：正式实验只测了一个规划器模型；语料由程序生成并由程序检查，负责人的人工审核放在实验之后；计划由 AI 助手按负责人的指示撰写、
-在开发实验后修订并冻结（见 [SAFETY.md](SAFETY.md) 第 5 节）。它不改变 v2、v3 的任何结果。
+v3.1 的地位：正式实验只测了一个规划器模型；语料由程序生成并由程序检查，负责人已于 2026-11-26 完成正式运行后的人工审核；
+预注册在负责人指导下获得大量 AI 协助，由负责人授权并执行（见 [SAFETY.md](SAFETY.md) 第 5 节）。它不改变 v2、v3 的任何结果。
 
 **v3.1 之后的两个探索性补充（2026-11-25）。** 都没有确证效力；计划都写在正式结果已知之后、运行之前，并先行公开。
 

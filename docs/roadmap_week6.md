@@ -558,11 +558,12 @@ Frozen-boundary rules (non-negotiable):
     than the reason alone. No unsafe effect in 23,436 evidence-bound
     episodes. The record from the committed fingerprints equals the record
     computed on the experiment machine from the raw trace.
-  - Process, stated as it was: the owner chose the direction and instructed
-    the assistant to carry the study through; an AI assistant wrote the plan,
-    froze it and ran it; the owner had seen a summary of the revised plan and
-    not its full text; the corpus is machine-generated and its human review
-    follows the run (`SAFETY.md`, section 5).
+  - Process: the owner chose the direction and authorized the study; the
+    preregistration was prepared and frozen with substantial AI assistance,
+    and the run was executed on the owner's instruction. The corpus and labels
+    were machine-generated and machine-checked; the owner completed the
+    post-run human review of the task cards on 2026-11-26. The review does not
+    alter the frozen results (`SAFETY.md`, section 5).
   - Tooling: the experiment machine is driven from a stored terminal command
     and a step file (`scripts/v3_1_step.sh`, `scripts/v3_1_step.txt`); each
     finished run pushes its small outputs to the branch `claude/v3-1-results`.

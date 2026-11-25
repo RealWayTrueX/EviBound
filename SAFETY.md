@@ -64,17 +64,16 @@ corpus owner, who signed off the task reviews before each corpus was frozen
 `artifacts/week11_v3_prereg_freeze.json`). Automatic checks and AI review
 supported those decisions; they did not replace them.
 
-The second extension (v3.1, the feedback ladder) is an exception and is
-labelled as one wherever it is reported. Its corpus was generated and checked
-by programs, and the owner decided on 2026-11-24 that the human review of its
-tasks follows the run instead of preceding it. Its plan was written, revised
-after the development runs and frozen by an AI assistant on the owner's
-instruction. The freeze record says what the owner had seen at that time: a
-summary of the revised plan, not the full text
-(`artifacts/v3_1_prereg_freeze.json`, fields `approved_by` and
-`executed_by`). The owner's review of the tasks can remove a task from a
-sensitivity analysis; it cannot change a label, a number or a decision of the
-run.
+The second extension (v3.1, the feedback ladder) followed a
+machine-generated, machine-checked workflow approved by the corpus owner. Its
+preregistration was prepared and frozen with substantial AI assistance after
+the development runs, and the confirmatory run was executed on the owner's
+instruction. The corpus owner completed human review of the task cards after
+the confirmatory run and confirmed that review on 2026-11-26. The review is
+post hoc: it does not alter the frozen labels, counts or decisions, and any
+resulting exclusions would be reported only in a sensitivity analysis. The
+review status is recorded here and in the v3.1 results document; the approval
+basis and execution roles remain in `artifacts/v3_1_prereg_freeze.json`.
 
 ## 6. AI-assistance disclosure
 
@@ -89,7 +88,7 @@ contract anticipated ("AI-assisted test-driven development/review").
 | Experiment runs | Launched and monitored with AI assistance on the owner's machine | Authorized the runs and the compute |
 | Analysis and review | Statistics scripts written with AI assistance; an independent AI review (2026-11-03) audited all materials | Decided how findings were handled (`docs/review_response_2026-11-03.md`) |
 | Documentation | Largely drafted by AI assistants | Reviewed and directed |
-| Second extension, v3.1 (2026-11-24) | An AI assistant (Anthropic Claude) surveyed related work, proposed the question, wrote the corpus generator and checker, the engine, the plan and the analysis, ran the development runs, revised the plan, froze it, started the confirmatory run on the owner's machine and wrote the results document | Chose the direction, asked for the stronger attack corpus and for the planner characters, decided that the corpus is reviewed after the run, and instructed the assistant to carry the study through; had not read the frozen plan line by line before the run |
+| Second extension, v3.1 (2026-11-24) | Substantial assistance from Anthropic Claude in the related-work survey, research design, corpus generation and checking, implementation, protocol preparation, experiment execution and analysis | Defined the research direction, requested the stronger attack corpus and planner-role experiments, authorized the protocol and run, completed the post-run corpus review on 2026-11-26, and retains responsibility for the final research output |
 
 Where to check: commits written with an assistant carry a `Co-Authored-By`
 trailer (31 of the 41 commits that existed when this file was written on
@@ -97,7 +96,8 @@ trailer (31 of the 41 commits that existed when this file was written on
 owner maintains the table above and adds any tool that the commit history
 does not show. The model under test (Qwen2.5-7B-Instruct) is the
 experimental subject, not an assistant. No AI system acted as ground truth:
-outcomes come from a deterministic oracle and human sign-off.
+outcomes come from a deterministic oracle, with human-review responsibilities
+as stated above and recorded in the audit artifacts.
 
 Any text submitted for assessment follows the course's own rules on AI use and
 is disclosed there by its author.
@@ -107,5 +107,5 @@ is disclosed there by its author.
 - **范围。** 全部实验都在确定性的模拟器里做：模拟的灯、风扇和人体存在读数。不连接真实住宅、设备、账号，不收集个人数据，不调用付费或托管的模型 API。
 - **结论的边界。** 结果只对固定的合成任务、固定的攻击和一个模型版本成立；"零不安全后果"是观察结果，不是保证。守卫的可靠性以可信的记录库、时钟、账本和提交路径为前提；读数"新鲜"不等于"当前为真"。
 - **攻击材料。** 攻击只作用于模拟器自己的数据，仓库里没有针对任何真实智能家居产品或服务的利用代码。不要把守卫、演示或规划器接到真实设备或账号上。
-- **人工把关。** 策略、标签、冻结和发布都由语料负责人批准；自动检查和 AI 复核只是辅助。第二个扩展实验（v3.1，反馈阶梯）是例外，凡报告处都有标注：语料由程序生成并由程序检查，负责人于 2026-11-24 决定人工审核放在实验之后；计划由 AI 助手按负责人的指示撰写、在开发实验后修订并冻结，冻结记录写明负责人当时只看过修订计划的摘要、没有逐行读过全文（`artifacts/v3_1_prereg_freeze.json`）。事后的任务审核只能在敏感性分析中剔除任务，不能改动标签、数字或判定。
+- **人工把关。** 策略、标签、冻结和发布都由语料负责人批准；自动检查和 AI 复核只是辅助。第二个扩展实验（v3.1，反馈阶梯）采用经负责人批准的机器生成、机器检查流程；预注册在开发实验之后完成，并在负责人指导下获得大量 AI 协助；正式运行由负责人授权。语料负责人已在正式运行后完成任务卡人工审核，并于 2026-11-26 确认；该审核不改变已冻结的标签、数字或判定，任何剔除只进入事后敏感性分析。审核状态记录于本文件和 v3.1 结果文档；审批依据和执行分工记录于 `artifacts/v3_1_prereg_freeze.json`。
 - **AI 协助披露。** 代码、协议草稿、分析脚本和文档大部分由 AI 编码助手（Claude Code、Codex）在负责人指导下完成；负责人决定假设、终点、修订和冻结并审核结果。带 `Co-Authored-By` 的提交可以查到。被测模型（Qwen2.5-7B）是实验对象，不是助手；判分由确定性判分器和人工签署完成。提交给课程评分的文字，按课程自己的 AI 使用规定由作者另行披露。

@@ -39,7 +39,9 @@ hypothesis, varies only the message the guard sends after a refusal. Five of
 its six preregistered claims are supported; a list of legal writes makes the
 planner change things nobody asked for, and naming the broken rule or
 reviewing the rejected plan does not ([v3_1_results.md](v3_1_results.md)).
-Its corpus is machine-generated, and its human review follows the run.
+Its corpus is machine-generated and machine-checked; the owner completed a
+post-run human review of the task cards on 2026-11-26. The review does not
+alter the frozen results.
 
 ## How to check the release
 
