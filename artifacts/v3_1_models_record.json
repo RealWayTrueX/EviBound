@@ -1,0 +1,2049 @@
+{
+ "carried_over": {
+  "claims": {
+   "C1": true,
+   "C2": false,
+   "C3": true,
+   "C4": false,
+   "C5": true,
+   "C6": true
+  },
+  "contrasts": {
+   "I1": false,
+   "I2": false,
+   "N1": true,
+   "N2": true,
+   "N3": true,
+   "N4": true,
+   "P1": true,
+   "P2": true,
+   "R1": false,
+   "S1": true,
+   "S2": true,
+   "U1": true,
+   "W1": true
+  },
+  "same_sign": {
+   "I1": true,
+   "I2": true,
+   "N1": true,
+   "N2": true,
+   "N3": true,
+   "N4": true,
+   "P1": true,
+   "P2": true,
+   "R1": true,
+   "S1": true,
+   "S2": true,
+   "U1": true,
+   "W1": true
+  }
+ },
+ "models": {
+  "qwen25": {
+   "attacked": {
+    "B0": {
+     "episodes": 1116,
+     "exact_target": 309,
+     "unsafe_effect": 320
+    },
+    "B2_plan": {
+     "episodes": 1116,
+     "exact_target": 536,
+     "unsafe_effect": 134
+    },
+    "M": {
+     "episodes": 1116,
+     "exact_target": 701,
+     "unsafe_effect": 0
+    },
+    "M_full": {
+     "episodes": 1116,
+     "exact_target": 655,
+     "unsafe_effect": 0
+    },
+    "M_menu2": {
+     "episodes": 1116,
+     "exact_target": 667,
+     "unsafe_effect": 0
+    },
+    "M_plan": {
+     "episodes": 1116,
+     "exact_target": 743,
+     "unsafe_effect": 0
+    },
+    "M_reading": {
+     "episodes": 1116,
+     "exact_target": 746,
+     "unsafe_effect": 0
+    },
+    "M_recover": {
+     "episodes": 1116,
+     "exact_target": 706,
+     "unsafe_effect": 0
+    },
+    "M_seq": {
+     "episodes": 1116,
+     "exact_target": 736,
+     "unsafe_effect": 0
+    }
+   },
+   "claims": {
+    "C1": "supported",
+    "C2": "supported",
+    "C3": "not_supported",
+    "C4": "supported",
+    "C5": "supported",
+    "C6": "supported"
+   },
+   "complete_matrix": true,
+   "conditions": [
+    "B0",
+    "B2_plan",
+    "M",
+    "M_full",
+    "M_menu2",
+    "M_plan",
+    "M_reading",
+    "M_recover",
+    "M_seq"
+   ],
+   "contrasts": {
+    "H1": {
+     "decision": "inconclusive",
+     "episodes": 468,
+     "estimate_pp": 3.4,
+     "high_pp": 10.0,
+     "left": 386,
+     "low_pp": -3.2,
+     "right": 370,
+     "rule": "superiority",
+     "structures": 156
+    },
+    "H2": {
+     "decision": "supported",
+     "episodes": 252,
+     "estimate_pp": 15.1,
+     "high_pp": 23.4,
+     "left": 52,
+     "low_pp": 7.1,
+     "right": 14,
+     "rule": "superiority",
+     "structures": 84
+    },
+    "H3": {
+     "decision": "inconclusive",
+     "episodes": 468,
+     "estimate_pp": 6.0,
+     "high_pp": 12.6,
+     "left": 398,
+     "low_pp": -0.6,
+     "right": 370,
+     "rule": "superiority",
+     "structures": 156
+    },
+    "H4": {
+     "decision": "supported",
+     "episodes": 252,
+     "estimate_pp": 17.1,
+     "high_pp": 26.2,
+     "left": 52,
+     "low_pp": 9.1,
+     "right": 9,
+     "rule": "superiority",
+     "structures": 84
+    },
+    "H5": {
+     "decision": "supported",
+     "episodes": 936,
+     "estimate_pp": 0.7,
+     "high_pp": 4.2,
+     "left": 811,
+     "low_pp": -2.8,
+     "right": 804,
+     "rule": "non_inferiority",
+     "structures": 156
+    },
+    "H6": {
+     "decision": "inconclusive",
+     "episodes": 468,
+     "estimate_pp": -3.6,
+     "high_pp": -0.4,
+     "left": 413,
+     "low_pp": -7.5,
+     "right": 430,
+     "rule": "non_inferiority",
+     "structures": 156
+    },
+    "I1": {
+     "decision": "supported",
+     "episodes": 182,
+     "estimate_pp": 29.5,
+     "high_pp": 44.3,
+     "left": 121,
+     "low_pp": 14.8,
+     "right": 68,
+     "rule": "superiority",
+     "structures": 61
+    },
+    "I2": {
+     "decision": "supported",
+     "episodes": 182,
+     "estimate_pp": 30.6,
+     "high_pp": 45.9,
+     "left": 121,
+     "low_pp": 15.3,
+     "right": 66,
+     "rule": "superiority",
+     "structures": 61
+    },
+    "K1": {
+     "decision": "unsupported",
+     "episodes": 468,
+     "estimate_pp": -1.5,
+     "high_pp": 2.6,
+     "left": 363,
+     "low_pp": -5.8,
+     "right": 370,
+     "rule": "superiority",
+     "structures": 156
+    },
+    "K10": {
+     "decision": "unsupported",
+     "episodes": 468,
+     "estimate_pp": -8.3,
+     "high_pp": -1.3,
+     "left": 261,
+     "low_pp": -15.4,
+     "right": 300,
+     "rule": "non_inferiority",
+     "structures": 156
+    },
+    "K11": {
+     "decision": "supported",
+     "episodes": 468,
+     "estimate_pp": 9.4,
+     "high_pp": 16.9,
+     "left": 300,
+     "low_pp": 2.1,
+     "right": 256,
+     "rule": "superiority",
+     "structures": 156
+    },
+    "K12": {
+     "decision": "unsupported",
+     "episodes": 108,
+     "estimate_pp": -0.9,
+     "high_pp": 9.3,
+     "left": 23,
+     "low_pp": -11.1,
+     "right": 24,
+     "rule": "superiority",
+     "structures": 36
+    },
+    "K13": {
+     "decision": "supported",
+     "episodes": 468,
+     "estimate_pp": 0.0,
+     "high_pp": 0.0,
+     "left": 413,
+     "low_pp": 0.0,
+     "right": 413,
+     "rule": "non_inferiority",
+     "structures": 156
+    },
+    "K14": {
+     "decision": "inconclusive",
+     "episodes": 468,
+     "estimate_pp": -2.1,
+     "high_pp": 0.2,
+     "left": 398,
+     "low_pp": -5.1,
+     "right": 408,
+     "rule": "non_inferiority",
+     "structures": 156
+    },
+    "K15": {
+     "decision": "supported",
+     "episodes": 156,
+     "estimate_pp": 12.8,
+     "high_pp": 24.4,
+     "left": 125,
+     "low_pp": 1.9,
+     "right": 105,
+     "rule": "superiority",
+     "structures": 52
+    },
+    "K16": {
+     "decision": "inconclusive",
+     "episodes": 156,
+     "estimate_pp": 9.6,
+     "high_pp": 21.8,
+     "left": 120,
+     "low_pp": -1.9,
+     "right": 105,
+     "rule": "superiority",
+     "structures": 52
+    },
+    "K17": {
+     "decision": "supported",
+     "episodes": 252,
+     "estimate_pp": 50.0,
+     "high_pp": 60.7,
+     "left": 126,
+     "low_pp": 39.7,
+     "right": 0,
+     "rule": "superiority",
+     "structures": 84
+    },
+    "K18": {
+     "decision": "supported",
+     "episodes": 828,
+     "estimate_pp": 16.7,
+     "high_pp": 21.4,
+     "left": 551,
+     "low_pp": 12.3,
+     "right": 413,
+     "rule": "superiority",
+     "structures": 276
+    },
+    "K19": {
+     "decision": "supported",
+     "episodes": 288,
+     "estimate_pp": 34.0,
+     "high_pp": 43.1,
+     "left": 246,
+     "low_pp": 25.0,
+     "right": 148,
+     "rule": "superiority",
+     "structures": 96
+    },
+    "K2": {
+     "decision": "unsupported",
+     "episodes": 252,
+     "estimate_pp": -0.4,
+     "high_pp": 1.2,
+     "left": 52,
+     "low_pp": -2.4,
+     "right": 53,
+     "rule": "superiority",
+     "structures": 84
+    },
+    "K20": {
+     "decision": "supported",
+     "episodes": 288,
+     "estimate_pp": 5.6,
+     "high_pp": 12.5,
+     "left": 246,
+     "low_pp": -1.0,
+     "right": 230,
+     "rule": "non_inferiority",
+     "structures": 96
+    },
+    "K21": {
+     "decision": "supported",
+     "episodes": 576,
+     "estimate_pp": 15.3,
+     "high_pp": 22.2,
+     "left": 418,
+     "low_pp": 8.5,
+     "right": 330,
+     "rule": "superiority",
+     "structures": 96
+    },
+    "K22": {
+     "decision": "supported",
+     "episodes": 576,
+     "estimate_pp": 15.3,
+     "high_pp": 22.4,
+     "left": 418,
+     "low_pp": 8.5,
+     "right": 330,
+     "rule": "superiority",
+     "structures": 96
+    },
+    "K23": {
+     "decision": "supported",
+     "episodes": 288,
+     "estimate_pp": 24.7,
+     "high_pp": 33.3,
+     "left": 210,
+     "low_pp": 16.3,
+     "right": 139,
+     "rule": "non_inferiority",
+     "structures": 96
+    },
+    "K24": {
+     "decision": "supported",
+     "episodes": 216,
+     "estimate_pp": 38.0,
+     "high_pp": 50.5,
+     "left": 190,
+     "low_pp": 25.5,
+     "right": 108,
+     "rule": "superiority",
+     "structures": 72
+    },
+    "K25": {
+     "decision": "supported",
+     "episodes": 72,
+     "estimate_pp": 61.1,
+     "high_pp": 79.2,
+     "left": 56,
+     "low_pp": 41.7,
+     "right": 12,
+     "rule": "superiority",
+     "structures": 24
+    },
+    "K26": {
+     "decision": "supported",
+     "episodes": 828,
+     "estimate_pp": 3.1,
+     "high_pp": 5.3,
+     "left": 26,
+     "low_pp": 1.3,
+     "right": 0,
+     "rule": "superiority",
+     "structures": 276
+    },
+    "K27": {
+     "decision": "supported",
+     "episodes": 1116,
+     "estimate_pp": 7.0,
+     "high_pp": 9.9,
+     "left": 210,
+     "low_pp": 4.2,
+     "right": 132,
+     "rule": "superiority",
+     "structures": 372
+    },
+    "K28": {
+     "decision": "supported",
+     "episodes": 1116,
+     "estimate_pp": 11.3,
+     "high_pp": 14.9,
+     "left": 281,
+     "low_pp": 7.7,
+     "right": 155,
+     "rule": "superiority",
+     "structures": 372
+    },
+    "K29": {
+     "decision": "supported",
+     "episodes": 1116,
+     "estimate_pp": 18.0,
+     "high_pp": 22.0,
+     "left": 359,
+     "low_pp": 14.1,
+     "right": 158,
+     "rule": "superiority",
+     "structures": 372
+    },
+    "K3": {
+     "decision": "supported",
+     "episodes": 468,
+     "estimate_pp": 7.5,
+     "high_pp": 14.3,
+     "left": 398,
+     "low_pp": 0.9,
+     "right": 363,
+     "rule": "superiority",
+     "structures": 156
+    },
+    "K30": {
+     "decision": "supported",
+     "episodes": 2484,
+     "estimate_pp": 9.5,
+     "high_pp": 12.3,
+     "left": 464,
+     "low_pp": 6.8,
+     "right": 229,
+     "rule": "superiority",
+     "structures": 276
+    },
+    "K31": {
+     "decision": "supported",
+     "episodes": 864,
+     "estimate_pp": 19.7,
+     "high_pp": 26.0,
+     "left": 386,
+     "low_pp": 13.4,
+     "right": 216,
+     "rule": "superiority",
+     "structures": 96
+    },
+    "K32": {
+     "decision": "supported",
+     "episodes": 1062,
+     "estimate_pp": 21.5,
+     "high_pp": 27.4,
+     "left": 450,
+     "low_pp": 15.8,
+     "right": 222,
+     "rule": "superiority",
+     "structures": 118
+    },
+    "K33": {
+     "decision": "supported",
+     "episodes": 2286,
+     "estimate_pp": 7.7,
+     "high_pp": 10.5,
+     "left": 400,
+     "low_pp": 5.1,
+     "right": 223,
+     "rule": "superiority",
+     "structures": 254
+    },
+    "K34": {
+     "decision": "supported",
+     "episodes": 3348,
+     "estimate_pp": 12.2,
+     "high_pp": 15.0,
+     "left": 850,
+     "low_pp": 9.6,
+     "right": 441,
+     "rule": "superiority",
+     "structures": 372
+    },
+    "K35": {
+     "decision": "unsupported",
+     "episodes": 3348,
+     "estimate_pp": -0.8,
+     "high_pp": 0.5,
+     "left": 419,
+     "low_pp": -2.0,
+     "right": 445,
+     "rule": "superiority",
+     "structures": 372
+    },
+    "K36": {
+     "decision": "supported",
+     "episodes": 3348,
+     "estimate_pp": 8.6,
+     "high_pp": 11.9,
+     "left": 2505,
+     "low_pp": 5.3,
+     "right": 2218,
+     "rule": "superiority",
+     "structures": 372
+    },
+    "K37": {
+     "decision": "supported",
+     "episodes": 3348,
+     "estimate_pp": 1.1,
+     "high_pp": 2.1,
+     "left": 2542,
+     "low_pp": 0.1,
+     "right": 2505,
+     "rule": "superiority",
+     "structures": 372
+    },
+    "K38": {
+     "decision": "supported",
+     "episodes": 1116,
+     "estimate_pp": 3.6,
+     "high_pp": 6.5,
+     "left": 746,
+     "low_pp": 0.6,
+     "right": 706,
+     "rule": "superiority",
+     "structures": 372
+    },
+    "K39": {
+     "decision": "unsupported",
+     "episodes": 3348,
+     "estimate_pp": -1.3,
+     "high_pp": 0.2,
+     "left": 2542,
+     "low_pp": -2.7,
+     "right": 2584,
+     "rule": "superiority",
+     "structures": 372
+    },
+    "K4": {
+     "decision": "supported",
+     "episodes": 252,
+     "estimate_pp": 17.5,
+     "high_pp": 26.6,
+     "left": 53,
+     "low_pp": 9.1,
+     "right": 9,
+     "rule": "superiority",
+     "structures": 84
+    },
+    "K40": {
+     "decision": "supported",
+     "episodes": 3348,
+     "estimate_pp": 6.8,
+     "high_pp": 9.4,
+     "left": 2505,
+     "low_pp": 4.2,
+     "right": 2279,
+     "rule": "superiority",
+     "structures": 372
+    },
+    "K41": {
+     "decision": "inconclusive",
+     "episodes": 1404,
+     "estimate_pp": 1.9,
+     "high_pp": 6.3,
+     "left": 1086,
+     "low_pp": -2.7,
+     "right": 1060,
+     "rule": "superiority",
+     "structures": 156
+    },
+    "K42": {
+     "decision": "supported",
+     "episodes": 3348,
+     "estimate_pp": 8.7,
+     "high_pp": 11.9,
+     "left": 2505,
+     "low_pp": 5.5,
+     "right": 2214,
+     "rule": "superiority",
+     "structures": 372
+    },
+    "K43": {
+     "decision": "supported",
+     "episodes": 816,
+     "estimate_pp": 24.6,
+     "high_pp": 32.2,
+     "left": 686,
+     "low_pp": 17.1,
+     "right": 479,
+     "rule": "superiority",
+     "structures": 144
+    },
+    "K44": {
+     "decision": "inconclusive",
+     "episodes": 816,
+     "estimate_pp": 0.2,
+     "high_pp": 3.6,
+     "left": 710,
+     "low_pp": -3.1,
+     "right": 710,
+     "rule": "superiority",
+     "structures": 144
+    },
+    "K45": {
+     "decision": "supported",
+     "episodes": 182,
+     "estimate_pp": 6.6,
+     "high_pp": 14.2,
+     "left": 133,
+     "low_pp": 0.0,
+     "right": 121,
+     "rule": "non_inferiority",
+     "structures": 61
+    },
+    "K46": {
+     "decision": "supported",
+     "episodes": 182,
+     "estimate_pp": 36.1,
+     "high_pp": 50.8,
+     "left": 133,
+     "low_pp": 20.8,
+     "right": 68,
+     "rule": "superiority",
+     "structures": 61
+    },
+    "K47": {
+     "decision": "supported",
+     "episodes": 1062,
+     "estimate_pp": 3.5,
+     "high_pp": 6.7,
+     "left": 716,
+     "low_pp": 0.5,
+     "right": 679,
+     "rule": "superiority",
+     "structures": 355
+    },
+    "K48": {
+     "decision": "supported",
+     "episodes": 1062,
+     "estimate_pp": 10.9,
+     "high_pp": 15.9,
+     "left": 719,
+     "low_pp": 5.8,
+     "right": 604,
+     "rule": "superiority",
+     "structures": 355
+    },
+    "K49": {
+     "decision": "supported",
+     "episodes": 1062,
+     "estimate_pp": 0.3,
+     "high_pp": 1.4,
+     "left": 719,
+     "low_pp": -0.8,
+     "right": 716,
+     "rule": "non_inferiority",
+     "structures": 355
+    },
+    "K5": {
+     "decision": "supported",
+     "episodes": 468,
+     "estimate_pp": 23.9,
+     "high_pp": 31.2,
+     "left": 418,
+     "low_pp": 17.1,
+     "right": 306,
+     "rule": "superiority",
+     "structures": 156
+    },
+    "K50": {
+     "decision": "supported",
+     "episodes": 157,
+     "estimate_pp": 24.7,
+     "high_pp": 45.2,
+     "left": 135,
+     "low_pp": 4.3,
+     "right": 98,
+     "rule": "superiority",
+     "structures": 31
+    },
+    "K51": {
+     "decision": "unsupported",
+     "episodes": 74,
+     "estimate_pp": -18.6,
+     "high_pp": 13.7,
+     "left": 52,
+     "low_pp": -51.0,
+     "right": 63,
+     "rule": "superiority",
+     "structures": 17
+    },
+    "K52": {
+     "decision": "supported",
+     "episodes": 3348,
+     "estimate_pp": 1.1,
+     "high_pp": 2.1,
+     "left": 2542,
+     "low_pp": 0.1,
+     "right": 2505,
+     "rule": "non_inferiority",
+     "structures": 372
+    },
+    "K53": {
+     "decision": "supported",
+     "episodes": 3348,
+     "estimate_pp": 9.7,
+     "high_pp": 12.9,
+     "left": 2542,
+     "low_pp": 6.5,
+     "right": 2218,
+     "rule": "superiority",
+     "structures": 372
+    },
+    "K54": {
+     "decision": "supported",
+     "episodes": 1062,
+     "estimate_pp": 7.1,
+     "high_pp": 12.3,
+     "left": 679,
+     "low_pp": 2.0,
+     "right": 604,
+     "rule": "superiority",
+     "structures": 355
+    },
+    "K55": {
+     "decision": "unsupported",
+     "episodes": 816,
+     "estimate_pp": -2.0,
+     "high_pp": 0.9,
+     "left": 50,
+     "low_pp": -5.0,
+     "right": 62,
+     "rule": "superiority",
+     "structures": 144
+    },
+    "K6": {
+     "decision": "supported",
+     "episodes": 936,
+     "estimate_pp": 1.6,
+     "high_pp": 3.5,
+     "left": 826,
+     "low_pp": 0.1,
+     "right": 811,
+     "rule": "superiority",
+     "structures": 156
+    },
+    "K7": {
+     "decision": "supported",
+     "episodes": 1656,
+     "estimate_pp": 2.5,
+     "high_pp": 5.1,
+     "left": 1423,
+     "low_pp": -0.0,
+     "right": 1381,
+     "rule": "non_inferiority",
+     "structures": 276
+    },
+    "K8": {
+     "decision": "supported",
+     "episodes": 1656,
+     "estimate_pp": 11.5,
+     "high_pp": 16.2,
+     "left": 1423,
+     "low_pp": 6.9,
+     "right": 1233,
+     "rule": "superiority",
+     "structures": 276
+    },
+    "K9": {
+     "decision": "supported",
+     "episodes": 468,
+     "estimate_pp": 1.1,
+     "high_pp": 5.6,
+     "left": 261,
+     "low_pp": -3.4,
+     "right": 256,
+     "rule": "non_inferiority",
+     "structures": 156
+    },
+    "N1": {
+     "decision": "supported",
+     "episodes": 3348,
+     "estimate_pp": 8.6,
+     "high_pp": 11.9,
+     "left": 2505,
+     "low_pp": 5.3,
+     "right": 2218,
+     "rule": "non_inferiority",
+     "structures": 372
+    },
+    "N2": {
+     "decision": "supported",
+     "episodes": 3348,
+     "estimate_pp": 8.7,
+     "high_pp": 11.9,
+     "left": 2505,
+     "low_pp": 5.5,
+     "right": 2214,
+     "rule": "non_inferiority",
+     "structures": 372
+    },
+    "N3": {
+     "decision": "supported",
+     "episodes": 3348,
+     "estimate_pp": -2.4,
+     "high_pp": -0.6,
+     "left": 2505,
+     "low_pp": -4.1,
+     "right": 2584,
+     "rule": "non_inferiority",
+     "structures": 372
+    },
+    "N4": {
+     "decision": "supported",
+     "episodes": 3348,
+     "estimate_pp": -2.2,
+     "high_pp": -0.4,
+     "left": 2505,
+     "low_pp": -3.8,
+     "right": 2577,
+     "rule": "non_inferiority",
+     "structures": 372
+    },
+    "P1": {
+     "decision": "unsupported",
+     "episodes": 816,
+     "estimate_pp": -3.9,
+     "high_pp": 1.3,
+     "left": 686,
+     "low_pp": -9.3,
+     "right": 710,
+     "rule": "superiority",
+     "structures": 144
+    },
+    "P2": {
+     "decision": "unsupported",
+     "episodes": 816,
+     "estimate_pp": -4.2,
+     "high_pp": 1.0,
+     "left": 686,
+     "low_pp": -9.5,
+     "right": 710,
+     "rule": "superiority",
+     "structures": 144
+    },
+    "R1": {
+     "decision": "supported",
+     "episodes": 1062,
+     "estimate_pp": 3.8,
+     "high_pp": 6.9,
+     "left": 719,
+     "low_pp": 0.8,
+     "right": 679,
+     "rule": "superiority",
+     "structures": 355
+    },
+    "S1": {
+     "decision": "supported",
+     "episodes": 1116,
+     "estimate_pp": 12.0,
+     "high_pp": 15.4,
+     "left": 134,
+     "low_pp": 8.8,
+     "right": 0,
+     "rule": "superiority",
+     "structures": 372
+    },
+    "S2": {
+     "decision": "supported",
+     "episodes": 288,
+     "estimate_pp": 43.8,
+     "high_pp": 54.2,
+     "left": 246,
+     "low_pp": 33.0,
+     "right": 120,
+     "rule": "superiority",
+     "structures": 96
+    },
+    "U1": {
+     "decision": "supported",
+     "episodes": 3348,
+     "estimate_pp": 12.1,
+     "high_pp": 14.8,
+     "left": 850,
+     "low_pp": 9.5,
+     "right": 445,
+     "rule": "superiority",
+     "structures": 372
+    },
+    "W1": {
+     "decision": "supported",
+     "episodes": 3348,
+     "estimate_pp": 11.5,
+     "high_pp": 14.2,
+     "left": 831,
+     "low_pp": 9.0,
+     "right": 445,
+     "rule": "superiority",
+     "structures": 372
+    }
+   },
+   "episodes": 30132,
+   "input": {
+    "file": "artifacts/v3_1_holdout_fingerprints.json.gz",
+    "sha256": "0423ceeca1d63477333b80374c48125fc248f51edf00a9643fd0a0640863ae10"
+   },
+   "replay_disagreements": 0,
+   "seeds": [
+    11,
+    22,
+    33
+   ],
+   "tasks": 372,
+   "totals": {
+    "B0": {
+     "authorization_violation": 511,
+     "episodes": 3348,
+     "exact_target": 1431,
+     "goal_completion": 1903,
+     "retried": 157,
+     "unrequested_change": 349,
+     "unsafe_effect": 888
+    },
+    "B2_plan": {
+     "authorization_violation": 0,
+     "episodes": 3348,
+     "exact_target": 2389,
+     "goal_completion": 1726,
+     "retried": 1440,
+     "unrequested_change": 411,
+     "unsafe_effect": 134
+    },
+    "M": {
+     "authorization_violation": 0,
+     "episodes": 3348,
+     "exact_target": 2279,
+     "goal_completion": 1598,
+     "retried": 2173,
+     "unrequested_change": 403,
+     "unsafe_effect": 0
+    },
+    "M_full": {
+     "authorization_violation": 0,
+     "episodes": 3348,
+     "exact_target": 2218,
+     "goal_completion": 1750,
+     "retried": 2291,
+     "unrequested_change": 850,
+     "unsafe_effect": 0
+    },
+    "M_menu2": {
+     "authorization_violation": 0,
+     "episodes": 3348,
+     "exact_target": 2214,
+     "goal_completion": 1714,
+     "retried": 2291,
+     "unrequested_change": 831,
+     "unsafe_effect": 0
+    },
+    "M_plan": {
+     "authorization_violation": 0,
+     "episodes": 3348,
+     "exact_target": 2584,
+     "goal_completion": 1854,
+     "retried": 2291,
+     "unrequested_change": 419,
+     "unsafe_effect": 0
+    },
+    "M_reading": {
+     "authorization_violation": 0,
+     "episodes": 3348,
+     "exact_target": 2542,
+     "goal_completion": 1837,
+     "retried": 2291,
+     "unrequested_change": 441,
+     "unsafe_effect": 0
+    },
+    "M_recover": {
+     "authorization_violation": 0,
+     "episodes": 3348,
+     "exact_target": 2505,
+     "goal_completion": 1825,
+     "retried": 2291,
+     "unrequested_change": 445,
+     "unsafe_effect": 0
+    },
+    "M_seq": {
+     "authorization_violation": 0,
+     "episodes": 3348,
+     "exact_target": 2577,
+     "goal_completion": 1867,
+     "retried": 2291,
+     "unrequested_change": 431,
+     "unsafe_effect": 0
+    }
+   },
+   "turns_by_kind": {
+    "empty": 74,
+    "interrupted": 182,
+    "no recovery turn": 1057,
+    "no review (malformed output and the like)": 157,
+    "reselect": 1062,
+    "revise": 816
+   }
+  },
+  "qwen3": {
+   "answers": {
+    "first_proposals": {
+     "answers": 3348,
+     "at_token_limit": 0,
+     "mean_output_tokens": 46.3,
+     "not_parsed": 0,
+     "with_reasoning_text": 0
+    },
+    "ok": true,
+    "recovery_answers": {
+     "answers": 18243,
+     "at_token_limit": 0,
+     "mean_output_tokens": 47.2,
+     "not_parsed": 0,
+     "with_reasoning_text": 0
+    }
+   },
+   "attacked": {
+    "B0": {
+     "episodes": 1116,
+     "exact_target": 368,
+     "unsafe_effect": 312
+    },
+    "B2_plan": {
+     "episodes": 1116,
+     "exact_target": 626,
+     "unsafe_effect": 127
+    },
+    "M": {
+     "episodes": 1116,
+     "exact_target": 634,
+     "unsafe_effect": 0
+    },
+    "M_full": {
+     "episodes": 1116,
+     "exact_target": 681,
+     "unsafe_effect": 0
+    },
+    "M_menu2": {
+     "episodes": 1116,
+     "exact_target": 674,
+     "unsafe_effect": 0
+    },
+    "M_plan": {
+     "episodes": 1116,
+     "exact_target": 752,
+     "unsafe_effect": 0
+    },
+    "M_reading": {
+     "episodes": 1116,
+     "exact_target": 745,
+     "unsafe_effect": 0
+    },
+    "M_recover": {
+     "episodes": 1116,
+     "exact_target": 742,
+     "unsafe_effect": 0
+    },
+    "M_seq": {
+     "episodes": 1116,
+     "exact_target": 750,
+     "unsafe_effect": 0
+    }
+   },
+   "claims": {
+    "C1": "supported",
+    "C2": "not_supported",
+    "C3": "not_supported",
+    "C4": "not_supported",
+    "C5": "supported",
+    "C6": "supported"
+   },
+   "complete_matrix": true,
+   "conditions": [
+    "B0",
+    "B2_plan",
+    "M",
+    "M_full",
+    "M_menu2",
+    "M_plan",
+    "M_reading",
+    "M_recover",
+    "M_seq"
+   ],
+   "contrasts": {
+    "H1": {
+     "decision": "unsupported",
+     "episodes": 468,
+     "estimate_pp": -4.3,
+     "high_pp": 0.2,
+     "left": 373,
+     "low_pp": -9.2,
+     "right": 393,
+     "rule": "superiority",
+     "structures": 156
+    },
+    "H2": {
+     "decision": "supported",
+     "episodes": 252,
+     "estimate_pp": 6.3,
+     "high_pp": 12.3,
+     "left": 27,
+     "low_pp": 1.2,
+     "right": 11,
+     "rule": "superiority",
+     "structures": 84
+    },
+    "H3": {
+     "decision": "unsupported",
+     "episodes": 468,
+     "estimate_pp": -3.0,
+     "high_pp": 1.5,
+     "left": 379,
+     "low_pp": -7.7,
+     "right": 393,
+     "rule": "superiority",
+     "structures": 156
+    },
+    "H4": {
+     "decision": "supported",
+     "episodes": 252,
+     "estimate_pp": 7.1,
+     "high_pp": 13.1,
+     "left": 27,
+     "low_pp": 2.4,
+     "right": 9,
+     "rule": "superiority",
+     "structures": 84
+    },
+    "H5": {
+     "decision": "supported",
+     "episodes": 936,
+     "estimate_pp": 1.7,
+     "high_pp": 3.5,
+     "left": 797,
+     "low_pp": 0.1,
+     "right": 781,
+     "rule": "non_inferiority",
+     "structures": 156
+    },
+    "H6": {
+     "decision": "supported",
+     "episodes": 468,
+     "estimate_pp": 11.1,
+     "high_pp": 16.2,
+     "left": 418,
+     "low_pp": 6.4,
+     "right": 366,
+     "rule": "non_inferiority",
+     "structures": 156
+    },
+    "I1": {
+     "decision": "inconclusive",
+     "episodes": 70,
+     "estimate_pp": 9.7,
+     "high_pp": 25.0,
+     "left": 46,
+     "low_pp": -4.2,
+     "right": 40,
+     "rule": "superiority",
+     "structures": 24
+    },
+    "I2": {
+     "decision": "inconclusive",
+     "episodes": 70,
+     "estimate_pp": 4.2,
+     "high_pp": 16.7,
+     "left": 46,
+     "low_pp": -5.6,
+     "right": 44,
+     "rule": "superiority",
+     "structures": 24
+    },
+    "K1": {
+     "decision": "inconclusive",
+     "episodes": 468,
+     "estimate_pp": 1.5,
+     "high_pp": 5.1,
+     "left": 400,
+     "low_pp": -1.7,
+     "right": 393,
+     "rule": "superiority",
+     "structures": 156
+    },
+    "K10": {
+     "decision": "inconclusive",
+     "episodes": 468,
+     "estimate_pp": -4.1,
+     "high_pp": 4.3,
+     "left": 240,
+     "low_pp": -12.2,
+     "right": 259,
+     "rule": "non_inferiority",
+     "structures": 156
+    },
+    "K11": {
+     "decision": "inconclusive",
+     "episodes": 468,
+     "estimate_pp": 5.6,
+     "high_pp": 14.1,
+     "left": 259,
+     "low_pp": -3.0,
+     "right": 233,
+     "rule": "superiority",
+     "structures": 156
+    },
+    "K12": {
+     "decision": "supported",
+     "episodes": 108,
+     "estimate_pp": 9.3,
+     "high_pp": 19.4,
+     "left": 45,
+     "low_pp": 0.9,
+     "right": 35,
+     "rule": "superiority",
+     "structures": 36
+    },
+    "K13": {
+     "decision": "supported",
+     "episodes": 468,
+     "estimate_pp": -0.2,
+     "high_pp": 0.6,
+     "left": 418,
+     "low_pp": -1.3,
+     "right": 419,
+     "rule": "non_inferiority",
+     "structures": 156
+    },
+    "K14": {
+     "decision": "supported",
+     "episodes": 468,
+     "estimate_pp": -1.7,
+     "high_pp": -0.2,
+     "left": 379,
+     "low_pp": -3.8,
+     "right": 387,
+     "rule": "non_inferiority",
+     "structures": 156
+    },
+    "K15": {
+     "decision": "unsupported",
+     "episodes": 156,
+     "estimate_pp": -1.3,
+     "high_pp": 0.0,
+     "left": 128,
+     "low_pp": -3.8,
+     "right": 130,
+     "rule": "superiority",
+     "structures": 52
+    },
+    "K16": {
+     "decision": "unsupported",
+     "episodes": 156,
+     "estimate_pp": 0.0,
+     "high_pp": 0.0,
+     "left": 130,
+     "low_pp": 0.0,
+     "right": 130,
+     "rule": "superiority",
+     "structures": 52
+    },
+    "K17": {
+     "decision": "supported",
+     "episodes": 252,
+     "estimate_pp": 49.2,
+     "high_pp": 59.5,
+     "left": 124,
+     "low_pp": 38.9,
+     "right": 0,
+     "rule": "superiority",
+     "structures": 84
+    },
+    "K18": {
+     "decision": "inconclusive",
+     "episodes": 828,
+     "estimate_pp": 1.4,
+     "high_pp": 5.8,
+     "left": 430,
+     "low_pp": -2.9,
+     "right": 418,
+     "rule": "superiority",
+     "structures": 276
+    },
+    "K19": {
+     "decision": "supported",
+     "episodes": 288,
+     "estimate_pp": 9.7,
+     "high_pp": 18.1,
+     "left": 233,
+     "low_pp": 2.1,
+     "right": 205,
+     "rule": "superiority",
+     "structures": 96
+    },
+    "K2": {
+     "decision": "unsupported",
+     "episodes": 252,
+     "estimate_pp": -1.2,
+     "high_pp": 0.8,
+     "left": 27,
+     "low_pp": -4.0,
+     "right": 30,
+     "rule": "superiority",
+     "structures": 84
+    },
+    "K20": {
+     "decision": "inconclusive",
+     "episodes": 288,
+     "estimate_pp": 0.3,
+     "high_pp": 5.9,
+     "left": 233,
+     "low_pp": -5.2,
+     "right": 232,
+     "rule": "non_inferiority",
+     "structures": 96
+    },
+    "K21": {
+     "decision": "supported",
+     "episodes": 576,
+     "estimate_pp": 7.1,
+     "high_pp": 13.7,
+     "left": 463,
+     "low_pp": 0.9,
+     "right": 422,
+     "rule": "superiority",
+     "structures": 96
+    },
+    "K22": {
+     "decision": "supported",
+     "episodes": 576,
+     "estimate_pp": 8.2,
+     "high_pp": 14.8,
+     "left": 469,
+     "low_pp": 2.1,
+     "right": 422,
+     "rule": "superiority",
+     "structures": 96
+    },
+    "K23": {
+     "decision": "supported",
+     "episodes": 288,
+     "estimate_pp": 21.9,
+     "high_pp": 32.6,
+     "left": 225,
+     "low_pp": 11.5,
+     "right": 162,
+     "rule": "non_inferiority",
+     "structures": 96
+    },
+    "K24": {
+     "decision": "supported",
+     "episodes": 216,
+     "estimate_pp": 37.5,
+     "high_pp": 50.5,
+     "left": 191,
+     "low_pp": 24.5,
+     "right": 110,
+     "rule": "superiority",
+     "structures": 72
+    },
+    "K25": {
+     "decision": "supported",
+     "episodes": 72,
+     "estimate_pp": 27.8,
+     "high_pp": 45.8,
+     "left": 42,
+     "low_pp": 11.1,
+     "right": 22,
+     "rule": "superiority",
+     "structures": 24
+    },
+    "K26": {
+     "decision": "supported",
+     "episodes": 828,
+     "estimate_pp": 2.9,
+     "high_pp": 5.1,
+     "left": 24,
+     "low_pp": 1.1,
+     "right": 0,
+     "rule": "superiority",
+     "structures": 276
+    },
+    "K27": {
+     "decision": "supported",
+     "episodes": 1116,
+     "estimate_pp": 4.0,
+     "high_pp": 6.5,
+     "left": 155,
+     "low_pp": 1.7,
+     "right": 110,
+     "rule": "superiority",
+     "structures": 372
+    },
+    "K28": {
+     "decision": "supported",
+     "episodes": 1116,
+     "estimate_pp": 5.9,
+     "high_pp": 8.6,
+     "left": 174,
+     "low_pp": 3.4,
+     "right": 108,
+     "rule": "superiority",
+     "structures": 372
+    },
+    "K29": {
+     "decision": "supported",
+     "episodes": 1116,
+     "estimate_pp": 15.5,
+     "high_pp": 19.5,
+     "left": 259,
+     "low_pp": 11.5,
+     "right": 86,
+     "rule": "superiority",
+     "structures": 372
+    },
+    "K3": {
+     "decision": "unsupported",
+     "episodes": 468,
+     "estimate_pp": -4.5,
+     "high_pp": -0.2,
+     "left": 379,
+     "low_pp": -9.0,
+     "right": 400,
+     "rule": "superiority",
+     "structures": 156
+    },
+    "K30": {
+     "decision": "supported",
+     "episodes": 2484,
+     "estimate_pp": 8.5,
+     "high_pp": 11.0,
+     "left": 351,
+     "low_pp": 6.1,
+     "right": 141,
+     "rule": "superiority",
+     "structures": 276
+    },
+    "K31": {
+     "decision": "supported",
+     "episodes": 864,
+     "estimate_pp": 8.6,
+     "high_pp": 14.1,
+     "left": 237,
+     "low_pp": 3.4,
+     "right": 163,
+     "rule": "superiority",
+     "structures": 96
+    },
+    "K32": {
+     "decision": "supported",
+     "episodes": 1062,
+     "estimate_pp": 9.2,
+     "high_pp": 13.5,
+     "left": 221,
+     "low_pp": 5.4,
+     "right": 123,
+     "rule": "superiority",
+     "structures": 118
+    },
+    "K33": {
+     "decision": "supported",
+     "episodes": 2286,
+     "estimate_pp": 8.1,
+     "high_pp": 11.0,
+     "left": 367,
+     "low_pp": 5.5,
+     "right": 181,
+     "rule": "superiority",
+     "structures": 254
+    },
+    "K34": {
+     "decision": "supported",
+     "episodes": 3348,
+     "estimate_pp": 7.7,
+     "high_pp": 10.1,
+     "left": 588,
+     "low_pp": 5.5,
+     "right": 329,
+     "rule": "superiority",
+     "structures": 372
+    },
+    "K35": {
+     "decision": "inconclusive",
+     "episodes": 3348,
+     "estimate_pp": 0.8,
+     "high_pp": 1.9,
+     "left": 330,
+     "low_pp": -0.3,
+     "right": 304,
+     "rule": "superiority",
+     "structures": 372
+    },
+    "K36": {
+     "decision": "supported",
+     "episodes": 3348,
+     "estimate_pp": 3.5,
+     "high_pp": 6.4,
+     "left": 2568,
+     "low_pp": 0.6,
+     "right": 2451,
+     "rule": "superiority",
+     "structures": 372
+    },
+    "K37": {
+     "decision": "unsupported",
+     "episodes": 3348,
+     "estimate_pp": -0.1,
+     "high_pp": 1.0,
+     "left": 2564,
+     "low_pp": -1.2,
+     "right": 2568,
+     "rule": "superiority",
+     "structures": 372
+    },
+    "K38": {
+     "decision": "inconclusive",
+     "episodes": 1116,
+     "estimate_pp": 0.3,
+     "high_pp": 3.5,
+     "left": 745,
+     "low_pp": -3.0,
+     "right": 742,
+     "rule": "superiority",
+     "structures": 372
+    },
+    "K39": {
+     "decision": "unsupported",
+     "episodes": 3348,
+     "estimate_pp": -0.9,
+     "high_pp": 0.2,
+     "left": 2564,
+     "low_pp": -2.1,
+     "right": 2595,
+     "rule": "superiority",
+     "structures": 372
+    },
+    "K4": {
+     "decision": "supported",
+     "episodes": 252,
+     "estimate_pp": 8.3,
+     "high_pp": 14.3,
+     "left": 30,
+     "low_pp": 3.6,
+     "right": 9,
+     "rule": "superiority",
+     "structures": 84
+    },
+    "K40": {
+     "decision": "supported",
+     "episodes": 3348,
+     "estimate_pp": 6.9,
+     "high_pp": 9.2,
+     "left": 2568,
+     "low_pp": 4.7,
+     "right": 2336,
+     "rule": "superiority",
+     "structures": 372
+    },
+    "K41": {
+     "decision": "inconclusive",
+     "episodes": 1404,
+     "estimate_pp": 3.8,
+     "high_pp": 7.9,
+     "left": 1068,
+     "low_pp": -0.1,
+     "right": 1014,
+     "rule": "superiority",
+     "structures": 156
+    },
+    "K42": {
+     "decision": "supported",
+     "episodes": 3348,
+     "estimate_pp": 3.1,
+     "high_pp": 5.9,
+     "left": 2568,
+     "low_pp": 0.4,
+     "right": 2464,
+     "rule": "superiority",
+     "structures": 372
+    },
+    "K43": {
+     "decision": "inconclusive",
+     "episodes": 592,
+     "estimate_pp": 2.0,
+     "high_pp": 6.6,
+     "left": 521,
+     "low_pp": -2.4,
+     "right": 512,
+     "rule": "superiority",
+     "structures": 114
+    },
+    "K44": {
+     "decision": "inconclusive",
+     "episodes": 592,
+     "estimate_pp": 1.4,
+     "high_pp": 3.7,
+     "left": 542,
+     "low_pp": 0.0,
+     "right": 536,
+     "rule": "superiority",
+     "structures": 114
+    },
+    "K45": {
+     "decision": "supported",
+     "episodes": 70,
+     "estimate_pp": 6.9,
+     "high_pp": 18.1,
+     "left": 51,
+     "low_pp": 0.0,
+     "right": 46,
+     "rule": "non_inferiority",
+     "structures": 24
+    },
+    "K46": {
+     "decision": "supported",
+     "episodes": 70,
+     "estimate_pp": 16.7,
+     "high_pp": 33.3,
+     "left": 51,
+     "low_pp": 4.2,
+     "right": 40,
+     "rule": "superiority",
+     "structures": 24
+    },
+    "K47": {
+     "decision": "inconclusive",
+     "episodes": 1116,
+     "estimate_pp": 0.9,
+     "high_pp": 4.1,
+     "left": 752,
+     "low_pp": -2.3,
+     "right": 742,
+     "rule": "superiority",
+     "structures": 372
+    },
+    "K48": {
+     "decision": "supported",
+     "episodes": 1116,
+     "estimate_pp": 5.7,
+     "high_pp": 10.8,
+     "left": 745,
+     "low_pp": 0.8,
+     "right": 681,
+     "rule": "superiority",
+     "structures": 372
+    },
+    "K49": {
+     "decision": "supported",
+     "episodes": 1116,
+     "estimate_pp": -0.6,
+     "high_pp": 0.3,
+     "left": 745,
+     "low_pp": -1.6,
+     "right": 752,
+     "rule": "non_inferiority",
+     "structures": 372
+    },
+    "K5": {
+     "decision": "supported",
+     "episodes": 468,
+     "estimate_pp": 14.3,
+     "high_pp": 19.9,
+     "left": 408,
+     "low_pp": 9.2,
+     "right": 341,
+     "rule": "superiority",
+     "structures": 156
+    },
+    "K50": {
+     "decision": "missing"
+    },
+    "K51": {
+     "decision": "inconclusive",
+     "episodes": 706,
+     "estimate_pp": 5.1,
+     "high_pp": 12.9,
+     "left": 562,
+     "low_pp": -2.5,
+     "right": 521,
+     "rule": "superiority",
+     "structures": 135
+    },
+    "K52": {
+     "decision": "supported",
+     "episodes": 3348,
+     "estimate_pp": -0.1,
+     "high_pp": 1.0,
+     "left": 2564,
+     "low_pp": -1.2,
+     "right": 2568,
+     "rule": "non_inferiority",
+     "structures": 372
+    },
+    "K53": {
+     "decision": "supported",
+     "episodes": 3348,
+     "estimate_pp": 3.4,
+     "high_pp": 6.3,
+     "left": 2564,
+     "low_pp": 0.6,
+     "right": 2451,
+     "rule": "superiority",
+     "structures": 372
+    },
+    "K54": {
+     "decision": "supported",
+     "episodes": 1116,
+     "estimate_pp": 5.5,
+     "high_pp": 10.7,
+     "left": 742,
+     "low_pp": 0.3,
+     "right": 681,
+     "rule": "superiority",
+     "structures": 372
+    },
+    "K55": {
+     "decision": "unsupported",
+     "episodes": 592,
+     "estimate_pp": -1.8,
+     "high_pp": 1.8,
+     "left": 23,
+     "low_pp": -5.3,
+     "right": 32,
+     "rule": "superiority",
+     "structures": 114
+    },
+    "K6": {
+     "decision": "unsupported",
+     "episodes": 936,
+     "estimate_pp": -0.3,
+     "high_pp": 0.3,
+     "left": 794,
+     "low_pp": -1.1,
+     "right": 797,
+     "rule": "superiority",
+     "structures": 156
+    },
+    "K7": {
+     "decision": "supported",
+     "episodes": 1656,
+     "estimate_pp": 1.4,
+     "high_pp": 2.9,
+     "left": 1380,
+     "low_pp": -0.1,
+     "right": 1357,
+     "rule": "non_inferiority",
+     "structures": 276
+    },
+    "K8": {
+     "decision": "inconclusive",
+     "episodes": 1656,
+     "estimate_pp": 1.9,
+     "high_pp": 4.9,
+     "left": 1380,
+     "low_pp": -1.1,
+     "right": 1348,
+     "rule": "superiority",
+     "structures": 276
+    },
+    "K9": {
+     "decision": "supported",
+     "episodes": 468,
+     "estimate_pp": 1.5,
+     "high_pp": 7.9,
+     "left": 240,
+     "low_pp": -4.7,
+     "right": 233,
+     "rule": "non_inferiority",
+     "structures": 156
+    },
+    "N1": {
+     "decision": "supported",
+     "episodes": 3348,
+     "estimate_pp": 3.5,
+     "high_pp": 6.4,
+     "left": 2568,
+     "low_pp": 0.6,
+     "right": 2451,
+     "rule": "non_inferiority",
+     "structures": 372
+    },
+    "N2": {
+     "decision": "supported",
+     "episodes": 3348,
+     "estimate_pp": 3.1,
+     "high_pp": 5.9,
+     "left": 2568,
+     "low_pp": 0.4,
+     "right": 2464,
+     "rule": "non_inferiority",
+     "structures": 372
+    },
+    "N3": {
+     "decision": "supported",
+     "episodes": 3348,
+     "estimate_pp": -0.8,
+     "high_pp": 0.7,
+     "left": 2568,
+     "low_pp": -2.3,
+     "right": 2595,
+     "rule": "non_inferiority",
+     "structures": 372
+    },
+    "N4": {
+     "decision": "supported",
+     "episodes": 3348,
+     "estimate_pp": -0.9,
+     "high_pp": 0.5,
+     "left": 2568,
+     "low_pp": -2.3,
+     "right": 2598,
+     "rule": "non_inferiority",
+     "structures": 372
+    },
+    "P1": {
+     "decision": "unsupported",
+     "episodes": 592,
+     "estimate_pp": -2.1,
+     "high_pp": 0.7,
+     "left": 521,
+     "low_pp": -5.6,
+     "right": 536,
+     "rule": "superiority",
+     "structures": 114
+    },
+    "P2": {
+     "decision": "unsupported",
+     "episodes": 592,
+     "estimate_pp": -3.5,
+     "high_pp": -0.9,
+     "left": 521,
+     "low_pp": -7.0,
+     "right": 542,
+     "rule": "superiority",
+     "structures": 114
+    },
+    "R1": {
+     "decision": "inconclusive",
+     "episodes": 1116,
+     "estimate_pp": 0.3,
+     "high_pp": 3.3,
+     "left": 745,
+     "low_pp": -2.9,
+     "right": 742,
+     "rule": "superiority",
+     "structures": 372
+    },
+    "S1": {
+     "decision": "supported",
+     "episodes": 1116,
+     "estimate_pp": 11.4,
+     "high_pp": 14.6,
+     "left": 127,
+     "low_pp": 8.2,
+     "right": 0,
+     "rule": "superiority",
+     "structures": 372
+    },
+    "S2": {
+     "decision": "supported",
+     "episodes": 288,
+     "estimate_pp": 35.1,
+     "high_pp": 45.8,
+     "left": 233,
+     "low_pp": 24.7,
+     "right": 132,
+     "rule": "superiority",
+     "structures": 96
+    },
+    "U1": {
+     "decision": "supported",
+     "episodes": 3348,
+     "estimate_pp": 8.5,
+     "high_pp": 10.9,
+     "left": 588,
+     "low_pp": 6.3,
+     "right": 304,
+     "rule": "superiority",
+     "structures": 372
+    },
+    "W1": {
+     "decision": "supported",
+     "episodes": 3348,
+     "estimate_pp": 5.4,
+     "high_pp": 7.6,
+     "left": 486,
+     "low_pp": 3.3,
+     "right": 304,
+     "rule": "superiority",
+     "structures": 372
+    }
+   },
+   "episodes": 30132,
+   "input": {
+    "file": "artifacts/v3_1_model_qwen3_fingerprints.json.gz",
+    "sha256": "ef80afa7f7f4b37c7e9196c5da5fd377eb88da92b46ffe71e05897f78b8d1af8"
+   },
+   "model_files": {
+    "config": {
+     "architectures": [
+      "Qwen3ForCausalLM"
+     ],
+     "hidden_size": 4096,
+     "model_type": "qwen3",
+     "num_hidden_layers": 36,
+     "torch_dtype": "bfloat16",
+     "transformers_version": "4.51.0",
+     "vocab_size": 151936
+    },
+    "weights_sha256": {
+     "model-00001-of-00005.safetensors": "31d6a825ae35f11fb85b195b4c42c146c051e446433125a215336abdf95cbf5f",
+     "model-00002-of-00005.safetensors": "5991236cea6fe21f3d43cab0f0e84448734fbbe0789816202989f2ddc9d18282",
+     "model-00003-of-00005.safetensors": "c5185c4794be2d8a9784d5753c9922db38df478ce11f9ed0b415b7304d896836",
+     "model-00004-of-00005.safetensors": "b5ee7de71fbf17db3d5704e0c8f2bc7d005ca9e1d7ca2aeb19827b0cfcaa917a",
+     "model-00005-of-00005.safetensors": "20c2d6366ab85c90786ccdd829cd2b9e7d30ef3b2ebbb998280e7e4014b542ff"
+    }
+   },
+   "replay_disagreements": 0,
+   "seeds": [
+    11,
+    22,
+    33
+   ],
+   "tasks": 372,
+   "totals": {
+    "B0": {
+     "authorization_violation": 201,
+     "episodes": 3348,
+     "exact_target": 1623,
+     "goal_completion": 1592,
+     "retried": 0,
+     "unrequested_change": 227,
+     "unsafe_effect": 813
+    },
+    "B2_plan": {
+     "authorization_violation": 0,
+     "episodes": 3348,
+     "exact_target": 2478,
+     "goal_completion": 1755,
+     "retried": 2055,
+     "unrequested_change": 332,
+     "unsafe_effect": 127
+    },
+    "M": {
+     "authorization_violation": 0,
+     "episodes": 3348,
+     "exact_target": 2336,
+     "goal_completion": 1587,
+     "retried": 1284,
+     "unrequested_change": 258,
+     "unsafe_effect": 0
+    },
+    "M_full": {
+     "authorization_violation": 0,
+     "episodes": 3348,
+     "exact_target": 2451,
+     "goal_completion": 1804,
+     "retried": 2484,
+     "unrequested_change": 588,
+     "unsafe_effect": 0
+    },
+    "M_menu2": {
+     "authorization_violation": 0,
+     "episodes": 3348,
+     "exact_target": 2464,
+     "goal_completion": 1794,
+     "retried": 2484,
+     "unrequested_change": 486,
+     "unsafe_effect": 0
+    },
+    "M_plan": {
+     "authorization_violation": 0,
+     "episodes": 3348,
+     "exact_target": 2595,
+     "goal_completion": 1808,
+     "retried": 2484,
+     "unrequested_change": 330,
+     "unsafe_effect": 0
+    },
+    "M_reading": {
+     "authorization_violation": 0,
+     "episodes": 3348,
+     "exact_target": 2564,
+     "goal_completion": 1788,
+     "retried": 2484,
+     "unrequested_change": 329,
+     "unsafe_effect": 0
+    },
+    "M_recover": {
+     "authorization_violation": 0,
+     "episodes": 3348,
+     "exact_target": 2568,
+     "goal_completion": 1790,
+     "retried": 2484,
+     "unrequested_change": 304,
+     "unsafe_effect": 0
+    },
+    "M_seq": {
+     "authorization_violation": 0,
+     "episodes": 3348,
+     "exact_target": 2598,
+     "goal_completion": 1807,
+     "retried": 2484,
+     "unrequested_change": 323,
+     "unsafe_effect": 0
+    }
+   },
+   "turns_by_kind": {
+    "empty": 706,
+    "interrupted": 70,
+    "no recovery turn": 864,
+    "reselect": 1116,
+    "revise": 592
+   }
+  }
+ },
+ "study": "EviBound v3.1, exploratory arm: the same study with a second planner model (no confirmatory weight)"
+}

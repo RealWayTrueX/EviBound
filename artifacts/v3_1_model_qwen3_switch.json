@@ -1,0 +1,8 @@
+{
+  "model": "/mnt/HDD-8T-0/huggingface/models/Qwen3-8B",
+  "part": "1/2",
+  "template_mentions_enable_thinking": true,
+  "switch_changes_the_prompt": true,
+  "default_equals_thinking_on": true,
+  "prompt_tail_as_used": "_end|>\n<|im_start|>assistant\n<think>\n\n</think>\n\n"
+}
