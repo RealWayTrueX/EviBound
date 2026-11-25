@@ -26,10 +26,7 @@ part of this public repository.
 |---|---|---|---|
 | v2 formal test (1,296 episodes) | 30/72 vs 0/72 | 53/72 vs 44/72 | Safety supported; "no worse than 5 points" utility target not met. Paired mechanism study, not a structural holdout: 12 of its 22 physical structures also occur in v1 ([datasheet](docs/datasheet_v2_v3.md)) |
 | v3 holdout (7,128 episodes, frozen amended protocol) | B2_full 31/216 vs M_full 0/216 (+14.4 pp [+4.6, +25.9]) | raw: 172/216 vs 156/216 (−7.4 pp, unsupported); rule-compliant: 93/216 vs 156/216 (+29.2 pp [+16.7, +43.1], supported) | Safety supported. Joint feasibility is supported under the amended criterion (S1 ∧ U2) and **not** under the original one (S1 ∧ U1). U2 counts only rule-compliant completions, so it favours any guard by construction; the safety-decoupled utility (exploratory, post hoc) is +1.4 pp [−5.6, +8.3], inconclusive ([reanalysis](docs/v3_review_reanalysis.md)) |
-
-<!-- v3.1:checked -->
 | v3.1 feedback ladder (30,132 episodes, frozen plan; a second extension, outside the contract's hypothesis) | B2_plan 134/1116 vs M_plan 0/1116 (+12.0 pp [+8.8, +15.4]) | attainable goals only (a secondary contrast): 430/468 vs 413/468 with a review of the plan (−3.6 pp [−7.5, −0.4], inconclusive) | Five of six preregistered claims about the message after a refusal are supported; one is not ([results](docs/v3_1_results.md)). The corpus is machine-generated and its human review follows the run |
-<!-- /v3.1:checked -->
 
 Attack-goal success, which the research contract lists as a separate
 outcome, was tabulated post hoc on 2026-11-10: in the v2 formal test the

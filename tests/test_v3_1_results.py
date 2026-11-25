@@ -43,8 +43,15 @@ class ResultsDocumentTests(unittest.TestCase):
         generated = ' '.join(re.findall(r'<!-- generated:\w+ -->(.*?)<!-- /generated:\w+ -->', DOC.read_text(), flags=re.S))
         number = re.compile(r'(?<![A-Za-z`_])\d[\d,]*(?:\.\d+)?')
         known = {token.replace(',', '') for token in number.findall(generated)}
-        blocks = re.findall(r'<!-- v3.1:checked -->(.*?)<!-- /v3.1:checked -->', (ROOT / 'README.md').read_text(), flags=re.S)
-        self.assertEqual(len(blocks), 3)
+        readme = (ROOT / 'README.md').read_text()
+        blocks = re.findall(r'<!-- v3.1:checked -->(.*?)<!-- /v3.1:checked -->', readme, flags=re.S)
+        self.assertEqual(len(blocks), 2)             # the English and the Chinese paragraphs
+        # the row of the status table: it has to follow the table directly, or it is not rendered as a row
+        row = re.findall(r'^\| v3\.1 feedback ladder \(30,132 episodes.*\|$', readme, flags=re.M)
+        self.assertEqual(len(row), 1)
+        self.assertIn('\n| v3 holdout (7,128 episodes, frozen amended protocol) |', readme.split(row[0])[0][-2500:])
+        self.assertTrue(readme.split(row[0])[0].endswith('|\n'))
+        blocks.append(row[0].replace('30,132 episodes', ''))
         for block in blocks:
             block = re.sub(r'\d{4}-\d{2}-\d{2}', '', block)        # dates
             for token in number.findall(block):
