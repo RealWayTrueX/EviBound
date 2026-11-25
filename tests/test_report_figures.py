@@ -78,6 +78,15 @@ class FigureDataTest(unittest.TestCase):
         # the evidence-bound guard let no unsafe write through in any home, under any planner
         bound = next(s for s in data['panels']['unsafe'] if s['key'] == 'reason')
         self.assertTrue(all(v == 0 for values in bound['values'].values() for v in values))
+        # the reference points are each planner's own Study 3; the first planner's are the confirmatory run
+        study3 = report.load('v3_1_models_record.json')['models']
+        confirmatory = report.v31_totals(report.v31_record())
+        listed = next(s for s in data['panels']['unrequested'] if s['key'] == 'list')
+        self.assertAlmostEqual(listed['study3']['Qwen2.5-7B'],
+                               100 * confirmatory['M_full']['unrequested_change'] / confirmatory['M_full']['episodes'])
+        for planner, value in listed['study3'].items():
+            total = study3[next(k for k, v in names.items() if v == planner)]['totals']['M_full']
+            self.assertAlmostEqual(value, 100 * total['unrequested_change'] / total['episodes'])
 
     def test_formal_test_figure_adds_up(self):
         data = figures.data_formal_test()
