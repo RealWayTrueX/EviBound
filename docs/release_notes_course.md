@@ -52,7 +52,9 @@ bash scripts/reproduce.sh --traces DIR             # recompute the published num
 On 2026-11-18: 128 tests pass, both corpus checkers pass,
 `python3 scripts/verify_freezes.py` reports 4 of 4 `[ok]`. On 2026-11-25, with
 v3.1: 203 tests pass, the three corpus checkers pass, the same four freezes
-and the v3.1 freeze verify.
+and the v3.1 freeze verify. Later the same day, with the tests for the
+report's figures: 217 tests (15 of them need the local report and are skipped
+without it).
 
 ## Known issues
 

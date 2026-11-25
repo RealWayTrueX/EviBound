@@ -575,5 +575,17 @@ Frozen-boundary rules (non-negotiable):
   - Course report updated (local only): eight pages with references and
     appendix, section 6 on v3.1; `scripts/build_report_numbers.py` now also
     reads the v3.1 records (806 values); 203 tests pass.
+  - Course report rewritten (local only, 2026-11-25, at the owner's request):
+    IEEE conference format, eight pages. The introduction names three gaps and
+    the three mechanisms that answer them; the results are ordered by research
+    question; the conclusion ends with practices and open questions for other
+    work. Six figures replace the two TikZ plots: two schematics as editable
+    SVG (`scripts/build_report_diagrams.py`) and four charts
+    (`scripts/build_report_figures.py`), all drawn from the committed records;
+    the worked example is an episode of the v3.1 confirmatory run. One
+    statement about related work was wrong and is corrected: Environment
+    Steering does compare three kinds of feedback after a violation
+    (`docs/related_work_2026-11.md`, section 5, where every reference of the
+    report is listed as re-checked). 217 tests pass (872 report values).
   - Open, owner: M8; whether to restore the two v4 planner servers; reading
     and approving the updated course report.

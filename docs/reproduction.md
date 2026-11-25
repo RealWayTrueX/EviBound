@@ -270,22 +270,42 @@ The report itself is kept locally and is not in the public repository
 报告本身只保存在本地，不在公开仓库里（`report/` 已加入 .gitignore）；下面的命令需要本地的
 `report/` 目录，没有时 `tests/test_report_numbers.py` 会自动跳过。
 
-`report/evibound_report.pdf` is typeset from `report/evibound_report.tex`.
-The source contains no hand-typed result: `scripts/build_report_numbers.py`
-writes every number, both data tables and both data figures from the
-committed records into `report/generated/`, and the report looks each value
-up by key.
+`report/evibound_report.pdf` is typeset from `report/evibound_report.tex` in
+the IEEE conference format (`IEEEtran.cls` is kept next to the report, so the
+build does not depend on the TeX distribution). The source contains no
+hand-typed result: `scripts/build_report_numbers.py` writes every number and
+the generated tables from the committed records into `report/generated/`, and
+the report looks each value up by key.
+
+The figures are generated too, into `report/figures/`:
+
+| Script | Figures | Source of what is shown |
+|---|---|---|
+| `scripts/build_report_figures.py` | four charts (formal test, paired contrasts of v2 and v3, the feedback ladder, the thirteen confirmatory contrasts of v3.1) | the same records as the numbers; `--data` prints every plotted value |
+| `scripts/build_report_diagrams.py` | two schematics as editable SVG (overview of the evidence chain; one refused plan and the seven refusal messages) | the worked example is an episode of the v3.1 confirmatory run, read from the corpus and the episode fingerprints; the script asserts each stated fact against them |
+| `scripts/report_style.py` | colours and sizes shared by both | blue, orange and aqua are the first three slots of the charting guide's reference palette; they pass its colour-vision checks for every pair, and blue against red was checked the same way on 2026-11-25 |
 
 ```bash
 python3 scripts/build_report_numbers.py --check   # do the generated files still match the records?
 python3 scripts/build_report_numbers.py --keys    # every key and its value
-bash report/build.sh                              # regenerate and typeset (needs pdflatex)
+python3 scripts/build_report_figures.py --data    # every value a chart plots, as JSON
+python3 scripts/build_report_diagrams.py --check  # are the SVG schematics current?
+bash report/build.sh                              # regenerate numbers and figures, then typeset
 ```
 
-`tests/test_report_numbers.py` runs the check on every test run, and also
-fails if the report uses a key that does not exist. The build uses a fixed
-timestamp, so the same sources give the same PDF byte for byte.
+The build needs pdflatex; charts need matplotlib, and turning the SVG
+schematics into PDF needs `rsvg-convert`. Where one of the two is missing,
+the build keeps the figure files that are already in `report/figures/`.
 
-课程报告由 `report/evibound_report.tex` 排版。源文件里没有手写的结果数字：
-`scripts/build_report_numbers.py` 从已提交的记录生成全部数字、两张数据表和两张数据图，
-报告按键名取值。测试会在每次运行时检查生成文件是否与记录一致。
+`tests/test_report_numbers.py` runs the check on every test run, and also
+fails if the report uses a key that does not exist.
+`tests/test_report_figures.py` checks that the charts show the recorded
+counts and the frozen decisions and that the worked example is what the
+records say; with a local report it also checks that the references are
+numbered in the order they are cited. The build uses a fixed timestamp.
+
+课程报告由 `report/evibound_report.tex` 排版，采用 IEEE 会议格式（`IEEEtran.cls` 放在报告目录里）。
+源文件里没有手写的结果数字：`scripts/build_report_numbers.py` 从已提交的记录生成全部数字和数据表，
+报告按键名取值；四张数据图由 `scripts/build_report_figures.py` 生成，两张示意图（可编辑的 SVG）由
+`scripts/build_report_diagrams.py` 生成，其中的例子是 v3.1 正式实验里的一个真实回合，脚本会逐项对照记录。
+测试会在每次运行时检查生成文件、图里的数字和判定是否与记录一致。

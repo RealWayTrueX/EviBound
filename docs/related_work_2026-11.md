@@ -148,6 +148,32 @@ and Walker 2005), shields with minimal interference (Bloem et al. 2015;
 Alshiekh et al. 2018), and partial-satisfaction planning (Smith 2004; van den
 Briel et al. 2004) are cited from memory here and are still to be checked.
 
+## 5. References re-checked for the course report (2026-11-25)
+
+The references of the rewritten course report were checked on 2026-11-25 as
+follows. For the 2026 preprints the arXiv abstract page was read for title,
+authors and the statement the report makes. Five older works are new in this
+report and were checked against publisher or author pages: Sasha (Proc. ACM
+IMWUT 8(1), 2024), IoTGuard (NDSS 2019), Peeves (ACM CCS 2019), Bishop and
+Dilger (Computing Systems 9(2), 1996) and Nosek et al. (PNAS 115(11), 2018).
+SimuHome was checked against the first page of the paper (ICLR 2026). The
+remaining items from before 2026 were carried over from the earlier report
+and were not fetched again.
+
+| arXiv | Title on the arXiv page on 2026-11-25 | Note |
+|---|---|---|
+| 2610.01349 | PACE: Provenance-Aware Capability Enforcement for Tool-Using LLM Agents | as cited |
+| 2610.16333 | TRAP: Tool-result Replay Attack for Probing Misbinding in LLM Agents | as cited |
+| 2607.10487 | Temporary Authority, Permanent Effects: Commit-Time Authorization for LLM Agents | as cited; the page now shows a second version |
+| 2609.29522 | Stale Does Not Mean Unsafe: Measuring Commit-Guard Precision for Tool-Using LLM Agents in Simulated and Transactional Infrastructure | **the title differs from the one this project cited before**; the page gives 2 September 2026 for the first version. The report uses the current title and only the statement that guards bound to versions or epochs block benign races |
+| 2609.35807 | Environment Steering: Using Data Flow Control to Improve Agent Utility and Safety | section 5.2 of the full text compares STOP, GENERIC RETRY and Constraint-Aware RETRY on task and attack success (−36.2%, −10.5%, +6.5% task success against no defence). **The earlier report text said that this work does not vary the content of a refusal; that was wrong and is corrected**: the report now says that it compares three kinds of feedback on task and attack success, and that what was not found is a measurement of unrequested changes or a score against what the policy left attainable |
+| 2610.17039 | MENTOR: Procedural Shielding of Tool-Using LLM Agents | guidance towards compliant progress after a block |
+| 2610.01508 | OverAct: Measuring and Mitigating Proactive Over-Authorization in LLM Tool-Calling Agents | as cited |
+| 2611.19886 | Recovery Gone Too Far: Understanding and Repairing Risky Fallback in LLM Agents | about substitute tools after ordinary failures that cross an action boundary; section 4 above described it more loosely |
+| 2609.35381 | MCP Error Messages Written for Developers Hurt the Most Capable Agents Most | as described in section 4 |
+| 2607.22868 | What Can Be Enforced? A Theory of Certified Runtime Safety for Tool-Using Agents | as described in section 4 |
+| 2410.06703, 2505.23643, 2503.18666 | ST-WebAgentBench; Securing AI Agents with Information-Flow Control (FIDES); AgentSpec (ICSE 2026) | as cited |
+
 ## 中文摘要
 
 **新增工作。** 复核指出的五篇 2026 年 10 月预印本都已在 arXiv 上核实。
