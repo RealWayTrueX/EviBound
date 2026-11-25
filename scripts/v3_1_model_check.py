@@ -45,7 +45,7 @@ def model_files(folder):
     return record
 
 
-def tally(answers):
+def tally(answers, token_limit=TOKEN_LIMIT):
     answers = list(answers)
     n = len(answers)
     count = lambda test: sum(1 for a in answers if test(a))  # noqa: E731
@@ -53,23 +53,24 @@ def tally(answers):
         'answers': n,
         'not_parsed': count(lambda a: a.get('parsed') is None),
         'with_reasoning_text': count(lambda a: '<think>' in a.get('raw', '') or '</think>' in a.get('raw', '')),
-        'at_token_limit': count(lambda a: a.get('output_tokens', 0) >= TOKEN_LIMIT),
+        'at_token_limit': count(lambda a: a.get('output_tokens', 0) >= token_limit),
         'mean_output_tokens': round(sum(a.get('output_tokens', 0) for a in answers) / n, 1) if n else None,
     }
 
 
-def plumbing(paths):
+def plumbing(paths, token_limit=TOKEN_LIMIT):
     first, recovery, by_condition = {}, [], {}
     for path in paths:
         with open(path) as stream:
             for line in stream:
                 episode = json.loads(line)
                 proposals = episode['proposals']
-                first[(episode['task_id'], episode['variant'], episode['seed'])] = proposals[0]
+                first[(episode.get('home'), episode['task_id'], episode['variant'], episode['seed'])] = proposals[0]
                 recovery.extend(proposals[1:])
                 by_condition.setdefault(episode['condition'], []).extend(proposals[1:])
-    record = {'first_proposals': tally(first.values()), 'recovery_answers': tally(recovery),
-              'recovery_answers_by_condition': {c: tally(v) for c, v in sorted(by_condition.items())}}
+    record = {'first_proposals': tally(first.values(), token_limit), 'recovery_answers': tally(recovery, token_limit),
+              'recovery_answers_by_condition': {c: tally(v, token_limit) for c, v in sorted(by_condition.items())},
+              'token_limit': token_limit}
     head = record['first_proposals']
     reasoning = head['with_reasoning_text'] + record['recovery_answers']['with_reasoning_text']
     share = head['not_parsed'] / head['answers'] if head['answers'] else 1.0
@@ -84,11 +85,13 @@ def main():
     p = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     p.add_argument('--files')
     p.add_argument('--plumbing', nargs='+')
+    p.add_argument('--token-limit', type=int, default=TOKEN_LIMIT,
+                   help='new tokens allowed per answer in the run (224 in v3.1, 384 in the scale study)')
     p.add_argument('--output', type=Path, required=True)
     args = p.parse_args()
     if bool(args.files) == bool(args.plumbing):
         raise SystemExit('give exactly one of --files and --plumbing')
-    record = model_files(args.files) if args.files else plumbing(args.plumbing)
+    record = model_files(args.files) if args.files else plumbing(args.plumbing, args.token_limit)
     args.output.write_text(json.dumps(record, indent=2, sort_keys=True) + '\n')
     print(json.dumps({k: v for k, v in record.items() if k not in ('files', 'recovery_answers_by_condition')}))
 

@@ -14,8 +14,9 @@
 #   conditions <names...>    development runs started after this line use these conditions
 #   run <stage> <gpu> <tag> [seeds]   start a run in the background (dev_v3, dev, holdout, role_NAME;
 #                            modelpilot_NAME and model_NAME are the exploratory second-model arm,
-#                            scripts/run_v3_1_model.sh, where <gpu> may be several indices separated
-#                            by commas, or "auto" for every card that is idle right now)
+#                            scripts/run_v3_1_model.sh; homespilot_NAME and homes_NAME the exploratory
+#                            scale study, scripts/run_homes.sh. For these <gpu> may be several indices
+#                            separated by commas, or "auto" for every card that is idle right now)
 #   status                   progress of every v3.1 run
 #   wait <stage> <tag> [minutes]      block until that run is complete (default 20 minutes)
 #   publish                  push the small outputs now (always done once more at the end)
@@ -137,6 +138,8 @@ step_run() {
   case "$stage" in
     model_*|modelpilot_*)   # exploratory second-model arm; without seeds the launcher uses its own default
       setsid nohup nice -n 10 bash scripts/run_v3_1_model.sh "$stage" "$gpu" "$tag" ${seeds:+"$seeds"} > "$LOG_DIR/run_${stage}_${tag}.log" 2>&1 < /dev/null & ;;
+    homes_*|homespilot_*)   # exploratory scale study: homes of three sizes
+      setsid nohup nice -n 10 bash scripts/run_homes.sh "$stage" "$gpu" "$tag" ${seeds:+"$seeds"} > "$LOG_DIR/run_${stage}_${tag}.log" 2>&1 < /dev/null & ;;
     *)
       setsid nohup nice -n 10 bash scripts/run_v3_1.sh "$stage" "$gpu" "$tag" "${seeds:-11 22 33}" > "$LOG_DIR/run_${stage}_${tag}.log" 2>&1 < /dev/null & ;;
   esac

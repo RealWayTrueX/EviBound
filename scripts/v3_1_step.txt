@@ -1,12 +1,16 @@
 # Steps for the next call of scripts/v3_1_step.sh on the experiment machine (see that file).
-# The confirmatory run and the three planner characters are complete (2026-11-24 and 25).
-# Exploratory second-model arm (docs/v3_1_second_model.md): a pilot on the development split,
-# then, only if the pilot passes its check of the form of the answers, the holdout tasks with
-# Qwen3-8B. "auto" uses every graphics card that is idle and leaves a busy one alone.
+# The confirmatory run, the three planner characters and the second-model arm of v3.1 are done.
+# Exploratory scale study (docs/scale_study.md): homes of three sizes. For each planner a pilot
+# checks the form of the answers; the study starts only if the pilot passes. First the planner of
+# the confirmatory studies, then the second model. "auto" uses every idle graphics card.
 detach
 probe
-ensure modelpilot_qwen3 auto q1
+ensure homespilot_qwen25 auto h1
 publish
-ensure model_qwen3 auto q1
+ensure homes_qwen25 auto h1
+publish
+ensure homespilot_qwen3 auto h1
+publish
+ensure homes_qwen3 auto h1
 publish
 status
