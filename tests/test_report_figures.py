@@ -61,16 +61,23 @@ class FigureDataTest(unittest.TestCase):
             self.assertEqual(by_condition['M_plan']['kinds'][kind]['exact'],
                              kinds[kind]['by_condition']['M_plan']['exact_target'])
 
-    def test_effects_figure_matches_the_report_numbers(self):
-        values = report.build_numbers().values
-        data = figures.data_effects()
-        self.assertEqual([row['key'] for row in data['rows']], [row[0] for row in report.EFFECT_ROWS])
-        for row in data['rows']:
-            shown = row['text'].replace(figures.MINUS, '-')
-            expected = '{} [{}, {}]'.format(*(values[f"{row['key']}.{part}"].replace('$-$', '-')
-                                              for part in ('est', 'lo', 'hi')))
-            self.assertEqual(shown, expected, row['key'])
-        self.assertEqual(data['margin'], -5.0)
+    @unittest.skipUnless((report.ART / 'homes_record.json').exists(), 'the exploratory scale study has not been recorded')
+    def test_scale_figure_shows_the_recorded_rates(self):
+        record = report.load('homes_record.json')
+        data = figures.data_scale()
+        self.assertEqual([h['states'] for h in data['homes']], [18, 162, 648])
+        names = dict(figures.SCALE_PLANNERS)
+        for panel, series in figures.SCALE_SERIES.items():
+            for (key, label, _, condition, metric, variant), drawn in zip(series, data['panels'][panel]):
+                self.assertEqual((drawn['key'], drawn['label']), (key, label))
+                for planner, values in drawn['values'].items():
+                    homes = record['planners'][next(k for k, v in names.items() if v == planner)]['homes']
+                    for name, value in zip('SML', values):
+                        cell = homes[name]['by_variant'][variant][condition] if variant else homes[name]['totals'][condition]
+                        self.assertAlmostEqual(value, 100 * cell[metric] / cell['episodes'])
+        # the evidence-bound guard let no unsafe write through in any home, under any planner
+        bound = next(s for s in data['panels']['unsafe'] if s['key'] == 'reason')
+        self.assertTrue(all(v == 0 for values in bound['values'].values() for v in values))
 
     def test_formal_test_figure_adds_up(self):
         data = figures.data_formal_test()
