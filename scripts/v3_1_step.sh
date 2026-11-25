@@ -12,7 +12,10 @@
 #   stop_v4                  stop the two v4 planner servers (owner's decision of 2026-11-24)
 #   smoke                    tests and a scripted pipeline run, no GPU
 #   conditions <names...>    development runs started after this line use these conditions
-#   run <stage> <gpu> <tag> [seeds]   start a run in the background (dev_v3, dev, holdout)
+#   run <stage> <gpu> <tag> [seeds]   start a run in the background (dev_v3, dev, holdout, role_NAME;
+#                            modelpilot_NAME and model_NAME are the exploratory second-model arm,
+#                            scripts/run_v3_1_model.sh, where <gpu> may be several indices separated
+#                            by commas, or "auto" for every card that is idle right now)
 #   status                   progress of every v3.1 run
 #   wait <stage> <tag> [minutes]      block until that run is complete (default 20 minutes)
 #   publish                  push the small outputs now (always done once more at the end)
@@ -75,6 +78,10 @@ step_probe() {
   echo "data disk:"; df -h "$EVIBOUND_DATA" | tail -1 | sed 's/^/  /'
   echo "python: $(command -v python) $(python -c 'import sys, torch, transformers; print(sys.version.split()[0], "torch", torch.__version__, "transformers", transformers.__version__)' 2>&1)"
   echo "model folder: $(ls -d "$EVIBOUND_DATA"/models/Qwen2.5-7B-Instruct 2>&1) ($(ls "$EVIBOUND_DATA/models" 2>/dev/null | tr '\n' ' '))"
+  # the second model of the exploratory arm: file names and sizes only
+  local second; second="$(bash scripts/run_v3_1_model.sh --where qwen3 2>&1)"
+  echo "second model folder: $second"
+  ls -l "$second" 2>&1 | awk 'NR > 1 {printf "  %s %s\n", $5, $NF}' | head -24
   echo "v3.1 runs: $(ls -d "$RUNS"/v3_1_* 2>/dev/null | xargs -n1 basename 2>/dev/null | tr '\n' ' ')"
   echo "load: $(uptime | sed 's/.*load average/load average/')"
 }
@@ -105,18 +112,34 @@ step_smoke() {
 }
 
 step_run() {
-  local stage="$1" gpu="$2" tag="$3" seeds="${4:-11 22 33}"
+  local stage="$1" gpu="$2" tag="$3" seeds="${4:-}"
   local run_dir="$RUNS/v3_1_${stage}_${tag}"
   if [ -e "$run_dir/COMPLETE" ]; then say "$run_dir already complete"; return 0; fi
   if [ -e "$run_dir/RUNNING" ] && kill -0 "$(cat "$run_dir/RUNNING")" 2>/dev/null; then say "$run_dir is running"; return 0; fi
-  if [ "$gpu" != scripted ]; then   # "scripted" runs a persona without a model, for a dry run of the pipeline
-    local used tries=0; used="$(gpu_used "$gpu")"
-    while { [ -z "$used" ] || [ "$used" -gt 2000 ]; } && [ "$tries" -lt 12 ]; do sleep 5; tries=$((tries + 1)); used="$(gpu_used "$gpu")"; done
-    if [ -z "$used" ] || [ "$used" -gt 2000 ]; then say "GPU $gpu is not idle (${used:-?} MiB used); not starting $stage"; return 1; fi
+  local g used tries
+  if [ "$gpu" = auto ]; then   # every card that is idle now; a card somebody else is using is left alone
+    gpu=""
+    for g in $(nvidia-smi --query-gpu=index --format=csv,noheader 2>/dev/null); do
+      used="$(gpu_used "$g")"
+      [ -n "$used" ] && [ "$used" -le 2000 ] && gpu="${gpu:+$gpu,}$g"
+    done
+    if [ -z "$gpu" ]; then say "no GPU is idle; not starting $stage"; return 1; fi
+  fi
+  if [ "${gpu#scripted}" = "$gpu" ]; then   # "scripted" runs a persona without a model, for a dry run of the pipeline
+    for g in ${gpu//,/ }; do
+      tries=0; used="$(gpu_used "$g")"
+      while { [ -z "$used" ] || [ "$used" -gt 2000 ]; } && [ "$tries" -lt 12 ]; do sleep 5; tries=$((tries + 1)); used="$(gpu_used "$g")"; done
+      if [ -z "$used" ] || [ "$used" -gt 2000 ]; then say "GPU $g is not idle (${used:-?} MiB used); not starting $stage"; return 1; fi
+    done
   fi
   mkdir -p "$run_dir"
   # nice 10: other work on this machine keeps its share of the processors
-  setsid nohup nice -n 10 bash scripts/run_v3_1.sh "$stage" "$gpu" "$tag" "$seeds" > "$LOG_DIR/run_${stage}_${tag}.log" 2>&1 < /dev/null &
+  case "$stage" in
+    model_*|modelpilot_*)   # exploratory second-model arm; without seeds the launcher uses its own default
+      setsid nohup nice -n 10 bash scripts/run_v3_1_model.sh "$stage" "$gpu" "$tag" ${seeds:+"$seeds"} > "$LOG_DIR/run_${stage}_${tag}.log" 2>&1 < /dev/null & ;;
+    *)
+      setsid nohup nice -n 10 bash scripts/run_v3_1.sh "$stage" "$gpu" "$tag" "${seeds:-11 22 33}" > "$LOG_DIR/run_${stage}_${tag}.log" 2>&1 < /dev/null & ;;
+  esac
   say "started $stage on GPU $gpu as $run_dir (pid $!)"
 }
 
@@ -197,6 +220,7 @@ publish_now() {
     cp "$dir"/analysis/results.json "$dir"/analysis/summary.md "$dir"/fingerprints.json.gz "$dir"/examples.json \
        "$dir"/episodes.sha256 "$dir"/code_commit.txt "$dir"/COMPLETE "$dir"/*.config.json "$dir"/analysis.log "$dest/" 2>/dev/null
     [ -e "$dir/prereg_freeze.json" ] && cp "$dir/prereg_freeze.json" "$dest/"
+    cp "$dir"/model_*.json "$dest/" 2>/dev/null   # second-model arm: file hashes, template switch, form of the answers
   done
   tar -czf "$LOG_DIR/v3_1_server_out.tar.gz" -C "$OUT" server_out 2>/dev/null   # one file, in case it has to be fetched by hand
   git -C "$OUT" add -A >/dev/null 2>&1

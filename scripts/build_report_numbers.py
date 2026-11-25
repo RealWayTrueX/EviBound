@@ -47,7 +47,7 @@ MINUS = r'$-$'
 
 # Dated facts about the repository that are not results. tests/test_report_numbers.py checks that the
 # test suite has not shrunk below the number printed in the report.
-SNAPSHOT = {'date': '25 November 2026', 'unit_tests': 203, 'component_tests': 27}
+SNAPSHOT = {'date': '25 November 2026', 'unit_tests': 217, 'component_tests': 27}
 
 
 def load(name):
@@ -559,7 +559,8 @@ V31_LADDER = (
 )
 V31_OTHER = (('B0', 'b0'), ('B2_plan', 'b2plan'))
 V31_CONFIRMATORY = ('U1', 'W1', 'I1', 'I2', 'P1', 'P2', 'R1', 'N1', 'N2', 'N3', 'N4', 'S1', 'S2')
-V31_SECONDARY = ('K36', 'K42', 'K31', 'K32', 'K33', 'K37', 'K43', 'K54', 'K41', 'H1', 'H2')
+V31_SECONDARY = ('K36', 'K42', 'K31', 'K32', 'K33', 'K37', 'K43', 'K54', 'K41', 'H1', 'H2',
+                 'K11', 'K19', 'K20', 'K40', 'K50', 'H6', 'K18')
 V31_KINDS = ('interrupted', 'revise', 'reselect')
 V31_ROLES = ('cautious', 'faithful', 'experienced')
 V31_ROLE_CONTRASTS = ('U1', 'N1', 'I1', 'R1', 'K43')
@@ -636,6 +637,40 @@ def v31_numbers(n):
             n.effect(f'v31.role.{role}.{contrast}', item['estimate_pp'] / 100, item['low_pp'] / 100, item['high_pp'] / 100)
             n.add(f'v31.role.{role}.{contrast}.decision', item['decision'])
     n.add('v31.role.episodes', integer(sum(roles[role]['episodes'] for role in V31_ROLES)))
+
+
+def summary_numbers(n):
+    """Totals over the three studies, for the abstract, the introduction and the conclusion."""
+    v = n.values
+
+    def count(key):
+        return int(v[key].replace(',', ''))
+
+    n.add('all.episodes', integer(sum(count(f'{study}.episodes') for study in ('v2', 'v3', 'v31'))))
+    n.add('all.tasks', integer(sum(count(f'{study}.tasks') for study in ('v2', 'v3', 'v31'))))
+    # share of attacked episodes with an unsafe effect under the guard that trusts the cited reading
+    shares = {'v2.safety.b2_pct': (count('v2.safety.b2'), count('v2.cell')),
+              'v3.S1.left_pct': (count('v3.S1.left'), count('v3.cell')),
+              'v31.S1.left_pct': (count('v31.S1.left'), count('v31.S1.n'))}
+    for key, (events, episodes) in shares.items():
+        n.add(key, pct(events, episodes))
+    rates = [100 * events / episodes for events, episodes in shares.values()]
+    n.add('all.b2_unsafe.min', round(min(rates)))
+    n.add('all.b2_unsafe.max', round(max(rates)))
+    # episodes under an evidence-bound guard, every variant; none of them had an unsafe effect or a
+    # write outside the scope (v3.1 is asserted in v31_numbers)
+    assert all(v[f'v2.{variant}.m.unsafe'] == '0' for variant in ('att', 'clean', 'bound'))
+    outcomes = load('contract_outcomes_v2_v3.json')['studies']
+    for study, bound in (('v2_formal_test', ('M',)),
+                         ('v3_holdout', ('M', 'M_confirm_empty', 'M_full', 'M_mask', 'M_recover', 'M_repair'))):
+        rows = [row for row in outcomes[study]['table'] if row['condition'] in bound]
+        assert {row['condition'] for row in rows} == set(bound)
+        assert all(row['unsafe_effect_count'] == 0 and row['authorization_violation_count'] == 0 for row in rows)
+    assert int(v['v3.fullguard.conditions']) == 6
+    n.add('all.guarded.episodes', integer(3 * count('v2.cell') + count('v3.fullguard.episodes')
+                                          + count('v31.guarded.episodes')))
+    n.add('v31.U1.ratio', f"{count('v31.U1.left') / count('v31.U1.right'):.1f}")
+    n.add('v31.battery.attacked', integer(count('v31.S2.n')))
 
 
 def table_ladder():
@@ -895,21 +930,19 @@ def figure_bars(n):
 
 ARTIFACT_ROWS = (
     # group, path
-    ('Formal test (v2)', 'data/scenarios_v2/test.jsonl'),
-    ('Formal test (v2)', 'artifacts/week8_main_protocol_freeze.tar.gz'),
-    ('Formal test (v2)', 'artifacts/week8_main_results.json'),
-    ('Holdout extension (v3)', 'data/scenarios_v3/holdout.jsonl'),
-    ('Holdout extension (v3)', 'artifacts/week11_v3_prereg_freeze.json'),
-    ('Holdout extension (v3)', 'artifacts/week11_v3_holdout_results.json'),
-    ('Second extension (v3.1)', 'data/scenarios_v3_1/holdout.jsonl'),
-    ('Second extension (v3.1)', 'artifacts/v3_1_prereg_freeze.json'),
-    ('Second extension (v3.1)', 'artifacts/v3_1_holdout_fingerprints.json.gz'),
-    ('Second extension (v3.1)', 'artifacts/v3_1_holdout_results.json'),
-    ('Post hoc analyses and reproduction', 'artifacts/week11_v3_review_reanalysis.json'),
-    ('Post hoc analyses and reproduction', 'artifacts/contract_outcomes_v2_v3.json'),
-    ('Post hoc analyses and reproduction', 'artifacts/reproduction_published_results_check.json'),
-    ('Post hoc analyses and reproduction', 'artifacts/reproduction_colab_a100_record.json'),
-    ('Model and raw traces', 'artifacts/model_manifest.json'),
+    ('Study 1: formal test (v2)', 'data/scenarios_v2/test.jsonl'),
+    ('Study 1: formal test (v2)', 'artifacts/week8_main_protocol_freeze.tar.gz'),
+    ('Study 1: formal test (v2)', 'artifacts/week8_main_results.json'),
+    ('Study 2: holdout (v3)', 'data/scenarios_v3/holdout.jsonl'),
+    ('Study 2: holdout (v3)', 'artifacts/week11_v3_prereg_freeze.json'),
+    ('Study 2: holdout (v3)', 'artifacts/week11_v3_holdout_results.json'),
+    ('Study 3: feedback ladder (v3.1)', 'data/scenarios_v3_1/holdout.jsonl'),
+    ('Study 3: feedback ladder (v3.1)', 'artifacts/v3_1_prereg_freeze.json'),
+    ('Study 3: feedback ladder (v3.1)', 'artifacts/v3_1_holdout_fingerprints.json.gz'),
+    ('Study 3: feedback ladder (v3.1)', 'artifacts/v3_1_holdout_results.json'),
+    ('Reproduction, model and raw traces', 'artifacts/reproduction_published_results_check.json'),
+    ('Reproduction, model and raw traces', 'artifacts/reproduction_colab_a100_record.json'),
+    ('Reproduction, model and raw traces', 'artifacts/model_manifest.json'),
 )
 
 
@@ -939,12 +972,13 @@ def table_artifacts():
         digest = hashlib.sha256((ROOT / path).read_bytes()).hexdigest()
         add(group, path[len('artifacts/'):] if path.startswith('artifacts/') else path, digest)
     name, _size, digest = trace_archive()
-    add('Model and raw traces', name, digest)
+    add('Reproduction, model and raw traces', name, digest)
     return '\n'.join(rows) + '\n'
 
 
 def outputs():
     numbers = build_numbers()
+    summary_numbers(numbers)
     name, size, _digest = trace_archive()
     numbers.add('traces.bytes', size)
     for key, value in SNAPSHOT.items():
