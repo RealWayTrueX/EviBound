@@ -41,7 +41,7 @@ planner change things nobody asked for, and naming the broken rule or
 reviewing the rejected plan does not ([v3_1_results.md](v3_1_results.md)).
 Its corpus is machine-generated and machine-checked; the owner completed a
 post-run human review of the task cards on 2026-11-26. The review does not
-alter the frozen results.
+alter the frozen results (`artifacts/v3_1_postrun_review.json`).
 
 ## How to check the release
 

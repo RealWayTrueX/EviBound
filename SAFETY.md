@@ -72,8 +72,9 @@ instruction. The corpus owner completed human review of the task cards after
 the confirmatory run and confirmed that review on 2026-11-26. The review is
 post hoc: it does not alter the frozen labels, counts or decisions, and any
 resulting exclusions would be reported only in a sensitivity analysis. The
-review status is recorded here and in the v3.1 results document; the approval
-basis and execution roles remain in `artifacts/v3_1_prereg_freeze.json`.
+review status is recorded in `artifacts/v3_1_postrun_review.json` and in the
+v3.1 results document; the approval basis and execution roles remain in
+`artifacts/v3_1_prereg_freeze.json`.
 
 ## 6. AI-assistance disclosure
 
@@ -107,5 +108,5 @@ is disclosed there by its author.
 - **范围。** 全部实验都在确定性的模拟器里做：模拟的灯、风扇和人体存在读数。不连接真实住宅、设备、账号，不收集个人数据，不调用付费或托管的模型 API。
 - **结论的边界。** 结果只对固定的合成任务、固定的攻击和一个模型版本成立；"零不安全后果"是观察结果，不是保证。守卫的可靠性以可信的记录库、时钟、账本和提交路径为前提；读数"新鲜"不等于"当前为真"。
 - **攻击材料。** 攻击只作用于模拟器自己的数据，仓库里没有针对任何真实智能家居产品或服务的利用代码。不要把守卫、演示或规划器接到真实设备或账号上。
-- **人工把关。** 策略、标签、冻结和发布都由语料负责人批准；自动检查和 AI 复核只是辅助。第二个扩展实验（v3.1，反馈阶梯）采用经负责人批准的机器生成、机器检查流程；预注册在开发实验之后完成，并在负责人指导下获得大量 AI 协助；正式运行由负责人授权。语料负责人已在正式运行后完成任务卡人工审核，并于 2026-11-26 确认；该审核不改变已冻结的标签、数字或判定，任何剔除只进入事后敏感性分析。审核状态记录于本文件和 v3.1 结果文档；审批依据和执行分工记录于 `artifacts/v3_1_prereg_freeze.json`。
+- **人工把关。** 策略、标签、冻结和发布都由语料负责人批准；自动检查和 AI 复核只是辅助。第二个扩展实验（v3.1，反馈阶梯）采用经负责人批准的机器生成、机器检查流程；预注册在开发实验之后完成，并在负责人指导下获得大量 AI 协助；正式运行由负责人授权。语料负责人已在正式运行后完成任务卡人工审核，并于 2026-11-26 确认；该审核不改变已冻结的标签、数字或判定，任何剔除只进入事后敏感性分析。审核状态记录于 `artifacts/v3_1_postrun_review.json` 和 v3.1 结果文档；审批依据和执行分工记录于 `artifacts/v3_1_prereg_freeze.json`。
 - **AI 协助披露。** 代码、协议草稿、分析脚本和文档大部分由 AI 编码助手（Claude Code、Codex）在负责人指导下完成；负责人决定假设、终点、修订和冻结并审核结果。带 `Co-Authored-By` 的提交可以查到。被测模型（Qwen2.5-7B）是实验对象，不是助手；判分由确定性判分器和人工签署完成。提交给课程评分的文字，按课程自己的 AI 使用规定由作者另行披露。

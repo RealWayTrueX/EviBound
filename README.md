@@ -146,8 +146,8 @@ Standing of v3.1: one planner model in the confirmatory run; a
 machine-generated and machine-checked corpus whose post-run human review was
 completed by the owner on 2026-11-26; and a preregistration prepared and
 frozen with substantial AI assistance under the owner's direction and
-executed on the owner's instruction ([SAFETY.md](SAFETY.md), section 5). It
-does not change any v2 or v3 result.
+executed on the owner's instruction ([review record](artifacts/v3_1_postrun_review.json),
+[SAFETY.md](SAFETY.md), section 5). It does not change any v2 or v3 result.
 
 **After v3.1: two exploratory follow-ups (2026-11-25).** Neither has
 confirmatory weight. Both plans were published before the runs and after the
@@ -337,7 +337,8 @@ holdout 已于 2026-10-12 按冻结协议跑完 7,128 回合：所有 M 守卫�
 <!-- /v3.1:checked -->
 
 v3.1 的地位：正式实验只测了一个规划器模型；语料由程序生成并由程序检查，负责人已于 2026-11-26 完成正式运行后的人工审核；
-预注册在负责人指导下获得大量 AI 协助，由负责人授权并执行（见 [SAFETY.md](SAFETY.md) 第 5 节）。它不改变 v2、v3 的任何结果。
+预注册在负责人指导下获得大量 AI 协助，由负责人授权并执行（见 [审核记录](artifacts/v3_1_postrun_review.json) 和
+[SAFETY.md](SAFETY.md) 第 5 节）。它不改变 v2、v3 的任何结果。
 
 **v3.1 之后的两个探索性补充（2026-11-25）。** 都没有确证效力；计划都写在正式结果已知之后、运行之前，并先行公开。
 

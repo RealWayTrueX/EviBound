@@ -563,7 +563,8 @@ Frozen-boundary rules (non-negotiable):
     and the run was executed on the owner's instruction. The corpus and labels
     were machine-generated and machine-checked; the owner completed the
     post-run human review of the task cards on 2026-11-26. The review does not
-    alter the frozen results (`SAFETY.md`, section 5).
+    alter the frozen results (`artifacts/v3_1_postrun_review.json`,
+    `SAFETY.md`, section 5).
   - Tooling: the experiment machine is driven from a stored terminal command
     and a step file (`scripts/v3_1_step.sh`, `scripts/v3_1_step.txt`); each
     finished run pushes its small outputs to the branch `claude/v3-1-results`.

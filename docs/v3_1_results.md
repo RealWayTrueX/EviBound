@@ -1050,7 +1050,8 @@ matter most for reading the results:
   completed human review of the task cards after the confirmatory run and
   confirmed that review on 2026-11-26. The review is post hoc: the analysis
   above stands as run, and any rejected task would be addressed in a
-  sensitivity analysis without replacement.
+  sensitivity analysis without replacement
+  (`artifacts/v3_1_postrun_review.json`).
 - **The claims were rewritten after development runs.** The development runs
   used other tasks (the v3 corpus and the development split, which share no
   physical structure with the holdout), and the first draft's claims are
