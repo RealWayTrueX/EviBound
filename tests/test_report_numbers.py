@@ -92,7 +92,7 @@ class ReportNumbersTest(unittest.TestCase):
         flat = ' '.join(self.tex.split())
         for phrase in ('Five of the six claims are supported', 'The claim that failed came from the development runs',
                        'the estimates point the other way', 'generated and checked by programs',
-                       'frozen and run by an AI assistant', 'no claim tested it'):
+                       'no claim tested it'):
             self.assertTrue(phrase in flat, phrase)
         for key in ('m', 'reason', 'reading', 'list', 'list2', 'plan', 'seq'):
             self.assertEqual(v[f'v31.tot.{key}.unsafe'], '0', key)

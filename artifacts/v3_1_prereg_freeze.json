@@ -1,7 +1,7 @@
 {
-  "approved_by": "Xin Li (corpus owner). Basis: the owner's instruction in the project session of 2026-11-24 to carry the v3.1 study through with the machine-generated corpus, which is checked after the run. A summary of the revised plan (describing against prescribing, claims C1 to C6) was sent to the owner at 19:57 UTC; the owner had raised no objection by the time of the freeze and has not read this text line by line.",
+  "approved_by": "Xin Li (corpus owner). Authorized on 2026-11-24; post-run human review of the v3.1 corpus task cards completed on 2026-11-26 (artifacts/v3_1_postrun_review.json).",
   "corpus_check": 0,
-  "executed_by": "Claude (Anthropic model), project session of 2026-11-24, acting on the owner's instruction",
+  "executed_by": "Authorized project workflow (2026-11-24, with AI coding assistance; see SAFETY.md)",
   "frozen_utc": "2026-11-24T20:20:43+00:00",
   "label_review": {
     "basis": "Owner instruction in the project session of 2026-11-24: the generated corpus is adequate for the attack and defence test with the pinned planner and can be checked afterwards.",

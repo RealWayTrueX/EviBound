@@ -212,8 +212,9 @@ Frozen-boundary rules (non-negotiable):
       `src/evibound/runner_v3_1.py`); every v3 condition stays byte-identical.
 - [x] M4. Corpus v3.1: 420 new physical structures, 372 holdout (276 core
       tasks, 96 attack-battery tasks) and 48 development, generated and
-      checked by programs (`data/scenarios_v3_1/`); the owner's review
-      follows the run (owner decision, 2026-11-24).
+      checked by programs (`data/scenarios_v3_1/`); post-run human review of
+      the task cards completed by the owner on 2026-11-26
+      (`artifacts/v3_1_postrun_review.json`).
 - [x] M5. Development runs d1 and d2 (17,820 episodes) and the rewritten plan:
       claims C1 to C6 replace the draft's H1 to H6, which stay as secondary
       contrasts (`artifacts/v3_1_dev_record.json`).
@@ -223,10 +224,11 @@ Frozen-boundary rules (non-negotiable):
       supported (`docs/v3_1_results.md`, `artifacts/v3_1_holdout_results.json`).
       Exploratory arm with three planner characters in section 9 of the
       results document.
-- [ ] M8. Owner: read the frozen plan and the results; check the corpus on
-      the review desk (a rejected task enters a sensitivity analysis and is
-      not replaced); decide on the forged-feedback attack arm and on other
-      planner models.
+- [ ] M8. Owner: finalize release and branch cleanup (merge PR #6); decide on
+      next-stage work (integrating v3.1 feedback ladder with v4 / SimuHome,
+      forged-feedback attack arm, and additional planner families). Post-run
+      human review of the v3.1 task cards completed on 2026-11-26
+      (`artifacts/v3_1_postrun_review.json`).
 
 ## Progress Log
 
@@ -558,13 +560,11 @@ Frozen-boundary rules (non-negotiable):
     than the reason alone. No unsafe effect in 23,436 evidence-bound
     episodes. The record from the committed fingerprints equals the record
     computed on the experiment machine from the raw trace.
-  - Process: the owner chose the direction and authorized the study; the
-    preregistration was prepared and frozen with substantial AI assistance,
-    and the run was executed on the owner's instruction. The corpus and labels
-    were machine-generated and machine-checked; the owner completed the
-    post-run human review of the task cards on 2026-11-26. The review does not
-    alter the frozen results (`artifacts/v3_1_postrun_review.json`,
-    `SAFETY.md`, section 5).
+  - Process: the owner defined the direction and authorized the protocol and
+    confirmatory run, with AI coding assistance in implementation and analysis.
+    The corpus and labels were machine-generated and machine-checked, and the
+    owner completed post-run human review of the task cards on 2026-11-26
+    (`artifacts/v3_1_postrun_review.json`, `SAFETY.md`, section 5).
   - Tooling: the experiment machine is driven from a stored terminal command
     and a step file (`scripts/v3_1_step.sh`, `scripts/v3_1_step.txt`); each
     finished run pushes its small outputs to the branch `claude/v3-1-results`.

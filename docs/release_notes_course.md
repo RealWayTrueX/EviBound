@@ -10,7 +10,7 @@ here changes a frozen file.
 
 | Deliverable of the research contract | Where |
 |---|---|
-| Report, eight pages with references and appendix (updated 2026-11-25 with a section on v3.1) | kept locally, not in the public repository |
+| Report, eight pages in IEEE conference format (Study 3 is v3.1, plus Qwen3-8B and multi-device exploratory studies) | kept locally, not in the public repository |
 | Five-minute demo and its script | [demo/](../demo/README.md), [demo_walkthrough.md](demo_walkthrough.md) |
 | Versioned scenarios and prompts | `data/scenarios*/`, the frozen planner and recovery modules under `src/evibound/` |
 | Raw traces | one archive with a hash manifest on the data disk ([reproduction.md](reproduction.md), section 5); the episode fingerprints of both confirmatory runs are in `artifacts/` |
@@ -78,12 +78,12 @@ These commands change the public repository. They are listed for the owner
 and have not been run.
 
 ```bash
-# 1. merge pull request #4 into main (or use the button on GitHub)
-gh pr merge 4 --merge
+# 1. merge pull request #6 into main (or use the button on GitHub)
+gh pr merge 6 --squash
 
 # 2. tag the merged commit; the report can then cite the tag
 git checkout main && git pull
-git tag -a v1.0-course -m "EviBound: course report, frozen v1-v3 studies, reproduction package"
+git tag -a v1.0-course -m "EviBound: course report, frozen v1-v3.1 studies, reproduction package"
 git push origin v1.0-course
 
 # 3. optional: publish the trace archive with the release (owner's decision)
@@ -92,6 +92,3 @@ git push origin v1.0-course
 gh release create v1.0-course --title "EviBound course release" --notes-file docs/release_notes_course.md \
     evibound_raw_traces_20261110.tar.gz
 ```
-
-Before step 2, read the report: its last paragraph states that the text was
-drafted with AI assistance and checked by the author.

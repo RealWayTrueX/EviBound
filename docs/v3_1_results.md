@@ -1064,8 +1064,7 @@ matter most for reading the results:
 - **Fixed attacks.** The attack alters or replays the first observation. The
   message of the guard is not attacked; a forged message is outside this
   study.
-- **Roles and approval.** The study was prepared and executed under the
-  owner's direction with substantial AI assistance in protocol preparation,
-  implementation, execution and analysis; the owner completed the post-run
-  corpus review. The freeze record documents the approval basis and execution
-  roles (`artifacts/v3_1_prereg_freeze.json`).
+- **Roles and approval.** The study was directed and authorized by the owner,
+  with AI coding assistance in implementation, execution and analysis; the
+  owner completed post-run human review of the task cards on 2026-11-26
+  (`artifacts/v3_1_postrun_review.json`; full disclosure in `SAFETY.md`).

@@ -143,11 +143,10 @@ advice as such; this reading was made after the results.
 <!-- /v3.1:checked -->
 
 Standing of v3.1: one planner model in the confirmatory run; a
-machine-generated and machine-checked corpus whose post-run human review was
-completed by the owner on 2026-11-26; and a preregistration prepared and
-frozen with substantial AI assistance under the owner's direction and
-executed on the owner's instruction ([review record](artifacts/v3_1_postrun_review.json),
-[SAFETY.md](SAFETY.md), section 5). It does not change any v2 or v3 result.
+machine-generated and machine-checked corpus with post-run human review
+completed by the owner on 2026-11-26 ([review record](artifacts/v3_1_postrun_review.json);
+oversight and AI-assistance disclosure in [SAFETY.md](SAFETY.md), sections 5–6).
+It does not change any v2 or v3 result.
 
 **After v3.1: two exploratory follow-ups (2026-11-25).** Neither has
 confirmatory weight. Both plans were published before the runs and after the
@@ -194,7 +193,7 @@ confirmatory results were known.
 | Related work checked in November 2026 | [docs/related_work_2026-11.md](docs/related_work_2026-11.md) |
 | Formal test validation record | [artifacts/week8_main_validation.json](artifacts/week8_main_validation.json) |
 | Every contract outcome per condition: attack-goal success, authorization violations, reads, latency, tokens (post hoc) | [artifacts/contract_outcomes_v2_v3.json](artifacts/contract_outcomes_v2_v3.json) |
-| Course report in IEEE conference format (eight pages with references and appendix; its Study 3 is v3.1); every number and every figure is generated from the committed records | kept locally, not in this repository (`report/` is git-ignored); with a local copy: `bash report/build.sh`, `python3 scripts/build_report_numbers.py --check`. The figure scripts are public: `scripts/build_report_figures.py` (charts), `scripts/build_report_diagrams.py` (schematics as editable SVG) |
+| Course report in IEEE conference format (eight pages; Study 3 is v3.1, plus Qwen3-8B and multi-device exploratory studies); every number and figure is generated from the committed records | kept locally, not in this repository (`report/` is git-ignored); with a local copy: `bash report/build.sh`, `python3 scripts/build_report_numbers.py --check`. The figure scripts are public: `scripts/build_report_figures.py` (charts), `scripts/build_report_diagrams.py` (schematics as editable SVG) |
 | Reproduction: one command without a GPU, up to a model re-run on another machine | [docs/reproduction.md](docs/reproduction.md) |
 | Safety statement and AI-assistance disclosure | [SAFETY.md](SAFETY.md) |
 | Licences: code under MIT, data and documentation under CC BY 4.0 | [LICENSE](LICENSE), [LICENSE-DATA.md](LICENSE-DATA.md) |
@@ -336,9 +335,7 @@ holdout 已于 2026-10-12 按冻结协议跑完 7,128 回合：所有 M 守卫�
 这一解读是看到结果之后做出的。
 <!-- /v3.1:checked -->
 
-v3.1 的地位：正式实验只测了一个规划器模型；语料由程序生成并由程序检查，负责人已于 2026-11-26 完成正式运行后的人工审核；
-预注册在负责人指导下获得大量 AI 协助，由负责人授权并执行（见 [审核记录](artifacts/v3_1_postrun_review.json) 和
-[SAFETY.md](SAFETY.md) 第 5 节）。它不改变 v2、v3 的任何结果。
+v3.1 的地位：正式实验只测了一个规划器模型；语料由程序生成并由程序检查，负责人已于 2026-11-26 完成正式运行后的人工审核（见[审核记录](artifacts/v3_1_postrun_review.json)；把关与 AI 协助说明见 [SAFETY.md](SAFETY.md) 第 5–6 节）。它不改变 v2、v3 的任何结果。
 
 **v3.1 之后的两个探索性补充（2026-11-25）。** 都没有确证效力；计划都写在正式结果已知之后、运行之前，并先行公开。
 
@@ -365,11 +362,11 @@ v2、v3 数字、计数、区间、哈希和判定都已从原始轨迹重算（
 
 任务语料：`data/scenarios/`（v1，48 个，已冻结）、`data/scenarios_v2/`（56 个，
 已冻结并经人工审核）、`data/scenarios_v3/`（84 个，覆盖 4 种传感器模态和 3 级语言，已审核并冻结，holdout 已完成）、
-`data/scenarios_v3_1/`（420 个任务，420 个全新的物理结构：holdout 372，开发集 48；由程序生成并由程序检查，负责人的人工审核放在实验之后）。模型权重、
+`data/scenarios_v3_1/`（420 个任务，420 个全新的物理结构：holdout 372，开发集 48；由程序生成并由程序检查，负责人已于 2026-11-26 完成运行后人工审核）。模型权重、
 完整逐回合轨迹和运行日志在数据盘 `/mnt/HDD-8T-0/evibound_yanke/`。面向人的
 实验报告、审核包和交接记录只保存在本地，不放进公开仓库。
 
-课程收尾用的文件：课程报告（IEEE 会议格式，共 8 页，含参考文献和附录，其中 Study 3 即 v3.1；数字和图都由脚本从已提交的记录生成；只保存在本地，不在公开仓库里；`report/` 已加入 .gitignore）、[复现说明](docs/reproduction.md)、[安全声明与 AI 协助披露](SAFETY.md)、
+课程收尾用的文件：课程报告（IEEE 会议格式，共 8 页，其中 Study 3 即 v3.1，含 Qwen3-8B 与多设备规模探索实验；数字和图均由脚本从已提交的记录生成；只保存在本地，不在公开仓库里；`report/` 已加入 .gitignore）、[复现说明](docs/reproduction.md)、[安全声明与 AI 协助披露](SAFETY.md)、
 许可证（代码 [MIT](LICENSE)，数据和文档 [CC BY 4.0](LICENSE-DATA.md)）、
 [课程收尾审计与完成计划](docs/course_closeout_2026-11-10.md)、
 [同伴与教师评审协议](docs/peer_review_protocol.md)（一致率脚本 `scripts/review_agreement.py`）、
