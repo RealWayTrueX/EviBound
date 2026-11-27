@@ -1,0 +1,166 @@
+{
+  "episodes_attempted": 14,
+  "episodes_error": 0,
+  "episodes_ok": 10,
+  "limit": 10,
+  "rows": [
+    {
+      "after_time": "2025-08-23 11:37:05",
+      "attribute_after_sha256": "41ddba9ac6641b81475d129784905cdfb8ef2af48f9cecb6a38a3819d8a109bd",
+      "attribute_before_sha256": "55decdeda700ef69a6edb26ad56985af56f3216aecebc793634471b06530487a",
+      "before_time": "2025-08-23 11:36:54",
+      "commands_executed": 5,
+      "device_id": "living_room_dimmable_light_1",
+      "episode": "qt4-1_feasible_seed_1.json",
+      "num_rooms": 5,
+      "query_type": "qt4-1",
+      "status": "ok",
+      "workflow_id": "10a65349-3195-429e-90e9-84fc7d0d4169",
+      "workflow_status": "completed"
+    },
+    {
+      "after_time": "2025-08-23 11:37:04",
+      "attribute_after_sha256": "d6ebb21ef367a7bd1edb9ab592878dafc1e118e8c2f6b11e68e68b8d28732b69",
+      "attribute_before_sha256": "1253de458e0eed74c4b1c208927bd57966656f47ac7786187eb7071589d3918d",
+      "before_time": "2025-08-23 11:36:54",
+      "commands_executed": 2,
+      "device_id": "dining_room_on_off_light_1",
+      "episode": "qt4-2_feasible_seed_1.json",
+      "num_rooms": 5,
+      "query_type": "qt4-2",
+      "status": "ok",
+      "workflow_id": "0d0c787a-c682-42bd-97ab-8e4b699d8358",
+      "workflow_status": "completed"
+    },
+    {
+      "episode": "qt4-3_feasible_seed_2.json",
+      "status": "skipped_no_supported_command"
+    },
+    {
+      "after_time": "2025-08-23 09:05:15",
+      "attribute_after_sha256": "0c37f8f08705b88f105b711839b1f0d91da7de00f92ebd31ded9411494f448d1",
+      "attribute_before_sha256": "6272e8170a32f585b43196a638cc2819aae427f039f824021c9205414eff4c04",
+      "before_time": "2025-08-23 09:05:05",
+      "commands_executed": 2,
+      "device_id": "living_room_fan_1",
+      "episode": "qt4-1_feasible_seed_2.json",
+      "num_rooms": 5,
+      "query_type": "qt4-1",
+      "status": "ok",
+      "workflow_id": "b7736f6d-f18b-4269-9165-eb98e08b8395",
+      "workflow_status": "completed"
+    },
+    {
+      "after_time": "2025-08-23 09:05:15",
+      "attribute_after_sha256": "a1b38a969f51df29d8325351a9473e812c8139bee8d8f3e45e22d727f9941b4b",
+      "attribute_before_sha256": "c4c63f5e2c12a8de4efac0dbb65c68922f5275e74413c1282e1fda668b545a88",
+      "before_time": "2025-08-23 09:05:05",
+      "commands_executed": 2,
+      "device_id": "bathroom_humidifier_1",
+      "episode": "qt4-2_feasible_seed_2.json",
+      "num_rooms": 5,
+      "query_type": "qt4-2",
+      "status": "ok",
+      "workflow_id": "d7cf3d72-037c-4bd7-9380-82fc10609477",
+      "workflow_status": "completed"
+    },
+    {
+      "episode": "qt4-3_feasible_seed_3.json",
+      "status": "skipped_no_supported_command"
+    },
+    {
+      "after_time": "2025-08-23 12:37:45",
+      "attribute_after_sha256": "d6ebb21ef367a7bd1edb9ab592878dafc1e118e8c2f6b11e68e68b8d28732b69",
+      "attribute_before_sha256": "1253de458e0eed74c4b1c208927bd57966656f47ac7786187eb7071589d3918d",
+      "before_time": "2025-08-23 12:37:34",
+      "commands_executed": 5,
+      "device_id": "bathroom_on_off_light_1",
+      "episode": "qt4-1_feasible_seed_3.json",
+      "num_rooms": 5,
+      "query_type": "qt4-1",
+      "status": "ok",
+      "workflow_id": "8ea84ffa-7f8c-4a23-954a-6ba82ef240fd",
+      "workflow_status": "completed"
+    },
+    {
+      "after_time": "2025-08-23 12:37:44",
+      "attribute_after_sha256": "3d2e20f128385de24ffd908f877c313ed678923ea14e2d38158b322be855e5a4",
+      "attribute_before_sha256": "36142ea1e008078d8251e44f0e6bd3e63372064e34e44aac3d7d3c2f5ef35f77",
+      "before_time": "2025-08-23 12:37:34",
+      "commands_executed": 2,
+      "device_id": "kitchen_dehumidifier_1",
+      "episode": "qt4-2_feasible_seed_3.json",
+      "num_rooms": 5,
+      "query_type": "qt4-2",
+      "status": "ok",
+      "workflow_id": "988715c3-f03a-47ea-b619-0fd2b2eab174",
+      "workflow_status": "completed"
+    },
+    {
+      "episode": "qt4-3_feasible_seed_7.json",
+      "status": "skipped_no_supported_command"
+    },
+    {
+      "after_time": "2025-08-23 12:19:16",
+      "attribute_after_sha256": "245b3a999da7af8009071a00b1b27e51e84b7b0981f4c045f3a07d4e11e083c4",
+      "attribute_before_sha256": "55decdeda700ef69a6edb26ad56985af56f3216aecebc793634471b06530487a",
+      "before_time": "2025-08-23 12:19:06",
+      "commands_executed": 4,
+      "device_id": "bathroom_dimmable_light_1",
+      "episode": "qt4-1_feasible_seed_4.json",
+      "num_rooms": 5,
+      "query_type": "qt4-1",
+      "status": "ok",
+      "workflow_id": "903b7a17-773e-49c8-b9ed-759f7070abeb",
+      "workflow_status": "completed"
+    },
+    {
+      "after_time": "2025-08-23 12:19:16",
+      "attribute_after_sha256": "d6ebb21ef367a7bd1edb9ab592878dafc1e118e8c2f6b11e68e68b8d28732b69",
+      "attribute_before_sha256": "1253de458e0eed74c4b1c208927bd57966656f47ac7786187eb7071589d3918d",
+      "before_time": "2025-08-23 12:19:06",
+      "commands_executed": 2,
+      "device_id": "bathroom_on_off_light_1",
+      "episode": "qt4-2_feasible_seed_4.json",
+      "num_rooms": 5,
+      "query_type": "qt4-2",
+      "status": "ok",
+      "workflow_id": "30435523-e363-47d6-8d90-5a96c38930e5",
+      "workflow_status": "completed"
+    },
+    {
+      "episode": "qt4-3_feasible_seed_8.json",
+      "status": "skipped_no_supported_command"
+    },
+    {
+      "after_time": "2025-08-23 18:16:57",
+      "attribute_after_sha256": "d6ebb21ef367a7bd1edb9ab592878dafc1e118e8c2f6b11e68e68b8d28732b69",
+      "attribute_before_sha256": "1253de458e0eed74c4b1c208927bd57966656f47ac7786187eb7071589d3918d",
+      "before_time": "2025-08-23 18:16:47",
+      "commands_executed": 3,
+      "device_id": "kitchen_on_off_light_1",
+      "episode": "qt4-1_feasible_seed_5.json",
+      "num_rooms": 5,
+      "query_type": "qt4-1",
+      "status": "ok",
+      "workflow_id": "78a40d09-1338-4cc0-bd6b-419135c9bb6d",
+      "workflow_status": "completed"
+    },
+    {
+      "after_time": "2025-08-23 18:52:15",
+      "attribute_after_sha256": "d6ebb21ef367a7bd1edb9ab592878dafc1e118e8c2f6b11e68e68b8d28732b69",
+      "attribute_before_sha256": "1253de458e0eed74c4b1c208927bd57966656f47ac7786187eb7071589d3918d",
+      "before_time": "2025-08-23 18:52:05",
+      "commands_executed": 2,
+      "device_id": "office_on_off_light_2",
+      "episode": "qt4-2_feasible_seed_6.json",
+      "num_rooms": 5,
+      "query_type": "qt4-2",
+      "status": "ok",
+      "workflow_id": "283ac8d9-b141-4e81-a11c-9f9bd67696a1",
+      "workflow_status": "completed"
+    }
+  ],
+  "schema": "evibound-v4-simuhome-smoke-v1",
+  "simuhome_commit": "83d28837b69f0cbf1bc02ed5334cb8b561a9d54d"
+}

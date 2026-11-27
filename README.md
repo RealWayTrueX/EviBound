@@ -90,8 +90,16 @@ and the agent then fails to repair.
 An independent review on 2026-11-03 checked all materials; its findings, what
 was verified, and what changed are in
 [docs/review_response_2026-11-03.md](docs/review_response_2026-11-03.md).
-The next study (v4, for IEEE TDSC) is a draft awaiting the owner's decisions:
-[docs/v4_preregistration_draft.md](docs/v4_preregistration_draft.md).
+The two-week v4 core, EviBound-T, is now frozen and implemented. Its 2,600
+holdout counterfactual scenarios produced zero static-rule violations, zero
+clean/benign false blocks, one short-circuit read under context replay or
+forgery, and fail-safe rejection under transport freeze. A pinned SimuHome
+checkout also passed ten QT4 external API smoke episodes. The planned
+Qwen2.5-7B/Qwen3-8B end-to-end arm has not run because neither GPU endpoint is
+available in this workspace. See the
+[execution specification](docs/v4_execution_spec.md),
+[frozen preregistration](docs/v4_preregistration.md), and
+[results memo](docs/v4_results_memo.md).
 The Week 11–12 **v3** study tests three recovery aids (rule explanation,
 empty-plan check, and a legal-writes menu added before the freeze) on 72 new
 tasks that also vary the sensor modality and the phrasing of requests
@@ -186,6 +194,7 @@ confirmatory results were known.
 | v2 preregistration and results | [docs/week8_preregistration.md](docs/week8_preregistration.md), [artifacts/week8_main_results.json](artifacts/week8_main_results.json) |
 | v3 recovery study | [docs/week11_v3_preregistration.md](docs/week11_v3_preregistration.md) |
 | v3 holdout closeout and results | [docs/week12_v3_holdout_closeout.md](docs/week12_v3_holdout_closeout.md), [artifacts/week11_v3_holdout_results.json](artifacts/week11_v3_holdout_results.json) |
+| EviBound-T v4 protocol, rules, implementation and results | [docs/v4_execution_spec.md](docs/v4_execution_spec.md), [docs/v4_preregistration.md](docs/v4_preregistration.md), [docs/v4_results_memo.md](docs/v4_results_memo.md), [artifacts/v4_core_results.json](artifacts/v4_core_results.json) |
 | Direction review, literature positioning, external datasets | [docs/week12_direction_review.md](docs/week12_direction_review.md) |
 | v3.1 feedback ladder (second extension): frozen plan, results, analysis record | [docs/v3_1_preregistration.md](docs/v3_1_preregistration.md), [docs/v3_1_results.md](docs/v3_1_results.md), [artifacts/v3_1_holdout_results.json](artifacts/v3_1_holdout_results.json) |
 | v3.1 records: freeze, development runs, planner characters (exploratory), episode fingerprints | [artifacts/v3_1_prereg_freeze.json](artifacts/v3_1_prereg_freeze.json), [artifacts/v3_1_dev_record.json](artifacts/v3_1_dev_record.json), [artifacts/v3_1_roles_record.json](artifacts/v3_1_roles_record.json), `artifacts/v3_1_*_fingerprints.json.gz` |
