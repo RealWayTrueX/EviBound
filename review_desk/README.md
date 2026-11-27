@@ -28,6 +28,15 @@ python3 scripts/build_review_desk.py          # writes reviews/v3/review_desk.ht
 **The v3 corpus is frozen.** Its desk is a practice run. Do not overwrite
 `reviews/v3/checklist.csv` with its export, and do not run `--signoff` for v3.
 
+**The v3.1 corpus is checked after the run** (owner's decision of 2026-11-24).
+`python3 scripts/build_review_desk.py --corpus v3_1` builds its desk: 420 task
+cards, of which 84 holdout cards are required (one per stratum and
+modality-language cell; four core strata and three attack-battery strata). Each card adds a line and an automatic check for what
+the rules and the scope allow at most. There is no sign-off script for v3.1:
+the export goes into the sensitivity analysis described in
+`docs/v3_1_preregistration.md`. The whole-chain attack cards belong to the v3
+desk only.
+
 ## Whole-chain attack cards (exploratory)
 
 With `node` installed, the build also runs `demo/attacks/export_chain_cases.js`

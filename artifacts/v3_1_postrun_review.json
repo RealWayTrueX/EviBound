@@ -1,0 +1,23 @@
+{
+  "schema_version": "1.0",
+  "study": "EviBound v3.1 feedback ladder",
+  "record_type": "post_run_human_review",
+  "status": "completed",
+  "completed_on": "2026-11-26",
+  "reviewer": {
+    "name": "Xin Li",
+    "role": "corpus owner and report author"
+  },
+  "scope": "Human review of the v3.1 corpus task cards after the confirmatory run.",
+  "run_context": {
+    "preregistration_frozen_utc": "2026-11-24T20:20:43+00:00",
+    "confirmatory_run_completed_utc": "2026-11-24T22:50:43Z"
+  },
+  "constraints": {
+    "can_change_frozen_labels": false,
+    "can_change_frozen_counts": false,
+    "can_change_frozen_decisions": false,
+    "rejected_tasks_handling": "Reported only in a post hoc sensitivity analysis; no task is replaced."
+  },
+  "evidence_source": "Corpus owner's confirmation in the project workspace on 2026-11-26."
+}

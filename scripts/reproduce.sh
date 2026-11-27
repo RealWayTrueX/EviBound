@@ -10,7 +10,8 @@
 #                         --v3-seeds "11"          # also re-run the v3 holdout for these seeds (2,376 episodes each)
 #
 # Level 1 checks the code and the evidence chain: unit tests, corpus checkers, all protocol
-# freezes, and the full v3 pipeline (runner -> guard -> oracle -> analysis) with a scripted planner.
+# freezes, the full v3 pipeline (runner -> guard -> oracle -> analysis) with a scripted planner,
+# and the v3.1 records, which are recomputed from the committed episode fingerprints.
 # Level 2 needs the raw-trace bundle (see docs/reproduction.md). DIR is laid out like the data
 # disk's runs/ folder: week8_v2_main_test/seed_{11,22,33}.jsonl, week11_v3_holdout/episodes.jsonl.
 # Level 3 needs one 24 GB GPU and the pinned Qwen2.5-7B-Instruct weights.
@@ -64,15 +65,35 @@ status=0
 step "1/6 Unit tests"
 run "$PY" -m unittest discover -s tests -p 'test_*.py' || status=1
 
-step "2/6 Corpus checkers (v2: 56 tasks, v3: 84 tasks)"
+step "2/6 Corpus checkers (v2: 56 tasks, v3: 84 tasks, v3.1: 420 tasks)"
 run "$PY" scripts/check_scenarios_v2.py || status=1
 run "$PY" scripts/check_scenarios_v3.py || status=1
+run "$PY" scripts/check_scenarios_v3_1.py || status=1
 
-step "3/6 Protocol freezes (v1, v2 pilot, v2 formal test, v3)"
+step "3/6 Protocol freezes (v1, v2 pilot, v2 formal test, v3, v3.1)"
 run "$PY" scripts/verify_freezes.py || status=1
+run "$PY" scripts/freeze_v3_1_prereg.py --verify || status=1
 
 step "4/6 Full v3 pipeline with a scripted planner (illustrates the pipeline; not evidence about the model)"
 run "$PY" scripts/run_v3_local.py --split dev --planner scripted:hasty --seeds 11 --output "$OUT/pipeline_scripted" || status=1
+
+step "4b v3.1 records recomputed from the committed episode fingerprints (development runs, confirmatory run, planner characters)"
+run "$PY" scripts/v3_1_dev_record.py --check || status=1
+if [ -f artifacts/v3_1_holdout_fingerprints.json.gz ]; then
+  run "$PY" scripts/analyze_v3_1.py --stage holdout --input artifacts/v3_1_holdout_fingerprints.json.gz \
+      --record artifacts/v3_1_holdout_results.json --doc docs/v3_1_results.md --check || status=1
+  run "$PY" scripts/v3_1_results_tables.py --check || status=1
+  run "$PY" scripts/v3_1_roles.py --check || status=1
+  if [ -f artifacts/v3_1_model_qwen3_fingerprints.json.gz ]; then
+    run "$PY" scripts/v3_1_models.py --check || status=1        # exploratory: the second planner model
+  fi
+else
+  echo "no v3.1 confirmatory fingerprints in this checkout; skipped" | tee -a "$LOG"
+fi
+
+step "4c Exploratory scale study: task files as generated; record recomputed from the fingerprints where a run is recorded"
+run "$PY" scripts/generate_scenarios_homes.py --check || status=1
+run "$PY" scripts/homes_record.py --check || status=1
 
 if [ -n "$TRACES" ]; then
   step "5/6 Recompute published results from raw traces in $TRACES"

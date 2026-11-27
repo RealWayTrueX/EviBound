@@ -1,0 +1,5 @@
+# Steps for the next call of scripts/v3_1_step.sh on the experiment machine (see that file).
+# All runs are complete: the confirmatory run and the three planner characters of v3.1
+# (2026-11-24 and 25), the second-model arm and the exploratory scale study (2026-11-25).
+# Nothing is started from here any more: a call only reports the state of the runs.
+status

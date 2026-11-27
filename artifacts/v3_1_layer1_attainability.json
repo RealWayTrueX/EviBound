@@ -1,0 +1,2247 @@
+{
+ "boundary_interrupted_plans": {
+  "B2_full": {
+   "correct_plans": 89,
+   "plans_of_two_or_more_writes": 53,
+   "retried": 0
+  },
+  "M": {
+   "correct_plans": 89,
+   "plans_of_two_or_more_writes": 53,
+   "retried": 53
+  },
+  "M_full": {
+   "abandoned": 27,
+   "abandoned_first_write_then_a_write_outside_the_plan": 27,
+   "correct_plans": 89,
+   "plans_of_two_or_more_writes": 53,
+   "retried": 53
+  },
+  "M_mask": {
+   "abandoned": 31,
+   "abandoned_first_write_then_a_write_outside_the_plan": 31,
+   "correct_plans": 89,
+   "plans_of_two_or_more_writes": 53,
+   "retried": 53
+  },
+  "M_recover": {
+   "abandoned": 2,
+   "abandoned_first_write_then_a_write_outside_the_plan": 2,
+   "correct_plans": 89,
+   "plans_of_two_or_more_writes": 53,
+   "retried": 53
+  }
+ },
+ "ceiling": {
+  "attainable_completion_clean": {
+   "B0": 147,
+   "B2": 114,
+   "B2_full": 157,
+   "M": 114,
+   "M_full": 156,
+   "M_recover": 150
+  },
+  "attainable_per_cell": 168,
+  "episodes_per_cell": 216,
+  "gap_M_full_minus_B0": {
+   "goals_attainable": 9,
+   "goals_not_attainable": -25,
+   "raw": -16
+  },
+  "raw_completion_clean": {
+   "B0": 172,
+   "B2": 114,
+   "B2_full": 157,
+   "M": 114,
+   "M_full": 156,
+   "M_recover": 150
+  }
+ },
+ "checks": {
+  "completions_of_a_goal_that_is_not_attainable": {
+   "by_condition": {
+    "B0": 48,
+    "B0_confirm_empty": 48
+   },
+   "total": 96,
+   "with_a_violation": 96
+  },
+  "dual_device_class_full": 48,
+  "dual_device_shortest_equals_annotation": 48,
+  "dual_device_tasks": 48,
+  "episodes": 7128,
+  "replay_disagreements": 0,
+  "scoped_target_equals_corpus_subgoal": 24,
+  "scoped_tasks": 24,
+  "structures_with_more_than_one_class": 0,
+  "tasks_with_more_than_one_target_state": 0
+ },
+ "classes": {
+  "full": {
+   "shortest_plan": {
+    "1": 40,
+    "2": 14,
+    "3": 2
+   },
+   "structures": 28,
+   "task_types": {
+    "dual_device": 48,
+    "unauthorized": 8
+   },
+   "tasks": 56
+  },
+  "none": {
+   "shortest_plan": {
+    "0": 8
+   },
+   "structures": 4,
+   "task_types": {
+    "unauthorized": 8
+   },
+   "tasks": 8
+  },
+  "part": {
+   "shortest_plan": {
+    "0": 4,
+    "1": 4
+   },
+   "structures": 4,
+   "task_types": {
+    "unauthorized": 8
+   },
+   "tasks": 8
+  }
+ },
+ "contrasts": [
+  {
+   "classes": [
+    "full"
+   ],
+   "decision": "supported",
+   "effect": {
+    "bootstrap_seed": 20261011,
+    "ci95_high": 0.125,
+    "ci95_low": -0.017857142857142856,
+    "classes": [
+     "full"
+    ],
+    "cluster_sd": 0.20813482606259295,
+    "contrast": "M_full-B0",
+    "episodes_per_arm": 168,
+    "estimand": "equal-task mean of within-task, matched-seed differences",
+    "estimate": 0.05357142857142857,
+    "interval_caution": "",
+    "left": "M_full",
+    "left_count": 156,
+    "left_unpaired_episodes": 0,
+    "metric": "goal_completion",
+    "n_paired_episodes": 168,
+    "n_tasks": 28,
+    "resamples": 10000,
+    "right": "B0",
+    "right_count": 147,
+    "right_unpaired_episodes": 0,
+    "variants": [
+     "clean"
+    ],
+    "where": "all"
+   },
+   "id": "att_full_vs_B0_clean",
+   "left": "M_full",
+   "metric": "goal_completion",
+   "note": "",
+   "right": "B0",
+   "rule": "non_inferiority",
+   "variants": [
+    "clean"
+   ]
+  },
+  {
+   "classes": [
+    "full"
+   ],
+   "decision": "supported",
+   "effect": {
+    "bootstrap_seed": 20261011,
+    "ci95_high": 0.13690476190476192,
+    "ci95_low": -0.017857142857142856,
+    "classes": [
+     "full"
+    ],
+    "cluster_sd": 0.20892772350933625,
+    "contrast": "B2_full-B0",
+    "episodes_per_arm": 168,
+    "estimand": "equal-task mean of within-task, matched-seed differences",
+    "estimate": 0.05952380952380952,
+    "interval_caution": "",
+    "left": "B2_full",
+    "left_count": 157,
+    "left_unpaired_episodes": 0,
+    "metric": "goal_completion",
+    "n_paired_episodes": 168,
+    "n_tasks": 28,
+    "resamples": 10000,
+    "right": "B0",
+    "right_count": 147,
+    "right_unpaired_episodes": 0,
+    "variants": [
+     "clean"
+    ],
+    "where": "all"
+   },
+   "id": "att_B2full_vs_B0_clean",
+   "left": "B2_full",
+   "metric": "goal_completion",
+   "note": "",
+   "right": "B0",
+   "rule": "non_inferiority",
+   "variants": [
+    "clean"
+   ]
+  },
+  {
+   "classes": [
+    "full"
+   ],
+   "decision": "supported",
+   "effect": {
+    "bootstrap_seed": 20261011,
+    "ci95_high": 0.05357142857142857,
+    "ci95_low": 0.0,
+    "classes": [
+     "full"
+    ],
+    "cluster_sd": 0.09449111825230681,
+    "contrast": "M_recover-B0",
+    "episodes_per_arm": 168,
+    "estimand": "equal-task mean of within-task, matched-seed differences",
+    "estimate": 0.017857142857142856,
+    "interval_caution": "",
+    "left": "M_recover",
+    "left_count": 150,
+    "left_unpaired_episodes": 0,
+    "metric": "goal_completion",
+    "n_paired_episodes": 168,
+    "n_tasks": 28,
+    "resamples": 10000,
+    "right": "B0",
+    "right_count": 147,
+    "right_unpaired_episodes": 0,
+    "variants": [
+     "clean"
+    ],
+    "where": "all"
+   },
+   "id": "att_recover_vs_B0_clean",
+   "left": "M_recover",
+   "metric": "goal_completion",
+   "note": "",
+   "right": "B0",
+   "rule": "non_inferiority",
+   "variants": [
+    "clean"
+   ]
+  },
+  {
+   "classes": [
+    "full"
+   ],
+   "decision": "unsupported",
+   "effect": {
+    "bootstrap_seed": 20261011,
+    "ci95_high": -0.05357142857142857,
+    "ci95_low": -0.35714285714285715,
+    "classes": [
+     "full"
+    ],
+    "cluster_sd": 0.41587225857195076,
+    "contrast": "M-B0",
+    "episodes_per_arm": 168,
+    "estimand": "equal-task mean of within-task, matched-seed differences",
+    "estimate": -0.19642857142857142,
+    "interval_caution": "",
+    "left": "M",
+    "left_count": 114,
+    "left_unpaired_episodes": 0,
+    "metric": "goal_completion",
+    "n_paired_episodes": 168,
+    "n_tasks": 28,
+    "resamples": 10000,
+    "right": "B0",
+    "right_count": 147,
+    "right_unpaired_episodes": 0,
+    "variants": [
+     "clean"
+    ],
+    "where": "all"
+   },
+   "id": "att_M_vs_B0_clean",
+   "left": "M",
+   "metric": "goal_completion",
+   "note": "",
+   "right": "B0",
+   "rule": "non_inferiority",
+   "variants": [
+    "clean"
+   ]
+  },
+  {
+   "classes": [
+    "full"
+   ],
+   "decision": "supported",
+   "effect": {
+    "bootstrap_seed": 20261011,
+    "ci95_high": 0.39285714285714285,
+    "ci95_low": 0.10714285714285714,
+    "classes": [
+     "full"
+    ],
+    "cluster_sd": 0.3967460238079361,
+    "contrast": "M_full-M",
+    "episodes_per_arm": 168,
+    "estimand": "equal-task mean of within-task, matched-seed differences",
+    "estimate": 0.25,
+    "interval_caution": "",
+    "left": "M_full",
+    "left_count": 156,
+    "left_unpaired_episodes": 0,
+    "metric": "goal_completion",
+    "n_paired_episodes": 168,
+    "n_tasks": 28,
+    "resamples": 10000,
+    "right": "M",
+    "right_count": 114,
+    "right_unpaired_episodes": 0,
+    "variants": [
+     "clean"
+    ],
+    "where": "all"
+   },
+   "id": "att_full_vs_M_clean",
+   "left": "M_full",
+   "metric": "goal_completion",
+   "note": "",
+   "right": "M",
+   "rule": "superiority",
+   "variants": [
+    "clean"
+   ]
+  },
+  {
+   "classes": [
+    "full"
+   ],
+   "decision": "supported",
+   "effect": {
+    "bootstrap_seed": 20261011,
+    "ci95_high": 0.0,
+    "ci95_low": -0.017857142857142856,
+    "classes": [
+     "full"
+    ],
+    "cluster_sd": 0.0314970394174356,
+    "contrast": "M_full-B2_full",
+    "episodes_per_arm": 168,
+    "estimand": "equal-task mean of within-task, matched-seed differences",
+    "estimate": -0.005952380952380952,
+    "interval_caution": "",
+    "left": "M_full",
+    "left_count": 156,
+    "left_unpaired_episodes": 0,
+    "metric": "goal_completion",
+    "n_paired_episodes": 168,
+    "n_tasks": 28,
+    "resamples": 10000,
+    "right": "B2_full",
+    "right_count": 157,
+    "right_unpaired_episodes": 0,
+    "variants": [
+     "clean"
+    ],
+    "where": "all"
+   },
+   "id": "att_full_vs_B2full_clean",
+   "left": "M_full",
+   "metric": "goal_completion",
+   "note": "",
+   "right": "B2_full",
+   "rule": "non_inferiority",
+   "variants": [
+    "clean"
+   ]
+  },
+  {
+   "classes": [
+    "full"
+   ],
+   "decision": "supported",
+   "effect": {
+    "bootstrap_seed": 20261011,
+    "ci95_high": 0.4345238095238095,
+    "ci95_low": 0.07142857142857142,
+    "classes": [
+     "full"
+    ],
+    "cluster_sd": 0.5101483340669876,
+    "contrast": "M_full-B0",
+    "episodes_per_arm": 168,
+    "estimand": "equal-task mean of within-task, matched-seed differences",
+    "estimate": 0.25595238095238093,
+    "interval_caution": "",
+    "left": "M_full",
+    "left_count": 123,
+    "left_unpaired_episodes": 0,
+    "metric": "goal_completion",
+    "n_paired_episodes": 168,
+    "n_tasks": 28,
+    "resamples": 10000,
+    "right": "B0",
+    "right_count": 80,
+    "right_unpaired_episodes": 0,
+    "variants": [
+     "perturbed"
+    ],
+    "where": "all"
+   },
+   "id": "att_full_vs_B0_attacked",
+   "left": "M_full",
+   "metric": "goal_completion",
+   "note": "",
+   "right": "B0",
+   "rule": "non_inferiority",
+   "variants": [
+    "perturbed"
+   ]
+  },
+  {
+   "classes": [
+    "full"
+   ],
+   "decision": "unsupported",
+   "effect": {
+    "bootstrap_seed": 20261011,
+    "ci95_high": -0.02380952380952381,
+    "ci95_low": -0.27380952380952384,
+    "classes": [
+     "full"
+    ],
+    "cluster_sd": 0.33744161425868874,
+    "contrast": "M_full-B0",
+    "episodes_per_arm": 168,
+    "estimand": "equal-task mean of within-task, matched-seed differences",
+    "estimate": -0.1488095238095238,
+    "interval_caution": "",
+    "left": "M_full",
+    "left_count": 121,
+    "left_unpaired_episodes": 0,
+    "metric": "goal_completion",
+    "n_paired_episodes": 168,
+    "n_tasks": 28,
+    "resamples": 10000,
+    "right": "B0",
+    "right_count": 146,
+    "right_unpaired_episodes": 0,
+    "variants": [
+     "boundary"
+    ],
+    "where": "all"
+   },
+   "id": "att_full_vs_B0_boundary",
+   "left": "M_full",
+   "metric": "goal_completion",
+   "note": "",
+   "right": "B0",
+   "rule": "non_inferiority",
+   "variants": [
+    "boundary"
+   ]
+  },
+  {
+   "classes": [
+    "full"
+   ],
+   "decision": "unsupported",
+   "effect": {
+    "bootstrap_seed": 20261011,
+    "ci95_high": -0.05357142857142857,
+    "ci95_low": -0.26785714285714285,
+    "classes": [
+     "full"
+    ],
+    "cluster_sd": 0.290198496806067,
+    "contrast": "M_full-B2_full",
+    "episodes_per_arm": 168,
+    "estimand": "equal-task mean of within-task, matched-seed differences",
+    "estimate": -0.15476190476190477,
+    "interval_caution": "",
+    "left": "M_full",
+    "left_count": 121,
+    "left_unpaired_episodes": 0,
+    "metric": "goal_completion",
+    "n_paired_episodes": 168,
+    "n_tasks": 28,
+    "resamples": 10000,
+    "right": "B2_full",
+    "right_count": 147,
+    "right_unpaired_episodes": 0,
+    "variants": [
+     "boundary"
+    ],
+    "where": "all"
+   },
+   "id": "att_full_vs_B2full_boundary",
+   "left": "M_full",
+   "metric": "goal_completion",
+   "note": "",
+   "right": "B2_full",
+   "rule": "non_inferiority",
+   "variants": [
+    "boundary"
+   ]
+  },
+  {
+   "classes": [
+    "full"
+   ],
+   "decision": "supported",
+   "effect": {
+    "bootstrap_seed": 20261011,
+    "ci95_high": 0.10714285714285714,
+    "ci95_low": -0.005952380952380952,
+    "classes": [
+     "full"
+    ],
+    "cluster_sd": 0.16265001215808886,
+    "contrast": "M_recover-B0",
+    "episodes_per_arm": 168,
+    "estimand": "equal-task mean of within-task, matched-seed differences",
+    "estimate": 0.047619047619047616,
+    "interval_caution": "",
+    "left": "M_recover",
+    "left_count": 154,
+    "left_unpaired_episodes": 0,
+    "metric": "goal_completion",
+    "n_paired_episodes": 168,
+    "n_tasks": 28,
+    "resamples": 10000,
+    "right": "B0",
+    "right_count": 146,
+    "right_unpaired_episodes": 0,
+    "variants": [
+     "boundary"
+    ],
+    "where": "all"
+   },
+   "id": "att_recover_vs_B0_boundary",
+   "left": "M_recover",
+   "metric": "goal_completion",
+   "note": "",
+   "right": "B0",
+   "rule": "non_inferiority",
+   "variants": [
+    "boundary"
+   ]
+  },
+  {
+   "classes": [
+    "full"
+   ],
+   "decision": "supported",
+   "effect": {
+    "bootstrap_seed": 20261011,
+    "ci95_high": 0.35714285714285715,
+    "ci95_low": 0.07142857142857142,
+    "classes": [
+     "full"
+    ],
+    "cluster_sd": 0.39507550681440134,
+    "contrast": "M_recover-M",
+    "episodes_per_arm": 168,
+    "estimand": "equal-task mean of within-task, matched-seed differences",
+    "estimate": 0.21428571428571427,
+    "interval_caution": "",
+    "left": "M_recover",
+    "left_count": 150,
+    "left_unpaired_episodes": 0,
+    "metric": "goal_completion",
+    "n_paired_episodes": 168,
+    "n_tasks": 28,
+    "resamples": 10000,
+    "right": "M",
+    "right_count": 114,
+    "right_unpaired_episodes": 0,
+    "variants": [
+     "clean"
+    ],
+    "where": "all"
+   },
+   "id": "reason_vs_silence_clean",
+   "left": "M_recover",
+   "metric": "goal_completion",
+   "note": "what one sentence naming the rule adds",
+   "right": "M",
+   "rule": "superiority",
+   "variants": [
+    "clean"
+   ]
+  },
+  {
+   "classes": [
+    "full"
+   ],
+   "decision": "inconclusive",
+   "effect": {
+    "bootstrap_seed": 20261011,
+    "ci95_high": 0.10714285714285714,
+    "ci95_low": -0.03571428571428571,
+    "classes": [
+     "full"
+    ],
+    "cluster_sd": 0.18898223650461363,
+    "contrast": "M_full-M_recover",
+    "episodes_per_arm": 168,
+    "estimand": "equal-task mean of within-task, matched-seed differences",
+    "estimate": 0.03571428571428571,
+    "interval_caution": "",
+    "left": "M_full",
+    "left_count": 156,
+    "left_unpaired_episodes": 0,
+    "metric": "goal_completion",
+    "n_paired_episodes": 168,
+    "n_tasks": 28,
+    "resamples": 10000,
+    "right": "M_recover",
+    "right_count": 150,
+    "right_unpaired_episodes": 0,
+    "variants": [
+     "clean"
+    ],
+    "where": "all"
+   },
+   "id": "menu_gain_clean",
+   "left": "M_full",
+   "metric": "goal_completion",
+   "note": "what the list of legal writes adds on clean tasks",
+   "right": "M_recover",
+   "rule": "superiority",
+   "variants": [
+    "clean"
+   ]
+  },
+  {
+   "classes": [
+    "full"
+   ],
+   "decision": "inconclusive",
+   "effect": {
+    "bootstrap_seed": 20261011,
+    "ci95_high": 0.17857142857142858,
+    "ci95_low": -0.03571428571428571,
+    "classes": [
+     "full"
+    ],
+    "cluster_sd": 0.29893009294868855,
+    "contrast": "M_full-M_recover",
+    "episodes_per_arm": 168,
+    "estimand": "equal-task mean of within-task, matched-seed differences",
+    "estimate": 0.07142857142857142,
+    "interval_caution": "",
+    "left": "M_full",
+    "left_count": 123,
+    "left_unpaired_episodes": 0,
+    "metric": "goal_completion",
+    "n_paired_episodes": 168,
+    "n_tasks": 28,
+    "resamples": 10000,
+    "right": "M_recover",
+    "right_count": 111,
+    "right_unpaired_episodes": 0,
+    "variants": [
+     "perturbed"
+    ],
+    "where": "all"
+   },
+   "id": "menu_gain_attacked",
+   "left": "M_full",
+   "metric": "goal_completion",
+   "note": "the same under attack",
+   "right": "M_recover",
+   "rule": "superiority",
+   "variants": [
+    "perturbed"
+   ]
+  },
+  {
+   "classes": [
+    "full"
+   ],
+   "decision": "supported",
+   "effect": {
+    "bootstrap_seed": 20261011,
+    "ci95_high": 0.3154761904761905,
+    "ci95_low": 0.08333333333333334,
+    "classes": [
+     "full"
+    ],
+    "cluster_sd": 0.3209219339856812,
+    "contrast": "M_recover-M_full",
+    "episodes_per_arm": 168,
+    "estimand": "equal-task mean of within-task, matched-seed differences",
+    "estimate": 0.19642857142857142,
+    "interval_caution": "",
+    "left": "M_recover",
+    "left_count": 154,
+    "left_unpaired_episodes": 0,
+    "metric": "goal_completion",
+    "n_paired_episodes": 168,
+    "n_tasks": 28,
+    "resamples": 10000,
+    "right": "M_full",
+    "right_count": 121,
+    "right_unpaired_episodes": 0,
+    "variants": [
+     "boundary"
+    ],
+    "where": "all"
+   },
+   "id": "menu_loss_boundary",
+   "left": "M_recover",
+   "metric": "goal_completion",
+   "note": "what the list costs at the freshness boundary",
+   "right": "M_full",
+   "rule": "superiority",
+   "variants": [
+    "boundary"
+   ]
+  },
+  {
+   "classes": [
+    "part"
+   ],
+   "decision": "supported",
+   "effect": {
+    "bootstrap_seed": 20261011,
+    "ci95_high": 0.5,
+    "ci95_low": 0.125,
+    "classes": [
+     "part"
+    ],
+    "cluster_sd": 0.23935677693908453,
+    "contrast": "M_full-M_recover",
+    "episodes_per_arm": 48,
+    "estimand": "equal-task mean of within-task, matched-seed differences",
+    "estimate": 0.3541666666666667,
+    "interval_caution": "Few task clusters; interval is descriptive.",
+    "left": "M_full",
+    "left_count": 20,
+    "left_unpaired_episodes": 0,
+    "metric": "off_target",
+    "n_paired_episodes": 48,
+    "n_tasks": 4,
+    "resamples": 10000,
+    "right": "M_recover",
+    "right_count": 3,
+    "right_unpaired_episodes": 0,
+    "variants": [
+     "clean",
+     "boundary"
+    ],
+    "where": "all"
+   },
+   "id": "menu_off_target_part",
+   "left": "M_full",
+   "metric": "off_target",
+   "note": "ends in a permitted state nobody asked for; 4 structures only",
+   "right": "M_recover",
+   "rule": "superiority",
+   "variants": [
+    "clean",
+    "boundary"
+   ]
+  },
+  {
+   "classes": [
+    "full",
+    "part",
+    "none"
+   ],
+   "decision": "inconclusive",
+   "effect": {
+    "bootstrap_seed": 20261011,
+    "ci95_high": 0.08333333333333333,
+    "ci95_low": -0.05555555555555555,
+    "classes": [
+     "full",
+     "part",
+     "none"
+    ],
+    "cluster_sd": 0.22316269245012102,
+    "contrast": "M_full-B0",
+    "episodes_per_arm": 216,
+    "estimand": "equal-task mean of within-task, matched-seed differences",
+    "estimate": 0.013888888888888888,
+    "interval_caution": "",
+    "left": "M_full",
+    "left_count": 193,
+    "left_unpaired_episodes": 0,
+    "metric": "target_reached",
+    "n_paired_episodes": 216,
+    "n_tasks": 36,
+    "resamples": 10000,
+    "right": "B0",
+    "right_count": 190,
+    "right_unpaired_episodes": 0,
+    "variants": [
+     "clean"
+    ],
+    "where": "all"
+   },
+   "id": "target_all_full_vs_B0_clean",
+   "left": "M_full",
+   "metric": "target_reached",
+   "note": "attainable target reached, all classes (the earlier U_dec)",
+   "right": "B0",
+   "rule": "non_inferiority",
+   "variants": [
+    "clean"
+   ]
+  }
+ ],
+ "estimator": {
+  "bootstrap_seed": 20261011,
+  "clusters": "physical structures",
+  "function": "analyze.paired_contrast",
+  "non_inferiority_margin": -0.05,
+  "resamples": 10000
+ },
+ "goals_not_attainable": {
+  "B0": {
+   "changed_although_nothing_needed": 24,
+   "episodes": 48,
+   "goal_completed": 25,
+   "nothing_needed": 36,
+   "part_episodes": 24,
+   "part_target_reached": 19,
+   "with_a_violation": 25
+  },
+  "B2": {
+   "changed_although_nothing_needed": 5,
+   "episodes": 48,
+   "goal_completed": 0,
+   "nothing_needed": 36,
+   "part_episodes": 24,
+   "part_target_reached": 19,
+   "with_a_violation": 0
+  },
+  "B2_full": {
+   "changed_although_nothing_needed": 8,
+   "episodes": 48,
+   "goal_completed": 0,
+   "nothing_needed": 36,
+   "part_episodes": 24,
+   "part_target_reached": 13,
+   "with_a_violation": 0
+  },
+  "M": {
+   "changed_although_nothing_needed": 5,
+   "episodes": 48,
+   "goal_completed": 0,
+   "nothing_needed": 36,
+   "part_episodes": 24,
+   "part_target_reached": 19,
+   "with_a_violation": 0
+  },
+  "M_full": {
+   "changed_although_nothing_needed": 8,
+   "episodes": 48,
+   "goal_completed": 0,
+   "nothing_needed": 36,
+   "part_episodes": 24,
+   "part_target_reached": 13,
+   "with_a_violation": 0
+  },
+  "M_mask": {
+   "changed_although_nothing_needed": 24,
+   "episodes": 48,
+   "goal_completed": 0,
+   "nothing_needed": 36,
+   "part_episodes": 24,
+   "part_target_reached": 12,
+   "with_a_violation": 0
+  },
+  "M_recover": {
+   "changed_although_nothing_needed": 5,
+   "episodes": 48,
+   "goal_completed": 0,
+   "nothing_needed": 36,
+   "part_episodes": 24,
+   "part_target_reached": 19,
+   "with_a_violation": 0
+  }
+ },
+ "inputs": {
+  "artifacts/episode_fingerprints_v3_holdout.json.gz": "9a788132267175e4b88fbfca3a323808fc746948532282c3894b01516cfcd94b",
+  "data/scenarios_v3/holdout.jsonl": "6bf41a0093f8f8e5b345a6bcb21a2ff7e31d26433452ede38d13f49238c58627"
+ },
+ "ledger": {
+  "B0": {
+   "boundary": {
+    "completed": 146,
+    "with_a_violation": 57
+   },
+   "clean": {
+    "completed": 147,
+    "with_a_violation": 54
+   },
+   "perturbed": {
+    "completed": 80,
+    "with_a_violation": 41
+   }
+  },
+  "B2_full": {
+   "boundary": {
+    "completed": 147,
+    "with_a_violation": 0
+   },
+   "clean": {
+    "completed": 157,
+    "with_a_violation": 0
+   },
+   "perturbed": {
+    "completed": 68,
+    "with_a_violation": 16
+   }
+  },
+  "M": {
+   "boundary": {
+    "completed": 117,
+    "with_a_violation": 0
+   },
+   "clean": {
+    "completed": 114,
+    "with_a_violation": 0
+   },
+   "perturbed": {
+    "completed": 102,
+    "with_a_violation": 0
+   }
+  },
+  "M_full": {
+   "boundary": {
+    "completed": 121,
+    "with_a_violation": 0
+   },
+   "clean": {
+    "completed": 156,
+    "with_a_violation": 0
+   },
+   "perturbed": {
+    "completed": 123,
+    "with_a_violation": 0
+   }
+  },
+  "M_recover": {
+   "boundary": {
+    "completed": 154,
+    "with_a_violation": 0
+   },
+   "clean": {
+    "completed": 150,
+    "with_a_violation": 0
+   },
+   "perturbed": {
+    "completed": 111,
+    "with_a_violation": 0
+   }
+  }
+ },
+ "outcomes": {
+  "boundary": {
+   "B0": {
+    "full": {
+     "exact": 79,
+     "extra": 10,
+     "nothing": 11,
+     "short": 0,
+     "unrequested": 2,
+     "violation": 66
+    },
+    "none": {
+     "exact": 6,
+     "extra": 3,
+     "nothing": 0,
+     "short": 0,
+     "unrequested": 0,
+     "violation": 15
+    },
+    "part": {
+     "exact": 9,
+     "extra": 0,
+     "nothing": 3,
+     "short": 0,
+     "unrequested": 0,
+     "violation": 12
+    }
+   },
+   "B0_confirm_empty": {
+    "full": {
+     "exact": 79,
+     "extra": 10,
+     "nothing": 11,
+     "short": 0,
+     "unrequested": 2,
+     "violation": 66
+    },
+    "none": {
+     "exact": 6,
+     "extra": 3,
+     "nothing": 0,
+     "short": 0,
+     "unrequested": 0,
+     "violation": 15
+    },
+    "part": {
+     "exact": 9,
+     "extra": 0,
+     "nothing": 3,
+     "short": 0,
+     "unrequested": 0,
+     "violation": 12
+    }
+   },
+   "B2": {
+    "full": {
+     "exact": 108,
+     "extra": 10,
+     "nothing": 29,
+     "short": 4,
+     "unrequested": 17,
+     "violation": 0
+    },
+    "none": {
+     "exact": 21,
+     "extra": 3,
+     "nothing": 0,
+     "short": 0,
+     "unrequested": 0,
+     "violation": 0
+    },
+    "part": {
+     "exact": 20,
+     "extra": 0,
+     "nothing": 3,
+     "short": 0,
+     "unrequested": 1,
+     "violation": 0
+    }
+   },
+   "B2_full": {
+    "full": {
+     "exact": 124,
+     "extra": 23,
+     "nothing": 7,
+     "short": 0,
+     "unrequested": 14,
+     "violation": 0
+    },
+    "none": {
+     "exact": 21,
+     "extra": 3,
+     "nothing": 0,
+     "short": 0,
+     "unrequested": 0,
+     "violation": 0
+    },
+    "part": {
+     "exact": 14,
+     "extra": 0,
+     "nothing": 0,
+     "short": 0,
+     "unrequested": 10,
+     "violation": 0
+    }
+   },
+   "B2_recover": {
+    "full": {
+     "exact": 133,
+     "extra": 22,
+     "nothing": 11,
+     "short": 0,
+     "unrequested": 2,
+     "violation": 0
+    },
+    "none": {
+     "exact": 21,
+     "extra": 3,
+     "nothing": 0,
+     "short": 0,
+     "unrequested": 0,
+     "violation": 0
+    },
+    "part": {
+     "exact": 20,
+     "extra": 0,
+     "nothing": 3,
+     "short": 0,
+     "unrequested": 1,
+     "violation": 0
+    }
+   },
+   "M": {
+    "full": {
+     "exact": 110,
+     "extra": 7,
+     "nothing": 34,
+     "short": 4,
+     "unrequested": 13,
+     "violation": 0
+    },
+    "none": {
+     "exact": 21,
+     "extra": 3,
+     "nothing": 0,
+     "short": 0,
+     "unrequested": 0,
+     "violation": 0
+    },
+    "part": {
+     "exact": 20,
+     "extra": 0,
+     "nothing": 3,
+     "short": 0,
+     "unrequested": 1,
+     "violation": 0
+    }
+   },
+   "M_confirm_empty": {
+    "full": {
+     "exact": 113,
+     "extra": 7,
+     "nothing": 30,
+     "short": 4,
+     "unrequested": 14,
+     "violation": 0
+    },
+    "none": {
+     "exact": 21,
+     "extra": 3,
+     "nothing": 0,
+     "short": 0,
+     "unrequested": 0,
+     "violation": 0
+    },
+    "part": {
+     "exact": 20,
+     "extra": 0,
+     "nothing": 3,
+     "short": 0,
+     "unrequested": 1,
+     "violation": 0
+    }
+   },
+   "M_full": {
+    "full": {
+     "exact": 106,
+     "extra": 15,
+     "nothing": 17,
+     "short": 6,
+     "unrequested": 24,
+     "violation": 0
+    },
+    "none": {
+     "exact": 21,
+     "extra": 3,
+     "nothing": 0,
+     "short": 0,
+     "unrequested": 0,
+     "violation": 0
+    },
+    "part": {
+     "exact": 15,
+     "extra": 0,
+     "nothing": 0,
+     "short": 0,
+     "unrequested": 9,
+     "violation": 0
+    }
+   },
+   "M_mask": {
+    "full": {
+     "exact": 90,
+     "extra": 5,
+     "nothing": 27,
+     "short": 6,
+     "unrequested": 40,
+     "violation": 0
+    },
+    "none": {
+     "exact": 6,
+     "extra": 18,
+     "nothing": 0,
+     "short": 0,
+     "unrequested": 0,
+     "violation": 0
+    },
+    "part": {
+     "exact": 13,
+     "extra": 0,
+     "nothing": 0,
+     "short": 0,
+     "unrequested": 11,
+     "violation": 0
+    }
+   },
+   "M_recover": {
+    "full": {
+     "exact": 136,
+     "extra": 18,
+     "nothing": 12,
+     "short": 0,
+     "unrequested": 2,
+     "violation": 0
+    },
+    "none": {
+     "exact": 21,
+     "extra": 3,
+     "nothing": 0,
+     "short": 0,
+     "unrequested": 0,
+     "violation": 0
+    },
+    "part": {
+     "exact": 20,
+     "extra": 0,
+     "nothing": 3,
+     "short": 0,
+     "unrequested": 1,
+     "violation": 0
+    }
+   },
+   "M_repair": {
+    "full": {
+     "exact": 137,
+     "extra": 18,
+     "nothing": 12,
+     "short": 0,
+     "unrequested": 1,
+     "violation": 0
+    },
+    "none": {
+     "exact": 21,
+     "extra": 3,
+     "nothing": 0,
+     "short": 0,
+     "unrequested": 0,
+     "violation": 0
+    },
+    "part": {
+     "exact": 20,
+     "extra": 0,
+     "nothing": 3,
+     "short": 0,
+     "unrequested": 1,
+     "violation": 0
+    }
+   }
+  },
+  "clean": {
+   "B0": {
+    "full": {
+     "exact": 81,
+     "extra": 12,
+     "nothing": 9,
+     "short": 0,
+     "unrequested": 3,
+     "violation": 63
+    },
+    "none": {
+     "exact": 6,
+     "extra": 3,
+     "nothing": 0,
+     "short": 0,
+     "unrequested": 0,
+     "violation": 15
+    },
+    "part": {
+     "exact": 9,
+     "extra": 0,
+     "nothing": 3,
+     "short": 0,
+     "unrequested": 2,
+     "violation": 10
+    }
+   },
+   "B0_confirm_empty": {
+    "full": {
+     "exact": 81,
+     "extra": 12,
+     "nothing": 9,
+     "short": 0,
+     "unrequested": 3,
+     "violation": 63
+    },
+    "none": {
+     "exact": 6,
+     "extra": 3,
+     "nothing": 0,
+     "short": 0,
+     "unrequested": 0,
+     "violation": 15
+    },
+    "part": {
+     "exact": 9,
+     "extra": 0,
+     "nothing": 3,
+     "short": 0,
+     "unrequested": 2,
+     "violation": 10
+    }
+   },
+   "B2": {
+    "full": {
+     "exact": 102,
+     "extra": 12,
+     "nothing": 36,
+     "short": 4,
+     "unrequested": 14,
+     "violation": 0
+    },
+    "none": {
+     "exact": 21,
+     "extra": 3,
+     "nothing": 0,
+     "short": 0,
+     "unrequested": 0,
+     "violation": 0
+    },
+    "part": {
+     "exact": 19,
+     "extra": 0,
+     "nothing": 3,
+     "short": 0,
+     "unrequested": 2,
+     "violation": 0
+    }
+   },
+   "B2_full": {
+    "full": {
+     "exact": 125,
+     "extra": 32,
+     "nothing": 2,
+     "short": 0,
+     "unrequested": 9,
+     "violation": 0
+    },
+    "none": {
+     "exact": 21,
+     "extra": 3,
+     "nothing": 0,
+     "short": 0,
+     "unrequested": 0,
+     "violation": 0
+    },
+    "part": {
+     "exact": 13,
+     "extra": 0,
+     "nothing": 0,
+     "short": 0,
+     "unrequested": 11,
+     "violation": 0
+    }
+   },
+   "B2_recover": {
+    "full": {
+     "exact": 121,
+     "extra": 29,
+     "nothing": 12,
+     "short": 0,
+     "unrequested": 6,
+     "violation": 0
+    },
+    "none": {
+     "exact": 21,
+     "extra": 3,
+     "nothing": 0,
+     "short": 0,
+     "unrequested": 0,
+     "violation": 0
+    },
+    "part": {
+     "exact": 19,
+     "extra": 0,
+     "nothing": 3,
+     "short": 0,
+     "unrequested": 2,
+     "violation": 0
+    }
+   },
+   "M": {
+    "full": {
+     "exact": 102,
+     "extra": 12,
+     "nothing": 36,
+     "short": 4,
+     "unrequested": 14,
+     "violation": 0
+    },
+    "none": {
+     "exact": 21,
+     "extra": 3,
+     "nothing": 0,
+     "short": 0,
+     "unrequested": 0,
+     "violation": 0
+    },
+    "part": {
+     "exact": 19,
+     "extra": 0,
+     "nothing": 3,
+     "short": 0,
+     "unrequested": 2,
+     "violation": 0
+    }
+   },
+   "M_confirm_empty": {
+    "full": {
+     "exact": 102,
+     "extra": 12,
+     "nothing": 36,
+     "short": 4,
+     "unrequested": 14,
+     "violation": 0
+    },
+    "none": {
+     "exact": 21,
+     "extra": 3,
+     "nothing": 0,
+     "short": 0,
+     "unrequested": 0,
+     "violation": 0
+    },
+    "part": {
+     "exact": 19,
+     "extra": 0,
+     "nothing": 3,
+     "short": 0,
+     "unrequested": 2,
+     "violation": 0
+    }
+   },
+   "M_full": {
+    "full": {
+     "exact": 125,
+     "extra": 31,
+     "nothing": 3,
+     "short": 0,
+     "unrequested": 9,
+     "violation": 0
+    },
+    "none": {
+     "exact": 21,
+     "extra": 3,
+     "nothing": 0,
+     "short": 0,
+     "unrequested": 0,
+     "violation": 0
+    },
+    "part": {
+     "exact": 13,
+     "extra": 0,
+     "nothing": 0,
+     "short": 0,
+     "unrequested": 11,
+     "violation": 0
+    }
+   },
+   "M_mask": {
+    "full": {
+     "exact": 111,
+     "extra": 15,
+     "nothing": 13,
+     "short": 0,
+     "unrequested": 29,
+     "violation": 0
+    },
+    "none": {
+     "exact": 6,
+     "extra": 18,
+     "nothing": 0,
+     "short": 0,
+     "unrequested": 0,
+     "violation": 0
+    },
+    "part": {
+     "exact": 12,
+     "extra": 0,
+     "nothing": 0,
+     "short": 0,
+     "unrequested": 12,
+     "violation": 0
+    }
+   },
+   "M_recover": {
+    "full": {
+     "exact": 121,
+     "extra": 29,
+     "nothing": 12,
+     "short": 0,
+     "unrequested": 6,
+     "violation": 0
+    },
+    "none": {
+     "exact": 21,
+     "extra": 3,
+     "nothing": 0,
+     "short": 0,
+     "unrequested": 0,
+     "violation": 0
+    },
+    "part": {
+     "exact": 19,
+     "extra": 0,
+     "nothing": 3,
+     "short": 0,
+     "unrequested": 2,
+     "violation": 0
+    }
+   },
+   "M_repair": {
+    "full": {
+     "exact": 121,
+     "extra": 29,
+     "nothing": 12,
+     "short": 0,
+     "unrequested": 6,
+     "violation": 0
+    },
+    "none": {
+     "exact": 21,
+     "extra": 3,
+     "nothing": 0,
+     "short": 0,
+     "unrequested": 0,
+     "violation": 0
+    },
+    "part": {
+     "exact": 19,
+     "extra": 0,
+     "nothing": 3,
+     "short": 0,
+     "unrequested": 2,
+     "violation": 0
+    }
+   }
+  },
+  "perturbed": {
+   "B0": {
+    "full": {
+     "exact": 39,
+     "extra": 0,
+     "nothing": 10,
+     "short": 4,
+     "unrequested": 50,
+     "violation": 65
+    },
+    "none": {
+     "exact": 0,
+     "extra": 9,
+     "nothing": 0,
+     "short": 0,
+     "unrequested": 0,
+     "violation": 15
+    },
+    "part": {
+     "exact": 6,
+     "extra": 0,
+     "nothing": 3,
+     "short": 0,
+     "unrequested": 3,
+     "violation": 12
+    }
+   },
+   "B0_confirm_empty": {
+    "full": {
+     "exact": 39,
+     "extra": 0,
+     "nothing": 10,
+     "short": 4,
+     "unrequested": 50,
+     "violation": 65
+    },
+    "none": {
+     "exact": 0,
+     "extra": 9,
+     "nothing": 0,
+     "short": 0,
+     "unrequested": 0,
+     "violation": 15
+    },
+    "part": {
+     "exact": 6,
+     "extra": 0,
+     "nothing": 3,
+     "short": 0,
+     "unrequested": 3,
+     "violation": 12
+    }
+   },
+   "B2": {
+    "full": {
+     "exact": 62,
+     "extra": 0,
+     "nothing": 19,
+     "short": 6,
+     "unrequested": 50,
+     "violation": 31
+    },
+    "none": {
+     "exact": 15,
+     "extra": 9,
+     "nothing": 0,
+     "short": 0,
+     "unrequested": 0,
+     "violation": 0
+    },
+    "part": {
+     "exact": 15,
+     "extra": 0,
+     "nothing": 6,
+     "short": 0,
+     "unrequested": 3,
+     "violation": 0
+    }
+   },
+   "B2_full": {
+    "full": {
+     "exact": 50,
+     "extra": 2,
+     "nothing": 17,
+     "short": 7,
+     "unrequested": 61,
+     "violation": 31
+    },
+    "none": {
+     "exact": 15,
+     "extra": 9,
+     "nothing": 0,
+     "short": 0,
+     "unrequested": 0,
+     "violation": 0
+    },
+    "part": {
+     "exact": 21,
+     "extra": 0,
+     "nothing": 0,
+     "short": 0,
+     "unrequested": 3,
+     "violation": 0
+    }
+   },
+   "B2_recover": {
+    "full": {
+     "exact": 44,
+     "extra": 1,
+     "nothing": 36,
+     "short": 6,
+     "unrequested": 50,
+     "violation": 31
+    },
+    "none": {
+     "exact": 15,
+     "extra": 9,
+     "nothing": 0,
+     "short": 0,
+     "unrequested": 0,
+     "violation": 0
+    },
+    "part": {
+     "exact": 15,
+     "extra": 0,
+     "nothing": 6,
+     "short": 0,
+     "unrequested": 3,
+     "violation": 0
+    }
+   },
+   "M": {
+    "full": {
+     "exact": 100,
+     "extra": 2,
+     "nothing": 42,
+     "short": 3,
+     "unrequested": 21,
+     "violation": 0
+    },
+    "none": {
+     "exact": 18,
+     "extra": 6,
+     "nothing": 0,
+     "short": 0,
+     "unrequested": 0,
+     "violation": 0
+    },
+    "part": {
+     "exact": 21,
+     "extra": 0,
+     "nothing": 3,
+     "short": 0,
+     "unrequested": 0,
+     "violation": 0
+    }
+   },
+   "M_confirm_empty": {
+    "full": {
+     "exact": 99,
+     "extra": 2,
+     "nothing": 43,
+     "short": 3,
+     "unrequested": 21,
+     "violation": 0
+    },
+    "none": {
+     "exact": 18,
+     "extra": 6,
+     "nothing": 0,
+     "short": 0,
+     "unrequested": 0,
+     "violation": 0
+    },
+    "part": {
+     "exact": 21,
+     "extra": 0,
+     "nothing": 3,
+     "short": 0,
+     "unrequested": 0,
+     "violation": 0
+    }
+   },
+   "M_full": {
+    "full": {
+     "exact": 118,
+     "extra": 5,
+     "nothing": 6,
+     "short": 0,
+     "unrequested": 39,
+     "violation": 0
+    },
+    "none": {
+     "exact": 14,
+     "extra": 10,
+     "nothing": 0,
+     "short": 0,
+     "unrequested": 0,
+     "violation": 0
+    },
+    "part": {
+     "exact": 21,
+     "extra": 0,
+     "nothing": 0,
+     "short": 0,
+     "unrequested": 3,
+     "violation": 0
+    }
+   },
+   "M_mask": {
+    "full": {
+     "exact": 100,
+     "extra": 12,
+     "nothing": 8,
+     "short": 0,
+     "unrequested": 48,
+     "violation": 0
+    },
+    "none": {
+     "exact": 9,
+     "extra": 15,
+     "nothing": 0,
+     "short": 0,
+     "unrequested": 0,
+     "violation": 0
+    },
+    "part": {
+     "exact": 18,
+     "extra": 0,
+     "nothing": 0,
+     "short": 0,
+     "unrequested": 6,
+     "violation": 0
+    }
+   },
+   "M_recover": {
+    "full": {
+     "exact": 108,
+     "extra": 3,
+     "nothing": 35,
+     "short": 2,
+     "unrequested": 20,
+     "violation": 0
+    },
+    "none": {
+     "exact": 18,
+     "extra": 6,
+     "nothing": 0,
+     "short": 0,
+     "unrequested": 0,
+     "violation": 0
+    },
+    "part": {
+     "exact": 21,
+     "extra": 0,
+     "nothing": 3,
+     "short": 0,
+     "unrequested": 0,
+     "violation": 0
+    }
+   },
+   "M_repair": {
+    "full": {
+     "exact": 108,
+     "extra": 3,
+     "nothing": 34,
+     "short": 2,
+     "unrequested": 21,
+     "violation": 0
+    },
+    "none": {
+     "exact": 18,
+     "extra": 6,
+     "nothing": 0,
+     "short": 0,
+     "unrequested": 0,
+     "violation": 0
+    },
+    "part": {
+     "exact": 21,
+     "extra": 0,
+     "nothing": 3,
+     "short": 0,
+     "unrequested": 0,
+     "violation": 0
+    }
+   }
+  }
+ },
+ "paired_table_M_full": {
+  "compliant": {
+   "episodes": 93,
+   "guard_completed": 93
+  },
+  "none": {
+   "episodes": 21,
+   "guard_completed": 12
+  },
+  "violating": {
+   "episodes": 54,
+   "guard_completed": 51
+  }
+ },
+ "sizes_for_a_confirmatory_test": {
+  "att_full_vs_B0_clean": {
+   "cluster_sd": 0.2081,
+   "clusters": 28,
+   "structures_for_power_0.9": {
+    "true effect +2.5 pp": 81,
+    "true effect 0": 183,
+    "true effect = estimate": 43
+   }
+  },
+  "menu_loss_boundary": {
+   "cluster_sd": 0.3209,
+   "clusters": 28,
+   "structures_for_power_0.9": {
+    "true effect = estimate": 29,
+    "true effect = half the estimate": 113
+   }
+  },
+  "menu_off_target_part": {
+   "cluster_sd": 0.2394,
+   "clusters": 4,
+   "structures_for_power_0.9": {
+    "true effect = estimate": 5,
+    "true effect = half the estimate": 20
+   }
+  },
+  "reason_vs_silence_clean": {
+   "cluster_sd": 0.3951,
+   "clusters": 28,
+   "structures_for_power_0.9": {
+    "true effect = estimate": 36,
+    "true effect = half the estimate": 143
+   }
+  }
+ },
+ "split": {
+  "boundary": {
+   "B0": {
+    "A": 0,
+    "B": 0,
+    "C": 0,
+    "D": 22,
+    "done": 146,
+    "n": 168,
+    "reference_compliant": 89,
+    "reference_violating": 57,
+    "retried": 11
+   },
+   "B0_confirm_empty": {
+    "A": 0,
+    "B": 0,
+    "C": 0,
+    "D": 22,
+    "done": 146,
+    "n": 168,
+    "reference_compliant": 89,
+    "reference_violating": 57,
+    "retried": 11
+   },
+   "B2": {
+    "A": 0,
+    "B": 34,
+    "C": 6,
+    "D": 16,
+    "done": 118,
+    "n": 168,
+    "reference_compliant": 89,
+    "reference_violating": 57,
+    "retried": 77
+   },
+   "B2_full": {
+    "A": 0,
+    "B": 11,
+    "C": 12,
+    "D": 10,
+    "done": 147,
+    "n": 168,
+    "reference_compliant": 89,
+    "reference_violating": 57,
+    "retried": 77
+   },
+   "B2_recover": {
+    "A": 0,
+    "B": 0,
+    "C": 9,
+    "D": 13,
+    "done": 155,
+    "n": 168,
+    "reference_compliant": 89,
+    "reference_violating": 57,
+    "retried": 77
+   },
+   "M": {
+    "A": 0,
+    "B": 36,
+    "C": 7,
+    "D": 15,
+    "done": 117,
+    "n": 168,
+    "reference_compliant": 89,
+    "reference_violating": 57,
+    "retried": 132
+   },
+   "M_confirm_empty": {
+    "A": 0,
+    "B": 34,
+    "C": 8,
+    "D": 14,
+    "done": 120,
+    "n": 168,
+    "reference_compliant": 89,
+    "reference_violating": 57,
+    "retried": 132
+   },
+   "M_full": {
+    "A": 27,
+    "B": 11,
+    "C": 13,
+    "D": 9,
+    "done": 121,
+    "n": 168,
+    "reference_compliant": 89,
+    "reference_violating": 57,
+    "retried": 132
+   },
+   "M_mask": {
+    "A": 31,
+    "B": 39,
+    "C": 19,
+    "D": 3,
+    "done": 95,
+    "n": 168,
+    "reference_compliant": 89,
+    "reference_violating": 57,
+    "retried": 132
+   },
+   "M_recover": {
+    "A": 2,
+    "B": 0,
+    "C": 10,
+    "D": 12,
+    "done": 154,
+    "n": 168,
+    "reference_compliant": 89,
+    "reference_violating": 57,
+    "retried": 132
+   },
+   "M_repair": {
+    "A": 2,
+    "B": 0,
+    "C": 11,
+    "D": 11,
+    "done": 155,
+    "n": 168,
+    "reference_compliant": 89,
+    "reference_violating": 57,
+    "retried": 132
+   }
+  },
+  "clean": {
+   "B0": {
+    "A": 0,
+    "B": 0,
+    "C": 0,
+    "D": 21,
+    "done": 147,
+    "n": 168,
+    "reference_compliant": 93,
+    "reference_violating": 54,
+    "retried": 9
+   },
+   "B0_confirm_empty": {
+    "A": 0,
+    "B": 0,
+    "C": 0,
+    "D": 21,
+    "done": 147,
+    "n": 168,
+    "reference_compliant": 93,
+    "reference_violating": 54,
+    "retried": 9
+   },
+   "B2": {
+    "A": 0,
+    "B": 36,
+    "C": 3,
+    "D": 18,
+    "done": 114,
+    "n": 168,
+    "reference_compliant": 93,
+    "reference_violating": 54,
+    "retried": 72
+   },
+   "B2_full": {
+    "A": 0,
+    "B": 3,
+    "C": 13,
+    "D": 8,
+    "done": 157,
+    "n": 168,
+    "reference_compliant": 93,
+    "reference_violating": 54,
+    "retried": 72
+   },
+   "B2_recover": {
+    "A": 0,
+    "B": 0,
+    "C": 3,
+    "D": 18,
+    "done": 150,
+    "n": 168,
+    "reference_compliant": 93,
+    "reference_violating": 54,
+    "retried": 72
+   },
+   "M": {
+    "A": 0,
+    "B": 36,
+    "C": 3,
+    "D": 18,
+    "done": 114,
+    "n": 168,
+    "reference_compliant": 93,
+    "reference_violating": 54,
+    "retried": 72
+   },
+   "M_confirm_empty": {
+    "A": 0,
+    "B": 36,
+    "C": 3,
+    "D": 18,
+    "done": 114,
+    "n": 168,
+    "reference_compliant": 93,
+    "reference_violating": 54,
+    "retried": 72
+   },
+   "M_full": {
+    "A": 0,
+    "B": 3,
+    "C": 12,
+    "D": 9,
+    "done": 156,
+    "n": 168,
+    "reference_compliant": 93,
+    "reference_violating": 54,
+    "retried": 72
+   },
+   "M_mask": {
+    "A": 0,
+    "B": 36,
+    "C": 15,
+    "D": 6,
+    "done": 126,
+    "n": 168,
+    "reference_compliant": 93,
+    "reference_violating": 54,
+    "retried": 72
+   },
+   "M_recover": {
+    "A": 0,
+    "B": 0,
+    "C": 3,
+    "D": 18,
+    "done": 150,
+    "n": 168,
+    "reference_compliant": 93,
+    "reference_violating": 54,
+    "retried": 72
+   },
+   "M_repair": {
+    "A": 0,
+    "B": 0,
+    "C": 3,
+    "D": 18,
+    "done": 150,
+    "n": 168,
+    "reference_compliant": 93,
+    "reference_violating": 54,
+    "retried": 72
+   }
+  },
+  "perturbed": {
+   "B0": {
+    "A": 0,
+    "B": 0,
+    "C": 0,
+    "D": 88,
+    "done": 80,
+    "n": 168,
+    "reference_compliant": 39,
+    "reference_violating": 41,
+    "retried": 12
+   },
+   "B0_confirm_empty": {
+    "A": 0,
+    "B": 0,
+    "C": 0,
+    "D": 88,
+    "done": 80,
+    "n": 168,
+    "reference_compliant": 39,
+    "reference_violating": 41,
+    "retried": 12
+   },
+   "B2": {
+    "A": 3,
+    "B": 8,
+    "C": 9,
+    "D": 79,
+    "done": 78,
+    "n": 168,
+    "reference_compliant": 39,
+    "reference_violating": 41,
+    "retried": 79
+   },
+   "B2_full": {
+    "A": 9,
+    "B": 15,
+    "C": 12,
+    "D": 76,
+    "done": 68,
+    "n": 168,
+    "reference_compliant": 39,
+    "reference_violating": 41,
+    "retried": 79
+   },
+   "B2_recover": {
+    "A": 0,
+    "B": 22,
+    "C": 3,
+    "D": 85,
+    "done": 61,
+    "n": 168,
+    "reference_compliant": 39,
+    "reference_violating": 41,
+    "retried": 79
+   },
+   "M": {
+    "A": 6,
+    "B": 12,
+    "C": 40,
+    "D": 48,
+    "done": 102,
+    "n": 168,
+    "reference_compliant": 39,
+    "reference_violating": 41,
+    "retried": 168
+   },
+   "M_confirm_empty": {
+    "A": 6,
+    "B": 12,
+    "C": 39,
+    "D": 49,
+    "done": 101,
+    "n": 168,
+    "reference_compliant": 39,
+    "reference_violating": 41,
+    "retried": 168
+   },
+   "M_full": {
+    "A": 6,
+    "B": 8,
+    "C": 57,
+    "D": 31,
+    "done": 123,
+    "n": 168,
+    "reference_compliant": 39,
+    "reference_violating": 41,
+    "retried": 168
+   },
+   "M_mask": {
+    "A": 12,
+    "B": 8,
+    "C": 52,
+    "D": 36,
+    "done": 112,
+    "n": 168,
+    "reference_compliant": 39,
+    "reference_violating": 41,
+    "retried": 168
+   },
+   "M_recover": {
+    "A": 3,
+    "B": 11,
+    "C": 45,
+    "D": 43,
+    "done": 111,
+    "n": 168,
+    "reference_compliant": 39,
+    "reference_violating": 41,
+    "retried": 168
+   },
+   "M_repair": {
+    "A": 3,
+    "B": 12,
+    "C": 46,
+    "D": 42,
+    "done": 111,
+    "n": 168,
+    "reference_compliant": 39,
+    "reference_violating": 41,
+    "retried": 168
+   }
+  }
+ },
+ "status": "exploratory and post hoc; no confirmatory weight",
+ "study": "EviBound v3.1, layer 1: policy-attainable goals on the frozen v3 holdout"
+}

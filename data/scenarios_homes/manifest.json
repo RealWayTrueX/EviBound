@@ -1,0 +1,179 @@
+{
+  "homes": {
+    "L": {
+      "device_states": 324,
+      "devices": 6,
+      "devices_list": [
+        "light",
+        "fan",
+        "heater",
+        "window",
+        "purifier",
+        "lock"
+      ],
+      "legal_absent": 4,
+      "legal_present": 110,
+      "legal_states": 114,
+      "main": {
+        "all_devices_authorized": 66,
+        "by_presence_and_class": {
+          "absent/full": 30,
+          "absent/none": 18,
+          "absent/part": 12,
+          "present/full": 38,
+          "present/none": 8,
+          "present/part": 14
+        },
+        "lure_unsafe": 42,
+        "needs_no_write": 44,
+        "sha256": "47a9e375e2c9d7503be40100e8d0fb9eb08d18aeed1067c9e7a50b7bd8502570",
+        "tasks": 120,
+        "writes_needed": {
+          "0": 44,
+          "1": 43,
+          "2": 18,
+          "3": 8,
+          "4": 3,
+          "5": 3,
+          "6": 1
+        }
+      },
+      "max_writes": 6,
+      "pilot": {
+        "all_devices_authorized": 7,
+        "by_presence_and_class": {
+          "absent/full": 3,
+          "absent/none": 2,
+          "absent/part": 1,
+          "present/full": 4,
+          "present/part": 2
+        },
+        "lure_unsafe": 3,
+        "needs_no_write": 3,
+        "sha256": "ca1d53e5232cb18cbe1d3d0ecf5e69b92b1e83027eb53126fea7d8cc6b211c65",
+        "tasks": 12,
+        "writes_needed": {
+          "0": 3,
+          "1": 3,
+          "2": 5,
+          "4": 1
+        }
+      },
+      "rules": 14,
+      "states": 648
+    },
+    "M": {
+      "device_states": 81,
+      "devices": 4,
+      "devices_list": [
+        "light",
+        "fan",
+        "heater",
+        "window"
+      ],
+      "legal_absent": 2,
+      "legal_present": 33,
+      "legal_states": 35,
+      "main": {
+        "all_devices_authorized": 65,
+        "by_presence_and_class": {
+          "absent/full": 30,
+          "absent/none": 18,
+          "absent/part": 12,
+          "present/full": 38,
+          "present/none": 8,
+          "present/part": 14
+        },
+        "lure_unsafe": 42,
+        "needs_no_write": 44,
+        "sha256": "b7090b51763525738c550e2d99d58bd098125c6ffb1fff1129acbeee74ecf0b3",
+        "tasks": 120,
+        "writes_needed": {
+          "0": 44,
+          "1": 50,
+          "2": 15,
+          "3": 10,
+          "5": 1
+        }
+      },
+      "max_writes": 5,
+      "pilot": {
+        "all_devices_authorized": 6,
+        "by_presence_and_class": {
+          "absent/full": 3,
+          "absent/none": 2,
+          "absent/part": 1,
+          "present/full": 4,
+          "present/part": 2
+        },
+        "lure_unsafe": 5,
+        "needs_no_write": 3,
+        "sha256": "ec8906df8df27c6d830438ac9382b73459e519f2e4efaeeddf597d3a402cd99e",
+        "tasks": 12,
+        "writes_needed": {
+          "0": 3,
+          "1": 5,
+          "2": 3,
+          "3": 1
+        }
+      },
+      "rules": 12,
+      "states": 162
+    },
+    "S": {
+      "device_states": 9,
+      "devices": 2,
+      "devices_list": [
+        "light",
+        "fan"
+      ],
+      "legal_absent": 2,
+      "legal_present": 7,
+      "legal_states": 9,
+      "main": {
+        "all_devices_authorized": 79,
+        "by_presence_and_class": {
+          "absent/full": 30,
+          "absent/none": 18,
+          "absent/part": 12,
+          "present/full": 38,
+          "present/none": 8,
+          "present/part": 14
+        },
+        "lure_unsafe": 42,
+        "needs_no_write": 44,
+        "sha256": "fdba19091149d119900c4ff2a996185618706c37c9d4281cb803db063699f2fa",
+        "tasks": 120,
+        "writes_needed": {
+          "0": 44,
+          "1": 45,
+          "2": 22,
+          "3": 9
+        }
+      },
+      "max_writes": 3,
+      "pilot": {
+        "all_devices_authorized": 7,
+        "by_presence_and_class": {
+          "absent/full": 3,
+          "absent/none": 2,
+          "absent/part": 1,
+          "present/full": 4,
+          "present/part": 2
+        },
+        "lure_unsafe": 3,
+        "needs_no_write": 3,
+        "sha256": "537648733a7c982889f534a720fee938d32d52ddce26084c8f1462aa137bb2bb",
+        "tasks": 12,
+        "writes_needed": {
+          "0": 3,
+          "1": 6,
+          "2": 3
+        }
+      },
+      "rules": 6,
+      "states": 18
+    }
+  },
+  "seed": 20261125
+}

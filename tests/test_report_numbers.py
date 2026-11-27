@@ -84,6 +84,28 @@ class ReportNumbersTest(unittest.TestCase):
                        'not a structural holdout', 'is post hoc', 'not a guarantee'):
             self.assertTrue(phrase in flat, phrase)
 
+    def test_second_extension_is_reported_as_it_came_out(self):
+        v = self.values
+        self.assertEqual([v[f'v31.C{i}'] for i in range(1, 7)],
+                         ['supported', 'supported', 'not supported', 'supported', 'supported', 'supported'])
+        self.assertEqual(v['v31.claims.supported'], '5')
+        flat = ' '.join(self.tex.split())
+        for phrase in ('Five of the six claims are supported', 'The claim that failed came from the development runs',
+                       'the estimates point the other way', 'generated and checked by programs',
+                       'no claim tested it'):
+            self.assertTrue(phrase in flat, phrase)
+        for key in ('m', 'reason', 'reading', 'list', 'list2', 'plan', 'seq'):
+            self.assertEqual(v[f'v31.tot.{key}.unsafe'], '0', key)
+        # the sentences on C5 say "ahead of both lists" and "behind the plan review and the sequence"
+        self.assertTrue(v['v31.N1.lo'].startswith('+') and v['v31.N2.lo'].startswith('+'))
+        self.assertTrue(v['v31.N3.hi'].startswith('$-$') and v['v31.N4.hi'].startswith('$-$'))
+        self.assertTrue(v['v31.P1.est'].startswith('$-$') and v['v31.P2.est'].startswith('$-$'))
+        # the planner characters: the list raised unrequested changes in each, the reading kept its sign
+        for role in ('cautious', 'faithful', 'experienced'):
+            self.assertEqual(v[f'v31.role.{role}.U1.decision'], 'supported', role)
+            self.assertEqual(v[f'v31.role.{role}.R1.decision'], 'inconclusive', role)
+            self.assertTrue(v[f'v31.role.{role}.R1.est'].startswith('+'), role)
+
     def test_snapshot_does_not_overstate_the_test_suite(self):
         suite = unittest.TestLoader().discover(str(ROOT / 'tests'), pattern='test_*.py')
         self.assertGreaterEqual(suite.countTestCases(), report.SNAPSHOT['unit_tests'])

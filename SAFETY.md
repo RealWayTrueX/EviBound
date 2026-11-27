@@ -64,6 +64,14 @@ corpus owner, who signed off the task reviews before each corpus was frozen
 `artifacts/week11_v3_prereg_freeze.json`). Automatic checks and AI review
 supported those decisions; they did not replace them.
 
+The second extension (v3.1, the feedback ladder) used a machine-generated,
+machine-checked corpus approved by the corpus owner. The owner defined the
+research direction, authorized the protocol and confirmatory run, and completed
+post-run human review of the task cards on 2026-11-26. The review is post hoc
+and does not alter the frozen labels, counts or decisions; any resulting
+exclusions would be reported in a sensitivity analysis
+(`artifacts/v3_1_postrun_review.json`).
+
 ## 6. AI-assistance disclosure
 
 AI coding assistants were used throughout this project, as the research
@@ -71,28 +79,26 @@ contract anticipated ("AI-assisted test-driven development/review").
 
 | Activity | AI assistance | Human role |
 |---|---|---|
-| Code (simulator, guard, oracle, runners, analysis, tools, demo) | Largely written and tested by AI assistants (Anthropic Claude Code; OpenAI Codex) under the owner's direction, test-first where practical | Set requirements, reviewed behaviour and results, decided what was merged |
-| Scenario corpora | Generators and independent checkers written with AI assistance | Reviewed and signed off the required task cards and the rules |
-| Protocols and preregistrations | Drafted with AI assistance | Decided hypotheses, endpoints, amendments and freezes; approved each freeze |
-| Experiment runs | Launched and monitored with AI assistance on the owner's machine | Authorized the runs and the compute |
-| Analysis and review | Statistics scripts written with AI assistance; an independent AI review (2026-11-03) audited all materials | Decided how findings were handled (`docs/review_response_2026-11-03.md`) |
-| Documentation | Largely drafted by AI assistants | Reviewed and directed |
+| Code (simulator, guard, oracle, runners, analysis, tools, demo) | Implementation and unit tests drafted with AI coding assistants (Claude Code, Codex) under the owner's direction | Set requirements, reviewed behaviour and results, decided what was merged |
+| Scenario corpora | Generators and independent checkers written with AI assistance | Reviewed and signed off the required task cards and rules |
+| Protocols and preregistrations | Drafted with AI assistance | Defined hypotheses, endpoints, amendments and freezes; authorized each freeze |
+| Experiment runs | Launched and monitored with AI assistance on the owner's machine | Authorized the runs and compute |
+| Analysis and review | Statistics scripts written with AI assistance; an independent review (2026-11-03) audited all materials | Decided how findings were handled (`docs/review_response_2026-11-03.md`) |
+| Documentation | Drafted and edited with AI assistance | Directed, reviewed and approved |
+| Second extension, v3.1 (2026-11-24) | Assistance with literature review, corpus tooling, implementation, execution and analysis | Defined the research direction, requested the attack battery, second-model and scale studies, authorized the protocol and runs, completed post-run human review on 2026-11-26, and takes full responsibility for the output |
 
-Where to check: commits written with an assistant carry a `Co-Authored-By`
-trailer (31 of the 41 commits that existed when this file was written on
-2026-11-10), and `docs/agentic_workflow.md` describes the working rules. The
-owner maintains the table above and adds any tool that the commit history
-does not show. The model under test (Qwen2.5-7B-Instruct) is the
-experimental subject, not an assistant. No AI system acted as ground truth:
-outcomes come from a deterministic oracle and human sign-off.
+The model under test (Qwen2.5-7B-Instruct, plus Qwen3-8B in exploratory runs)
+is the experimental subject, not an assistant. No AI system served as ground
+truth: outcomes come from deterministic oracles, with human oversight as
+recorded above.
 
 Any text submitted for assessment follows the course's own rules on AI use and
 is disclosed there by its author.
 
 ## 中文摘要
 
-- **范围。** 全部实验都在确定性的模拟器里做：模拟的灯、风扇和人体存在读数。不连接真实住宅、设备、账号，不收集个人数据，不调用付费或托管的模型 API。
-- **结论的边界。** 结果只对固定的合成任务、固定的攻击和一个模型版本成立；"零不安全后果"是观察结果，不是保证。守卫的可靠性以可信的记录库、时钟、账本和提交路径为前提；读数"新鲜"不等于"当前为真"。
-- **攻击材料。** 攻击只作用于模拟器自己的数据，仓库里没有针对任何真实智能家居产品或服务的利用代码。不要把守卫、演示或规划器接到真实设备或账号上。
-- **人工把关。** 策略、标签、冻结和发布都由语料负责人批准；自动检查和 AI 复核只是辅助。
-- **AI 协助披露。** 代码、协议草稿、分析脚本和文档大部分由 AI 编码助手（Claude Code、Codex）在负责人指导下完成；负责人决定假设、终点、修订和冻结并审核结果。带 `Co-Authored-By` 的提交可以查到。被测模型（Qwen2.5-7B）是实验对象，不是助手；判分由确定性判分器和人工签署完成。提交给课程评分的文字，按课程自己的 AI 使用规定由作者另行披露。
+- **范围。** 全部实验都在确定性的模拟器里做：模拟的智能家居设备与人体存在读数。不连接真实住宅、设备或账号，不收集个人数据，不调用付费或托管的模型 API。
+- **结论的边界。** 结果只对固定的合成任务、固定的攻击和所测模型版本成立；“零不安全后果”是观察结果，不是形式化保证。守卫的可靠性以可信记录库、时钟、账本和提交路径为前提；读数“新鲜”不等于“当前为真”。
+- **攻击材料。** 攻击只作用于模拟器内部数据，仓库里没有针对任何真实智能家居产品或服务的利用代码。不要把守卫、演示或规划器接到真实设备或账号上。
+- **人工把关。** 策略、标签、冻结和发布均由负责人批准。v3.1（反馈阶梯）采用经负责人批准的程序生成与校验流程，由负责人确定研究方向并授权运行，且已于 2026-11-26 完成任务卡运行后人工审核（记录见 `artifacts/v3_1_postrun_review.json`）。该审核不改变已冻结的标签、数字或判定。
+- **AI 协助披露。** 代码、协议草稿、分析脚本和文档在负责人指导下使用了 AI 编码助手（Claude Code、Codex）协助编写与润色；负责人负责研究方向、假设设定、实验授权、人工审核与最终把关。被测模型（Qwen2.5-7B、Qwen3-8B）是实验对象而非助手，判分由确定性判分器完成。提交给课程评分的文字按课程规定另行披露。

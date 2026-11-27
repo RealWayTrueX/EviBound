@@ -201,6 +201,35 @@ Frozen-boundary rules (non-negotiable):
 - [ ] L6. Owner decisions: read and approve the report, merge PR #4, release
       tag, trace archive, demo rehearsal, submission.
 
+### M. Second extension: v3.1 feedback ladder (from 2026-11-24; outside the contract's hypothesis; no frozen v1-v3 file is touched)
+- [x] M1. Attainability analysis of the frozen v3 holdout: for every task an
+      exhaustive search gives the best end state the rules and the scope
+      allow (`docs/v3_1_layer1_attainability.md`, post hoc).
+- [x] M2. Related work checked against arXiv and the question narrowed to
+      what a guard should say after it blocks (`docs/related_work_2026-11.md`).
+- [x] M3. Feedback ladder and engine: the guard is unchanged, only the one
+      message after a refusal varies (`src/evibound/recovery_v3_1.py`,
+      `src/evibound/runner_v3_1.py`); every v3 condition stays byte-identical.
+- [x] M4. Corpus v3.1: 420 new physical structures, 372 holdout (276 core
+      tasks, 96 attack-battery tasks) and 48 development, generated and
+      checked by programs (`data/scenarios_v3_1/`); post-run human review of
+      the task cards completed by the owner on 2026-11-26
+      (`artifacts/v3_1_postrun_review.json`).
+- [x] M5. Development runs d1 and d2 (17,820 episodes) and the rewritten plan:
+      claims C1 to C6 replace the draft's H1 to H6, which stay as secondary
+      contrasts (`artifacts/v3_1_dev_record.json`).
+- [x] M6. Freeze, 2026-11-24 20:20:43 UTC (`artifacts/v3_1_prereg_freeze.json`).
+- [x] M7. Confirmatory run, 2026-11-24 20:21 to 22:50 UTC (30,132 episodes,
+      one process, no restart): five of six claims supported, C3 not
+      supported (`docs/v3_1_results.md`, `artifacts/v3_1_holdout_results.json`).
+      Exploratory arm with three planner characters in section 9 of the
+      results document.
+- [ ] M8. Owner: finalize release and branch cleanup (merge PR #6); decide on
+      next-stage work (integrating v3.1 feedback ladder with v4 / SimuHome,
+      forged-feedback attack arm, and additional planner families). Post-run
+      human review of the v3.1 task cards completed on 2026-11-26
+      (`artifacts/v3_1_postrun_review.json`).
+
 ## Progress Log
 
 - 2026-10-10: A1-A2 done. v1 confounds reconfirmed from current files: perturbation
@@ -509,3 +538,75 @@ Frozen-boundary rules (non-negotiable):
     erratum is in `docs/reproduction.md`, section 7.1. No primary result is
     affected.
   - Open, owner: L5 exports and L6.
+
+- 2026-11-24: second extension v3.1 (section M), outside the contract's
+  hypothesis; no frozen v1-v3 file was touched. Completion criterion: a plan
+  frozen before any holdout output exists, one confirmatory run under it,
+  every reported number derived from committed episode fingerprints, and
+  unsupported claims reported as such.
+  - Question: the guard is fixed; what should the one message after a
+    refusal contain? Seven messages from the bare verdict to a sequence of
+    writes; measures from an exhaustive attainability search (exact target,
+    unrequested change).
+  - Development runs d1 and d2 (17,820 episodes on the v3 corpus and the
+    development split) changed the plan: the first draft's claims H1 to H4
+    would probably not have held in their first form on the new tasks. The
+    plan was rewritten as claims C1 to C6 and frozen at 20:20:43 UTC
+    (`artifacts/v3_1_prereg_freeze.json`).
+  - Confirmatory run: 372 new tasks, 9 conditions, 30,132 episodes. C1, C2,
+    C4, C5 and C6 supported; C3 not supported, with estimates below zero. A
+    list of legal writes harms in either wording; a review of the planner's
+    own plan does not, and ends in the attainable target slightly more often
+    than the reason alone. No unsafe effect in 23,436 evidence-bound
+    episodes. The record from the committed fingerprints equals the record
+    computed on the experiment machine from the raw trace.
+  - Process: the owner defined the direction and authorized the protocol and
+    confirmatory run, with AI coding assistance in implementation and analysis.
+    The corpus and labels were machine-generated and machine-checked, and the
+    owner completed post-run human review of the task cards on 2026-11-26
+    (`artifacts/v3_1_postrun_review.json`, `SAFETY.md`, section 5).
+  - Tooling: the experiment machine is driven from a stored terminal command
+    and a step file (`scripts/v3_1_step.sh`, `scripts/v3_1_step.txt`); each
+    finished run pushes its small outputs to the branch `claude/v3-1-results`.
+    The two planner servers of the v4 work were stopped before the runs; the
+    commands to start them again are recorded in the local handoff.
+  - Exploratory arm (three planner characters, 40,176 episodes), finished
+    2026-11-25 00:04 UTC: the effect of the list repeats under every system
+    prompt; the gain from the trusted reading keeps its sign and its
+    intervals include zero.
+  - Course report updated (local only): eight pages with references and
+    appendix, section 6 on v3.1; `scripts/build_report_numbers.py` now also
+    reads the v3.1 records (806 values); 203 tests pass.
+  - Course report rewritten (local only, 2026-11-25, at the owner's request):
+    IEEE conference format, eight pages. The introduction names three gaps and
+    the three mechanisms that answer them; the results are ordered by research
+    question; the conclusion ends with practices and open questions for other
+    work. Six figures replace the two TikZ plots: two schematics as editable
+    SVG (`scripts/build_report_diagrams.py`) and four charts
+    (`scripts/build_report_figures.py`), all drawn from the committed records;
+    the worked example is an episode of the v3.1 confirmatory run. One
+    statement about related work was wrong and is corrected: Environment
+    Steering does compare three kinds of feedback after a violation
+    (`docs/related_work_2026-11.md`, section 5, where every reference of the
+    report is listed as re-checked). 217 tests pass (872 report values).
+  - Exploratory, second planner model (2026-11-25, at the owner's request):
+    the whole v3.1 study again with Qwen3-8B, 30,132 episodes, plan published
+    before the run (`docs/v3_1_second_model.md`). Four of the six claims get
+    the same decision; evidence binding and the harm of the list carry over,
+    C2 and C4 do not reach support (`docs/v3_1_results.md`, section 10;
+    `scripts/v3_1_models.py`).
+  - Exploratory scale study (2026-11-25, at the owner's request): homes with
+    2, 4 and 6 devices on one engine (`src/evibound/homes*.py`), plan
+    published before the run (`docs/scale_study.md`). The small home is
+    tested to be the frozen world again. Run the same day with both planners,
+    32,400 episodes. Evidence binding and the harm of the list show in every
+    home with both planners; the harm of the list grows with the home; with
+    Qwen3-8B the list does not measurably cost attainable targets, and the
+    plan review pulls ahead of the reason alone in the larger homes
+    (`docs/scale_study.md`, Results; `docs/v3_1_results.md`, section 11;
+    `scripts/homes_record.py`).
+  - Course report rewritten again in plainer language (local only), with the
+    second planner and the scale study as an exploratory subsection; 251 tests
+    pass.
+  - Open, owner: M8; whether to restore the two v4 planner servers; reading
+    and approving the updated course report.

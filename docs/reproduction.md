@@ -11,7 +11,7 @@ changes a frozen file or a frozen decision.
 
 | Level | Needs | Command | What it shows | Time |
 |---|---|---|---|---|
-| 1. Code and evidence chain | Python 3.10+ (node 21+ for two optional tests) | `bash scripts/reproduce.sh` | unit tests, corpus checkers, all four protocol freezes, and the full pipeline (runner → guard → oracle → analysis) with a scripted planner | about 1 min |
+| 1. Code and evidence chain | Python 3.10+ (node 21+ for two optional tests) | `bash scripts/reproduce.sh` | unit tests, corpus checkers, all five protocol freezes, the full pipeline (runner → guard → oracle → analysis) with a scripted planner, and the v3.1 records recomputed from the committed episode fingerprints (section 7.3) | about 3 min |
 | 2. Published numbers | level 1 + the raw traces | `bash scripts/reproduce.sh --traces DIR` | every primary number, count, interval, hash and decision of the v2 formal test and the v3 holdout, recomputed from the traces (23 checks), plus the contract-outcome table | about 1 min |
 | 3. Model re-run, original machine | level 2 + one 24 GB GPU + the pinned weights | `EVIBOUND_DATA=/path/to/data-disk bash scripts/reproduce.sh --gpu 0` | seed 11 of the v2 formal-test matrix (432 episodes) run again with the frozen runner and compared episode by episode; `--seeds "11 22 33"` runs the full matrix and `--v3-seeds "11"` adds the v3 holdout | 15 min to 2 h |
 | 4. Model re-run, another machine | a fresh GPU machine with internet (for example Google Colab, one GPU with at least 24 GB) | `bash scripts/reproduce_cloud.sh` | the same re-run on different hardware: pins the library versions, downloads and verifies the pinned model revision, runs the frozen runners, and reports the re-run beside the published results | about 1 h |
@@ -207,6 +207,81 @@ v3 holdout 种子 11 的 2,376 回合，共 21 分钟。约九成回合的首个
 成立（−13.6 个百分点，同样完全一致）。完整守卫条件在两次运行中都没有出现不安全后果。
 重跑的逐回合指纹已提交，表中数字可以只靠仓库重新算出。
 
+### 7.3 The second extension, v3.1 (2026-11-24)
+
+The v3.1 study was run once, on the original machine. Its raw traces stay on
+the data disk and were not part of the trace bundle of 2026-11-10; what the
+repository holds is a fingerprint of every episode (executed writes, parsed
+plans, rejection reasons, kind of recovery turn, outcomes; no model text) and
+the records computed from them.
+
+| Run | Episodes | Fingerprints in `artifacts/` | SHA-256 of the raw trace (in the fingerprint header) |
+|---|---:|---|---|
+| Development, round 1 (v3 corpus; v3.1 development split) | 7,560; 4,320 | `v3_1_dev_d1_v3_fingerprints.json.gz`, `v3_1_dev_d1_fingerprints.json.gz` | in each file |
+| Development, round 2 | 3,780; 2,160 | `v3_1_dev_d2_v3_fingerprints.json.gz`, `v3_1_dev_d2_fingerprints.json.gz` | in each file |
+| Confirmatory run | 30,132 | `v3_1_holdout_fingerprints.json.gz` | `230cbc02de3b933b…` |
+| Planner characters (exploratory) | 13,392 each | `v3_1_role_<name>_fingerprints.json.gz` | in each file |
+
+What level 1 checks for v3.1 (step 4b of `scripts/reproduce.sh`, and the unit
+tests):
+
+```bash
+python3 scripts/check_scenarios_v3_1.py            # 420 tasks, every label recomputed, every task played through the simulator
+python3 scripts/freeze_v3_1_prereg.py --verify     # the 41 frozen files are unchanged
+python3 scripts/v3_1_dev_record.py --check         # every development number the plan quotes
+python3 scripts/analyze_v3_1.py --stage holdout --input artifacts/v3_1_holdout_fingerprints.json.gz \
+    --record artifacts/v3_1_holdout_results.json --doc docs/v3_1_results.md --check
+python3 scripts/v3_1_results_tables.py --check     # further tables and the summary's sentences
+python3 scripts/v3_1_roles.py --check              # the planner characters
+```
+
+What was checked when the run was recorded:
+
+- **The run used the frozen plan and code.** The run directory holds the
+  commit (`d7c8546`), the hashes of the ten source files it imported and a
+  copy of the freeze record. The hashes equal the frozen ones and the copy is
+  identical to `artifacts/v3_1_prereg_freeze.json`.
+- **Fingerprints against raw traces.** The frozen analysis script was run on
+  the experiment machine from the raw trace and here from the fingerprints.
+  For the confirmatory run the two records are identical in every field
+  except the name and hash of the input file. For the planner characters all
+  28 contrasts agree. The oracle rescored the raw traces without a
+  disagreement.
+- **The engine against v3.** With the v3 corpus, the v3.1 engine reproduced
+  the frozen v3 holdout run where it should: 648 of 648 first responses
+  identical, and every episode without a recovery turn identical
+  (`python3 scripts/v3_1_replication_check.py --dev-v3 artifacts/v3_1_dev_d1_v3_fingerprints.json.gz`).
+
+- **The second planner model (exploratory).** The record of the run with
+  Qwen3-8B (`python3 scripts/v3_1_models.py --check`) is computed from its
+  fingerprints. It agrees with the analysis the experiment machine made from
+  the raw traces in all 74 contrasts. The files of the model are identified
+  by size and SHA-256 in `artifacts/v3_1_model_qwen3_files.json`; the run is
+  started with `bash scripts/run_v3_1_model.sh model_qwen3 <gpu[,gpu]> <tag>`
+  after a pilot (`modelpilot_qwen3`) has passed its check.
+
+- **The scale study (exploratory).** The record of the runs in homes of
+  three sizes (`python3 scripts/homes_record.py --check`) is computed from
+  the fingerprints of both planners
+  (`artifacts/homes_qwen25_fingerprints.json.gz`,
+  `artifacts/homes_qwen3_fingerprints.json.gz`). It agrees with the analysis
+  the experiment machine made from the raw traces in all 66 contrasts and in
+  every count. The task files are what the generator writes
+  (`python3 scripts/generate_scenarios_homes.py --check`). A run is started
+  with `bash scripts/run_homes.sh homes_qwen25 <gpu[,gpu]> <tag>` (or
+  `homes_qwen3`) after its pilot (`homespilot_...`) has passed the check of
+  the answers; both planners together took about 100 minutes on two RTX 4090.
+
+Not done: a re-run of v3.1 on a second machine. On the original machine the
+confirmatory run is `bash scripts/run_v3_1.sh holdout <gpu> <tag>` (about two
+and a half hours on one RTX 4090); the script refuses to start without the
+freeze and refuses a changed set of conditions.
+
+v3.1 只在原机器上跑了一次。原始轨迹留在数据盘上；仓库里保存的是每个回合的指纹（执行的写入、解析出的计划、拒绝原因、
+恢复回合类型、结局，不含模型输出文本）和由它们算出的记录。一键检查的第 4b 步会从这些指纹重算开发实验、正式实验和角色对照的
+全部数字。记录结果时核对过三件事：实验用的确实是冻结的计划和代码；实验机从原始轨迹算出的结果与这里从指纹算出的结果除输入
+文件名外逐字段相同；用 v3 语料时，v3.1 引擎与冻结的 v3 实验首次回答 648/648 逐字一致。v3.1 没有在第二台机器上重跑。
+
 ## 8. The course report / 课程报告
 
 The report itself is kept locally and is not in the public repository
@@ -215,22 +290,42 @@ The report itself is kept locally and is not in the public repository
 报告本身只保存在本地，不在公开仓库里（`report/` 已加入 .gitignore）；下面的命令需要本地的
 `report/` 目录，没有时 `tests/test_report_numbers.py` 会自动跳过。
 
-`report/evibound_report.pdf` is typeset from `report/evibound_report.tex`.
-The source contains no hand-typed result: `scripts/build_report_numbers.py`
-writes every number, both data tables and both data figures from the
-committed records into `report/generated/`, and the report looks each value
-up by key.
+`report/evibound_report.pdf` is typeset from `report/evibound_report.tex` in
+the IEEE conference format (`IEEEtran.cls` is kept next to the report, so the
+build does not depend on the TeX distribution). The source contains no
+hand-typed result: `scripts/build_report_numbers.py` writes every number and
+the generated tables from the committed records into `report/generated/`, and
+the report looks each value up by key.
+
+The figures are generated too, into `report/figures/`:
+
+| Script | Figures | Source of what is shown |
+|---|---|---|
+| `scripts/build_report_figures.py` | four charts (formal test, the feedback ladder, the thirteen confirmatory contrasts of v3.1, and the exploratory scale study next to Study 3) | the same records as the numbers; `--data` prints every plotted value |
+| `scripts/build_report_diagrams.py` | two schematics as editable SVG (overview of the evidence chain; one refused plan and the seven refusal messages) | the worked example is an episode of the v3.1 confirmatory run, read from the corpus and the episode fingerprints; the script asserts each stated fact against them |
+| `scripts/report_style.py` | colours and sizes shared by both | blue, orange and aqua are the first three slots of the charting guide's reference palette; they pass its colour-vision checks for every pair, and blue against red was checked the same way on 2026-11-25 |
 
 ```bash
 python3 scripts/build_report_numbers.py --check   # do the generated files still match the records?
 python3 scripts/build_report_numbers.py --keys    # every key and its value
-bash report/build.sh                              # regenerate and typeset (needs pdflatex)
+python3 scripts/build_report_figures.py --data    # every value a chart plots, as JSON
+python3 scripts/build_report_diagrams.py --check  # are the SVG schematics current?
+bash report/build.sh                              # regenerate numbers and figures, then typeset
 ```
 
-`tests/test_report_numbers.py` runs the check on every test run, and also
-fails if the report uses a key that does not exist. The build uses a fixed
-timestamp, so the same sources give the same PDF byte for byte.
+The build needs pdflatex; charts need matplotlib, and turning the SVG
+schematics into PDF needs `rsvg-convert`. Where one of the two is missing,
+the build keeps the figure files that are already in `report/figures/`.
 
-课程报告由 `report/evibound_report.tex` 排版。源文件里没有手写的结果数字：
-`scripts/build_report_numbers.py` 从已提交的记录生成全部数字、两张数据表和两张数据图，
-报告按键名取值。测试会在每次运行时检查生成文件是否与记录一致。
+`tests/test_report_numbers.py` runs the check on every test run, and also
+fails if the report uses a key that does not exist.
+`tests/test_report_figures.py` checks that the charts show the recorded
+counts and the frozen decisions and that the worked example is what the
+records say; with a local report it also checks that the references are
+numbered in the order they are cited. The build uses a fixed timestamp.
+
+课程报告由 `report/evibound_report.tex` 排版，采用 IEEE 会议格式（`IEEEtran.cls` 放在报告目录里）。
+源文件里没有手写的结果数字：`scripts/build_report_numbers.py` 从已提交的记录生成全部数字和数据表，
+报告按键名取值；数据图由 `scripts/build_report_figures.py` 生成，两张示意图（可编辑的 SVG）由
+`scripts/build_report_diagrams.py` 生成，其中的例子是 v3.1 正式实验里的一个真实回合，脚本会逐项对照记录。
+测试会在每次运行时检查生成文件、图里的数字和判定是否与记录一致。

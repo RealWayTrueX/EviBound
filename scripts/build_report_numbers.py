@@ -15,6 +15,9 @@ Sources (all committed, none of them frozen files that this script changes):
 - ``artifacts/episode_fingerprints_v2_formal_test.json.gz`` and ``data/scenarios_v2/test.jsonl``
   for facts about single episodes (which episodes make up the utility gap)
 - ``artifacts/chain_attack_matrix_exploratory.json`` exploratory whole-chain matrix
+- ``artifacts/v3_1_holdout_results.json``           v3.1 feedback ladder, preregistered decisions
+- ``artifacts/v3_1_roles_record.json``              v3.1 exploratory arm (planner characters)
+- ``artifacts/v3_1_dev_record.json``                v3.1 development runs before the freeze
 
 Usage::
 
@@ -44,7 +47,7 @@ MINUS = r'$-$'
 
 # Dated facts about the repository that are not results. tests/test_report_numbers.py checks that the
 # test suite has not shrunk below the number printed in the report.
-SNAPSHOT = {'date': '18 November 2026', 'unit_tests': 128, 'component_tests': 27}
+SNAPSHOT = {'date': '25 November 2026', 'unit_tests': 251, 'component_tests': 27}
 
 
 def load(name):
@@ -72,7 +75,7 @@ def pct(count, total):
 
 
 WORDS = ('zero', 'one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine', 'ten', 'eleven',
-         'twelve')
+         'twelve', 'thirteen', 'fourteen', 'fifteen')
 
 
 def dec(value, digits=2):
@@ -539,7 +542,251 @@ def build_numbers():
     n.add('chain.persistent.episodes', persistent[0]['episodes'])
     swap = [r for r in chain['rows'] if r['attack'].startswith('H6-') and r['condition'] == 'M_full']
     assert swap and all(r['harmed'] == 0 for r in swap)
+    v31_numbers(n)
     return n
+
+
+# ------------------------------------------------------------------ v3.1: the feedback ladder
+# (condition, key in the report, what the message contains, describes or prescribes)
+V31_LADDER = (
+    ('M', 'm', 'verdict only', 'describes'),
+    ('M_recover', 'reason', 'reason', 'describes'),
+    ('M_reading', 'reading', 'reason and reading', 'describes'),
+    ('M_full', 'list', 'list, first wording', 'prescribes'),
+    ('M_menu2', 'list2', 'list, corrected', 'prescribes'),
+    ('M_plan', 'plan', 'plan review', 'prescribes'),
+    ('M_seq', 'seq', 'sequence of writes', 'prescribes'),
+)
+V31_OTHER = (('B0', 'b0'), ('B2_plan', 'b2plan'))
+V31_CONFIRMATORY = ('U1', 'W1', 'I1', 'I2', 'P1', 'P2', 'R1', 'N1', 'N2', 'N3', 'N4', 'S1', 'S2')
+V31_SECONDARY = ('K36', 'K42', 'K31', 'K32', 'K33', 'K37', 'K43', 'K54', 'K41', 'H1', 'H2',
+                 'K11', 'K19', 'K20', 'K40', 'K50', 'H6', 'K18')
+V31_KINDS = ('interrupted', 'revise', 'reselect')
+V31_ROLES = ('cautious', 'faithful', 'experienced')
+V31_ROLE_CONTRASTS = ('U1', 'N1', 'I1', 'R1', 'K43')
+
+
+def v31_record():
+    return load('v3_1_holdout_results.json')
+
+
+def v31_totals(record):
+    """Episodes of each condition over all tasks and variants, by outcome."""
+    totals = {}
+    for item in record['summary']:
+        if item['class'] == 'all':
+            cell = totals.setdefault(item['condition'], Counter())
+            cell['episodes'] += item['n']
+            for key in ('exact_target', 'unrequested_change', 'unsafe_effect', 'authorization_violation'):
+                cell[key] += item[key]
+    return totals
+
+
+def v31_numbers(n):
+    record = v31_record()
+    design, groups = record['design'], record['groups']
+    assert design['complete_matrix'] and record['replay_disagreements'] == 0
+    assert record['metadata']['oracle_disagreements'] == 0
+    n.add('v31.tasks', design['tasks'])
+    n.add('v31.core', groups['core'])
+    n.add('v31.battery', groups['attack_unsafe'] + groups['attack_hijack'])
+    n.add('v31.battery.unsafe', groups['attack_unsafe'])
+    n.add('v31.battery.hijack', groups['attack_hijack'])
+    n.add('v31.conditions', len(design['conditions']))
+    n.add('v31.messages', len(V31_LADDER))
+    n.add('v31.episodes', integer(design['episodes']))
+    totals = v31_totals(record)
+    cell = totals['M_recover']['episodes']
+    assert all(v['episodes'] == cell for v in totals.values())
+    n.add('v31.cell', integer(cell))
+    n.add('v31.frozen', load('v3_1_prereg_freeze.json')['frozen_utc'][:10])
+    for condition, key, _, _ in V31_LADDER + tuple((c, k, '', '') for c, k in V31_OTHER):
+        n.add(f'v31.tot.{key}.exact', integer(totals[condition]['exact_target']))
+        n.add(f'v31.tot.{key}.exact_pct', pct(totals[condition]['exact_target'], cell))
+        n.add(f'v31.tot.{key}.unrequested', integer(totals[condition]['unrequested_change']))
+        n.add(f'v31.tot.{key}.unrequested_pct', pct(totals[condition]['unrequested_change'], cell))
+        n.add(f'v31.tot.{key}.unsafe', integer(totals[condition]['unsafe_effect']))
+    guarded = [c for c, _, _, _ in V31_LADDER]
+    assert all(totals[c]['unsafe_effect'] == 0 and totals[c]['authorization_violation'] == 0 for c in guarded)
+    n.add('v31.guarded.episodes', integer(sum(totals[c]['episodes'] for c in guarded)))
+    items = {**record['decisions'], **{item['id']: item for item in record['secondary']}}
+    for contrast in V31_CONFIRMATORY + V31_SECONDARY:
+        item = items[contrast]
+        effect = item['effect']
+        n.add(f'v31.{contrast}.left', integer(effect['left_count']))
+        n.add(f'v31.{contrast}.right', integer(effect['right_count']))
+        n.add(f'v31.{contrast}.n', integer(effect['episodes_per_arm']))
+        n.add(f'v31.{contrast}.structures', effect['n_tasks'])
+        n.effect(f'v31.{contrast}', effect['estimate'], effect['ci95_low'], effect['ci95_high'])
+        n.add(f'v31.{contrast}.decision', item['decision'])
+    for claim, outcome in record['joint'].items():
+        n.add(f'v31.{claim}', outcome.replace('_', ' '))
+    n.add('v31.claims.supported', sum(v == 'supported' for v in record['joint'].values()))
+    kinds = record['kinds']['rows']
+    for kind in V31_KINDS:
+        n.add(f'v31.kind.{kind}.n', integer(kinds[kind]['n']))
+    n.add('v31.kind.none.n', integer(kinds['no recovery turn']['n']))
+    # development runs before the freeze, and the planner characters after it
+    dev = load('v3_1_dev_record.json')['runs']
+    n.add('v31.dev.tasks', dev['d1_v3']['tasks'] + dev['d1_dev']['tasks'])
+    n.add('v31.dev.episodes', integer(sum(run['episodes'] for run in dev.values())))
+    roles = load('v3_1_roles_record.json')['roles']
+    for role in V31_ROLES:
+        for contrast in V31_ROLE_CONTRASTS:
+            item = roles[role]['contrasts'][contrast]
+            n.effect(f'v31.role.{role}.{contrast}', item['estimate_pp'] / 100, item['low_pp'] / 100, item['high_pp'] / 100)
+            n.add(f'v31.role.{role}.{contrast}.decision', item['decision'])
+    n.add('v31.role.episodes', integer(sum(roles[role]['episodes'] for role in V31_ROLES)))
+
+
+def exploratory_numbers(n):
+    """The two exploratory follow-ups: Study 3 with a second planner, and homes of three sizes.
+
+    Both records are written by scripts of their own (v3_1_models.py, homes_record.py) from the
+    published fingerprints. Keys are added only for records that exist.
+    """
+    if (ART / 'v3_1_models_record.json').exists():
+        record = load('v3_1_models_record.json')
+        if 'qwen3' in record['models']:
+            second = record['models']['qwen3']
+            assert second['complete_matrix'] and second['replay_disagreements'] == 0
+            n.add('q3.episodes', integer(second['episodes']))
+            n.add('q3.tasks', second['tasks'])
+            n.add('q3.conditions', len(second['conditions']))
+            cell = second['totals']['M_recover']['episodes']
+            n.add('q3.cell', integer(cell))
+            for condition, key, _, _ in V31_LADDER + tuple((c, k, '', '') for c, k in V31_OTHER):
+                total = second['totals'][condition]
+                n.add(f'q3.tot.{key}.exact_pct', pct(total['exact_target'], cell))
+                n.add(f'q3.tot.{key}.unrequested_pct', pct(total['unrequested_change'], cell))
+                n.add(f'q3.tot.{key}.unsafe', integer(total['unsafe_effect']))
+            guarded = [c for c, _, _, _ in V31_LADDER]
+            assert all(second['totals'][c]['unsafe_effect'] == 0 and second['totals'][c]['authorization_violation'] == 0
+                       for c in guarded)
+            n.add('q3.guarded.episodes', integer(sum(second['totals'][c]['episodes'] for c in guarded)))
+            for contrast in V31_CONFIRMATORY + ('K36', 'K37', 'K31', 'K11'):
+                item = second['contrasts'][contrast]
+                n.add(f'q3.{contrast}.left', integer(item['left']))
+                n.add(f'q3.{contrast}.right', integer(item['right']))
+                n.add(f'q3.{contrast}.n', integer(item['episodes']))
+                n.effect(f'q3.{contrast}', item['estimate_pp'] / 100, item['low_pp'] / 100, item['high_pp'] / 100)
+                n.add(f'q3.{contrast}.decision', item['decision'].replace('_', ' '))
+            n.add('q3.S1.left_pct', pct(second['contrasts']['S1']['left'], second['contrasts']['S1']['episodes']))
+            for claim, outcome in second['claims'].items():
+                n.add(f'q3.{claim}', outcome.replace('_', ' '))
+            same = record['carried_over']['claims']
+            n.count('q3.claims.same', sum(same.values()))
+            n.add('q3.claims.differ', ', '.join(c for c, ok in sorted(same.items()) if not ok) or 'none')
+            n.add('q3.claims.supported', sum(v == 'supported' for v in second['claims'].values()))
+            n.count('q3.contrasts.same', sum(record['carried_over']['contrasts'].values()))
+            n.count('q3.contrasts.same_sign', sum(record['carried_over']['same_sign'].values()))
+            answers = second.get('answers')
+            if answers:
+                n.add('q3.first.not_parsed', integer(answers['first_proposals']['not_parsed']))
+                n.add('q3.first.answers', integer(answers['first_proposals']['answers']))
+    if (ART / 'homes_record.json').exists():
+        record = load('homes_record.json')
+        episodes = guarded = 0
+        for planner, data in record['planners'].items():
+            assert data['recomputed_differently'] == 0
+            n.add(f'hm.{planner}.episodes', integer(data['episodes']))
+            episodes += data['episodes']
+            for name, home in data['homes'].items():
+                key = f'hm.{planner}.{name}'
+                size = home['size']
+                if planner == 'qwen25':
+                    for field in ('devices', 'rules', 'states', 'legal_states', 'max_writes'):
+                        n.add(f'hm.{name}.{field}', size[field])
+                    n.add(f'hm.{name}.tasks', home['tasks'])
+                attacked, clean, totals = home['by_variant']['perturbed'], home['by_variant']['clean'], home['totals']
+                n.add(f'{key}.att.n', integer(attacked['B2_plan']['episodes']))
+                n.add(f'{key}.att.rule.unsafe', integer(attacked['B2_plan']['unsafe_effect']))
+                n.add(f'{key}.att.rule.unsafe_pct', pct(attacked['B2_plan']['unsafe_effect'], attacked['B2_plan']['episodes']))
+                n.add(f'{key}.att.none.unsafe_pct', pct(attacked['B0']['unsafe_effect'], attacked['B0']['episodes']))
+                n.add(f'{key}.clean.none.exact_pct', pct(clean['B0']['exact_target'], clean['B0']['episodes']))
+                n.add(f'{key}.clean.reason.exact_pct', pct(clean['M_recover']['exact_target'], clean['M_recover']['episodes']))
+                for condition, short in (('M_recover', 'reason'), ('M_full', 'list'), ('M_plan', 'plan'),
+                                         ('B0', 'none'), ('B2_plan', 'rule')):
+                    total = totals[condition]
+                    n.add(f'{key}.tot.{short}.exact_pct', pct(total['exact_target'], total['episodes']))
+                    n.add(f'{key}.tot.{short}.unrequested_pct', pct(total['unrequested_change'], total['episodes']))
+                    if condition.startswith('M_'):
+                        assert total['unsafe_effect'] == 0 and total['authorization_violation'] == 0, (planner, name, condition)
+                        guarded += total['episodes']
+                for contrast in record['primary_contrasts'] + ['K1', 'K2', 'K6']:
+                    item = home['contrasts'][contrast]
+                    n.add(f'{key}.{contrast}.left', integer(item['left']))
+                    n.add(f'{key}.{contrast}.right', integer(item['right']))
+                    n.add(f'{key}.{contrast}.n', integer(item['episodes']))
+                    n.effect(f'{key}.{contrast}', item['estimate_pp'] / 100, item['low_pp'] / 100, item['high_pp'] / 100)
+                    n.add(f'{key}.{contrast}.decision', item['decision'])
+                n.add(f'{key}.list_length', f"{home['form']['mean_list_length']:.2f}")
+                n.add(f'{key}.recovery.not_parsed', integer(home['form']['recovery_not_parsed']))
+                n.add(f'{key}.first.not_parsed_pct', pct(home['form']['first_not_parsed'], home['form']['first_proposals']))
+            for name, flags in data['carried_over_from_small'].items():
+                n.count(f'hm.{planner}.{name}.same', sum(flags.values()))
+        n.add('hm.episodes', integer(episodes))
+        first = next(iter(record['planners'].values()))['homes']
+        n.add('hm.tasks', integer(sum(home['tasks'] for home in first.values())))
+        n.add('hm.conditions', len(first['S']['totals']))
+        n.add('hm.guarded.episodes', integer(guarded))
+        n.add('hm.planners', len(record['planners']))
+
+
+def summary_numbers(n):
+    """Totals over the three studies, for the abstract, the introduction and the conclusion."""
+    v = n.values
+
+    def count(key):
+        return int(v[key].replace(',', ''))
+
+    n.add('all.episodes', integer(sum(count(f'{study}.episodes') for study in ('v2', 'v3', 'v31'))))
+    n.add('all.tasks', integer(sum(count(f'{study}.tasks') for study in ('v2', 'v3', 'v31'))))
+    # share of attacked episodes with an unsafe effect under the guard that trusts the cited reading
+    shares = {'v2.safety.b2_pct': (count('v2.safety.b2'), count('v2.cell')),
+              'v3.S1.left_pct': (count('v3.S1.left'), count('v3.cell')),
+              'v31.S1.left_pct': (count('v31.S1.left'), count('v31.S1.n'))}
+    for key, (events, episodes) in shares.items():
+        n.add(key, pct(events, episodes))
+    rates = [100 * events / episodes for events, episodes in shares.values()]
+    n.add('all.b2_unsafe.min', round(min(rates)))
+    n.add('all.b2_unsafe.max', round(max(rates)))
+    # episodes under an evidence-bound guard, every variant; none of them had an unsafe effect or a
+    # write outside the scope (v3.1 is asserted in v31_numbers)
+    assert all(v[f'v2.{variant}.m.unsafe'] == '0' for variant in ('att', 'clean', 'bound'))
+    outcomes = load('contract_outcomes_v2_v3.json')['studies']
+    for study, bound in (('v2_formal_test', ('M',)),
+                         ('v3_holdout', ('M', 'M_confirm_empty', 'M_full', 'M_mask', 'M_recover', 'M_repair'))):
+        rows = [row for row in outcomes[study]['table'] if row['condition'] in bound]
+        assert {row['condition'] for row in rows} == set(bound)
+        assert all(row['unsafe_effect_count'] == 0 and row['authorization_violation_count'] == 0 for row in rows)
+    assert int(v['v3.fullguard.conditions']) == 6
+    n.add('all.guarded.episodes', integer(3 * count('v2.cell') + count('v3.fullguard.episodes')
+                                          + count('v31.guarded.episodes')))
+    n.add('v31.U1.ratio', f"{count('v31.U1.left') / count('v31.U1.right'):.1f}")
+    n.add('v31.battery.attacked', integer(count('v31.S2.n')))
+
+
+def table_ladder():
+    """The feedback ladder: one row per message, over all tasks and variants and within three kinds of turn."""
+    record = v31_record()
+    totals, kinds = v31_totals(record), record['kinds']['rows']
+    rows, shown = [], None
+    for condition, _, text, group in V31_LADDER:
+        if group != shown:
+            if shown:
+                rows.append(r'\addlinespace[2pt]')
+            rows.append(r'\emph{' + group.capitalize() + r'} \\')
+            shown = group
+        total = totals[condition]
+        row = [r'\quad ' + text, integer(total['exact_target']), integer(total['unrequested_change'])]
+        for kind in V31_KINDS:
+            entry = kinds[kind]['by_condition'][condition]
+            # the verdict-only level does not ask again after an empty plan, so it has fewer turns of some kinds
+            row.append(integer(entry['exact_target']) if entry['n'] == kinds[kind]['n']
+                       else f"{entry['exact_target']}\\,/\\,{entry['n']}")
+        rows.append(' & '.join(row) + r' \\')
+    return '\n'.join(rows) + '\n'
 
 
 # ------------------------------------------------------------------ tables
@@ -777,17 +1024,19 @@ def figure_bars(n):
 
 ARTIFACT_ROWS = (
     # group, path
-    ('Formal test (v2)', 'data/scenarios_v2/test.jsonl'),
-    ('Formal test (v2)', 'artifacts/week8_main_protocol_freeze.tar.gz'),
-    ('Formal test (v2)', 'artifacts/week8_main_results.json'),
-    ('Holdout extension (v3)', 'data/scenarios_v3/holdout.jsonl'),
-    ('Holdout extension (v3)', 'artifacts/week11_v3_prereg_freeze.json'),
-    ('Holdout extension (v3)', 'artifacts/week11_v3_holdout_results.json'),
-    ('Post hoc analyses and reproduction', 'artifacts/week11_v3_review_reanalysis.json'),
-    ('Post hoc analyses and reproduction', 'artifacts/contract_outcomes_v2_v3.json'),
-    ('Post hoc analyses and reproduction', 'artifacts/reproduction_published_results_check.json'),
-    ('Post hoc analyses and reproduction', 'artifacts/reproduction_colab_a100_record.json'),
-    ('Model and raw traces', 'artifacts/model_manifest.json'),
+    ('Study 1: formal test (v2)', 'data/scenarios_v2/test.jsonl'),
+    ('Study 1: formal test (v2)', 'artifacts/week8_main_protocol_freeze.tar.gz'),
+    ('Study 1: formal test (v2)', 'artifacts/week8_main_results.json'),
+    ('Study 2: holdout (v3)', 'data/scenarios_v3/holdout.jsonl'),
+    ('Study 2: holdout (v3)', 'artifacts/week11_v3_prereg_freeze.json'),
+    ('Study 2: holdout (v3)', 'artifacts/week11_v3_holdout_results.json'),
+    ('Study 3: feedback ladder (v3.1)', 'data/scenarios_v3_1/holdout.jsonl'),
+    ('Study 3: feedback ladder (v3.1)', 'artifacts/v3_1_prereg_freeze.json'),
+    ('Study 3: feedback ladder (v3.1)', 'artifacts/v3_1_holdout_fingerprints.json.gz'),
+    ('Study 3: feedback ladder (v3.1)', 'artifacts/v3_1_holdout_results.json'),
+    ('Reproduction, model and raw traces', 'artifacts/reproduction_published_results_check.json'),
+    ('Reproduction, model and raw traces', 'artifacts/reproduction_colab_a100_record.json'),
+    ('Reproduction, model and raw traces', 'artifacts/model_manifest.json'),
 )
 
 
@@ -817,12 +1066,14 @@ def table_artifacts():
         digest = hashlib.sha256((ROOT / path).read_bytes()).hexdigest()
         add(group, path[len('artifacts/'):] if path.startswith('artifacts/') else path, digest)
     name, _size, digest = trace_archive()
-    add('Model and raw traces', name, digest)
+    add('Reproduction, model and raw traces', name, digest)
     return '\n'.join(rows) + '\n'
 
 
 def outputs():
     numbers = build_numbers()
+    summary_numbers(numbers)
+    exploratory_numbers(numbers)
     name, size, _digest = trace_archive()
     numbers.add('traces.bytes', size)
     for key, value in SNAPSHOT.items():
@@ -835,6 +1086,7 @@ def outputs():
         'figure_effects.tex': figure_effects(numbers),
         'figure_bars.tex': figure_bars(numbers),
         'table_chain.tex': '% Generated by scripts/build_report_numbers.py. Do not edit.\n' + table_chain(),
+        'table_ladder.tex': '% Generated by scripts/build_report_numbers.py. Do not edit.\n' + table_ladder(),
     }
 
 

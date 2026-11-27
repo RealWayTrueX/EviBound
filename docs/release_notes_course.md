@@ -1,4 +1,4 @@
-# Course release notes (draft, 2026-11-18) / 课程版本发布说明（草稿）
+# Course release notes (draft, 2026-11-18; updated 2026-11-25 for v3.1) / 课程版本发布说明（草稿）
 
 Status: draft for the corpus owner. Tagging, merging and publishing the trace
 archive are release decisions and stay with the owner (`AGENTS.md`). Nothing
@@ -10,7 +10,7 @@ here changes a frozen file.
 
 | Deliverable of the research contract | Where |
 |---|---|
-| Report, six pages and a one-page appendix | kept locally, not in the public repository |
+| Report, eight pages in IEEE conference format (Study 3 is v3.1, plus Qwen3-8B and multi-device exploratory studies) | kept locally, not in the public repository |
 | Five-minute demo and its script | [demo/](../demo/README.md), [demo_walkthrough.md](demo_walkthrough.md) |
 | Versioned scenarios and prompts | `data/scenarios*/`, the frozen planner and recovery modules under `src/evibound/` |
 | Raw traces | one archive with a hash manifest on the data disk ([reproduction.md](reproduction.md), section 5); the episode fingerprints of both confirmatory runs are in `artifacts/` |
@@ -34,16 +34,30 @@ here changes a frozen file.
 
 Every number above is in `artifacts/week8_main_results.json`.
 
+Added on 2026-11-25: a second extension (v3.1), outside the contract's
+hypothesis, varies only the message the guard sends after a refusal. Five of
+its six preregistered claims are supported; a list of legal writes makes the
+planner change things nobody asked for, and naming the broken rule or
+reviewing the rejected plan does not ([v3_1_results.md](v3_1_results.md)).
+Its corpus is machine-generated and machine-checked; the owner completed a
+post-run human review of the task cards on 2026-11-26. The review does not
+alter the frozen results (`artifacts/v3_1_postrun_review.json`).
+
 ## How to check the release
 
 ```bash
-bash scripts/reproduce.sh                          # tests, corpus checkers, four freezes, scripted pipeline
+bash scripts/reproduce.sh                          # tests, corpus checkers, five freezes, scripted pipeline, v3.1 records
 python3 scripts/build_report_numbers.py --check    # with a local copy of report/: the report's numbers match the records
 bash scripts/reproduce.sh --traces DIR             # recompute the published numbers from the raw traces
 ```
 
 On 2026-11-18: 128 tests pass, both corpus checkers pass,
-`python3 scripts/verify_freezes.py` reports 4 of 4 `[ok]`.
+`python3 scripts/verify_freezes.py` reports 4 of 4 `[ok]`. On 2026-11-25, with
+v3.1: 203 tests pass, the three corpus checkers pass, the same four freezes
+and the v3.1 freeze verify. Later the same day, with the tests for the
+report's figures: 217 tests (15 of them need the local report and are skipped
+without it). With the two exploratory follow-ups of 2026-11-25 (a second
+planner model, and the scale study in homes of three sizes): 251 tests.
 
 ## Known issues
 
@@ -64,12 +78,12 @@ These commands change the public repository. They are listed for the owner
 and have not been run.
 
 ```bash
-# 1. merge pull request #4 into main (or use the button on GitHub)
-gh pr merge 4 --merge
+# 1. merge pull request #6 into main (or use the button on GitHub)
+gh pr merge 6 --squash
 
 # 2. tag the merged commit; the report can then cite the tag
 git checkout main && git pull
-git tag -a v1.0-course -m "EviBound: course report, frozen v1-v3 studies, reproduction package"
+git tag -a v1.0-course -m "EviBound: course report, frozen v1-v3.1 studies, reproduction package"
 git push origin v1.0-course
 
 # 3. optional: publish the trace archive with the release (owner's decision)
@@ -78,6 +92,3 @@ git push origin v1.0-course
 gh release create v1.0-course --title "EviBound course release" --notes-file docs/release_notes_course.md \
     evibound_raw_traces_20261110.tar.gz
 ```
-
-Before step 2, read the report: its last paragraph states that the text was
-drafted with AI assistance and checked by the author.

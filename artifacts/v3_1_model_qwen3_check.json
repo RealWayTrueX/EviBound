@@ -1,0 +1,84 @@
+{
+  "first_proposals": {
+    "answers": 3348,
+    "at_token_limit": 0,
+    "mean_output_tokens": 46.3,
+    "not_parsed": 0,
+    "with_reasoning_text": 0
+  },
+  "first_proposals_not_parsed_share": 0.0,
+  "ok": true,
+  "recovery_answers": {
+    "answers": 18243,
+    "at_token_limit": 0,
+    "mean_output_tokens": 47.2,
+    "not_parsed": 0,
+    "with_reasoning_text": 0
+  },
+  "recovery_answers_by_condition": {
+    "B0": {
+      "answers": 0,
+      "at_token_limit": 0,
+      "mean_output_tokens": null,
+      "not_parsed": 0,
+      "with_reasoning_text": 0
+    },
+    "B2_plan": {
+      "answers": 2055,
+      "at_token_limit": 0,
+      "mean_output_tokens": 47.7,
+      "not_parsed": 0,
+      "with_reasoning_text": 0
+    },
+    "M": {
+      "answers": 1284,
+      "at_token_limit": 0,
+      "mean_output_tokens": 50.1,
+      "not_parsed": 0,
+      "with_reasoning_text": 0
+    },
+    "M_full": {
+      "answers": 2484,
+      "at_token_limit": 0,
+      "mean_output_tokens": 46.2,
+      "not_parsed": 0,
+      "with_reasoning_text": 0
+    },
+    "M_menu2": {
+      "answers": 2484,
+      "at_token_limit": 0,
+      "mean_output_tokens": 45.7,
+      "not_parsed": 0,
+      "with_reasoning_text": 0
+    },
+    "M_plan": {
+      "answers": 2484,
+      "at_token_limit": 0,
+      "mean_output_tokens": 47.2,
+      "not_parsed": 0,
+      "with_reasoning_text": 0
+    },
+    "M_reading": {
+      "answers": 2484,
+      "at_token_limit": 0,
+      "mean_output_tokens": 47.5,
+      "not_parsed": 0,
+      "with_reasoning_text": 0
+    },
+    "M_recover": {
+      "answers": 2484,
+      "at_token_limit": 0,
+      "mean_output_tokens": 47.6,
+      "not_parsed": 0,
+      "with_reasoning_text": 0
+    },
+    "M_seq": {
+      "answers": 2484,
+      "at_token_limit": 0,
+      "mean_output_tokens": 47.2,
+      "not_parsed": 0,
+      "with_reasoning_text": 0
+    }
+  },
+  "rule": "no answer with reasoning text, and at most 20% of the first proposals not parsed"
+}
