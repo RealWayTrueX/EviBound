@@ -198,6 +198,7 @@ confirmatory results were known.
 | Roadmap and decision log | [docs/roadmap_week6.md](docs/roadmap_week6.md) |
 | Agent working rules | [AGENTS.md](AGENTS.md) |
 | Step-by-step attack/defense demo (editable prompts, parameters, models) | [demo/](demo/README.md) — `python3 demo/serve.py`; five-minute script: [docs/demo_walkthrough.md](docs/demo_walkthrough.md) |
+| Reusable project skills (6 custom skills + external skills used) | [skills/](skills/README.md) |
 | Laptop recheck of the whole pipeline and a no-GPU reproduction path | [docs/week13_local_recheck.md](docs/week13_local_recheck.md), `scripts/run_v3_local.py` |
 | Mac demo calling the frozen planner on the GPU machine (no SSH, Tailscale) | [docs/remote_planner_setup.md](docs/remote_planner_setup.md), `scripts/serve_planner.py` |
 | One-click demo start / stop from the Mac (GPU planner is off by default) | `demo/launch/EviBound-Demo-Start.command`, `demo/launch/EviBound-Demo-Stop.command` |
@@ -359,7 +360,7 @@ v2、v3 数字、计数、区间、哈希和判定都已从原始轨迹重算（
 课程收尾用的文件：课程报告（IEEE 会议格式，共 8 页，其中 Study 3 即 v3.1，含 Qwen3-8B 与多设备规模探索实验；数字和图均由脚本从已提交的记录生成；只保存在本地，不在公开仓库里；`report/` 已加入 .gitignore）、[复现说明](docs/reproduction.md)、[安全声明与 AI 协助披露](SAFETY.md)、
 许可证（代码 [MIT](LICENSE)，数据和文档 [CC BY 4.0](LICENSE-DATA.md)）、
 [同伴与教师评审协议](docs/peer_review_protocol.md)（一致率脚本 `scripts/review_agreement.py`）、
-[五分钟演示讲稿](docs/demo_walkthrough.md)，以及合同要求的全部指标表
+[五分钟演示讲稿](docs/demo_walkthrough.md)、[项目技能库（6 个自研 skills + 外部 skills 清单）](skills/README.md)，以及合同要求的全部指标表
 [artifacts/contract_outcomes_v2_v3.json](artifacts/contract_outcomes_v2_v3.json)（含攻击目标达成、时延和 token，事后描述性统计）。
 
 ## 运行检查
