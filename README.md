@@ -101,13 +101,10 @@ contract-eligible false blocks under every M-guard condition, and the
 rule-compliant utility criterion is met; the raw-completion deficit (−7.4 pp)
 comes from the unguarded baseline "completing" authorization-negative tasks by
 writing the forbidden device ([closeout](docs/week12_v3_holdout_closeout.md),
-[results record](artifacts/week11_v3_holdout_results.json)). The U2 criterion
-was added after the exploratory v3 dev run had shown U1 unsupported, and it
+[results record](artifacts/week11_v3_holdout_results.json)). The U2 criterion was added before the freeze after development runs, and it
 rewards rule compliance as well as completion; the original-protocol decision
 and a safety-decoupled utility are reported next to it in
-[docs/v3_review_reanalysis.md](docs/v3_review_reanalysis.md). Why the plan was
-amended, where the work sits in the 2024–2026 literature, and which external
-datasets come next: [Week-12 direction review](docs/week12_direction_review.md).
+[docs/v3_review_reanalysis.md](docs/v3_review_reanalysis.md).
 
 <!-- v3.1:checked -->
 The **v3.1** study (2026-11-24) follows up on what v2 and v3 had located: the
@@ -186,7 +183,6 @@ confirmatory results were known.
 | v2 preregistration and results | [docs/week8_preregistration.md](docs/week8_preregistration.md), [artifacts/week8_main_results.json](artifacts/week8_main_results.json) |
 | v3 recovery study | [docs/week11_v3_preregistration.md](docs/week11_v3_preregistration.md) |
 | v3 holdout closeout and results | [docs/week12_v3_holdout_closeout.md](docs/week12_v3_holdout_closeout.md), [artifacts/week11_v3_holdout_results.json](artifacts/week11_v3_holdout_results.json) |
-| Direction review, literature positioning, external datasets | [docs/week12_direction_review.md](docs/week12_direction_review.md) |
 | v3.1 feedback ladder (second extension): frozen plan, results, analysis record | [docs/v3_1_preregistration.md](docs/v3_1_preregistration.md), [docs/v3_1_results.md](docs/v3_1_results.md), [artifacts/v3_1_holdout_results.json](artifacts/v3_1_holdout_results.json) |
 | v3.1 records: freeze, development runs, planner characters (exploratory), episode fingerprints | [artifacts/v3_1_prereg_freeze.json](artifacts/v3_1_prereg_freeze.json), [artifacts/v3_1_dev_record.json](artifacts/v3_1_dev_record.json), [artifacts/v3_1_roles_record.json](artifacts/v3_1_roles_record.json), `artifacts/v3_1_*_fingerprints.json.gz` |
 | What the rules allow at best: attainability analysis of the frozen v3 holdout (post hoc) | [docs/v3_1_layer1_attainability.md](docs/v3_1_layer1_attainability.md) |
@@ -197,18 +193,14 @@ confirmatory results were known.
 | Reproduction: one command without a GPU, up to a model re-run on another machine | [docs/reproduction.md](docs/reproduction.md) |
 | Safety statement and AI-assistance disclosure | [SAFETY.md](SAFETY.md) |
 | Licences: code under MIT, data and documentation under CC BY 4.0 | [LICENSE](LICENSE), [LICENSE-DATA.md](LICENSE-DATA.md) |
-| Course closeout: contract compliance, open items, finishing plan, report outline | [docs/course_closeout_2026-11-10.md](docs/course_closeout_2026-11-10.md) |
-| Release notes for the course version (draft; tagging is the owner's decision) | [docs/release_notes_course.md](docs/release_notes_course.md) |
 | Peer and instructor review: protocol, fixed sample, agreement script | [docs/peer_review_protocol.md](docs/peer_review_protocol.md), `scripts/review_agreement.py` |
-| v1 dataset card and literature check | [docs/dataset_card.md](docs/dataset_card.md), [docs/sources_and_design_review.md](docs/sources_and_design_review.md) |
+| v1 dataset card | [docs/dataset_card.md](docs/dataset_card.md) |
 | Roadmap and decision log | [docs/roadmap_week6.md](docs/roadmap_week6.md) |
 | Agent working rules | [AGENTS.md](AGENTS.md) |
 | Step-by-step attack/defense demo (editable prompts, parameters, models) | [demo/](demo/README.md) — `python3 demo/serve.py`; five-minute script: [docs/demo_walkthrough.md](docs/demo_walkthrough.md) |
-| Reusable project skills (experiment design, demo, literature review) | [skills/](skills/README.md) |
 | Laptop recheck of the whole pipeline and a no-GPU reproduction path | [docs/week13_local_recheck.md](docs/week13_local_recheck.md), `scripts/run_v3_local.py` |
 | Mac demo calling the frozen planner on the GPU machine (no SSH, Tailscale) | [docs/remote_planner_setup.md](docs/remote_planner_setup.md), `scripts/serve_planner.py` |
 | One-click demo start / stop from the Mac (GPU planner is off by default) | `demo/launch/EviBound-Demo-Start.command`, `demo/launch/EviBound-Demo-Stop.command` |
-| Independent review brief for reviewer agents (v4 / IEEE TDSC) | [docs/external_review_brief.md](docs/external_review_brief.md) |
 
 Task corpora: `data/scenarios/` (v1, 48 tasks, frozen), `data/scenarios_v2/`
 (56 tasks, frozen and human-reviewed), `data/scenarios_v3/` (84 tasks across 4
@@ -313,9 +305,7 @@ holdout 已于 2026-10-12 按冻结协议跑完 7,128 回合：所有 M 守卫�
 效用（探索性、事后）为 +1.4 pp [−5.6, +8.3]，尚不确定，见
 [复核再分析](docs/v3_review_reanalysis.md)。2026-11-03 的独立复核及处理见
 [复核回应](docs/review_response_2026-11-03.md)；下一项研究（v4，投 IEEE TDSC）的预注册草稿见
-[v4 预注册草稿](docs/v4_preregistration_draft.md)，待语料负责人决定后冻结。为什么修订、工作在
-2024–2026 文献中的位置、下一步并入哪些外部数据集：
-[第 12 周方向复审](docs/week12_direction_review.md)。
+[v4 预注册草稿](docs/v4_preregistration_draft.md)。
 
 <!-- v3.1:checked -->
 **v3.1**（2026-11-24，合同假设之外的第二个扩展实验）接着 v2、v3 找到的问题往下做：守卫的代价出在“正确拦截之后规划器怎么办”。
@@ -368,7 +358,6 @@ v2、v3 数字、计数、区间、哈希和判定都已从原始轨迹重算（
 
 课程收尾用的文件：课程报告（IEEE 会议格式，共 8 页，其中 Study 3 即 v3.1，含 Qwen3-8B 与多设备规模探索实验；数字和图均由脚本从已提交的记录生成；只保存在本地，不在公开仓库里；`report/` 已加入 .gitignore）、[复现说明](docs/reproduction.md)、[安全声明与 AI 协助披露](SAFETY.md)、
 许可证（代码 [MIT](LICENSE)，数据和文档 [CC BY 4.0](LICENSE-DATA.md)）、
-[课程收尾审计与完成计划](docs/course_closeout_2026-11-10.md)、
 [同伴与教师评审协议](docs/peer_review_protocol.md)（一致率脚本 `scripts/review_agreement.py`）、
 [五分钟演示讲稿](docs/demo_walkthrough.md)，以及合同要求的全部指标表
 [artifacts/contract_outcomes_v2_v3.json](artifacts/contract_outcomes_v2_v3.json)（含攻击目标达成、时延和 token，事后描述性统计）。

@@ -47,7 +47,7 @@ MINUS = r'$-$'
 
 # Dated facts about the repository that are not results. tests/test_report_numbers.py checks that the
 # test suite has not shrunk below the number printed in the report.
-SNAPSHOT = {'date': '25 November 2026', 'unit_tests': 251, 'component_tests': 27}
+SNAPSHOT = {'date': '28 November 2026', 'unit_tests': 251, 'component_tests': 27}
 
 
 def load(name):
